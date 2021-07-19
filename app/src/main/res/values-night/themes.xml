@@ -14,5 +14,8 @@
         <!-- Customize your theme here. -->
         <!-- 기본 폰트 : 고도체 -->
         <item name="android:fontFamily">@font/godo_font</item>
+        <!-- 타이틀 바 삭제 -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 </resources>
