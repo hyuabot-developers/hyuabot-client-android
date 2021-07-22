@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Hyuabot">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="{admob_id}"/>
+            android:value="ca-app-pub-9199717541699148~4262220626"/>
         <activity android:name=".activity.MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
