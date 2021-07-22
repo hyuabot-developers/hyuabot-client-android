@@ -33,6 +33,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "admob_id", properties['ADMOB_ID']
     }
 
     buildTypes {
