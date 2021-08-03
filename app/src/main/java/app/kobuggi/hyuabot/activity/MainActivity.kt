@@ -33,13 +33,8 @@ class MainActivity : AppCompatActivity() {
             val textColor = if(getDarkMode(config)) Color.WHITE else Color.BLACK
             val templateStyle = NativeTemplateStyle.Builder()
                 .withMainBackgroundColor(bgColor)
-                .withPrimaryTextBackgroundColor(bgColor)
-                .withSecondaryTextBackgroundColor(bgColor)
-                .withTertiaryTextBackgroundColor(bgColor)
-                .withCallToActionBackgroundColor(bgColor)
                 .withPrimaryTextTypefaceColor(textColor)
                 .withSecondaryTextTypefaceColor(textColor)
-                .withTertiaryTextTypefaceColor(textColor)
                 .build()
             template.setStyles(templateStyle)
             template.setNativeAd(it)
