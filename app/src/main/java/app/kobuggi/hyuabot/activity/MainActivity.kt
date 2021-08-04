@@ -11,22 +11,20 @@ import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
-import app.kobuggi.hyuabot.config.getServerURL
+import app.kobuggi.hyuabot.config.NetworkClient
 import app.kobuggi.hyuabot.function.getDarkMode
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.nativead.NativeAd
-import com.google.android.gms.ads.nativead.NativeAdOptions
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
 class MainActivity : AppCompatActivity() {
     var nativeAd : NativeAd? = null
     override fun onCreate(savedInstanceState: Bundle?) {
-        val serverURL = getServerURL()
-        Log.d("Connected to ", serverURL)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -88,6 +86,13 @@ class MainActivity : AppCompatActivity() {
         val calendarMenuButton = findViewById<RelativeLayout>(R.id.menu_calendar_button)
         calendarMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_calendar, null))
         calendarMenuButton.findViewById<TextView>(R.id.button_label).text = "학사력"
+
+        NetworkClient.getServer().getShuttleAll()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                    items -> Log.d("response", items.toString())
+            })
     }
 
     override fun onDestroy() {

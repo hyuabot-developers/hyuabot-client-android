@@ -10,7 +10,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Hyuabot">
+        android:theme="@style/Theme.Hyuabot"
+        android:usesCleartextTraffic="true"
+        >
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-9199717541699148~4262220626"/>
