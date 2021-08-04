@@ -7,17 +7,9 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <com.google.android.ads.nativetemplates.TemplateView
-        android:layout_alignParentTop="true"
-        android:id="@+id/home_admob_template"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:gnt_template_type="@layout/gnt_small_template_view"/>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/home_admob_template"
         android:overScrollMode="never"
         >
         <LinearLayout
@@ -27,10 +19,16 @@
             android:paddingHorizontal="15dp"
             android:layout_marginTop="10dp"
             >
+            <com.google.android.ads.nativetemplates.TemplateView
+                android:id="@+id/home_admob_template"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:gnt_template_type="@layout/gnt_small_template_view"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginTop="10dp"
                 android:animateLayoutChanges="true">
                 <!-- 메뉴 expand/shrink -->
                 <LinearLayout
