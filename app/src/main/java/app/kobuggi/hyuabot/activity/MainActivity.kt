@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.config.getServerURL
 import app.kobuggi.hyuabot.function.getDarkMode
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
@@ -23,6 +24,9 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 class MainActivity : AppCompatActivity() {
     var nativeAd : NativeAd? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        val serverURL = getServerURL()
+        Log.d("Connected to ", serverURL)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

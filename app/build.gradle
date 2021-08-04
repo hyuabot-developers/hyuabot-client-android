@@ -30,7 +30,6 @@ android {
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "admob_id", properties['ADMOB_ID']
         buildConfigField "String", "admob_unit_id", properties['ADMOB_UNIT_ID']
@@ -38,12 +37,14 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debugWithSignedKey
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "server_url", properties["RELEASE_URL"]
+            signingConfig signingConfigs.debugWithSignedKey
         }
 
         debug {
+            buildConfigField "String", "server_url", properties["DEBUG_URL"]
             signingConfig signingConfigs.debugWithSignedKey
         }
     }
