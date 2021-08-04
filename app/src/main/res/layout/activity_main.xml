@@ -26,133 +26,85 @@
             android:paddingHorizontal="15dp"
             android:layout_marginTop="10dp"
             >
-            <!-- 메뉴 expand/shrink -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
-                <TextView
+                android:orientation="vertical"
+                android:animateLayoutChanges="true">
+                <!-- 메뉴 expand/shrink -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="메뉴"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:paddingVertical="5dp"
-                />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="전체 보기"
-                    android:textColor="@color/hanyang_primary"
-                    android:textSize="18sp"
-                    android:textAlignment="textEnd"
-                    android:paddingVertical="5dp"
-                />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:orientation="horizontal"
-                >
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:layout_marginVertical="5dp"
-                        android:layout_marginHorizontal="10dp"
-                        android:padding="15dp"
-                        android:src="@drawable/menu_shuttle"
-                        android:background="@drawable/button_background"
-                        />
+                    android:orientation="horizontal"
+                    android:layout_marginHorizontal="15dp"
+                    >
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="셔틀"
+                        android:layout_weight="1"
+                        android:text="메뉴"
+                        android:textColor="@color/black"
                         android:textSize="18sp"
-                        android:textAlignment="center"
-                        android:layout_alignParentBottom="true"
-                    />
-                </RelativeLayout>
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:layout_marginVertical="5dp"
-                        android:layout_marginHorizontal="10dp"
-                        android:padding="15dp"
-                        android:src="@drawable/menu_bus"
-                        android:background="@drawable/button_background"
+                        android:paddingVertical="5dp"
                         />
                     <TextView
+                        android:id="@+id/expanded_menu_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="노선버스"
+                        android:layout_weight="1"
+                        android:text="전체 보기"
+                        android:textColor="@color/hanyang_primary"
                         android:textSize="18sp"
-                        android:textAlignment="center"
-                        android:layout_alignParentBottom="true"
+                        android:textAlignment="textEnd"
+                        android:paddingVertical="5dp"
                         />
-                </RelativeLayout>
-                <RelativeLayout
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:layout_marginVertical="5dp"
-                        android:layout_marginHorizontal="10dp"
-                        android:padding="15dp"
-                        android:src="@drawable/menu_metro"
-                        android:background="@drawable/button_background"
+                    android:layout_height="120dp"
+                    android:orientation="horizontal"
+                    >
+                    <include
+                        android:id="@+id/menu_shuttle_button"
+                        layout="@layout/menu_button_item"
                         />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="전철"
-                        android:textSize="18sp"
-                        android:textAlignment="center"
-                        android:layout_alignParentBottom="true"
+                    <include
+                        android:id="@+id/menu_bus_button"
+                        layout="@layout/menu_button_item"
                         />
-                </RelativeLayout>
-                <RelativeLayout
+                    <include
+                        android:id="@+id/menu_subway_button"
+                        layout="@layout/menu_button_item"
+                        />
+                    <include
+                        android:id="@+id/menu_food_button"
+                        layout="@layout/menu_button_item"
+                        />
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:layout_marginVertical="5dp"
-                        android:layout_marginHorizontal="10dp"
-                        android:padding="15dp"
-                        android:src="@drawable/menu_restaurant"
-                        android:background="@drawable/button_background"
+                    android:layout_height="120dp"
+                    android:orientation="horizontal"
+                    android:id="@+id/expanded_menu"
+                    android:visibility="gone"
+                    >
+                    <include
+                        android:id="@+id/menu_library_button"
+                        layout="@layout/menu_button_item"
                         />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="학식"
-                        android:textSize="18sp"
-                        android:textAlignment="center"
-                        android:layout_alignParentBottom="true"
+                    <include
+                        android:id="@+id/menu_contact_button"
+                        layout="@layout/menu_button_item"
                         />
-                </RelativeLayout>
+                    <include
+                        android:id="@+id/menu_map_button"
+                        layout="@layout/menu_button_item"
+                        />
+                    <include
+                        android:id="@+id/menu_calendar_button"
+                        layout="@layout/menu_button_item"
+                        />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

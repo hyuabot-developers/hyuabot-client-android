@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
-import android.widget.LinearLayout
+import android.view.View
+import android.widget.*
+import androidx.core.content.res.ResourcesCompat
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.function.getDarkMode
@@ -41,6 +43,45 @@ class MainActivity : AppCompatActivity() {
         }
         val adLoader = builder.build()
         adLoader.loadAd(AdRequest.Builder().build())
+
+        val expandMenu = findViewById<LinearLayout>(R.id.expanded_menu)
+        val expandMenuButton = findViewById<TextView>(R.id.expanded_menu_button)
+        expandMenuButton.setOnClickListener {
+            if(expandMenu.visibility == View.VISIBLE){
+                expandMenu.visibility = View.GONE
+            } else {
+                expandMenu.visibility = View.VISIBLE
+            }
+        }
+
+        val shuttleMenuButton = findViewById<RelativeLayout>(R.id.menu_shuttle_button)
+        val busMenuButton = findViewById<RelativeLayout>(R.id.menu_bus_button)
+        busMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_bus, null))
+        busMenuButton.findViewById<TextView>(R.id.button_label).text = "버스"
+
+        val subwayMenuButton = findViewById<RelativeLayout>(R.id.menu_subway_button)
+        subwayMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_metro, null))
+        subwayMenuButton.findViewById<TextView>(R.id.button_label).text = "전철"
+
+        val foodMenuButton = findViewById<RelativeLayout>(R.id.menu_food_button)
+        foodMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_restaurant, null))
+        foodMenuButton.findViewById<TextView>(R.id.button_label).text = "학식"
+
+        val libraryMenuButton = findViewById<RelativeLayout>(R.id.menu_library_button)
+        libraryMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_library, null))
+        libraryMenuButton.findViewById<TextView>(R.id.button_label).text = "열람실"
+
+        val contactMenuButton = findViewById<RelativeLayout>(R.id.menu_contact_button)
+        contactMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_contact, null))
+        contactMenuButton.findViewById<TextView>(R.id.button_label).text = "전화부"
+
+        val mapMenuButton = findViewById<RelativeLayout>(R.id.menu_map_button)
+        mapMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_map, null))
+        mapMenuButton.findViewById<TextView>(R.id.button_label).text = "지도"
+
+        val calendarMenuButton = findViewById<RelativeLayout>(R.id.menu_calendar_button)
+        calendarMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_calendar, null))
+        calendarMenuButton.findViewById<TextView>(R.id.button_label).text = "학사력"
     }
 
     override fun onDestroy() {
