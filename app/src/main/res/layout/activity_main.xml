@@ -111,7 +111,6 @@
                     android:layout_height="1dp"
                     android:background="#4D7F7F7F"
                     android:layout_marginTop="10dp"
-                    android:layout_marginHorizontal="5dp"
                 />
                 <!-- 메뉴 expand/shrink -->
                 <LinearLayout
@@ -175,6 +174,68 @@
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#4D7F7F7F"
+                android:layout_marginTop="10dp"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginTop="10dp"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="학식"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:paddingVertical="5dp"
+                    />
+                <TextView
+                    android:id="@+id/food_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="전체 학식 정보"
+                    android:textColor="@color/hanyang_primary"
+                    android:textSize="18sp"
+                    android:textAlignment="textEnd"
+                    android:paddingVertical="5dp"
+                    />
+            </LinearLayout>
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:overScrollMode="never"
+                android:scrollbars="none">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginVertical="10dp"
+                    >
+                    <include
+                        layout="@layout/food_card"
+                    />
+                    <include
+                        layout="@layout/food_card"
+                    />
+                    <include
+                        layout="@layout/food_card"
+                    />
+                    <include
+                        layout="@layout/food_card"
+                    />
+                    <include
+                        layout="@layout/food_card"
+                    />
+                </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

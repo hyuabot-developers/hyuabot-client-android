@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="200dp"
+    android:layout_width="300dp"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="16dp"
@@ -15,43 +15,35 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/shuttle_card_title"
+            android:id="@+id/food_card_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:text="출발지 → 도착지"
+            android:text="동빈이네"
             android:textColor="@color/black"
             android:layout_alignParentTop="true"
+            android:textAlignment="center"
         />
         <TextView
-            android:id="@+id/shuttle_card_time"
-            android:layout_below="@id/shuttle_card_title"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="NaN 분 후"
-            android:textColor="@color/black"
-        />
-
-        <TextView
-            android:id="@+id/shuttle_card_this_bus"
-            android:layout_above="@id/shuttle_card_next_bus"
+            android:id="@+id/food_card_menu"
+            android:layout_below="@id/food_card_title"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="이번 버스 : 00:00(회차)"
+            android:text="집밥"
             android:textColor="@color/black"
-            />
+        />
+
         <TextView
             android:id="@+id/shuttle_card_next_bus"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="다음 버스 : 00:00(회차)"
-            android:textColor="@color/black"
-
-            />
+            android:text="0 원"
+            android:textColor="@color/hanyang_primary"
+            android:textAlignment="center"
+        />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
