@@ -49,8 +49,10 @@ class MainActivity : AppCompatActivity() {
         expandMenuButton.setOnClickListener {
             if(expandMenu.visibility == View.VISIBLE){
                 expandMenu.visibility = View.GONE
+                expandMenuButton.text = "전체 보기"
             } else {
                 expandMenu.visibility = View.VISIBLE
+                expandMenuButton.text = "줄이기"
             }
         }
 
