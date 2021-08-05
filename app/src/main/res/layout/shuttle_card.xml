@@ -29,8 +29,9 @@
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:text="NaN 분 후"
+            android:bufferType="spannable"
             android:textColor="@color/black"
         />
 
