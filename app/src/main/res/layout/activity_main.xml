@@ -149,24 +149,31 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
                         <include
+                            android:id="@+id/shuttle_card_dorm_to_station"
                             layout="@layout/shuttle_card"
                         />
                         <include
+                            android:id="@+id/shuttle_card_dorm_to_terminal"
                             layout="@layout/shuttle_card"
                         />
                         <include
+                            android:id="@+id/shuttle_card_shuttlecock_to_station"
                             layout="@layout/shuttle_card"
                         />
                         <include
+                            android:id="@+id/shuttle_card_shuttlecock_to_terminal"
                             layout="@layout/shuttle_card"
                         />
                         <include
+                            android:id="@+id/shuttle_card_station"
                             layout="@layout/shuttle_card"
                         />
                         <include
+                            android:id="@+id/shuttle_card_terminal"
                             layout="@layout/shuttle_card"
                         />
                         <include
+                            android:id="@+id/shuttle_card_shuttlecock_to_residence"
                             layout="@layout/shuttle_card"
                         />
                     </LinearLayout>
