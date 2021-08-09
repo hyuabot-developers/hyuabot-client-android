@@ -44,7 +44,7 @@ class RestaurantCardListAdapter(list: RestaurantList) : RecyclerView.Adapter<Res
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.food_card, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.card_food_home, parent, false)
         return ItemViewHolder(view)
     }
 

@@ -150,31 +150,31 @@
                         android:orientation="horizontal">
                         <include
                             android:id="@+id/shuttle_card_dorm_to_station"
-                            layout="@layout/shuttle_card"
+                            layout="@layout/card_shuttle_home"
                         />
                         <include
                             android:id="@+id/shuttle_card_dorm_to_terminal"
-                            layout="@layout/shuttle_card"
+                            layout="@layout/card_shuttle_home"
                         />
                         <include
                             android:id="@+id/shuttle_card_shuttlecock_to_station"
-                            layout="@layout/shuttle_card"
+                            layout="@layout/card_shuttle_home"
                         />
                         <include
                             android:id="@+id/shuttle_card_shuttlecock_to_terminal"
-                            layout="@layout/shuttle_card"
+                            layout="@layout/card_shuttle_home"
                         />
                         <include
                             android:id="@+id/shuttle_card_station"
-                            layout="@layout/shuttle_card"
+                            layout="@layout/card_shuttle_home"
                         />
                         <include
                             android:id="@+id/shuttle_card_terminal"
-                            layout="@layout/shuttle_card"
+                            layout="@layout/card_shuttle_home"
                         />
                         <include
                             android:id="@+id/shuttle_card_shuttlecock_to_residence"
-                            layout="@layout/shuttle_card"
+                            layout="@layout/card_shuttle_home"
                         />
                     </LinearLayout>
                 </HorizontalScrollView>
