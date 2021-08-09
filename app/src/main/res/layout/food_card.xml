@@ -19,24 +19,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:text="동빈이네"
+            android:text="식당 이름"
             android:textColor="@color/black"
             android:layout_alignParentTop="true"
             android:textAlignment="center"
         />
         <TextView
             android:id="@+id/food_card_menu"
-            android:layout_below="@id/food_card_title"
+            android:layout_below="@+id/food_card_title"
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="집밥"
+            android:text="-"
+            android:textAlignment="center"
             android:textColor="@color/black"
         />
 
         <TextView
-            android:id="@+id/shuttle_card_next_bus"
+            android:id="@+id/food_card_price"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

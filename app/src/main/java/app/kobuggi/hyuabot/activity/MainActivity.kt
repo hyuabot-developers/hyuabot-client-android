@@ -16,11 +16,14 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.text.set
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.adapter.RestaurantCardListAdapter
 import app.kobuggi.hyuabot.config.NetworkService
 import app.kobuggi.hyuabot.function.getDarkMode
+import app.kobuggi.hyuabot.model.RestaurantList
 import app.kobuggi.hyuabot.model.Shuttle
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
@@ -43,7 +46,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     var nativeAd : NativeAd? = null
-    lateinit var shuttleService : NetworkService
+    lateinit var networkService : NetworkService
     lateinit var disposable : Disposable
 
     private lateinit var shuttleCardResidenceToStation : CardView
@@ -53,8 +56,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var shuttleCardStation : CardView
     private lateinit var shuttleCardTerminal : CardView
     private lateinit var shuttleCardShuttlecockToResidence : CardView
+    private lateinit var restaurantCardListAdapter: RestaurantCardListAdapter
 
-    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    private val formatter = DateTimeFormatter.ofPattern("HH:mm")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -151,7 +155,7 @@ class MainActivity : AppCompatActivity() {
             .create()
 
 
-        shuttleService = Retrofit.Builder()
+        networkService = Retrofit.Builder()
             .baseUrl(BuildConfig.server_url)
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -161,6 +165,8 @@ class MainActivity : AppCompatActivity() {
         disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::callShuttleEndpoint, this::onError)
+
+        this.callFoodAllEndpoint()
     }
 
     override fun onResume() {
@@ -182,11 +188,20 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("CheckResult")
     private fun callShuttleEndpoint(aLong : Long){
-        val observable = shuttleService.getShuttleAll()
+        val observable = networkService.getShuttleAll()
         observable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { data -> data }
             .subscribe(this::updateShuttleDepartureInfo, this::handleError)
+    }
+
+    @SuppressLint("CheckResult")
+    private fun callFoodAllEndpoint(){
+        val observable = networkService.getFoodAll()
+        observable.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { data -> data }
+            .subscribe(this::updateFoodInfo, this::handleError)
     }
 
     private fun onError(throwable: Throwable) {
@@ -358,6 +373,14 @@ class MainActivity : AppCompatActivity() {
                 shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_time).text = "운행 종료"
             }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateFoodInfo(data: RestaurantList) {
+        restaurantCardListAdapter = RestaurantCardListAdapter(data)
+        val foodCardListView = findViewById<RecyclerView>(R.id.food_card_list)
+        foodCardListView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        foodCardListView.adapter = restaurantCardListAdapter
     }
 
     private fun getHeadingString(heading: String) : String{
