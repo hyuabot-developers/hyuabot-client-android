@@ -126,25 +126,25 @@ class MainActivity : AppCompatActivity() {
         calendarMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_calendar, null))
         calendarMenuButton.findViewById<TextView>(R.id.button_label).text = "학사력"
 
-        shuttleCardResidenceToStation = findViewById(R.id.shuttle_card_dorm_to_station)
+        shuttleCardResidenceToStation = findViewById(R.id.shuttle_card_dorm_to_station_home)
         shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_title).text = "기숙사 → 한대앞"
         
-        shuttleCardResidenceToTerminal = findViewById(R.id.shuttle_card_dorm_to_terminal)
+        shuttleCardResidenceToTerminal = findViewById(R.id.shuttle_card_dorm_to_terminal_home)
         shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_title).text = "기숙사 → 예술인"
 
-        shuttleCardShuttlecockToStation = findViewById(R.id.shuttle_card_shuttlecock_to_station)
+        shuttleCardShuttlecockToStation = findViewById(R.id.shuttle_card_shuttlecock_to_station_home)
         shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_title).text = "셔틀콕 → 한대앞"
         
-        shuttleCardShuttlecockToTerminal = findViewById(R.id.shuttle_card_shuttlecock_to_terminal)
+        shuttleCardShuttlecockToTerminal = findViewById(R.id.shuttle_card_shuttlecock_to_terminal_home)
         shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_title).text = "셔틀콕 → 예술인"
 
-        shuttleCardStation = findViewById(R.id.shuttle_card_station)
+        shuttleCardStation = findViewById(R.id.shuttle_card_station_home)
         shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_title).text = "한대앞"
 
-        shuttleCardTerminal = findViewById(R.id.shuttle_card_terminal)
+        shuttleCardTerminal = findViewById(R.id.shuttle_card_terminal_home)
         shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_title).text = "예술인"
         
-        shuttleCardShuttlecockToResidence = findViewById(R.id.shuttle_card_shuttlecock_to_residence)
+        shuttleCardShuttlecockToResidence = findViewById(R.id.shuttle_card_shuttlecock_to_residence_home)
         shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_title).text = "셔틀콕 건너편"
 
         val client = OkHttpClient.Builder()

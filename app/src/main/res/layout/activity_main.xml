@@ -144,31 +144,31 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
                         <include
-                            android:id="@+id/shuttle_card_dorm_to_station"
+                            android:id="@+id/shuttle_card_dorm_to_station_home"
                             layout="@layout/card_shuttle_home"
                         />
                         <include
-                            android:id="@+id/shuttle_card_dorm_to_terminal"
+                            android:id="@+id/shuttle_card_dorm_to_terminal_home"
                             layout="@layout/card_shuttle_home"
                         />
                         <include
-                            android:id="@+id/shuttle_card_shuttlecock_to_station"
+                            android:id="@+id/shuttle_card_shuttlecock_to_station_home"
                             layout="@layout/card_shuttle_home"
                         />
                         <include
-                            android:id="@+id/shuttle_card_shuttlecock_to_terminal"
+                            android:id="@+id/shuttle_card_shuttlecock_to_terminal_home"
                             layout="@layout/card_shuttle_home"
                         />
                         <include
-                            android:id="@+id/shuttle_card_station"
+                            android:id="@+id/shuttle_card_station_home"
                             layout="@layout/card_shuttle_home"
                         />
                         <include
-                            android:id="@+id/shuttle_card_terminal"
+                            android:id="@+id/shuttle_card_terminal_home"
                             layout="@layout/card_shuttle_home"
                         />
                         <include
-                            android:id="@+id/shuttle_card_shuttlecock_to_residence"
+                            android:id="@+id/shuttle_card_shuttlecock_to_residence_home"
                             layout="@layout/card_shuttle_home"
                         />
                     </LinearLayout>
