@@ -222,6 +222,8 @@
         android:id="@+id/home_admob_template"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="15dp"
+        android:paddingTop="5dp"
         android:layout_alignParentBottom="true"
         app:gnt_template_type="@layout/gnt_small_template_view"/>
 </RelativeLayout>
