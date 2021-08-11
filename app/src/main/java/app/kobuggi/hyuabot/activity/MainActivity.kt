@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -95,6 +96,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         val shuttleMenuButton = findViewById<RelativeLayout>(R.id.menu_shuttle_button)
+        shuttleMenuButton.setOnClickListener { openShuttleActivity() }
+
         val busMenuButton = findViewById<RelativeLayout>(R.id.menu_bus_button)
         busMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_bus, null))
         busMenuButton.findViewById<TextView>(R.id.button_label).text = "버스"
@@ -184,6 +187,11 @@ class MainActivity : AppCompatActivity() {
         if (nativeAd != null) {
             nativeAd!!.destroy()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        disposable.dispose()
     }
 
     @SuppressLint("CheckResult")
@@ -391,8 +399,8 @@ class MainActivity : AppCompatActivity() {
         Log.d("Fetch Error", t.message!!)
     }
 
-    override fun onPause() {
-        super.onPause()
-        disposable.dispose()
+    private fun openShuttleActivity(){
+        val shuttleActivity = Intent(this, ShuttleActivity::class.java)
+        startActivity(shuttleActivity)
     }
 }
