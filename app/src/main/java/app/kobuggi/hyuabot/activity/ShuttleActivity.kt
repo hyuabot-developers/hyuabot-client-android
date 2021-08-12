@@ -3,12 +3,18 @@ package app.kobuggi.hyuabot.activity
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Spannable
 import android.text.Spanned
 import android.text.style.RelativeSizeSpan
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
@@ -16,7 +22,9 @@ import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.config.NetworkService
 import app.kobuggi.hyuabot.function.getDarkMode
+import app.kobuggi.hyuabot.model.CampusRequest
 import app.kobuggi.hyuabot.model.Shuttle
+import app.kobuggi.hyuabot.model.SubwayERICA
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.AdLoader
@@ -48,7 +56,10 @@ class ShuttleActivity : AppCompatActivity() {
 
     private lateinit var networkService: NetworkService
     private lateinit var disposable : Disposable
+    private lateinit var subwayDepartureInfo : SubwayERICA
+    private var headingCode = 0
     private val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    private val subwayFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,12 +97,18 @@ class ShuttleActivity : AppCompatActivity() {
         // 각 카드 별 제목 및 부제목 지정
         shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "기숙사"
         shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_heading).text = "한대앞역 방면"
+        shuttleCardResidenceToStation.findViewById<ImageView>(R.id.shuttle_card_metro_arrow).visibility = View.VISIBLE
+        shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).visibility = View.VISIBLE
+        shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).visibility = View.VISIBLE
 
         shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "기숙사"
         shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_heading).text = "예술인 방면"
 
         shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "셔틀콕"
         shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_heading).text = "한대앞역 방면"
+        shuttleCardShuttlecockToStation.findViewById<ImageView>(R.id.shuttle_card_metro_arrow).visibility = View.VISIBLE
+        shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).visibility = View.VISIBLE
+        shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).visibility = View.VISIBLE
 
         shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "셔틀콕"
         shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_heading).text = "예술인 방면"
@@ -108,7 +125,9 @@ class ShuttleActivity : AppCompatActivity() {
         shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "셔틀콕 건너편"
         shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_heading).text = "기숙사 방면"
 
-        findViewById<Toolbar>(R.id.shuttle_app_bar).setNavigationOnClickListener {
+        val toolbar = findViewById<Toolbar>(R.id.shuttle_app_bar)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
             finish()
         }
 
@@ -132,7 +151,7 @@ class ShuttleActivity : AppCompatActivity() {
 
         disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::callShuttleEndpoint, this::onError)
+            .subscribe(this::callAPIForShuttleActivity, this::onError)
     }
 
     override fun onResume() {
@@ -141,7 +160,7 @@ class ShuttleActivity : AppCompatActivity() {
             disposable = Observable.interval(0, 1,
                 TimeUnit.MINUTES)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::callShuttleEndpoint, this::onError)
+                .subscribe(this::callAPIForShuttleActivity, this::onError)
         }
     }
 
@@ -150,13 +169,61 @@ class ShuttleActivity : AppCompatActivity() {
         disposable.dispose()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.shuttle_action_bar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val arrow1 = shuttleCardResidenceToStation.findViewById<ImageView>(R.id.shuttle_card_metro_arrow)
+        val arrow2 = shuttleCardShuttlecockToStation.findViewById<ImageView>(R.id.shuttle_card_metro_arrow)
+        when(item.itemId){
+            R.id.shuttle_subway_line_4_seoul ->{
+                arrow1.setImageResource(R.drawable.ic_arrow_skyblue)
+                arrow2.setImageResource(R.drawable.ic_arrow_skyblue)
+                headingCode = 0
+            }
+            R.id.shuttle_subway_line_4_oido ->{
+                arrow1.setImageResource(R.drawable.ic_arrow_skyblue)
+                arrow2.setImageResource(R.drawable.ic_arrow_skyblue)
+                headingCode = 1
+            }
+            R.id.shuttle_subway_line_suin_seoul -> {
+                arrow1.setImageResource(R.drawable.ic_arrow_yellow)
+                arrow2.setImageResource(R.drawable.ic_arrow_yellow)
+                headingCode = 2
+            }
+            R.id.shuttle_subway_line_suin_incheon -> {
+                arrow1.setImageResource(R.drawable.ic_arrow_yellow)
+                arrow2.setImageResource(R.drawable.ic_arrow_yellow)
+                headingCode = 3
+            }
+        }
+        callSubwayEndpoint()
+        return true
+    }
+
+    private fun callAPIForShuttleActivity(aLong: Long){
+        callShuttleEndpoint()
+        callSubwayEndpoint()
+    }
+
     @SuppressLint("CheckResult")
-    private fun callShuttleEndpoint(aLong : Long){
+    private fun callShuttleEndpoint(){
         val observable = networkService.getShuttleAll()
         observable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { data -> data }
             .subscribe(this::updateShuttleDepartureInfo, this::onError)
+    }
+
+    @SuppressLint("CheckResult")
+    private fun callSubwayEndpoint(){
+        val observable = networkService.getSubwayERICA(CampusRequest(campus = "erica"))
+        observable.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { data -> data }
+            .subscribe(this::updateSubwayDepartureInfo, this::onError)
     }
 
     private fun onError(throwable: Throwable) {
@@ -285,6 +352,283 @@ class ShuttleActivity : AppCompatActivity() {
             }
             else -> {
                 shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_this).text = "운행 종료"
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateSubwayDepartureInfo(data: SubwayERICA) {
+        var remainedTime : Int?
+        var itemFound = false
+
+        val now = LocalTime.now()
+        subwayDepartureInfo = data
+        when(headingCode){
+            0 -> {
+                remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 0)
+                if(remainedTime > 0){
+                    for(item in data.line4.upLine){
+                        if(item.time > remainedTime){
+                            shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "${item.time.toInt()} 분 후 도착(${item.terminalStn}행)"
+                            itemFound = true
+                            break
+                        }
+                    }
+                    if(!itemFound){
+                        shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                    }
+                    remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 1)
+                    if(itemFound && remainedTime > 0){
+                        for(item in data.line4.upLine){
+                            if(item.time > remainedTime){
+                                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "${item.time.toInt()} 분 후 도착(${item.terminalStn}행)"
+                                itemFound = true
+                                break
+                            }
+                        }
+                        if(!itemFound){
+                            shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "도착 정보 없음"
+                        }
+                    } else {
+                        shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = ""
+                    }
+                } else {
+                    shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                }
+
+                remainedTime = getRemainedTime(R.id.shuttle_card_shuttlecock_to_station, 10, 0)
+                if(remainedTime > 0){
+                    for(item in data.line4.upLine){
+                        if(item.time > remainedTime){
+                            shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "${item.time.toInt()} 분 후 도착(${item.terminalStn}행)"
+                            itemFound = true
+                            break
+                        }
+                    }
+                    if(!itemFound){
+                        shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                    }
+                    remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 1)
+                    if(itemFound && remainedTime > 0){
+                        for(item in data.line4.upLine){
+                            if(item.time > remainedTime){
+                                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "${item.time.toInt()} 분 후 도착(${item.terminalStn}행)"
+                                itemFound = true
+                                break
+                            }
+                        }
+                        if(!itemFound){
+                            shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "도착 정보 없음"
+                        }
+                    } else {
+                        shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = ""
+                    }
+                } else {
+                    shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                }
+            }
+            1 -> {
+                remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 0)
+                if(remainedTime > 0){
+                    for(item in data.line4.downLine){
+                        if(item.time > remainedTime){
+                            shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "${item.time.toInt()} 분 후 도착(${item.terminalStn}행)"
+                            itemFound = true
+                            break
+                        }
+                    }
+                    if(!itemFound){
+                        shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                    }
+                    remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 1)
+                    if(itemFound && remainedTime > 0){
+                        for(item in data.line4.downLine){
+                            if(item.time > remainedTime){
+                                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "${item.time.toInt()} 분 후 도착(${item.terminalStn}행)"
+                                itemFound = true
+                                break
+                            }
+                        }
+                        if(!itemFound){
+                            shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "도착 정보 없음"
+                        }
+                    } else {
+                        shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = ""
+                    }
+                } else {
+                    shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                }
+
+                remainedTime = getRemainedTime(R.id.shuttle_card_shuttlecock_to_station, 10, 0)
+                if(remainedTime > 0){
+                    for(item in data.line4.downLine){
+                        if(item.time > remainedTime){
+                            shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "${item.time.toInt()} 분 후 도착(${item.terminalStn}행)"
+                            itemFound = true
+                            break
+                        }
+                    }
+                    if(!itemFound){
+                        shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                    }
+                    remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 1)
+                    if(itemFound && remainedTime > 0){
+                        for(item in data.line4.downLine){
+                            if(item.time > remainedTime){
+                                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "${item.time.toInt()} 분 후 도착(${item.terminalStn}행)"
+                                itemFound = true
+                                break
+                            }
+                        }
+                        if(!itemFound){
+                            shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "도착 정보 없음"
+                        }
+                    } else {
+                        shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = ""
+                    }
+                } else {
+                    shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                }
+            }
+            2 -> {
+                remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 0)
+                if(remainedTime > 0){
+                    for(item in data.lineSuin.upLine){
+                        if(Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt() > remainedTime){
+                            shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "${Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt()} 분 후 도착(${item.terminalStn}행)"
+                            itemFound = true
+                            break
+                        }
+                    }
+                    if(!itemFound){
+                        shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                    }
+                    remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 1)
+                    if(itemFound && remainedTime > 0){
+                        for(item in data.lineSuin.upLine){
+                            if(Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt() > remainedTime){
+                                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "${Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt()} 분 후 도착(${item.terminalStn}행)"
+                                itemFound = true
+                                break
+                            }
+                        }
+                        if(!itemFound){
+                            shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "도착 정보 없음"
+                        }
+                    } else {
+                        shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = ""
+                    }
+                } else {
+                    shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                }
+
+                remainedTime = getRemainedTime(R.id.shuttle_card_shuttlecock_to_station, 10, 0)
+                if(remainedTime > 0){
+                    for(item in data.lineSuin.upLine){
+                        if(Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt() > remainedTime){
+                            shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "${Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt()} 분 후 도착(${item.terminalStn}행)"
+                            itemFound = true
+                            break
+                        }
+                    }
+                    shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                    remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 1)
+                    if(itemFound && remainedTime > 0){
+                        for(item in data.lineSuin.upLine){
+                            if(Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt() > remainedTime){
+                                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "${Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt()} 분 후 도착(${item.terminalStn}행)"
+                                itemFound = true
+                                break
+                            }
+                        }
+                        if(!itemFound){
+                            shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "도착 정보 없음"
+                        }
+                    } else {
+                        shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = ""
+                    }
+                } else {
+                    shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                }
+            }
+            3 -> {
+                remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 0)
+                if(remainedTime > 0){
+                    for(item in data.lineSuin.downLine){
+                        if(Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt() > remainedTime){
+                            shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "${Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt()} 분 후 도착(${item.terminalStn}행)"
+                            itemFound = true
+                            break
+                        }
+                    }
+                    if(!itemFound){
+                        shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                    }
+                    remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 1)
+                    if(itemFound && remainedTime > 0){
+                        for(item in data.lineSuin.downLine){
+                            if(Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt() > remainedTime){
+                                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "${Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt()} 분 후 도착(${item.terminalStn}행)"
+                                itemFound = true
+                                break
+                            }
+                        }
+                        if(!itemFound){
+                            shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "도착 정보 없음"
+                        }
+                    } else {
+                        shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = ""
+                    }
+                } else {
+                    shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                }
+
+                remainedTime = getRemainedTime(R.id.shuttle_card_shuttlecock_to_station, 10, 0)
+                if(remainedTime > 0){
+                    for(item in data.lineSuin.downLine){
+                        if(Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt() > remainedTime){
+                            shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "${Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt()} 분 후 도착(${item.terminalStn}행)"
+                            itemFound = true
+                            break
+                        }
+                    }
+                    shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                    remainedTime = getRemainedTime(R.id.shuttle_card_dorm_to_station, 15, 1)
+                    if(itemFound && remainedTime > 0){
+                        for(item in data.lineSuin.downLine){
+                            if(Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt() > remainedTime){
+                                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "${Duration.between(now, LocalTime.parse(item.time, subwayFormatter)).toMinutes().toInt()} 분 후 도착(${item.terminalStn}행)"
+                                itemFound = true
+                                break
+                            }
+                        }
+                        if(!itemFound){
+                            shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = "도착 정보 없음"
+                        }
+                    } else {
+                        shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = ""
+                    }
+                } else {
+                    shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
+                }
+            }
+        }
+    }
+
+    private fun getRemainedTime(resourceID: Int, additionalTime: Int, index: Int) : Int {
+        return if(index == 0){
+            if(findViewById<CardView>(resourceID).findViewById<TextView>(R.id.shuttle_card_this).text.contains("분")){
+                val remainedTime = findViewById<CardView>(resourceID).findViewById<TextView>(R.id.shuttle_card_this).text.split("분")[0].toInt()
+                remainedTime + additionalTime
+            } else {
+                -1
+            }
+        } else {
+            if(findViewById<CardView>(resourceID).findViewById<TextView>(R.id.shuttle_card_next_subway).text.contains("분")){
+                val remainedTime = findViewById<CardView>(resourceID).findViewById<TextView>(R.id.shuttle_card_next).text.split("분")[0].toInt()
+                remainedTime + additionalTime
+            } else {
+                -1
             }
         }
     }

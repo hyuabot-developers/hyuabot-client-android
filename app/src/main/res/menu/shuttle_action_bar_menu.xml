@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/shuttle_subway_line_4_seoul"
+        android:title="4호선(당고개)"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/shuttle_subway_line_4_oido"
+        android:title="4호선(오이도)"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/shuttle_subway_line_suin_seoul"
+        android:title="수인분당선(왕십리)"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/shuttle_subway_line_suin_incheon"
+        android:title="수인분당선(인천)"
+        app:showAsAction="never" />
+</menu>

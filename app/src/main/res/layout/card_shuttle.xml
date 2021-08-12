@@ -76,7 +76,7 @@
             </RelativeLayout>
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="7"
+                android:layout_weight="2"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
                 <TextView
@@ -95,7 +95,39 @@
                     android:text="0분 (회차)"
                     />
             </LinearLayout>
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:src="@drawable/ic_arrow_skyblue"
+                android:padding="10dp"
+                android:id="@+id/shuttle_card_metro_arrow"
+                android:visibility="invisible"
+            />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/shuttle_card_this_subway"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="0분 (회차)"
+                    android:layout_marginBottom="10dp"
+                    android:visibility="invisible"
+                    />
+                <TextView
+                    android:id="@+id/shuttle_card_next_subway"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="0분 (회차)"
+                    android:visibility="invisible"
+                    />
+            </LinearLayout>
         </LinearLayout>
-
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
