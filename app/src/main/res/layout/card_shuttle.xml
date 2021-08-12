@@ -20,7 +20,6 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:text="정류장"
-            android:textColor="@color/black"
             android:layout_alignParentTop="true"
             android:layout_marginStart="10dp"
         />
@@ -33,7 +32,6 @@
             android:textSize="12sp"
             android:text="OO 정류장 방면"
             android:bufferType="spannable"
-            android:textColor="@color/black"
             android:layout_marginStart="10dp"
             />
 
@@ -88,7 +86,6 @@
                     android:textSize="15sp"
                     android:text="0분 (회차)"
                     android:layout_marginBottom="10dp"
-                    android:textColor="@color/black"
                     />
                 <TextView
                     android:id="@+id/shuttle_card_next"
@@ -96,7 +93,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
                     android:text="0분 (회차)"
-                    android:textColor="@color/black"
                     />
             </LinearLayout>
         </LinearLayout>
