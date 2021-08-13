@@ -121,6 +121,10 @@ class MainActivity : AppCompatActivity() {
         val libraryMenuButton = findViewById<RelativeLayout>(R.id.menu_library_button)
         libraryMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_library, null))
         libraryMenuButton.findViewById<TextView>(R.id.button_label).text = "열람실"
+        libraryMenuButton.setOnClickListener{
+            val readingRoomActivity = Intent(this, ReadingRoomActivity::class.java)
+            startActivity(readingRoomActivity)
+        }
 
         val contactMenuButton = findViewById<RelativeLayout>(R.id.menu_contact_button)
         contactMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_contact, null))

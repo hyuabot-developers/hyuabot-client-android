@@ -23,4 +23,7 @@ interface NetworkService {
 
     @GET("/app/bus")
     fun getBus() : Observable<Bus>
+
+    @POST("/app/library")
+    fun getReadingRoom(@Body body : CampusRequest) : Observable<ReadingRoomList>
 }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="16dp"
+    app:contentPadding="16dp"
+    android:background="@color/white"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="5dp"
+    app:cardElevation="2dp"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/reading_room_card_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="열람실"
+            android:layout_marginStart="10dp"
+            />
+        <TextView
+            android:layout_below="@id/reading_room_card_title"
+            android:id="@+id/reading_room_card_subtitle"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="학술정보관 2층"
+            android:bufferType="spannable"
+            android:layout_marginStart="10dp"
+            />
+        <View
+            android:layout_below="@id/reading_room_card_subtitle"
+            android:id="@+id/reading_room_card_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#4D7F7F7F"
+            android:layout_marginTop="5dp"
+            />
+
+        <LinearLayout
+            android:layout_below="@id/reading_room_card_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            >
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/reading_room_card_all"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="전체 좌석: 0석"
+                    android:layout_marginBottom="10dp"
+                    />
+                <TextView
+                    android:id="@+id/reading_room_card_available"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="잔여 좌석: 0석"
+                    />
+            </LinearLayout>
+            <ImageView
+                android:id="@+id/reading_room_reserve_button"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:src="@drawable/ic_alarm_off" />
+        </LinearLayout>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
