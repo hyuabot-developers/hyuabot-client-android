@@ -1,10 +1,7 @@
 package app.kobuggi.hyuabot.config
 
 import app.kobuggi.hyuabot.BuildConfig
-import app.kobuggi.hyuabot.model.CampusRequest
-import app.kobuggi.hyuabot.model.RestaurantList
-import app.kobuggi.hyuabot.model.Shuttle
-import app.kobuggi.hyuabot.model.SubwayERICA
+import app.kobuggi.hyuabot.model.*
 import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.http.Body
@@ -23,4 +20,7 @@ interface NetworkService {
 
     @POST("/app/subway")
     fun getSubwayERICA(@Body body : CampusRequest) : Observable<SubwayERICA>
+
+    @GET("/app/bus")
+    fun getBus() : Observable<Bus>
 }

@@ -101,6 +101,10 @@ class MainActivity : AppCompatActivity() {
         val busMenuButton = findViewById<RelativeLayout>(R.id.menu_bus_button)
         busMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_bus, null))
         busMenuButton.findViewById<TextView>(R.id.button_label).text = "버스"
+        busMenuButton.setOnClickListener {
+            val busActivity = Intent(this, BusActivity::class.java)
+            startActivity(busActivity)
+        }
 
         val subwayMenuButton = findViewById<RelativeLayout>(R.id.menu_subway_button)
         subwayMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_metro, null))
