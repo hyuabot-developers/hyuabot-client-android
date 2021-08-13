@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.config.NetworkService
@@ -114,6 +115,12 @@ class BusActivity : AppCompatActivity() {
         disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::callAPIForBusActivity, this::onError)
+
+        val refreshLayout = findViewById<SwipeRefreshLayout>(R.id.bus_swipe_refresh_layout)
+        refreshLayout.setOnRefreshListener {
+            callAPIForBusActivity(0)
+            refreshLayout.isRefreshing = false
+        }
     }
 
     override fun onResume() {
