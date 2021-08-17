@@ -129,6 +129,10 @@ class MainActivity : AppCompatActivity() {
         val contactMenuButton = findViewById<RelativeLayout>(R.id.menu_contact_button)
         contactMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_contact, null))
         contactMenuButton.findViewById<TextView>(R.id.button_label).text = "전화부"
+        contactMenuButton.setOnClickListener {
+            val contactActivity = Intent(this, ContactActivity::class.java)
+            startActivity(contactActivity)
+        }
 
         val mapMenuButton = findViewById<RelativeLayout>(R.id.menu_map_button)
         mapMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_map, null))
