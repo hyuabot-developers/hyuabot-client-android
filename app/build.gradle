@@ -69,6 +69,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation "androidx.core:core-splashscreen:1.0.0-alpha01" // Splash screen API from Android 12
     implementation 'com.google.android.gms:play-services-ads:20.2.0' // Admob Library
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+
 
     /* Retrofit2 */
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
