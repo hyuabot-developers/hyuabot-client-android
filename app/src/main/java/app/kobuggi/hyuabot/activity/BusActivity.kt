@@ -183,7 +183,7 @@ class BusActivity : AppCompatActivity() {
                         greenBusCardToStation.findViewById<TextView>(R.id.bus_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes() + 10}분 (회차점 대기)"
                         greenBusCardToStation.findViewById<TextView>(R.id.bus_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[1].time, formatter)).toMinutes() + 10}분 (회차점 대기)"
                     }
-                    timetable.isNotEmpty() -> {
+                    timetable.size == 1 -> {
                         greenBusCardToStation.findViewById<TextView>(R.id.bus_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes() + 10}분 (회차점 대기)"
                         greenBusCardToStation.findViewById<TextView>(R.id.bus_card_next).text = ""
                     }
@@ -221,12 +221,12 @@ class BusActivity : AppCompatActivity() {
                         greenBusCardToCampus.findViewById<TextView>(R.id.bus_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes() + 20}분 (회차점 대기)"
                         greenBusCardToCampus.findViewById<TextView>(R.id.bus_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[1].time, formatter)).toMinutes() + 20}분 (회차점 대기)"
                     }
-                    timetable.isNotEmpty() -> {
+                    timetable.size == 1 -> {
                         greenBusCardToCampus.findViewById<TextView>(R.id.bus_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes() + 20}분 (회차점 대기)"
                         greenBusCardToCampus.findViewById<TextView>(R.id.bus_card_next).text = ""
                     }
                     else -> {
-                        greenBusCardToCampus.findViewById<TextView>(R.id.bus_card_next).text = "운행 종료"
+                        greenBusCardToCampus.findViewById<TextView>(R.id.bus_card_this).text = "운행 종료"
                     }
                 }
             }
@@ -259,7 +259,7 @@ class BusActivity : AppCompatActivity() {
                         redBusCard.findViewById<TextView>(R.id.bus_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes() + 20}분 (회차점 대기)"
                         redBusCard.findViewById<TextView>(R.id.bus_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[1].time, formatter)).toMinutes() + 20}분 (회차점 대기)"
                     }
-                    timetable.isNotEmpty() -> {
+                    timetable.size == 1 -> {
                         redBusCard.findViewById<TextView>(R.id.bus_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes() + 20}분 (회차점 대기)"
                         redBusCard.findViewById<TextView>(R.id.bus_card_next).text = ""
                     }
@@ -297,7 +297,7 @@ class BusActivity : AppCompatActivity() {
                         blueBusCard.findViewById<TextView>(R.id.bus_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes() + 20}분 (회차점 대기)"
                         blueBusCard.findViewById<TextView>(R.id.bus_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[1].time, formatter)).toMinutes() + 20}분 (회차점 대기)"
                     }
-                    timetable.isNotEmpty() -> {
+                    timetable.size == 1 -> {
                         blueBusCard.findViewById<TextView>(R.id.bus_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes() + 20}분 (회차점 대기)"
                         blueBusCard.findViewById<TextView>(R.id.bus_card_next).text = ""
                     }
