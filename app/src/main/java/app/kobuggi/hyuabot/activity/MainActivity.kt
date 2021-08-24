@@ -141,6 +141,10 @@ class MainActivity : AppCompatActivity() {
         val calendarMenuButton = findViewById<RelativeLayout>(R.id.menu_calendar_button)
         calendarMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_calendar, null))
         calendarMenuButton.findViewById<TextView>(R.id.button_label).text = "학사력"
+        calendarMenuButton.setOnClickListener {
+            val calendarActivity = Intent(this, CalendarActivity::class.java)
+            startActivity(calendarActivity)
+        }
 
         shuttleCardResidenceToStation = findViewById(R.id.shuttle_card_dorm_to_station_home)
         shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_title).text = "기숙사 → 한대앞"
