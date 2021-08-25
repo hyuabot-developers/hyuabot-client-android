@@ -17,7 +17,6 @@ import java.time.LocalDateTime
 
 class EventsCardListAdapter(list: ArrayList<Events>) : RecyclerView.Adapter<EventsCardListAdapter.ItemViewHolder>(){
     private val mList = list
-    private val diffUtil = AsyncListDiffer(this, DateDiffUtilCallback())
 
     inner class ItemViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!){
         private val eventDate = itemView!!.findViewById<TextView>(R.id.calendar_card_date)
@@ -25,7 +24,11 @@ class EventsCardListAdapter(list: ArrayList<Events>) : RecyclerView.Adapter<Even
 
         @SuppressLint("SetTextI18n")
         fun bind(item: Events){
-            eventDate.text = "${item.startDate} ~ ${item.endDate}"
+            if(item.startDate == item.endDate){
+                eventDate.text = "${item.startDate}"
+            } else {
+                eventDate.text = "${item.startDate} ~ ${item.endDate}"
+            }
             eventContents.text = item.title
         }
 
@@ -52,5 +55,10 @@ class EventsCardListAdapter(list: ArrayList<Events>) : RecyclerView.Adapter<Even
         return mList.size
     }
 
-    fun replaceTo(events: ArrayList<Events>) = diffUtil.submitList(events)
+    @SuppressLint("NotifyDataSetChanged")
+    fun replaceTo(events: ArrayList<Events>){
+        mList.clear()
+        mList.addAll(events)
+        notifyDataSetChanged()
+    }
 }

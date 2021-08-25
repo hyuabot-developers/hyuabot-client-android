@@ -10,7 +10,7 @@
     android:layout_marginVertical="5dp"
     app:cardElevation="2dp"
     >
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -20,17 +20,15 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:text="Date"
-            android:layout_alignParentTop="true"
             android:layout_marginStart="10dp"
         />
 
         <View
-            android:layout_below="@id/calendar_card_date"
             android:id="@+id/calendar_card_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#4D7F7F7F"
-            android:layout_marginTop="5dp"
+            android:layout_marginVertical="5dp"
             />
 
         <TextView
@@ -39,8 +37,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:text="Contents"
-            android:layout_alignParentTop="true"
             android:layout_marginStart="10dp"
             />
-    </RelativeLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

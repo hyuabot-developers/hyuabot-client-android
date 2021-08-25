@@ -5,11 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.EventsCardListAdapter
 import app.kobuggi.hyuabot.config.GitHubNetworkService
@@ -23,7 +21,10 @@ import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Observable
+import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -35,6 +36,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
+
 class CalendarActivity : AppCompatActivity() {
     lateinit var eventCardListAdapter: EventsCardListAdapter
     lateinit var eventCardView: RecyclerView
@@ -42,7 +44,8 @@ class CalendarActivity : AppCompatActivity() {
     lateinit var calendarView : CalendarView
     lateinit var events: ArrayList<Events>
 
-    val eventsList = mutableMapOf<Int, ArrayList<Events>>()
+    val eventsList = mutableMapOf<Pair<Int, Int>, ArrayList<Events>>()
+    val eventsSource: PublishSubject<ArrayList<Events>> = PublishSubject.create()
 
     inner class DayViewContainer(view: View) : ViewContainer(view){
         val textView: TextView = view.findViewById(R.id.calendarDayText)
@@ -50,10 +53,6 @@ class CalendarActivity : AppCompatActivity() {
 
     inner class MonthViewContainer(view: View) : ViewContainer(view){
         val monthHeader: TextView = view.findViewById(R.id.month_header_text)
-    }
-
-    inner class EventsViewContainer(view: View) : ViewContainer(view){
-        val monthEventsList: RecyclerView = view.findViewById(R.id.event_card_list)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,13 +82,6 @@ class CalendarActivity : AppCompatActivity() {
         val lastMonth = currentMonth.plusMonths(10)
         val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
 
-        events = if(eventsList[currentMonth.monthValue] != null){
-            eventsList[currentMonth.monthValue]!!
-        } else {
-            ArrayList()
-        }
-        eventCardListAdapter = EventsCardListAdapter(events)
-
         calendarView = findViewById(R.id.calendar_view)
         calendarView.dayBinder = object : DayBinder<DayViewContainer>{
             override fun create(view: View) = DayViewContainer(view)
@@ -99,30 +91,26 @@ class CalendarActivity : AppCompatActivity() {
         }
 
         calendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer>{
+            @SuppressLint("NotifyDataSetChanged")
             override fun bind(container: MonthViewContainer, month: CalendarMonth) {
                 container.monthHeader.text = "${month.year}년 ${month.month}월"
+                if(eventsList[Pair(month.year, month.month - 1)] != null){
+                    events = eventsList[Pair(month.year, month.month - 1)]!!
+                    eventsSource.onNext(eventsList[Pair(month.year, month.month - 1)]!!)
+                    Log.d("events", eventsList[Pair(month.year, month.month - 1)]!!.toString())
+                    Log.d("events", eventCardListAdapter.itemCount.toString())
+                }
             }
             override fun create(view: View) = MonthViewContainer(view)
         }
-
-
-        calendarView.monthFooterBinder = object : MonthHeaderFooterBinder<EventsViewContainer>{
-            override fun bind(container: EventsViewContainer, month: CalendarMonth) {
-                Log.d("events", eventsList.toString())
-                if(eventsList[month.month] != null){
-                    eventCardListAdapter.replaceTo(eventsList[month.month]!!)
-                } else {
-                    eventCardListAdapter.replaceTo(ArrayList())
-                }
-                eventCardView = container.monthEventsList
-                eventCardView.layoutManager = LinearLayoutManager(this@CalendarActivity, RecyclerView.VERTICAL, false)
-                eventCardView.adapter = eventCardListAdapter
-            }
-            override fun create(view: View) = EventsViewContainer(view)
-        }
-
         calendarView.setup(firstMonth, lastMonth, firstDayOfWeek)
         calendarView.scrollToMonth(currentMonth)
+
+        eventsSource.subscribe(observer)
+        eventCardView = findViewById(R.id.event_card_list)
+        eventCardView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        eventCardListAdapter = EventsCardListAdapter(ArrayList())
+        eventCardView.adapter = eventCardListAdapter
     }
 
     @SuppressLint("CheckResult")
@@ -142,14 +130,17 @@ class CalendarActivity : AppCompatActivity() {
             val startDate = LocalDate.of(startArray[0].toInt(), startArray[1].toInt(), startArray[2].toInt())
             val endArray = item.endDate.split("/")
             val endDate = LocalDate.of(endArray[0].toInt(), endArray[1].toInt(), endArray[2].toInt())
-            if (eventsList[startDate.monthValue] == null){
-                eventsList[startDate.monthValue] = ArrayList()
+            if (eventsList[Pair(startDate.year, startDate.monthValue)] == null){
+                eventsList[Pair(startDate.year, startDate.monthValue)] = ArrayList()
             }
-            if (eventsList[endDate.monthValue] == null){
-                eventsList[endDate.monthValue] = ArrayList()
+            if (eventsList[Pair(endDate.year, endDate.monthValue)] == null){
+                eventsList[Pair(endDate.year, endDate.monthValue)] = ArrayList()
             }
-            eventsList[startDate.monthValue]!!.add(Events(key, startDate, endDate))
-            eventsList[endDate.monthValue]!!.add(Events(key, startDate, endDate))
+            eventsList[Pair(startDate.year, startDate.monthValue)]!!.add(Events(key, startDate, endDate))
+
+            if(Pair(startDate.year, startDate.monthValue) != Pair(endDate.year, endDate.monthValue)){
+                eventsList[Pair(endDate.year, endDate.monthValue)]!!.add(Events(key, startDate, endDate))
+            }
         }
     }
 
@@ -157,4 +148,18 @@ class CalendarActivity : AppCompatActivity() {
         Log.d("Fetch Error", t.message!!)
     }
 
+    private val observer = object : DisposableObserver<ArrayList<Events>>(){
+        override fun onComplete() {
+            Log.d("complete", "complete")
+        }
+
+        @SuppressLint("NotifyDataSetChanged")
+        override fun onNext(t: ArrayList<Events>) {
+            eventCardListAdapter.replaceTo(t)
+        }
+
+        override fun onError(e: Throwable) {
+
+        }
+    }
 }
