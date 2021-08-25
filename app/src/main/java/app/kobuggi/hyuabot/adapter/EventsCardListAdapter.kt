@@ -34,14 +34,6 @@ class EventsCardListAdapter(list: ArrayList<Events>) : RecyclerView.Adapter<Even
 
     }
 
-    inner class DateDiffUtilCallback : DiffUtil.ItemCallback<Events>() {
-        override fun areItemsTheSame(oldItem: Events, newItem: Events) =
-            oldItem.title == newItem.title && oldItem.startDate == newItem.startDate && oldItem.endDate == newItem.endDate
-
-        override fun areContentsTheSame(oldItem: Events, newItem: Events) =
-            oldItem.title == newItem.title && oldItem.startDate == newItem.startDate && oldItem.endDate == newItem.endDate
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.card_events, parent, false)
         return ItemViewHolder(view)
@@ -55,10 +47,8 @@ class EventsCardListAdapter(list: ArrayList<Events>) : RecyclerView.Adapter<Even
         return mList.size
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun replaceTo(events: ArrayList<Events>){
         mList.clear()
         mList.addAll(events)
-        notifyDataSetChanged()
     }
 }

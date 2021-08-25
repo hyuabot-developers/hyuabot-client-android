@@ -1,11 +1,10 @@
 package app.kobuggi.hyuabot.activity
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
@@ -14,14 +13,8 @@ import app.kobuggi.hyuabot.config.GitHubNetworkService
 import app.kobuggi.hyuabot.model.Events
 import app.kobuggi.hyuabot.model.EventsJson
 import com.google.gson.GsonBuilder
-import com.kizitonwose.calendarview.CalendarView
-import com.kizitonwose.calendarview.model.CalendarDay
-import com.kizitonwose.calendarview.model.CalendarMonth
-import com.kizitonwose.calendarview.ui.DayBinder
-import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
-import com.kizitonwose.calendarview.ui.ViewContainer
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.Observable
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -41,19 +34,13 @@ class CalendarActivity : AppCompatActivity() {
     lateinit var eventCardListAdapter: EventsCardListAdapter
     lateinit var eventCardView: RecyclerView
     lateinit var gitHubNetworkService: GitHubNetworkService
-    lateinit var calendarView : CalendarView
+    lateinit var calendarView : MaterialCalendarView
     lateinit var events: ArrayList<Events>
+    private val currentMonth: YearMonth = YearMonth.now()
 
     val eventsList = mutableMapOf<Pair<Int, Int>, ArrayList<Events>>()
     val eventsSource: PublishSubject<ArrayList<Events>> = PublishSubject.create()
 
-    inner class DayViewContainer(view: View) : ViewContainer(view){
-        val textView: TextView = view.findViewById(R.id.calendarDayText)
-    }
-
-    inner class MonthViewContainer(view: View) : ViewContainer(view){
-        val monthHeader: TextView = view.findViewById(R.id.month_header_text)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,40 +64,30 @@ class CalendarActivity : AppCompatActivity() {
             .build().create(GitHubNetworkService::class.java)
         this.callEventEndpoint()
 
-        val currentMonth = YearMonth.now()
-        val firstMonth = currentMonth.minusMonths(10)
-        val lastMonth = currentMonth.plusMonths(10)
-        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-
         calendarView = findViewById(R.id.calendar_view)
-        calendarView.dayBinder = object : DayBinder<DayViewContainer>{
-            override fun create(view: View) = DayViewContainer(view)
-            override fun bind(container: DayViewContainer, day: CalendarDay) {
-                container.textView.text = day.date.dayOfMonth.toString()
-            }
-        }
-
-        calendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer>{
-            @SuppressLint("NotifyDataSetChanged")
-            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-                container.monthHeader.text = "${month.year}년 ${month.month}월"
-                if(eventsList[Pair(month.year, month.month - 1)] != null){
-                    events = eventsList[Pair(month.year, month.month - 1)]!!
-                    eventsSource.onNext(eventsList[Pair(month.year, month.month - 1)]!!)
-                    Log.d("events", eventsList[Pair(month.year, month.month - 1)]!!.toString())
+        calendarView.setOnMonthChangedListener{_, calendarDay ->
+            run {
+                if (eventsList[Pair(calendarDay.year, calendarDay.month)] != null) {
+                    events = eventsList[Pair(calendarDay.year, calendarDay.month)]!!
+                    eventsSource.onNext(eventsList[Pair(calendarDay.year, calendarDay.month)]!!)
+                    Log.d("events", eventsList[Pair(calendarDay.year, calendarDay.month)]!!.toString())
                     Log.d("events", eventCardListAdapter.itemCount.toString())
+                } else {
+                    eventsSource.onNext(ArrayList())
                 }
             }
-            override fun create(view: View) = MonthViewContainer(view)
         }
-        calendarView.setup(firstMonth, lastMonth, firstDayOfWeek)
-        calendarView.scrollToMonth(currentMonth)
-
+        
         eventsSource.subscribe(observer)
         eventCardView = findViewById(R.id.event_card_list)
         eventCardView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         eventCardListAdapter = EventsCardListAdapter(ArrayList())
         eventCardView.adapter = eventCardListAdapter
+    }
+
+    override fun onDestroy() {
+        eventsSource.onComplete()
+        super.onDestroy()
     }
 
     @SuppressLint("CheckResult")
@@ -141,6 +118,9 @@ class CalendarActivity : AppCompatActivity() {
             if(Pair(startDate.year, startDate.monthValue) != Pair(endDate.year, endDate.monthValue)){
                 eventsList[Pair(endDate.year, endDate.monthValue)]!!.add(Events(key, startDate, endDate))
             }
+            if(eventsList[Pair(currentMonth.year, currentMonth.monthValue)] != null){
+                eventsSource.onNext(eventsList[Pair(currentMonth.year, currentMonth.monthValue)]!!)
+            }
         }
     }
 
@@ -156,6 +136,7 @@ class CalendarActivity : AppCompatActivity() {
         @SuppressLint("NotifyDataSetChanged")
         override fun onNext(t: ArrayList<Events>) {
             eventCardListAdapter.replaceTo(t)
+            eventCardListAdapter.notifyDataSetChanged()
         }
 
         override fun onError(e: Throwable) {
