@@ -10,10 +10,7 @@ import android.text.Spanned
 import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
@@ -117,6 +114,11 @@ class MainActivity : AppCompatActivity() {
         val foodMenuButton = findViewById<RelativeLayout>(R.id.menu_food_button)
         foodMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_restaurant, null))
         foodMenuButton.findViewById<TextView>(R.id.button_label).text = "학식"
+        foodMenuButton.setOnClickListener{
+            if(!BuildConfig.DEBUG){
+                Toast.makeText(this, "아직 준비중입니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         val libraryMenuButton = findViewById<RelativeLayout>(R.id.menu_library_button)
         libraryMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_library, null))
@@ -130,13 +132,22 @@ class MainActivity : AppCompatActivity() {
         contactMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_contact, null))
         contactMenuButton.findViewById<TextView>(R.id.button_label).text = "전화부"
         contactMenuButton.setOnClickListener {
-            val contactActivity = Intent(this, ContactActivity::class.java)
-            startActivity(contactActivity)
+            if(!BuildConfig.DEBUG){
+                Toast.makeText(this, "아직 준비중입니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                val contactActivity = Intent(this, ContactActivity::class.java)
+                startActivity(contactActivity)
+            }
         }
 
         val mapMenuButton = findViewById<RelativeLayout>(R.id.menu_map_button)
         mapMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_map, null))
         mapMenuButton.findViewById<TextView>(R.id.button_label).text = "지도"
+        mapMenuButton.setOnClickListener {
+            if(!BuildConfig.DEBUG){
+                Toast.makeText(this, "아직 준비중입니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         val calendarMenuButton = findViewById<RelativeLayout>(R.id.menu_calendar_button)
         calendarMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_calendar, null))
