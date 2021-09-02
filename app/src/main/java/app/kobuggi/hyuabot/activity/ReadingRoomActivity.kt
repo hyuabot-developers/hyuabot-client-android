@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -86,6 +87,12 @@ class ReadingRoomActivity : AppCompatActivity() {
         refreshLayout.setOnRefreshListener {
             callReadingRoomEndpoint(0)
             refreshLayout.isRefreshing = false
+        }
+
+        val toolbar = findViewById<Toolbar>(R.id.reading_room_app_bar)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
+            finish()
         }
     }
 
