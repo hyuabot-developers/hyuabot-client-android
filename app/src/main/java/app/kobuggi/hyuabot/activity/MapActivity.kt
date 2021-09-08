@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import app.kobuggi.hyuabot.R
 import com.kakao.util.maps.helper.Utility
+import net.daum.mf.map.api.CameraUpdate
+import net.daum.mf.map.api.MapPoint
 
 import net.daum.mf.map.api.MapView
 import java.security.MessageDigest
@@ -31,20 +33,6 @@ class MapActivity : AppCompatActivity() {
         val mapViewContainer = findViewById<ViewGroup>(R.id.map_view)
         mapViewContainer.addView(mapView)
 
-        Log.d("keyHASH", getKeyHash(this).toString())
-    }
-
-    fun getKeyHash(context: Context?): String? {
-        val packageInfo: PackageInfo = Utility.getPackageInfo(context, PackageManager.GET_SIGNATURES) ?: return null
-        for (signature in packageInfo.signatures) {
-            try {
-                val md: MessageDigest = MessageDigest.getInstance("SHA")
-                md.update(signature.toByteArray())
-                return Base64.encodeToString(md.digest(), Base64.NO_WRAP)
-            } catch (e: NoSuchAlgorithmException) {
-                println("디버그 keyHash$signature")
-            }
-        }
-        return null
+        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.300134067875675, 126.83786350205149), true)
     }
 }
