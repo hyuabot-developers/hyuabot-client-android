@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 Properties properties = new Properties()
@@ -98,4 +99,11 @@ dependencies {
 
     /* 카카오맵 */
     implementation files("libs/libDaumMapAndroid.jar")
+
+    /* Android Room */
+    def room_version = "2.3.0"
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    kapt("androidx.room:room-compiler:$room_version")
 }

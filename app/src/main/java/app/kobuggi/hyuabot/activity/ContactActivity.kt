@@ -6,12 +6,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.ContactFragmentStateAdapter
-import app.kobuggi.hyuabot.function.DatabaseHelper
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class ContactActivity : FragmentActivity() {
-    private lateinit var databaseHelper : DatabaseHelper
     private lateinit var viewPager2 : ViewPager2
     private lateinit var tabLayout: TabLayout
     private val tabTextList = arrayListOf("교내", "교외")
@@ -25,7 +23,6 @@ class ContactActivity : FragmentActivity() {
             finish()
         }
 
-        databaseHelper = DatabaseHelper(this)
         viewPager2 = findViewById(R.id.contact_tab_pager)
         tabLayout = findViewById(R.id.contact_tab_layout)
         init()

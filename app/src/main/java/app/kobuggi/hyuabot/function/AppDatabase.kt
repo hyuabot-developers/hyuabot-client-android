@@ -1,4 +1,11 @@
 package app.kobuggi.hyuabot.function
 
-class AppDatabase {
+import android.content.Context
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import app.kobuggi.hyuabot.model.DatabaseItem
+
+@Database(entities = [DatabaseItem::class], version = 1)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun databaseHelper(): DatabaseHelper?
 }
