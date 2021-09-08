@@ -137,6 +137,10 @@ class MainActivity : AppCompatActivity() {
         val mapMenuButton = findViewById<RelativeLayout>(R.id.menu_map_button)
         mapMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_map, null))
         mapMenuButton.findViewById<TextView>(R.id.button_label).text = "지도"
+        mapMenuButton.setOnClickListener {
+            val mapActivity = Intent(this, MapActivity::class.java)
+            startActivity(mapActivity)
+        }
 
         val calendarMenuButton = findViewById<RelativeLayout>(R.id.menu_calendar_button)
         calendarMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_calendar, null))

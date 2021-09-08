@@ -3,7 +3,8 @@
     package="app.kobuggi.hyuabot">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:name=".GlobalApplication"
         android:allowBackup="false"
@@ -13,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hyuabot"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".activity.MapActivity"
+            android:exported="true" />
         <activity
             android:name=".activity.ContactActivity"
             android:exported="true" />
@@ -28,7 +32,6 @@
         <activity
             android:name=".activity.ShuttleActivity"
             android:exported="true" />
-
         <activity
             android:name=".activity.CalendarActivity"
             android:exported="true" />
@@ -36,7 +39,6 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-9199717541699148~4262220626" />
-
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
@@ -46,6 +48,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data android:name="com.kakao.sdk.AppKey" android:value="${kakaoMapKey}"/>
     </application>
 
 </manifest>

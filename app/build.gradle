@@ -33,6 +33,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "admob_id", properties['ADMOB_ID']
         buildConfigField "String", "admob_unit_id", properties['ADMOB_UNIT_ID']
+        manifestPlaceholders = [kakaoMapKey: "${properties.getProperty('KAKAO_MAP_KEY')}"]
     }
 
     buildTypes {
@@ -54,6 +55,15 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'x86_64', 'armeabi-v7a', 'armeabi'
+            universalApk false
+        }
     }
 }
 
@@ -85,4 +95,7 @@ dependencies {
 
     /* Calendar */
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
+
+    /* 카카오맵 */
+    implementation files("libs/libDaumMapAndroid.jar")
 }
