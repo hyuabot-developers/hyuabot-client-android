@@ -7,8 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.HorizontalScrollView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import app.kobuggi.hyuabot.R
 import com.kakao.util.maps.helper.Utility
 import net.daum.mf.map.api.CameraUpdate
@@ -34,5 +38,15 @@ class MapActivity : AppCompatActivity() {
         mapViewContainer.addView(mapView)
 
         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.300134067875675, 126.83786350205149), true)
+
+        val categoryButton = findViewById<Button>(R.id.selected_category)
+        val categoryButtonsContainer = findViewById<HorizontalScrollView>(R.id.select_category_scrollview)
+        categoryButton.setOnClickListener {
+            if(categoryButtonsContainer.isVisible){
+                categoryButtonsContainer.visibility = View.INVISIBLE
+            } else {
+                categoryButtonsContainer.visibility = View.VISIBLE
+            }
+        }
     }
 }
