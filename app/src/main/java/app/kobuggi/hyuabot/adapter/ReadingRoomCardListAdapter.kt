@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,8 +30,10 @@ class ReadingRoomCardListAdapter(list: ArrayList<ReadingRoom>) : RecyclerView.Ad
 
         @SuppressLint("SetTextI18n")
         fun bind(item: ReadingRoom){
+            Log.d("isReservable", item.isReservable.toString())
+
             readingRoomCardTitle.text = item.name
-            readingRoomCardSubTitle.text = if (item.isReservable) "예약 중" else "예약 불가"
+            readingRoomCardSubTitle.text = if (item.isReservable) "예약 가능" else "예약 불가"
             readingRoomCardSubTitle.setTextColor(if (item.isReservable) Color.parseColor("#33a532") else Color.parseColor("#bb1e10"))
             readingRoomCardAll.text = "전체 좌석: ${item.activeTotal}석"
             readingRoomCardAvailable.text = "잔여 좌석: ${item.available}석"
