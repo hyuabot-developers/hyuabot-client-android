@@ -16,6 +16,7 @@ import com.google.android.material.navigation.NavigationView
 
 class ContactActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     lateinit var drawerLayout : DrawerLayout
+    lateinit var searchView: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +39,7 @@ class ContactActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         menuInflater.inflate(R.menu.contact_action_bar_menu, menu!!)
 
         val searchItem = menu.findItem(R.id.contact_search)
-        val searchView = searchItem.actionView as SearchView
+        searchView = searchItem.actionView as SearchView
         searchView.maxWidth = Int.MAX_VALUE
         return true
     }
@@ -57,5 +58,13 @@ class ContactActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         return false
+    }
+
+    override fun onBackPressed() {
+        if(searchView.isEnabled){
+            searchView.isEnabled = false
+        } else {
+            super.onBackPressed()
+        }
     }
 }
