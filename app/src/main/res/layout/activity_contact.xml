@@ -20,5 +20,10 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:menu="@menu/contact_app_bar_menu"
-        app:headerLayout="@layout/header_contact" />
+        app:headerLayout="@layout/header_contact" >
+        <include layout="@layout/header_contact" />
+    </com.google.android.material.navigation.NavigationView>
+
+
+
 </androidx.drawerlayout.widget.DrawerLayout>
