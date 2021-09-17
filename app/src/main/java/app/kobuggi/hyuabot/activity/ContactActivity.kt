@@ -10,8 +10,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,13 +21,11 @@ import app.kobuggi.hyuabot.function.AppDatabase
 import app.kobuggi.hyuabot.model.DatabaseItem
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.*
-import net.daum.mf.map.api.MapPOIItem
-import net.daum.mf.map.api.MapPoint
 import kotlin.coroutines.CoroutineContext
 
 class ContactActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CoroutineScope {
     lateinit var drawerLayout : DrawerLayout
-    lateinit var searchView: SearchView
+    private lateinit var searchView: SearchView
     lateinit var queryResult: ArrayList<DatabaseItem>
     lateinit var contactQueryResultListAdapter: ContactQueryResultListAdapter
     private lateinit var database : AppDatabase
@@ -99,6 +95,33 @@ class ContactActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateQueryResultByName(name: String){
+        launch {
+            queryResult = ArrayList()
+            if(name.isEmpty()){
+                for(item : DatabaseItem in database.databaseHelper()!!.getPhoneNumberAll()){
+                    if(item.phoneNumber!!.trim().isNotEmpty()){
+                        queryResult.add(item)
+                    }
+                }
+            }
+            else{
+                for(item : DatabaseItem in database.databaseHelper()!!.getPhoneNumberByName("%${name}%")){
+                    if(item.phoneNumber!!.trim().isNotEmpty()){
+                        queryResult.add(item)
+                    }
+                }
+            }
+
+            withContext(Dispatchers.Main){
+                Log.d("Phone", queryResult.size.toString())
+                contactQueryResultListAdapter.replaceTo(queryResult)
+                contactQueryResultListAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.contact_action_bar_menu, menu!!)
@@ -106,6 +129,16 @@ class ContactActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val searchItem = menu.findItem(R.id.contact_search)
         searchView = searchItem.actionView as SearchView
         searchView.maxWidth = Int.MAX_VALUE
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextChange(searchValue: String?): Boolean {
+                updateQueryResultByName(searchValue!!)
+                return false
+            }
+
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+        })
         return true
     }
 
