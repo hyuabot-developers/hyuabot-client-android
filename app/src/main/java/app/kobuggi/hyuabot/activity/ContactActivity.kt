@@ -59,7 +59,7 @@ class ContactActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     queryResult.add(item)
                 }
             }
-            contactQueryResultListAdapter = ContactQueryResultListAdapter(queryResult)
+            contactQueryResultListAdapter = ContactQueryResultListAdapter(queryResult, this@ContactActivity)
             contactQueryListView.layoutManager = LinearLayoutManager(this@ContactActivity, RecyclerView.VERTICAL, false)
             contactQueryListView.adapter = contactQueryResultListAdapter
             Log.d("Count of result", queryResult.size.toString())

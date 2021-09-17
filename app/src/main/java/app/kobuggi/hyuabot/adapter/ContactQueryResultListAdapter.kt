@@ -1,6 +1,11 @@
 package app.kobuggi.hyuabot.adapter
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +17,9 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class ContactQueryResultListAdapter(list: ArrayList<DatabaseItem>) : RecyclerView.Adapter<ContactQueryResultListAdapter.ItemViewHolder>(){
+class ContactQueryResultListAdapter(list: ArrayList<DatabaseItem>, context: Context) : RecyclerView.Adapter<ContactQueryResultListAdapter.ItemViewHolder>(){
     private val mList = list
+    private val mContext = context
     private lateinit var categoryMap : HashMap<String, String>
 
     init {
@@ -44,11 +50,23 @@ class ContactQueryResultListAdapter(list: ArrayList<DatabaseItem>) : RecyclerVie
         private val contactCategory = itemView!!.findViewById<TextView>(R.id.contact_card_category)
         private val contactPhoneNumber = itemView!!.findViewById<TextView>(R.id.contact_card_phone)
 
+
         @SuppressLint("SetTextI18n")
         fun bind(item: DatabaseItem){
             contactName.text = item.name
             contactCategory.text = categoryMap.getOrDefault(item.category, item.category)
             contactPhoneNumber.text = item.phoneNumber
+
+            itemView.setOnClickListener {
+                val dialogBuilder = AlertDialog.Builder(mContext)
+                    .setTitle("전화 걸기")
+                    .setMessage("${item.name}으로 전화를 거시겠습니까?")
+                    .setPositiveButton("전화 걸기") { _: DialogInterface, _: Int ->
+                        mContext.startActivity(Intent("android.intent.action.DIAL", Uri.parse("tel:${item.phoneNumber!!.trim().replace("-", "")}")))
+                    }
+                val dialog = dialogBuilder.create()
+                dialog.show()
+            }
         }
     }
 
