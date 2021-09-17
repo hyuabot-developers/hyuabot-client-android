@@ -3,8 +3,8 @@ package app.kobuggi.hyuabot.activity
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
@@ -83,6 +83,12 @@ class CalendarActivity : AppCompatActivity() {
         eventCardView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         eventCardListAdapter = EventsCardListAdapter(ArrayList())
         eventCardView.adapter = eventCardListAdapter
+
+        val toolbar = findViewById<Toolbar>(R.id.calendar_app_bar)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
     }
 
     override fun onDestroy() {

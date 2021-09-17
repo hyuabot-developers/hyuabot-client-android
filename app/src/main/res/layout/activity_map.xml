@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MapActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/hanyang_primary"
+        android:id="@+id/map_app_bar"
+        app:title="캠퍼스 지도"
+        app:titleTextColor="@color/white"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/map_view"
+        android:layout_below="@id/map_app_bar"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/map_app_bar">
+
+        <Button
+            android:id="@+id/selected_category"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/map_category_button_background"
+            android:text="학교 건물"
+            android:textColor="@color/white"
+            />
+
+        <HorizontalScrollView
+            android:id="@+id/select_category_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:visibility="invisible"
+            android:scrollbars="none"
+            >
+
+            <LinearLayout
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/select_category_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:text="학교 건물"
+                    android:textColor="@color/white"
+                    />
+
+                <Button
+                    android:id="@+id/select_category_exercise"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="한식"
+                    android:textColor="@color/white"
+                    />
+
+                <Button
+                    android:id="@+id/select_category_work"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="일식"
+                    android:textColor="@color/white"
+                    />
+
+                <Button
+                    android:id="@+id/select_category_reading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="중식"
+                    android:textColor="@color/white"
+                    />
+
+                <Button
+                    android:id="@+id/select_category_drive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="양식"
+                    android:textColor="@color/white"
+                    />
+
+                <Button
+                    android:id="@+id/select_category_trip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="베트남"
+                    android:textColor="@color/white"
+                    />
+
+                <Button
+                    android:id="@+id/select_category_programming"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="패스트푸드"
+                    android:textColor="@color/white"
+                    />
+
+                <Button
+                    android:id="@+id/select_category_shower"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="치킨"
+                    android:textColor="@color/white"
+                    />
+
+                <Button
+                    android:id="@+id/select_category_pizza"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="피자"
+                    android:textColor="@color/white"
+                    />
+
+                <Button
+                    android:id="@+id/select_category_meat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="육류"
+                    android:textColor="@color/white"
+                    />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+</RelativeLayout>

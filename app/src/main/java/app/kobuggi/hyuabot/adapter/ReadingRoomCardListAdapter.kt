@@ -2,7 +2,9 @@ package app.kobuggi.hyuabot.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.model.*
 import java.time.LocalDateTime
@@ -27,18 +30,34 @@ class ReadingRoomCardListAdapter(list: ArrayList<ReadingRoom>) : RecyclerView.Ad
 
         @SuppressLint("SetTextI18n")
         fun bind(item: ReadingRoom){
+            Log.d("isReservable", item.isReservable.toString())
+
             readingRoomCardTitle.text = item.name
-            readingRoomCardSubTitle.text = if (item.isReservable) "예약 중" else "예약 불가"
+            readingRoomCardSubTitle.text = if (item.isReservable) "예약 가능" else "예약 불가"
             readingRoomCardSubTitle.setTextColor(if (item.isReservable) Color.parseColor("#33a532") else Color.parseColor("#bb1e10"))
             readingRoomCardAll.text = "전체 좌석: ${item.activeTotal}석"
             readingRoomCardAvailable.text = "잔여 좌석: ${item.available}석"
+
             readingRoomReserveButton.setOnClickListener {
-                if(item.isReservable){
-                    Toast.makeText(mContext, "${item.name}의 잔여 좌석 알림을 예약했습니다.", Toast.LENGTH_SHORT).show()
-                    readingRoomReserveButton.setImageResource(R.drawable.ic_alarm_on)
-                } else{
-                    Toast.makeText(mContext, "${item.name}은 예약이 불가능합니다.", Toast.LENGTH_SHORT).show()
+                val tag = if (readingRoomReserveButton.tag != null){
+                    readingRoomReserveButton.tag
+                } else {
+                    R.drawable.ic_alarm_off
+                }
+                if(tag == R.drawable.ic_alarm_off){
+                    if(item.isReservable || BuildConfig.DEBUG){
+                        Toast.makeText(mContext, "${item.name}의 잔여 좌석 알림을 예약했습니다.", Toast.LENGTH_SHORT).show()
+                        readingRoomReserveButton.setImageResource(R.drawable.ic_alarm_on)
+                        readingRoomReserveButton.tag = R.drawable.ic_alarm_on
+                    } else{
+                        Toast.makeText(mContext, "${item.name}은 예약이 불가능합니다.", Toast.LENGTH_SHORT).show()
+                        readingRoomReserveButton.setImageResource(R.drawable.ic_alarm_off)
+                        readingRoomReserveButton.tag = R.drawable.ic_alarm_off
+                    }
+                } else {
+                    Toast.makeText(mContext, "${item.name}의 예약을 취소합니다.", Toast.LENGTH_SHORT).show()
                     readingRoomReserveButton.setImageResource(R.drawable.ic_alarm_off)
+                    readingRoomReserveButton.tag = R.drawable.ic_alarm_off
                 }
             }
         }

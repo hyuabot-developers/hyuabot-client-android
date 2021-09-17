@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/contact_on_campus"
+        android:icon="@drawable/ic_label"
+        android:title="교내 기관" />
+
+    <item
+        android:id="@+id/contact_restaurant"
+        android:icon="@drawable/ic_label"
+        android:title="식당" />
+
+    <item
+        android:id="@+id/contact_bakery"
+       android:icon="@drawable/ic_label"
+        android:title="빵집" />
+
+    <item
+        android:id="@+id/contact_cafe"
+        android:icon="@drawable/ic_label"
+        android:title="카페" />
+
+    <item
+        android:id="@+id/contact_pub"
+        android:icon="@drawable/ic_label"
+        android:title="술집" />
+</menu>
