@@ -9,6 +9,9 @@ interface DatabaseHelper {
     @Query("SELECT * FROM app where category = :category")
     fun getMarkersByCategory(category: String) : Array<DatabaseItem>
 
-    @Query("SELECT * FROM app where category = :category and name like :keyword and phone is not null")
+    @Query("SELECT * FROM app where category = :category and name like :keyword and phone is not null or phone != \"\"")
     fun getPhoneNumber(category: String, keyword: String) : Array<DatabaseItem>
+
+    @Query("SELECT * FROM app where phone is not null")
+    fun getPhoneNumberAll() : Array<DatabaseItem>
 }

@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.activity
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -12,12 +13,23 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.adapter.ContactQueryResultListAdapter
+import app.kobuggi.hyuabot.function.AppDatabase
+import app.kobuggi.hyuabot.model.DatabaseItem
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.*
+import net.daum.mf.map.api.MapPOIItem
+import net.daum.mf.map.api.MapPoint
 
 class ContactActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     lateinit var drawerLayout : DrawerLayout
     lateinit var searchView: SearchView
+    lateinit var queryResult: ArrayList<DatabaseItem>
+    lateinit var contactQueryResultListAdapter: ContactQueryResultListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +45,29 @@ class ContactActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         drawerLayout = findViewById(R.id.contact_drawer_layout)
         val navigationView = findViewById<NavigationView>(R.id.contact_navigation_view)
         navigationView.setNavigationItemSelectedListener(this)
+
+        val database = Room.databaseBuilder(this, AppDatabase::class.java, "app.db")
+            .createFromAsset("app.db")
+            .build()
+
+        val contactQueryListView = findViewById<RecyclerView>(R.id.contact_card_list)
+        val getQueryAllItems = GlobalScope.launch {
+            queryResult = ArrayList()
+            for(item : DatabaseItem in database.databaseHelper()!!.getPhoneNumberAll()){
+                if(item.phoneNumber!!.trim().isNotEmpty()){
+                    Log.d("Phone", item.phoneNumber.toString())
+                    queryResult.add(item)
+                }
+            }
+            contactQueryResultListAdapter = ContactQueryResultListAdapter(queryResult)
+            contactQueryListView.layoutManager = LinearLayoutManager(this@ContactActivity, RecyclerView.VERTICAL, false)
+            contactQueryListView.adapter = contactQueryResultListAdapter
+            Log.d("Count of result", queryResult.size.toString())
+        }
+
+        runBlocking {
+            getQueryAllItems.join()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
