@@ -7,56 +7,9 @@
         android:title="교내 기관" />
 
     <item
-        android:id="@+id/contact_korean"
+        android:id="@+id/contact_restaurant"
         android:icon="@drawable/ic_label"
-        android:title="식당(한식)" />
-
-    <item
-        android:id="@+id/contact_chinese"
-        android:icon="@drawable/ic_label"
-        android:title="식당(중식)" />
-
-    <item
-        android:id="@+id/contact_japanese"
-        android:icon="@drawable/ic_label"
-        android:title="식당(일식)" />
-
-
-    <item
-        android:id="@+id/contact_western"
-        android:icon="@drawable/ic_label"
-        android:title="식당(양식)" />
-
-    <item
-        android:id="@+id/contact_meat"
-        android:icon="@drawable/ic_label"
-        android:title="식당(고기)" />
-
-    <item
-        android:id="@+id/contact_chicken"
-        android:icon="@drawable/ic_label"
-        android:title="식당(치킨)" />
-
-    <item
-        android:id="@+id/contact_pizza"
-        android:icon="@drawable/ic_label"
-        android:title="식당(피자)" />
-
-    <item
-        android:id="@+id/contact_vietnamese"
-        android:icon="@drawable/ic_label"
-        android:title="식당(베트남)" />
-
-    <item
-        android:id="@+id/contact_fast_food"
-        android:icon="@drawable/ic_label"
-        android:title="식당(분식/패스트푸드)" />
-
-
-    <item
-        android:id="@+id/contact_other_food"
-        android:icon="@drawable/ic_label"
-        android:title="식당(기타)" />
+        android:title="식당" />
 
     <item
         android:id="@+id/contact_bakery"

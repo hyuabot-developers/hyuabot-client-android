@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -57,7 +58,25 @@ class ContactActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return false
+        when(item.itemId){
+            R.id.contact_on_campus -> {
+                Toast.makeText(this, "교내 기관 목록입니다.", Toast.LENGTH_SHORT).show()
+            }
+            R.id.contact_restaurant -> {
+                Toast.makeText(this, "교외 식당 목록입니다.", Toast.LENGTH_SHORT).show()
+            }
+            R.id.contact_bakery -> {
+                Toast.makeText(this, "교외 빵집 목록입니다.", Toast.LENGTH_SHORT).show()
+            }
+            R.id.contact_cafe -> {
+                Toast.makeText(this, "교외 카페 목록입니다.", Toast.LENGTH_SHORT).show()
+            }
+            R.id.contact_pub -> {
+                Toast.makeText(this, "교외 주점 목록입니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
     }
 
     override fun onBackPressed() {
