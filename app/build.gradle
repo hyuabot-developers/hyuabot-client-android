@@ -34,7 +34,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "admob_id", properties['ADMOB_ID']
         buildConfigField "String", "admob_unit_id", properties['ADMOB_UNIT_ID']
-        manifestPlaceholders = [kakaoMapKey: "${properties.getProperty('KAKAO_MAP_KEY')}"]
+        manifestPlaceholders = [mapKey: "${properties.getProperty('MAP_KEY')}"]
     }
 
     buildTypes {
@@ -103,4 +103,7 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version"
 
     kapt("androidx.room:room-compiler:$room_version")
+
+    // 네이버 지도 SDK
+    implementation 'com.naver.maps:map-sdk:3.12.0'
 }

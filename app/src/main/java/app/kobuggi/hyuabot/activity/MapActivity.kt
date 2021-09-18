@@ -3,7 +3,6 @@ package app.kobuggi.hyuabot.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.HorizontalScrollView
 import androidx.appcompat.widget.Toolbar
@@ -12,21 +11,24 @@ import androidx.room.Room
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.function.AppDatabase
 import app.kobuggi.hyuabot.model.DatabaseItem
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.MapView
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Marker
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
-import net.daum.mf.map.api.MapPOIItem
-import net.daum.mf.map.api.MapPoint
-
-import net.daum.mf.map.api.MapView
 import kotlin.coroutines.CoroutineContext
 
-class MapActivity : AppCompatActivity(), CoroutineScope {
-    private val markers = arrayListOf<MapPOIItem>()
+class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
+    private val markers = arrayListOf<Marker>()
     private val databaseItems = arrayListOf<DatabaseItem>()
 
     private lateinit var job: Job
     private lateinit var database : AppDatabase
-    private lateinit var mapView : MapView
+    private val mapView : MapView by lazy { findViewById(R.id.map_view) }
+    private lateinit var map : NaverMap
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
@@ -34,19 +36,15 @@ class MapActivity : AppCompatActivity(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
+
         job = Job()
         val toolbar = findViewById<Toolbar>(R.id.map_app_bar)
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener {
             finish()
         }
-
-        mapView = MapView(this)
-        val mapViewContainer = findViewById<ViewGroup>(R.id.map_view)
-        mapViewContainer.addView(mapView)
-
-        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.300134067875675, 126.83786350205149), true)
-        mapView.setZoomLevel(2, false)
 
         val categoryButton = findViewById<Button>(R.id.selected_category)
         val categoryButtonsContainer = findViewById<HorizontalScrollView>(R.id.select_category_scrollview)
@@ -62,20 +60,6 @@ class MapActivity : AppCompatActivity(), CoroutineScope {
             .createFromAsset("app.db")
             .build()
 
-        launch {
-            databaseItems.addAll(database.databaseHelper()!!.getMarkersByCategory("building"))
-            withContext(Main){
-                for(item : DatabaseItem in databaseItems){
-                    val marker = MapPOIItem()
-                    marker.itemName = item.name
-                    marker.tag = 0
-                    marker.mapPoint = MapPoint.mapPointWithGeoCoord(item.latitude!!, item.longitude!!)
-                    marker.markerType = MapPOIItem.MarkerType.BluePin
-                    markers.add(marker)
-                    mapView.addPOIItem(marker)
-                }
-            }
-        }
 
         val selectBuildingCategoryButton = findViewById<Button>(R.id.select_category_building)
         val selectKoreanCategoryButton = findViewById<Button>(R.id.select_category_korean)
@@ -113,18 +97,72 @@ class MapActivity : AppCompatActivity(), CoroutineScope {
             databaseItems.clear()
             databaseItems.addAll(database.databaseHelper()!!.getMarkersByCategory(category))
             withContext(Main){
-                mapView.removeAllPOIItems()
+                markers.map {
+                    marker -> marker.map = null
+                }
                 markers.clear()
                 for(item : DatabaseItem in databaseItems){
-                    val marker = MapPOIItem()
-                    marker.itemName = item.name
+                    val marker = Marker()
+                    marker.captionText = item.name
                     marker.tag = 0
-                    marker.mapPoint = MapPoint.mapPointWithGeoCoord(item.latitude!!, item.longitude!!)
-                    marker.markerType = MapPOIItem.MarkerType.BluePin
+                    marker.position = LatLng(item.latitude!!, item.longitude!!)
+                    marker.map = map
                     markers.add(marker)
-                    mapView.addPOIItem(marker)
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+
+    override fun onMapReady(naverMap: NaverMap) {
+        map = naverMap
+        // 줌 범위 설정
+        naverMap.maxZoom = 18.0
+        naverMap.minZoom = 10.0
+
+        // 지도 위치 이동
+        val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.30016859443061, 126.83779653945606))
+        naverMap.moveCamera(cameraUpdate)
+
+        // 현위치 버튼 기능
+        val uiSetting = naverMap.uiSettings
+        uiSetting.isLocationButtonEnabled = false // 뷰 페이져에 가려져 이후 레이아웃에 정의 하였음.
+
+        // 지도 다 로드 이후에 가져오기
+        updateMarkersByCategory("building")
     }
 }
