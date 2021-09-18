@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.activity
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -165,7 +166,6 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
         infoWindow = InfoWindow()
         // 지도 다 로드 이후에 가져오기
         updateMarkersByCategory("building")
-        naverMap.mapType = NaverMap.MapType.Satellite
         naverMap.minZoom = 14.0
         naverMap.maxZoom = 18.0
         // 현위치 버튼 기능
@@ -176,10 +176,11 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
         tedNaverClustering = TedNaverClustering.with<MarkerItem>(this, naverMap)
             .customMarker{
                 Marker().apply {
-                    width = 60
-                    height = 60
+                    width = 100
+                    height = 100
                     captionText = it.name
-                    icon = OverlayImage.fromResource(R.drawable.marker_campus_building)
+                    captionColor = getColor(R.color.hanyang_primary)
+                    icon = OverlayImage.fromResource(R.drawable.marker_school)
                     isHideCollidedSymbols = true
                     isHideCollidedMarkers = true
                     isHideCollidedCaptions = true
@@ -193,6 +194,7 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+            .minClusterSize(10)
             .make()
         naverMap.addOnCameraChangeListener { _, _ ->
             Log.d(
