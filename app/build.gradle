@@ -97,9 +97,6 @@ dependencies {
     /* Calendar */
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
 
-    /* 카카오맵 */
-    implementation files("libs/libDaumMapAndroid.jar")
-
     /* Android Room */
     def room_version = "2.3.0"
     implementation("androidx.room:room-runtime:$room_version")
