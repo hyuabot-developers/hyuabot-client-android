@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.Image
@@ -100,30 +101,54 @@ class ShuttleActivity : AppCompatActivity() {
         shuttleCardResidenceToStation.findViewById<ImageView>(R.id.shuttle_card_metro_arrow).visibility = View.VISIBLE
         shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).visibility = View.VISIBLE
         shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).visibility = View.VISIBLE
+        shuttleCardResidenceToStation.setOnClickListener {
+            openTimetableActivity("residence", "station")
+        }
 
         shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "기숙사"
         shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_heading).text = "예술인 방면"
+        shuttleCardResidenceToTerminal.setOnClickListener {
+            openTimetableActivity("residence", "terminal")
+        }
 
         shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "셔틀콕"
         shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_heading).text = "한대앞역 방면"
         shuttleCardShuttlecockToStation.findViewById<ImageView>(R.id.shuttle_card_metro_arrow).visibility = View.VISIBLE
         shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).visibility = View.VISIBLE
         shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).visibility = View.VISIBLE
+        shuttleCardShuttlecockToStation.setOnClickListener {
+            openTimetableActivity("shuttlecock", "station")
+        }
 
         shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "셔틀콕"
         shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_heading).text = "예술인 방면"
+        shuttleCardShuttlecockToTerminal.setOnClickListener {
+            openTimetableActivity("shuttlecock", "terminal")
+        }
 
         shuttleCardStationToCampus.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "한대앞역"
         shuttleCardStationToCampus.findViewById<TextView>(R.id.shuttle_card_heading).text = "기숙사, 셔틀콕 방면"
+        shuttleCardStationToCampus.setOnClickListener {
+            openTimetableActivity("station", "terminal")
+        }
 
         shuttleCardStationToTerminal.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "한대앞역"
         shuttleCardStationToTerminal.findViewById<TextView>(R.id.shuttle_card_heading).text = "예술인 방면"
+        shuttleCardStationToTerminal.setOnClickListener {
+            openTimetableActivity("station", "residence")
+        }
 
         shuttleCardTerminalToCampus.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "예술인"
         shuttleCardTerminalToCampus.findViewById<TextView>(R.id.shuttle_card_heading).text = "기숙사, 셔틀콕 방면"
+        shuttleCardTerminalToCampus.setOnClickListener {
+            openTimetableActivity("terminal", "residence")
+        }
 
         shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_bus_stop).text = "셔틀콕 건너편"
         shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_heading).text = "기숙사 방면"
+        shuttleCardShuttlecockToResidence.setOnClickListener {
+            openTimetableActivity("shuttlecock", "residence")
+        }
 
         val toolbar = findViewById<Toolbar>(R.id.shuttle_app_bar)
         setSupportActionBar(toolbar)
@@ -591,5 +616,12 @@ class ShuttleActivity : AppCompatActivity() {
             shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_subway).text = "도착 정보 없음"
             shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_subway).text = ""
         }
+    }
+
+    private fun openTimetableActivity(startStop: String, endStop: String){
+        val timetableActivity = Intent(this, ShuttleTimetableActivity::class.java)
+        timetableActivity.putExtra("departure", startStop)
+        timetableActivity.putExtra("arrival", endStop)
+        startActivity(timetableActivity)
     }
 }
