@@ -40,14 +40,14 @@ class HomeShuttleCardListAdapter(private val list: List<ShuttleDataItem>, privat
                 }
                 1 -> {
                     shuttleCardRemainedTime.text = mContext.resources.getString(R.string.shuttle_remained_time, Duration.between(now, LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt())
-                    shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus, item.arrivalList[0].time, getHeadingString(item.arrivalList[0].type))
+                    shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus_home, item.arrivalList[0].time, getHeadingString(item.arrivalList[0].type))
                     shuttleCardNextBus.text = mContext.resources.getString(R.string.no_next_bus)
                     (shuttleCardRemainedTime.text as Spannable).setSpan(RelativeSizeSpan(0.75f), shuttleCardRemainedTime.text.length - 6, shuttleCardRemainedTime.text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
                 else ->{
                     shuttleCardRemainedTime.text = mContext.resources.getString(R.string.shuttle_remained_time, Duration.between(now, LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt())
-                    shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus, item.arrivalList[0].time, getHeadingString(item.arrivalList[0].type))
-                    shuttleCardNextBus.text = mContext.resources.getString(R.string.this_bus, item.arrivalList[1].time, getHeadingString(item.arrivalList[1].type))
+                    shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus_home, item.arrivalList[0].time, getHeadingString(item.arrivalList[0].type))
+                    shuttleCardNextBus.text = mContext.resources.getString(R.string.next_bus_home, item.arrivalList[1].time, getHeadingString(item.arrivalList[1].type))
                     (shuttleCardRemainedTime.text as Spannable).setSpan(RelativeSizeSpan(0.75f), shuttleCardRemainedTime.text.length - 6, shuttleCardRemainedTime.text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
             }

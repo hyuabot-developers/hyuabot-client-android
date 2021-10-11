@@ -2,6 +2,14 @@ package app.kobuggi.hyuabot.model
 
 import com.google.gson.annotations.SerializedName
 
+data class ShuttleCardItem(
+    val shuttleStopID: Int,
+    val headingID: Int,
+    val arrivalList: List<ShuttleItem>,
+    val subwayItemsRealtime : List<SubwayItemByLineWithRealtime>,
+    val subwayItemsTimetable: List<SubwayItemByLineWithTimetable>
+)
+
 data class ShuttleDataItem(
     val cardTitle: Int,
     val arrivalList: List<ShuttleItem>

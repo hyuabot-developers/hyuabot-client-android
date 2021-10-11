@@ -15,7 +15,7 @@ interface AppServerService {
     fun getFoodAll() : Call<RestaurantList>
 
     @POST("/app/subway")
-    fun getSubwayERICA(@Body body : CampusRequest) : Observable<SubwayERICA>
+    fun getSubwayERICA(@Body body : CampusRequest) : Call<SubwayERICA>
 
     @GET("/app/bus")
     fun getBus() : Observable<Bus>
