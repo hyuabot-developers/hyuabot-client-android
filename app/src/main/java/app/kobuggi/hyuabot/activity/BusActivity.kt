@@ -12,11 +12,9 @@ import androidx.cardview.widget.CardView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
-import app.kobuggi.hyuabot.config.NetworkService
+import app.kobuggi.hyuabot.config.AppServerService
 import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.model.Bus
-import app.kobuggi.hyuabot.model.CampusRequest
-import app.kobuggi.hyuabot.model.Shuttle
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.AdLoader
@@ -40,7 +38,7 @@ class BusActivity : AppCompatActivity() {
     private lateinit var blueBusCard : CardView
     private lateinit var redBusCard : CardView
 
-    private lateinit var networkService: NetworkService
+    private lateinit var networkService: AppServerService
     private lateinit var disposable : Disposable
     private val formatter = DateTimeFormatter.ofPattern("HH:mm")
 
@@ -110,45 +108,19 @@ class BusActivity : AppCompatActivity() {
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .build().create(NetworkService::class.java)
+            .build().create(AppServerService::class.java)
 
-        disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::callAPIForBusActivity, this::onError)
-
-        val refreshLayout = findViewById<SwipeRefreshLayout>(R.id.bus_swipe_refresh_layout)
-        refreshLayout.setOnRefreshListener {
-            callAPIForBusActivity(0)
-            refreshLayout.isRefreshing = false
-        }
+        networkService.getShuttleAll()
+            .subscribeOn(Schedulers.io())
+            .subs
     }
 
     override fun onResume() {
         super.onResume()
-        if (disposable.isDisposed) {
-            disposable = Observable.interval(0, 1,
-                TimeUnit.MINUTES)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::callAPIForBusActivity, this::onError)
-        }
     }
 
     override fun onPause() {
         super.onPause()
-        disposable.dispose()
-    }
-
-    @SuppressLint("CheckResult")
-    private fun callAPIForBusActivity(aLong: Long){
-        val observable = networkService.getBus()
-        observable.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { data -> data }
-            .subscribe(this::updateBusDepartureInfo, this::onError)
-    }
-
-    private fun onError(throwable: Throwable) {
-        Log.d("Fetch Error", throwable.message!!)
     }
 
     @SuppressLint("SetTextI18n")

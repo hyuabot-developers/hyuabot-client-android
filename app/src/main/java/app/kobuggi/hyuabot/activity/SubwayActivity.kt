@@ -12,10 +12,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
-import app.kobuggi.hyuabot.config.NetworkService
+import app.kobuggi.hyuabot.config.AppServerService
 import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.model.CampusRequest
-import app.kobuggi.hyuabot.model.Shuttle
 import app.kobuggi.hyuabot.model.SubwayERICA
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
@@ -30,9 +29,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.DayOfWeek
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
@@ -43,7 +40,7 @@ class SubwayActivity : AppCompatActivity() {
     private lateinit var subwayCardLineSuinSeoul : CardView
     private lateinit var subwayCardLineSuinIncheon : CardView
 
-    private lateinit var networkService: NetworkService
+    private lateinit var networkService: AppServerService
     private lateinit var disposable : Disposable
     private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
@@ -112,7 +109,7 @@ class SubwayActivity : AppCompatActivity() {
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .build().create(NetworkService::class.java)
+            .build().create(AppServerService::class.java)
 
         disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
             .observeOn(AndroidSchedulers.mainThread())

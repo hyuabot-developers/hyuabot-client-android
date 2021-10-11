@@ -3,15 +3,10 @@ package app.kobuggi.hyuabot.activity
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Spannable
-import android.text.Spanned
-import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -20,7 +15,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
-import app.kobuggi.hyuabot.config.NetworkService
+import app.kobuggi.hyuabot.config.AppServerService
 import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.model.CampusRequest
 import app.kobuggi.hyuabot.model.Shuttle
@@ -54,7 +49,7 @@ class ShuttleActivity : AppCompatActivity() {
     private lateinit var shuttleCardTerminalToCampus : CardView
     private lateinit var shuttleCardShuttlecockToResidence : CardView
 
-    private lateinit var networkService: NetworkService
+    private lateinit var networkService: AppServerService
     private lateinit var disposable : Disposable
     private lateinit var subwayDepartureInfo : SubwayERICA
     private var headingCode = 0
@@ -147,7 +142,7 @@ class ShuttleActivity : AppCompatActivity() {
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .build().create(NetworkService::class.java)
+            .build().create(AppServerService::class.java)
 
         disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
             .observeOn(AndroidSchedulers.mainThread())

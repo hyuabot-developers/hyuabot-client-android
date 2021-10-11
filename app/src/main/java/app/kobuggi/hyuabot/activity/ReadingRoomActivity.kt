@@ -13,13 +13,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.ReadingRoomCardListAdapter
-import app.kobuggi.hyuabot.adapter.RestaurantCardListAdapter
-import app.kobuggi.hyuabot.config.NetworkService
+import app.kobuggi.hyuabot.config.AppServerService
 import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.model.CampusRequest
 import app.kobuggi.hyuabot.model.ReadingRoom
-import app.kobuggi.hyuabot.model.ReadingRoomList
-import app.kobuggi.hyuabot.model.RestaurantList
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.AdLoader
@@ -37,7 +34,7 @@ import java.util.concurrent.TimeUnit
 
 class ReadingRoomActivity : AppCompatActivity() {
     lateinit var readingRoomCardListAdapter: ReadingRoomCardListAdapter
-    lateinit var networkService : NetworkService
+    lateinit var networkService : AppServerService
     lateinit var disposable : Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +74,7 @@ class ReadingRoomActivity : AppCompatActivity() {
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .build().create(NetworkService::class.java)
+            .build().create(AppServerService::class.java)
 
         disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
             .observeOn(AndroidSchedulers.mainThread())

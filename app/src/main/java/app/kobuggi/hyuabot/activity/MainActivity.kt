@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.RestaurantCardListAdapter
-import app.kobuggi.hyuabot.config.NetworkService
+import app.kobuggi.hyuabot.config.AppServerService
 import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.model.RestaurantList
 import app.kobuggi.hyuabot.model.Shuttle
@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     var nativeAd : NativeAd? = null
-    lateinit var networkService : NetworkService
+    lateinit var networkService : AppServerService
     lateinit var disposable : Disposable
 
     private lateinit var shuttleCardResidenceToStation : CardView
@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .build().create(NetworkService::class.java)
+            .build().create(AppServerService::class.java)
 
         disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
             .observeOn(AndroidSchedulers.mainThread())
