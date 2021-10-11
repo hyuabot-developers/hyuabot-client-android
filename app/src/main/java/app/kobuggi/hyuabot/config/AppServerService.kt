@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.config
 
 import app.kobuggi.hyuabot.model.*
 import io.reactivex.Observable
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -11,7 +12,7 @@ interface AppServerService {
     fun getShuttleAll() : Observable<Shuttle>
 
     @GET("/app/food")
-    fun getFoodAll() : Observable<RestaurantList>
+    fun getFoodAll() : Call<RestaurantList>
 
     @POST("/app/subway")
     fun getSubwayERICA(@Body body : CampusRequest) : Observable<SubwayERICA>

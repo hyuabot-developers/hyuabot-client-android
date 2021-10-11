@@ -1,6 +1,5 @@
 package app.kobuggi.hyuabot.activity
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -10,10 +9,7 @@ import android.text.Spanned
 import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
@@ -31,14 +27,15 @@ import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.nativead.NativeAd
-import com.google.gson.GsonBuilder
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.*
 import java.time.format.DateTimeFormatter
@@ -48,7 +45,8 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
     var nativeAd : NativeAd? = null
     lateinit var networkService : AppServerService
-    lateinit var disposable : Disposable
+    lateinit var foodObservable : Observable<RestaurantList>
+    lateinit var shuttleObservable: Observable<Shuttle>
 
     private lateinit var shuttleCardResidenceToStation : CardView
     private lateinit var shuttleCardResidenceToTerminal : CardView
@@ -60,6 +58,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var restaurantCardListAdapter: RestaurantCardListAdapter
 
     private val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    
+    // 네트워크 클라이언트
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.server_url)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    private val appServerService = retrofit.create(AppServerService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val shuttleMenuButton = findViewById<RelativeLayout>(R.id.menu_shuttle_button)
-        shuttleMenuButton.setOnClickListener { openShuttleActivity() }
+        shuttleMenuButton.setOnClickListener {}
 
         val busMenuButton = findViewById<RelativeLayout>(R.id.menu_bus_button)
         busMenuButton.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.menu_bus, null))
@@ -171,41 +182,16 @@ class MainActivity : AppCompatActivity() {
         shuttleCardShuttlecockToResidence = findViewById(R.id.shuttle_card_shuttlecock_to_residence_home)
         shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_title).text = "셔틀콕 건너편"
 
-        val client = OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
 
-        val gson = GsonBuilder()
-            .setLenient()
-            .create()
-
-
-        networkService = Retrofit.Builder()
-            .baseUrl(BuildConfig.server_url)
-            .client(client)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build().create(AppServerService::class.java)
-
-        disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::callShuttleEndpoint, this::onError)
-
-        this.callFoodAllEndpoint()
+        updateFoodMenuListView()
     }
 
+    // 다시 액티비티로 돌아올 때
     override fun onResume() {
         super.onResume()
-        if (disposable.isDisposed) {
-            disposable = Observable.interval(0, 1,
-                TimeUnit.MINUTES)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::callShuttleEndpoint, this::onError)
-        }
     }
 
+    // 액티비티에서 빠져나갈 때
     override fun onDestroy() {
         super.onDestroy()
         if (nativeAd != null) {
@@ -213,218 +199,44 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // 다른 액티비티로 이동할 때
     override fun onPause() {
         super.onPause()
-        disposable.dispose()
     }
 
-    @SuppressLint("CheckResult")
-    private fun callShuttleEndpoint(aLong : Long){
-        val observable = networkService.getShuttleAll()
-        observable.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { data -> data }
-            .subscribe(this::updateShuttleDepartureInfo, this::handleError)
-    }
-
-    @SuppressLint("CheckResult")
-    private fun callFoodAllEndpoint(){
-        val observable = networkService.getFoodAll()
-        observable.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { data -> data }
-            .subscribe(this::updateFoodInfo, this::handleError)
-    }
-
-    private fun onError(throwable: Throwable) {
-        Log.d("Fetch Error", throwable.message!!)
-    }
-
-
-    @SuppressLint("SetTextI18n")
-    private fun updateShuttleDepartureInfo(data: Shuttle) {
-        val now = LocalTime.now()
-        var timetable = data.Residence.forStation
-        var remainedString : String
-        when {
-            timetable.size >= 2 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "다음 버스 : ${timetable[1].time} (${getHeadingString(timetable[1].type)})"
-                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            timetable.size == 1 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "막차입니다."
-                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            else -> {
-                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_this_bus).text = ""
-                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_next_bus).text = ""
-                shuttleCardResidenceToStation.findViewById<TextView>(R.id.shuttle_card_time).text = "운행 종료"
-            }
-        }
-
-        timetable = data.Residence.forTerminal
-        when {
-            timetable.size >= 2 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "다음 버스 : ${timetable[1].time} (${getHeadingString(timetable[1].type)})"
-                shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            timetable.size == 1 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "막차입니다."
-                shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            else -> {
-                shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_this_bus).text = ""
-                shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_next_bus).text = ""
-                shuttleCardResidenceToTerminal.findViewById<TextView>(R.id.shuttle_card_time).text = "운행 종료"
-            }
-        }
-
-        timetable = data.Shuttlecock_O.forStation
-        when {
-            timetable.size >= 2 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "다음 버스 : ${timetable[1].time} (${getHeadingString(timetable[1].type)})"
-                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            timetable.size == 1 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "막차입니다."
-                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            else -> {
-                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_this_bus).text = ""
-                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_next_bus).text = ""
-                shuttleCardShuttlecockToStation.findViewById<TextView>(R.id.shuttle_card_time).text = "운행 종료"
-            }
-        }
-
-        timetable = data.Shuttlecock_O.forTerminal
-        when {
-            timetable.size >= 2 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "다음 버스 : ${timetable[1].time} (${getHeadingString(timetable[1].type)})"
-                shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            timetable.size == 1 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "막차입니다."
-                shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            else -> {
-                shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_this_bus).text = ""
-                shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_next_bus).text = ""
-                shuttleCardShuttlecockToTerminal.findViewById<TextView>(R.id.shuttle_card_time).text = "운행 종료"
-            }
-        }
-
-        timetable = data.Subway.forStation
-        when {
-            timetable.size >= 2 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "다음 버스 : ${timetable[1].time} (${getHeadingString(timetable[1].type)})"
-                shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            timetable.size == 1 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "막차입니다."
-                shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            else -> {
-                shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_this_bus).text = ""
-                shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_next_bus).text = ""
-                shuttleCardStation.findViewById<TextView>(R.id.shuttle_card_time).text = "운행 종료"
-            }
-        }
-
-        timetable = data.Terminal.forTerminal
-        when {
-            timetable.size >= 2 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "다음 버스 : ${timetable[1].time} (${getHeadingString(timetable[1].type)})"
-                shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            timetable.size == 1 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "막차입니다."
-                shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            else -> {
-                shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_this_bus).text = ""
-                shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_next_bus).text = ""
-                shuttleCardTerminal.findViewById<TextView>(R.id.shuttle_card_time).text = "운행 종료"
-            }
-        }
-
-        timetable = data.Shuttlecock_I.forTerminal
-        when {
-            timetable.size >= 2 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "다음 버스 : ${timetable[1].time} (${getHeadingString(timetable[1].type)})"
-                shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            timetable.size == 1 -> {
-                remainedString = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes().toInt()} 분 후 도착"
-                shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_this_bus).text = "이번 버스 : ${timetable[0].time} (${getHeadingString(timetable[0].type)})"
-                shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_next_bus).text = "막차입니다."
-                shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_time).text = remainedString
-                (shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_time).text as Spannable).setSpan(RelativeSizeSpan(0.75f), remainedString.length - 6, remainedString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            else -> {
-                shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_this_bus).text = ""
-                shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_next_bus).text = ""
-                shuttleCardShuttlecockToResidence.findViewById<TextView>(R.id.shuttle_card_time).text = "운행 종료"
-            }
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun updateFoodInfo(data: RestaurantList) {
-        restaurantCardListAdapter = RestaurantCardListAdapter(data)
+    // 학식을 리스트뷰로 표현
+    private fun updateFoodMenuListView(){
+        val request = appServerService.getFoodAll()
         val foodCardListView = findViewById<RecyclerView>(R.id.food_card_list)
-        foodCardListView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        foodCardListView.adapter = restaurantCardListAdapter
-    }
+        val foodCardListProgressBar = findViewById<ProgressBar>(R.id.food_card_list_loading_bar)
+        val foodCardListStatus = findViewById<TextView>(R.id.food_card_list_status)
+        request.enqueue(object : Callback<RestaurantList>{
+            override fun onResponse(call: Call<RestaurantList>, response: Response<RestaurantList>) {
+                if(response.isSuccessful && response.body() != null){
+                    restaurantCardListAdapter = RestaurantCardListAdapter(response.body()!!)
+                    foodCardListView.layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
+                    foodCardListView.adapter = restaurantCardListAdapter
+                    foodCardListProgressBar.visibility = View.GONE
+                    foodCardListView.visibility = View.VISIBLE
+                } else {
+                    foodCardListProgressBar.visibility = View.GONE
+                    foodCardListStatus.text = response.message()
+                    foodCardListStatus.visibility = View.VISIBLE
+                }
+            }
 
+            override fun onFailure(call: Call<RestaurantList>, t: Throwable) {
+                foodCardListProgressBar.visibility = View.GONE
+                foodCardListStatus.text = t.message
+                foodCardListStatus.visibility = View.VISIBLE
+            }
+        })
+    }
+    
+    
+    
     private fun getHeadingString(heading: String) : String{
         return  if (heading == "C") "순환" else "직행"
     }
 
-    private fun handleError(t: Throwable) {
-        Log.d("Fetch Error", t.message!!)
-    }
-
-    private fun openShuttleActivity(){
-        val shuttleActivity = Intent(this, ShuttleActivity::class.java)
-        startActivity(shuttleActivity)
-    }
 }

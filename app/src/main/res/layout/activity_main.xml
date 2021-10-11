@@ -208,14 +208,31 @@
                     android:paddingVertical="5dp"
                     />
             </LinearLayout>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/food_card_list"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:overScrollMode="never"
-                android:orientation="horizontal"
-                android:layout_marginBottom="30dp"
-                android:scrollbars="none" />
+                android:layout_height="200dp">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/food_card_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:overScrollMode="never"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="30dp"
+                    android:scrollbars="none"
+                    android:visibility="gone"
+                    />
+                <ProgressBar
+                    android:id="@+id/food_card_list_loading_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+                <TextView
+                    android:id="@+id/food_card_list_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
     <com.google.android.ads.nativetemplates.TemplateView
