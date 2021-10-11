@@ -2,6 +2,11 @@ package app.kobuggi.hyuabot.model
 
 import com.google.gson.annotations.SerializedName
 
+data class ShuttleDataItem(
+    val cardTitle: Int,
+    val arrivalList: List<ShuttleItem>
+)
+
 data class ShuttleItem(
     @SerializedName("time") val time: String,
     @SerializedName("type") val type: String

@@ -9,7 +9,7 @@ import retrofit2.http.POST
 
 interface AppServerService {
     @GET("/app/shuttle")
-    fun getShuttleAll() : Observable<Shuttle>
+    fun getShuttleAll() : Call<Shuttle>
 
     @GET("/app/food")
     fun getFoodAll() : Call<RestaurantList>
