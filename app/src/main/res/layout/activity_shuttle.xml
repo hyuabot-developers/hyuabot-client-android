@@ -30,9 +30,9 @@
                 android:layout_height="match_parent"
                 android:overScrollMode="never"
                 android:orientation="horizontal"
-                android:layout_marginBottom="30dp"
                 android:scrollbars="none"
                 android:visibility="gone"
+                android:layout_marginVertical="10dp"
                 />
             <ProgressBar
                 android:id="@+id/shuttle_card_list_loading_bar"
