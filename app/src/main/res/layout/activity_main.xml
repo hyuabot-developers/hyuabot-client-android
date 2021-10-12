@@ -37,7 +37,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/menu"
-                        android:textColor="@color/black"
+                        android:textColor="@color/primaryTextColor"
                         android:textSize="18sp"
                         android:paddingVertical="5dp"
                         />
@@ -118,7 +118,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/shuttle"
-                        android:textColor="@color/black"
+                        android:textColor="@color/primaryTextColor"
                         android:textSize="18sp"
                         android:paddingVertical="5dp"
                         />
@@ -178,7 +178,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/food"
-                    android:textColor="@color/black"
+                    android:textColor="@color/primaryTextColor"
                     android:textSize="18sp"
                     android:paddingVertical="5dp"
                     />
