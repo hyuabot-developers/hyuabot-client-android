@@ -34,7 +34,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "admob_id", properties['ADMOB_ID']
         buildConfigField "String", "admob_unit_id", properties['ADMOB_UNIT_ID']
-        manifestPlaceholders = [kakaoMapKey: "${properties.getProperty('KAKAO_MAP_KEY')}"]
+        manifestPlaceholders = [mapKey: "${properties.getProperty('MAP_KEY')}"]
     }
 
     buildTypes {
@@ -96,13 +96,16 @@ dependencies {
     /* Calendar */
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
 
-    /* 카카오맵 */
-    implementation files("libs/libDaumMapAndroid.jar")
-
     /* Android Room */
     def room_version = "2.3.0"
     implementation("androidx.room:room-runtime:$room_version")
 
     annotationProcessor "androidx.room:room-compiler:$room_version"
     kapt("androidx.room:room-compiler:$room_version")
+
+    // 네이버 지도 SDK
+    implementation 'com.naver.maps:map-sdk:3.12.0'
+
+    // 네이버 지도 마커 클러스터링
+    implementation 'io.github.ParkSangGwon:tedclustering:1.0.2'
 }
