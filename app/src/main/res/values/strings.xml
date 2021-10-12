@@ -36,4 +36,14 @@
     <string name="reservation_unavailable">예약 불가</string>
     <string name="total_seat">전체 좌석: %d석</string>
     <string name="remained_seat">잔여 좌석: %d석</string>
+    <string name="guest_house">한양대게스트하우스</string>
+    <string name="main_gate">한양대정문</string>
+    <string name="gangnam_station">강남역</string>
+    <string name="suwon_station">수원역</string>
+    <string name="purgio_6th">푸르지오6차후문</string>
+    <string name="sangnoksu_station">상록수역</string>
+    <string name="bus_heading_to">%s 방면</string>
+    <string name="bus_remained_time">%d분 (%d전)</string>
+    <string name="bus_remained_time_waiting">%d분 (회차점 대기)</string>
+    <string name="last_bus">막차 운행중</string>
 </resources>
