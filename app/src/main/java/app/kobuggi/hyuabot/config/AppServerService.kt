@@ -18,7 +18,7 @@ interface AppServerService {
     fun getSubwayERICA(@Body body : CampusRequest) : Call<SubwayERICA>
 
     @GET("/app/bus")
-    fun getBus() : Observable<Bus>
+    fun getBus() : Call<Bus>
 
     @POST("/app/library")
     fun getReadingRoom(@Body body : CampusRequest) : Call<ReadingRoomList>

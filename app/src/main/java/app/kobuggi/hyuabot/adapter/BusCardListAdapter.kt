@@ -19,8 +19,6 @@ import java.time.format.DateTimeFormatter
 
 class BusCardListAdapter(private val list : ArrayList<BusCardItem>, private val mContext: Context) : RecyclerView.Adapter<BusCardListAdapter.ItemViewHolder>(){
     private val formatter = DateTimeFormatter.ofPattern("HH:mm")
-    private val day = LocalDate.now()
-    private val now = LocalTime.now()
 
     inner class ItemViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!){
         private val cardLineID = itemView!!.findViewById<TextView>(R.id.bus_card_line_id)
@@ -31,6 +29,9 @@ class BusCardListAdapter(private val list : ArrayList<BusCardItem>, private val 
 
 
         fun bind(item: BusCardItem){
+            val day = LocalDate.now()
+            val now = LocalTime.now()
+
             cardLineID.setTextColor(Color.parseColor(item.lineColor))
             cardLineID.text = item.lineName
             cardStopName.text = item.busStop
