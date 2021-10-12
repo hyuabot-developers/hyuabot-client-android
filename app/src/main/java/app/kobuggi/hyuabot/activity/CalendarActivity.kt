@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.EventsCardListAdapter
-import app.kobuggi.hyuabot.config.GitHubNetworkService
+import app.kobuggi.hyuabot.config.GitHubService
 import app.kobuggi.hyuabot.model.Events
 import app.kobuggi.hyuabot.model.EventsJson
 import com.google.gson.GsonBuilder
@@ -33,7 +33,7 @@ import kotlin.collections.ArrayList
 class CalendarActivity : AppCompatActivity() {
     lateinit var eventCardListAdapter: EventsCardListAdapter
     lateinit var eventCardView: RecyclerView
-    lateinit var gitHubNetworkService: GitHubNetworkService
+    lateinit var gitHubNetworkService: GitHubService
     lateinit var calendarView : MaterialCalendarView
     lateinit var events: ArrayList<Events>
     private val currentMonth: YearMonth = YearMonth.now()
@@ -61,7 +61,7 @@ class CalendarActivity : AppCompatActivity() {
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .build().create(GitHubNetworkService::class.java)
+            .build().create(GitHubService::class.java)
         this.callEventEndpoint()
 
         calendarView = findViewById(R.id.calendar_view)
