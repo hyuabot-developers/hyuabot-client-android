@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -13,6 +14,9 @@ import app.kobuggi.hyuabot.config.GitHubService
 import app.kobuggi.hyuabot.model.Events
 import app.kobuggi.hyuabot.model.EventsJson
 import com.google.gson.GsonBuilder
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.DayViewDecorator
+import com.prolificinteractive.materialcalendarview.DayViewFacade
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
@@ -41,6 +45,16 @@ class CalendarActivity : AppCompatActivity() {
     val eventsList = mutableMapOf<Pair<Int, Int>, ArrayList<Events>>()
     val eventsSource: PublishSubject<ArrayList<Events>> = PublishSubject.create()
 
+    inner class DayDecorator : DayViewDecorator {
+        private val calendar = Calendar.getInstance()
+        override fun shouldDecorate(day: CalendarDay?): Boolean {
+            return true
+        }
+
+        override fun decorate(view: DayViewFacade?) {
+            view?.addSpan(object : ForegroundColorSpan(getColor(R.color.primaryTextColor)){})
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +91,7 @@ class CalendarActivity : AppCompatActivity() {
                 }
             }
         }
+        calendarView.addDecorator(DayDecorator())
         
         eventsSource.subscribe(observer)
         eventCardView = findViewById(R.id.event_card_list)

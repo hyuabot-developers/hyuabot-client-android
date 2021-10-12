@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:text="출발지 → 도착지"
-            android:textColor="@color/black"
+            android:textColor="@color/primaryTextColor"
             android:layout_alignParentTop="true"
         />
         <TextView
@@ -32,7 +32,7 @@
             android:textSize="20sp"
             android:text="NaN 분 후"
             android:bufferType="spannable"
-            android:textColor="@color/black"
+            android:textColor="@color/primaryTextColor"
         />
 
         <TextView
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:text="이번 버스 : 00:00 (회차)"
-            android:textColor="@color/black"
+            android:textColor="@color/primaryTextColor"
             />
         <TextView
             android:id="@+id/shuttle_card_next_bus"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:text="다음 버스 : 00:00 (회차)"
-            android:textColor="@color/black"
+            android:textColor="@color/primaryTextColor"
 
             />
     </RelativeLayout>
