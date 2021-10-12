@@ -110,8 +110,10 @@ class MainActivity : AppCompatActivity() {
             button.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, buttonIconList[i], null))
             button.findViewById<TextView>(R.id.button_label).text = resources.getString(buttonLabelList[i])
             button.setOnClickListener {
-                val newActivity = Intent(this, newActivitiesWhenButtonClicked[i])
-                startActivity(newActivity)
+                if(newActivitiesWhenButtonClicked[i] != null){
+                    val newActivity = Intent(this, newActivitiesWhenButtonClicked[i])
+                    startActivity(newActivity)
+                }
             }
         }
     }
