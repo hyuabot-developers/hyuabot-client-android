@@ -12,7 +12,7 @@ data class ShuttleCardItem(
 
 data class ShuttleDataItem(
     val cardTitle: Int,
-    val arrivalList: List<ShuttleItem>
+    val arrivalList: List<ShuttleItem>?
 )
 
 data class ShuttleItem(

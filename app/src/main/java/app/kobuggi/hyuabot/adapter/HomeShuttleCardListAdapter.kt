@@ -32,23 +32,29 @@ class HomeShuttleCardListAdapter(private val list: List<ShuttleDataItem>, privat
 
         fun bind(item: ShuttleDataItem){
             shuttleCardTitle.text = mContext.resources.getString(item.cardTitle)
-            when(item.arrivalList.size){
-                0 -> {
-                    shuttleCardRemainedTime.text = mContext.resources.getString(R.string.out_of_service)
-                    shuttleCardThisBus.text = mContext.resources.getString(R.string.no_this_bus)
-                    shuttleCardNextBus.text = mContext.resources.getString(R.string.no_next_bus)
-                }
-                1 -> {
-                    shuttleCardRemainedTime.text = mContext.resources.getString(R.string.shuttle_remained_time, Duration.between(now, LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt())
-                    shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus_home, item.arrivalList[0].time, getHeadingString(item.arrivalList[0].type))
-                    shuttleCardNextBus.text = mContext.resources.getString(R.string.no_next_bus)
-                    (shuttleCardRemainedTime.text as Spannable).setSpan(RelativeSizeSpan(0.75f), shuttleCardRemainedTime.text.length - 6, shuttleCardRemainedTime.text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                }
-                else ->{
-                    shuttleCardRemainedTime.text = mContext.resources.getString(R.string.shuttle_remained_time, Duration.between(now, LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt())
-                    shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus_home, item.arrivalList[0].time, getHeadingString(item.arrivalList[0].type))
-                    shuttleCardNextBus.text = mContext.resources.getString(R.string.next_bus_home, item.arrivalList[1].time, getHeadingString(item.arrivalList[1].type))
-                    (shuttleCardRemainedTime.text as Spannable).setSpan(RelativeSizeSpan(0.75f), shuttleCardRemainedTime.text.length - 6, shuttleCardRemainedTime.text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            if(item.arrivalList == null){
+                shuttleCardRemainedTime.text = mContext.resources.getString(R.string.out_of_service)
+                shuttleCardThisBus.text = mContext.resources.getString(R.string.no_this_bus)
+                shuttleCardNextBus.text = mContext.resources.getString(R.string.no_next_bus)
+            } else {
+                when(item.arrivalList.size){
+                    0 -> {
+                        shuttleCardRemainedTime.text = mContext.resources.getString(R.string.out_of_service)
+                        shuttleCardThisBus.text = mContext.resources.getString(R.string.no_this_bus)
+                        shuttleCardNextBus.text = mContext.resources.getString(R.string.no_next_bus)
+                    }
+                    1 -> {
+                        shuttleCardRemainedTime.text = mContext.resources.getString(R.string.shuttle_remained_time, Duration.between(now, LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt())
+                        shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus_home, item.arrivalList[0].time, getHeadingString(item.arrivalList[0].type))
+                        shuttleCardNextBus.text = mContext.resources.getString(R.string.no_next_bus)
+                        (shuttleCardRemainedTime.text as Spannable).setSpan(RelativeSizeSpan(0.75f), shuttleCardRemainedTime.text.length - 6, shuttleCardRemainedTime.text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    else ->{
+                        shuttleCardRemainedTime.text = mContext.resources.getString(R.string.shuttle_remained_time, Duration.between(now, LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt())
+                        shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus_home, item.arrivalList[0].time, getHeadingString(item.arrivalList[0].type))
+                        shuttleCardNextBus.text = mContext.resources.getString(R.string.next_bus_home, item.arrivalList[1].time, getHeadingString(item.arrivalList[1].type))
+                        (shuttleCardRemainedTime.text as Spannable).setSpan(RelativeSizeSpan(0.75f), shuttleCardRemainedTime.text.length - 6, shuttleCardRemainedTime.text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
                 }
             }
         }
