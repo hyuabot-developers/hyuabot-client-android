@@ -79,7 +79,8 @@
                 android:layout_height="match_parent"
                 android:paddingVertical="10dp"
                 android:paddingHorizontal="10dp"
-                android:src="@drawable/ic_alarm_off" />
+                android:src="@drawable/ic_alarm_off"
+                app:tint="@color/primaryTextColor" />
         </LinearLayout>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
