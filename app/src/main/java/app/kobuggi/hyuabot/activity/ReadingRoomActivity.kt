@@ -1,11 +1,12 @@
 package app.kobuggi.hyuabot.activity
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,33 +16,59 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.ReadingRoomCardListAdapter
 import app.kobuggi.hyuabot.config.AppServerService
 import app.kobuggi.hyuabot.function.getDarkMode
-import app.kobuggi.hyuabot.model.CampusRequest
-import app.kobuggi.hyuabot.model.ReadingRoom
+import app.kobuggi.hyuabot.model.*
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
-import com.google.gson.GsonBuilder
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 class ReadingRoomActivity : AppCompatActivity() {
     lateinit var readingRoomCardListAdapter: ReadingRoomCardListAdapter
-    lateinit var networkService : AppServerService
-    lateinit var disposable : Disposable
+
+    // 네트워크 클라이언트
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(5, TimeUnit.SECONDS)
+        .writeTimeout(5, TimeUnit.SECONDS)
+        .build()
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.server_url)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    private val appServerService = retrofit.create(AppServerService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reading_room)
 
         // 광고 로드
+        loadNativeAd()
+
+        val refreshLayout = findViewById<SwipeRefreshLayout>(R.id.reading_room_swipe_refresh_layout)
+        refreshLayout.setOnRefreshListener {
+            fetchReadingRoomData()
+            refreshLayout.isRefreshing = false
+        }
+
+        val toolbar = findViewById<Toolbar>(R.id.reading_room_app_bar)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
+
+        updateReadingRoomListViewItem()
+    }
+
+    private fun loadNativeAd(){
         val builder = AdLoader.Builder(this, BuildConfig.admob_unit_id)
         val config = this.resources.configuration
         builder.forNativeAd{
@@ -58,74 +85,41 @@ class ReadingRoomActivity : AppCompatActivity() {
         }
         val adLoader = builder.build()
         adLoader.loadAd(AdRequest.Builder().build())
+    }
 
-        val client = OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
+    // 열람실 정보 업데이트 (1분 간격)
+    private fun updateReadingRoomListViewItem() = Observable.interval(0,1, TimeUnit.MINUTES)
+        .subscribe {
+        fetchReadingRoomData()
+    }
 
-        val gson = GsonBuilder()
-            .setLenient()
-            .create()
+    private fun fetchReadingRoomData() {
+        val request = appServerService.getReadingRoom(CampusRequest(campus = "erica"))
+        val readingRoomCardListview = findViewById<RecyclerView>(R.id.reading_room_list)
+        val readingRoomProgressBar = findViewById<ProgressBar>(R.id.reading_room_list_loading_bar)
+        val readingRoomListStatus = findViewById<TextView>(R.id.reading_room_list_status)
+        request.enqueue(object : Callback<ReadingRoomList> {
+            override fun onResponse(call: Call<ReadingRoomList>, response: Response<ReadingRoomList>) {
+                if(response.isSuccessful && response.body() != null){
+                    val responseBody = response.body()!!
+                    readingRoomCardListAdapter = ReadingRoomCardListAdapter(responseBody.rooms)
+                    readingRoomCardListview.layoutManager = LinearLayoutManager(this@ReadingRoomActivity, RecyclerView.VERTICAL, false)
+                    readingRoomCardListview.adapter = readingRoomCardListAdapter
+                    readingRoomProgressBar.visibility = View.GONE
+                    readingRoomCardListview.visibility = View.VISIBLE
+                } else {
+                    readingRoomProgressBar.visibility = View.GONE
+                    readingRoomListStatus.text = response.message()
+                    readingRoomListStatus.visibility = View.VISIBLE
+                }
+            }
 
-        networkService = Retrofit.Builder()
-            .baseUrl(BuildConfig.server_url)
-            .client(client)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build().create(AppServerService::class.java)
-
-        disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::callReadingRoomEndpoint, this::onError)
-
-        val refreshLayout = findViewById<SwipeRefreshLayout>(R.id.reading_room_swipe_refresh_layout)
-        refreshLayout.setOnRefreshListener {
-            callReadingRoomEndpoint(0)
-            refreshLayout.isRefreshing = false
+            override fun onFailure(call: Call<ReadingRoomList>, t: Throwable) {
+                readingRoomProgressBar.visibility = View.GONE
+                readingRoomListStatus.text = t.message
+                readingRoomListStatus.visibility = View.VISIBLE
+            }
         }
-
-        val toolbar = findViewById<Toolbar>(R.id.reading_room_app_bar)
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationOnClickListener {
-            finish()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (disposable.isDisposed) {
-            disposable = Observable.interval(0, 1,
-                TimeUnit.MINUTES)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::callReadingRoomEndpoint, this::onError)
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        disposable.dispose()
-    }
-
-    @SuppressLint("CheckResult")
-    private fun callReadingRoomEndpoint(aLong : Long){
-        val observable = networkService.getReadingRoom(CampusRequest("erica"))
-        observable.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { data -> data.rooms }
-            .subscribe(this::updateReadingRoomInfo, this::onError)
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun updateReadingRoomInfo(data: ArrayList<ReadingRoom>) {
-        readingRoomCardListAdapter = ReadingRoomCardListAdapter(data)
-        val readingRoomCardView = findViewById<RecyclerView>(R.id.reading_room_list)
-        readingRoomCardView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        readingRoomCardView.adapter = readingRoomCardListAdapter
-    }
-
-    private fun onError(throwable: Throwable) {
-        Log.d("Fetch Error", throwable.message!!)
+        )
     }
 }
