@@ -46,4 +46,12 @@
     <string name="bus_remained_time">%d분 (%d전)</string>
     <string name="bus_remained_time_waiting">%d분 (회차점 대기)</string>
     <string name="last_bus">막차 운행중</string>
+    <string name="subway_line_4">4호선</string>
+    <string name="subway_line_suin">수인분당선</string>
+    <string name="subway_current_station">한대앞역</string>
+    <string name="subway_card_title">%s (%s)</string>
+    <string name="heading_to_4_seoul">서울·당고개</string>
+    <string name="heading_to_4_oido">안산·오이도</string>
+    <string name="heading_to_suin_seoul">서울·왕십리</string>
+    <string name="heading_to_suin_incheon">인천·오이도</string>
 </resources>
