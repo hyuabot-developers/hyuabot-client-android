@@ -7,7 +7,7 @@
     </style>
 
     <!-- 주간 테마 -->
-    <style name="Theme.Hyuabot" parent="Theme.AppCompat.Light">
+    <style name="Theme.Hyuabot" parent="Theme.AppCompat.DayNight">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/hanyang_primary</item>
         <item name="colorPrimaryVariant">@color/primaryTextColor</item>
