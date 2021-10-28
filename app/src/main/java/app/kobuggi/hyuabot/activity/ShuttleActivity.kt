@@ -144,9 +144,9 @@ class ShuttleActivity : AppCompatActivity() {
                                 val shuttleCardList = arrayListOf(
                                     ShuttleCardItem(R.string.dorm, R.string.station, shuttleResponseBody.Residence.forStation, subwayRealtimeData, subwayTimetableData),
                                     ShuttleCardItem(R.string.dorm, R.string.terminal, shuttleResponseBody.Residence.forTerminal, subwayRealtimeData, subwayTimetableData),
-                                    ShuttleCardItem(R.string.shuttlecock_o, R.string.station, shuttleResponseBody.Shuttlecock_O.forTerminal, subwayRealtimeData, subwayTimetableData),
+                                    ShuttleCardItem(R.string.shuttlecock_o, R.string.station, shuttleResponseBody.Shuttlecock_O.forStation, subwayRealtimeData, subwayTimetableData),
                                     ShuttleCardItem(R.string.shuttlecock_o, R.string.terminal, shuttleResponseBody.Shuttlecock_O.forTerminal, subwayRealtimeData, subwayTimetableData),
-                                    ShuttleCardItem(R.string.station, R.string.campus, shuttleResponseBody.Subway.forTerminal, subwayRealtimeData, subwayTimetableData),
+                                    ShuttleCardItem(R.string.station, R.string.campus, shuttleResponseBody.Subway.forStation, subwayRealtimeData, subwayTimetableData),
                                     ShuttleCardItem(R.string.station, R.string.terminal, shuttleResponseBody.Subway.forTerminal, subwayRealtimeData, subwayTimetableData),
                                     ShuttleCardItem(R.string.terminal, R.string.campus, shuttleResponseBody.Terminal.forTerminal, subwayRealtimeData, subwayTimetableData),
                                     ShuttleCardItem(R.string.shuttlecock_i, R.string.dorm, shuttleResponseBody.Shuttlecock_I.forTerminal, subwayRealtimeData, subwayTimetableData),
