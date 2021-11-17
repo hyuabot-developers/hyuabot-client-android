@@ -19,26 +19,39 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never"
         android:layout_below="@id/shuttle_app_bar"
         android:layout_above="@id/shuttle_admob_template">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" tools:context=".activity.ShuttleActivity">
-            <include android:id="@+id/shuttle_card_dorm_to_station" layout="@layout/card_shuttle"/>
-            <include android:id="@+id/shuttle_card_dorm_to_terminal" layout="@layout/card_shuttle"/>
-            <include android:id="@+id/shuttle_card_shuttlecock_to_station" layout="@layout/card_shuttle"/>
-            <include android:id="@+id/shuttle_card_shuttlecock_to_terminal" layout="@layout/card_shuttle"/>
-            <include android:id="@+id/shuttle_card_station_to_campus" layout="@layout/card_shuttle"/>
-            <include android:id="@+id/shuttle_card_station_to_terminal" layout="@layout/card_shuttle"/>
-            <include android:id="@+id/shuttle_card_terminal_to_campus" layout="@layout/card_shuttle"/>
-            <include android:id="@+id/shuttle_card_shuttlecock_to_residence" layout="@layout/card_shuttle"/>
-        </LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/shuttle_card_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:orientation="horizontal"
+                android:scrollbars="none"
+                android:visibility="gone"
+                android:layout_marginVertical="10dp"
+                />
+            <ProgressBar
+                android:id="@+id/shuttle_card_list_loading_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="500dp"
+                android:layout_gravity="center" />
+            <TextView
+                android:id="@+id/shuttle_card_list_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
     </ScrollView>
     <com.google.android.ads.nativetemplates.TemplateView
         android:id="@+id/shuttle_admob_template"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="10dp"
-        android:paddingTop="5dp"
         android:layout_alignParentBottom="true"
         app:gnt_template_type="@layout/gnt_small_template_view"/>
 </RelativeLayout>

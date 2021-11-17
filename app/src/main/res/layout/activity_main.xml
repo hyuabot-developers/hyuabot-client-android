@@ -36,8 +36,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="메뉴"
-                        android:textColor="@color/black"
+                        android:text="@string/menu"
+                        android:textColor="@color/primaryTextColor"
                         android:textSize="18sp"
                         android:paddingVertical="5dp"
                         />
@@ -46,7 +46,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="전체 보기"
+                        android:text="@string/show_all_menu"
                         android:textColor="@color/hanyang_primary"
                         android:textSize="18sp"
                         android:textAlignment="textEnd"
@@ -117,8 +117,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="셔틀"
-                        android:textColor="@color/black"
+                        android:text="@string/shuttle"
+                        android:textColor="@color/primaryTextColor"
                         android:textSize="18sp"
                         android:paddingVertical="5dp"
                         />
@@ -127,52 +127,38 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="전체 정류장 정보"
+                        android:text="@string/show_all_shuttle_info"
                         android:textColor="@color/hanyang_primary"
                         android:textSize="18sp"
                         android:textAlignment="textEnd"
                         android:paddingVertical="5dp"
                         />
                 </LinearLayout>
-                <HorizontalScrollView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:overScrollMode="never"
-                    android:scrollbars="none">
-                    <LinearLayout
+                    android:layout_height="200dp">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/shuttle_card_list_home"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:overScrollMode="never"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="30dp"
+                        android:scrollbars="none"
+                        android:visibility="gone"
+                        />
+                    <ProgressBar
+                        android:id="@+id/shuttle_card_list_loading_bar"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-                        <include
-                            android:id="@+id/shuttle_card_dorm_to_station_home"
-                            layout="@layout/card_shuttle_home"
-                        />
-                        <include
-                            android:id="@+id/shuttle_card_dorm_to_terminal_home"
-                            layout="@layout/card_shuttle_home"
-                        />
-                        <include
-                            android:id="@+id/shuttle_card_shuttlecock_to_station_home"
-                            layout="@layout/card_shuttle_home"
-                        />
-                        <include
-                            android:id="@+id/shuttle_card_shuttlecock_to_terminal_home"
-                            layout="@layout/card_shuttle_home"
-                        />
-                        <include
-                            android:id="@+id/shuttle_card_station_home"
-                            layout="@layout/card_shuttle_home"
-                        />
-                        <include
-                            android:id="@+id/shuttle_card_terminal_home"
-                            layout="@layout/card_shuttle_home"
-                        />
-                        <include
-                            android:id="@+id/shuttle_card_shuttlecock_to_residence_home"
-                            layout="@layout/card_shuttle_home"
-                        />
-                    </LinearLayout>
-                </HorizontalScrollView>
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+                    <TextView
+                        android:id="@+id/shuttle_card_list_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="gone"/>
+                </FrameLayout>
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -191,8 +177,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="학식"
-                    android:textColor="@color/black"
+                    android:text="@string/food"
+                    android:textColor="@color/primaryTextColor"
                     android:textSize="18sp"
                     android:paddingVertical="5dp"
                     />
@@ -201,21 +187,40 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="전체 학식 정보"
+                    android:text="@string/show_all_food_info"
                     android:textColor="@color/hanyang_primary"
                     android:textSize="18sp"
                     android:textAlignment="textEnd"
                     android:paddingVertical="5dp"
                     />
             </LinearLayout>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/food_card_list"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:overScrollMode="never"
-                android:orientation="horizontal"
-                android:layout_marginBottom="30dp"
-                android:scrollbars="none" />
+                android:layout_marginBottom="10dp"
+                >
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/food_card_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:overScrollMode="never"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="30dp"
+                    android:scrollbars="none"
+                    android:visibility="gone"
+                    />
+                <ProgressBar
+                    android:id="@+id/food_card_list_loading_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+                <TextView
+                    android:id="@+id/food_card_list_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
     <com.google.android.ads.nativetemplates.TemplateView
@@ -223,7 +228,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="15dp"
-        android:paddingTop="5dp"
+        android:layout_marginTop="5dp"
         android:layout_alignParentBottom="true"
         app:gnt_template_type="@layout/gnt_small_template_view"/>
 </RelativeLayout>

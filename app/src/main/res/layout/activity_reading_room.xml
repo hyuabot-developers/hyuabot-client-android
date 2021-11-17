@@ -24,19 +24,27 @@
         android:layout_below="@id/reading_room_app_bar"
         android:layout_above="@id/reading_room_admob_template"
         >
-        <ScrollView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:overScrollMode="never"
-            >
+            android:layout_height="match_parent">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reading_room_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
             />
-
-        </ScrollView>
+            <ProgressBar
+                android:id="@+id/reading_room_list_loading_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+            <TextView
+                android:id="@+id/reading_room_list_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <com.google.android.ads.nativetemplates.TemplateView
         android:id="@+id/reading_room_admob_template"

@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:text="식당 이름"
-            android:textColor="@color/black"
+            android:textColor="@color/primaryTextColor"
             android:layout_alignParentTop="true"
             android:textAlignment="center"
         />
@@ -33,7 +33,7 @@
             android:textSize="15sp"
             android:text="-"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            android:textColor="@color/primaryTextColor"
         />
 
         <TextView

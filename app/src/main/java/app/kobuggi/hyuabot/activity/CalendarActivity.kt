@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -9,10 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.EventsCardListAdapter
-import app.kobuggi.hyuabot.config.GitHubNetworkService
+import app.kobuggi.hyuabot.config.GitHubService
 import app.kobuggi.hyuabot.model.Events
 import app.kobuggi.hyuabot.model.EventsJson
 import com.google.gson.GsonBuilder
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.DayViewDecorator
+import com.prolificinteractive.materialcalendarview.DayViewFacade
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
@@ -33,7 +37,7 @@ import kotlin.collections.ArrayList
 class CalendarActivity : AppCompatActivity() {
     lateinit var eventCardListAdapter: EventsCardListAdapter
     lateinit var eventCardView: RecyclerView
-    lateinit var gitHubNetworkService: GitHubNetworkService
+    lateinit var gitHubNetworkService: GitHubService
     lateinit var calendarView : MaterialCalendarView
     lateinit var events: ArrayList<Events>
     private val currentMonth: YearMonth = YearMonth.now()
@@ -41,6 +45,16 @@ class CalendarActivity : AppCompatActivity() {
     val eventsList = mutableMapOf<Pair<Int, Int>, ArrayList<Events>>()
     val eventsSource: PublishSubject<ArrayList<Events>> = PublishSubject.create()
 
+    inner class DayDecorator : DayViewDecorator {
+        private val calendar = Calendar.getInstance()
+        override fun shouldDecorate(day: CalendarDay?): Boolean {
+            return true
+        }
+
+        override fun decorate(view: DayViewFacade?) {
+            view?.addSpan(object : ForegroundColorSpan(getColor(R.color.primaryTextColor)){})
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +75,7 @@ class CalendarActivity : AppCompatActivity() {
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .build().create(GitHubNetworkService::class.java)
+            .build().create(GitHubService::class.java)
         this.callEventEndpoint()
 
         calendarView = findViewById(R.id.calendar_view)
@@ -77,6 +91,7 @@ class CalendarActivity : AppCompatActivity() {
                 }
             }
         }
+        calendarView.addDecorator(DayDecorator())
         
         eventsSource.subscribe(observer)
         eventCardView = findViewById(R.id.event_card_list)

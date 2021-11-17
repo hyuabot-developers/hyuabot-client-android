@@ -2,6 +2,15 @@ package app.kobuggi.hyuabot.model
 
 import com.google.gson.annotations.SerializedName
 
+data class BusCardItem(
+    val lineName: String,
+    val lineColor: String,
+    val busStop: String,
+    val heading: String,
+    val busData : BusByRoute,
+    val minutesFromTerminalStop : Int
+)
+
 data class BusRealtimeItem(
     @SerializedName("Location") val location: Int,
     @SerializedName("RemainedTime") val time: Int,
