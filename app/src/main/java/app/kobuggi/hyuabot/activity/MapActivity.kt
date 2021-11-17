@@ -176,11 +176,21 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
         tedNaverClustering = TedNaverClustering.with<MarkerItem>(this, naverMap)
             .customMarker{
                 Marker().apply {
+                    icon = if (it.category == "building"){
+                        OverlayImage.fromResource(R.drawable.marker_school)
+                    } else if (it.category == "bakery"){
+                        OverlayImage.fromResource(R.drawable.marker_bakery)
+                    } else if(it.category == "cafe"){
+                        OverlayImage.fromResource(R.drawable.marker_cafe)
+                    } else if(it.category == "pub"){
+                        OverlayImage.fromResource(R.drawable.marker_pub)
+                    } else {
+                        OverlayImage.fromResource(R.drawable.marker_restaurant)
+                    }
                     width = 100
                     height = 100
                     captionText = it.name
                     captionColor = getColor(R.color.hanyang_primary)
-                    icon = OverlayImage.fromResource(R.drawable.marker_school)
                     isHideCollidedSymbols = true
                     isHideCollidedMarkers = true
                     isHideCollidedCaptions = true
@@ -188,9 +198,10 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
             }
             .markerClickListener { markerItem ->
                 val position = markerItem.position
+                val description = markerItem.content
                 Toast.makeText(
                     this,
-                    "${position.latitude},${position.longitude} 클릭됨",
+                    "$description 클릭됨",
                     Toast.LENGTH_SHORT
                 ).show()
             }
