@@ -118,10 +118,6 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
             withContext(Main){
                 tedNaverClustering.clearItems()
                 tedNaverClustering.addItems(markers)
-                // 지도 위치 이동
-                val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.30016859443061, 126.83779653945606))
-                map.moveCamera(cameraUpdate)
-                map.moveCamera(CameraUpdate.zoomTo(16.0))
             }
         }
     }
@@ -197,19 +193,26 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
                 }
             }
             .markerClickListener { markerItem ->
-                val position = markerItem.position
-                val description = markerItem.content
-                Toast.makeText(
-                    this,
-                    "$description 클릭됨",
-                    Toast.LENGTH_SHORT
-                ).show()
+                val description = markerItem.content.toString()
+                if (description.startsWith("건물 번호 :")){
+                    Toast.makeText(
+                        this,
+                        description,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else{
+                    Toast.makeText(
+                        this,
+                        "메뉴 : $description",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
             .minClusterSize(10)
             .make()
-        naverMap.addOnCameraChangeListener { _, _ ->
-            Log.d(
-                "Current Zoom", naverMap.cameraPosition.zoom.toString())
-        }
+        // 지도 위치 이동
+        val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.30016859443061, 126.83779653945606))
+        map.moveCamera(cameraUpdate)
+        map.moveCamera(CameraUpdate.zoomTo(16.0))
     }
 }
