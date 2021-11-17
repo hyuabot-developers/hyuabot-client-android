@@ -6,8 +6,8 @@ data class SubwayCardItem(
     val lineName : String,
     val lineIconResID : Int,
     val heading : String,
-    val realtime : List<SubwayItemByLineWithRealtime>,
-    val timetable : List<SubwayItemByLineWithTimetable>,
+    val realtime : List<SubwayItemByLineWithRealtime>?,
+    val timetable : List<SubwayItemByLineWithTimetable>?,
 )
 
 data class SubwayItemByLineWithRealtime(

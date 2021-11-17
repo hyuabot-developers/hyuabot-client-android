@@ -79,12 +79,13 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent">
 
-                <ImageView
-                    android:layout_width="5dp"
+                <View
+                    android:layout_width="3dp"
                     android:layout_height="25dp"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="10dp"
-                    android:src="@drawable/bus_stop_bar" />
+                    android:background="@drawable/dash_bar_vertical"
+                    android:layerType="software"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
