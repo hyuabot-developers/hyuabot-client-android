@@ -102,7 +102,7 @@ class ReadingRoomActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ReadingRoomList>, response: Response<ReadingRoomList>) {
                 if(response.isSuccessful && response.body() != null){
                     val responseBody = response.body()!!
-                    readingRoomCardListAdapter = ReadingRoomCardListAdapter(responseBody.rooms)
+                    readingRoomCardListAdapter = ReadingRoomCardListAdapter(responseBody.rooms.filter {it.activeTotal > 0})
                     readingRoomCardListview.layoutManager = LinearLayoutManager(this@ReadingRoomActivity, RecyclerView.VERTICAL, false)
                     readingRoomCardListview.adapter = readingRoomCardListAdapter
                     readingRoomProgressBar.visibility = View.GONE

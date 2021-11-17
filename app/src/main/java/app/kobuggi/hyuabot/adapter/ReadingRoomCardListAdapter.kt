@@ -14,7 +14,7 @@ import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.model.ReadingRoom
 
-class ReadingRoomCardListAdapter(list: ArrayList<ReadingRoom>) : RecyclerView.Adapter<ReadingRoomCardListAdapter.ItemViewHolder>(){
+class ReadingRoomCardListAdapter(list: List<ReadingRoom>) : RecyclerView.Adapter<ReadingRoomCardListAdapter.ItemViewHolder>(){
     private val mList = list
     lateinit var mContext : Context
 
