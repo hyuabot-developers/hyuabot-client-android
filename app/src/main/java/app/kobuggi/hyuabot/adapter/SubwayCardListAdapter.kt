@@ -33,39 +33,75 @@ class SubwayCardListAdapter(private val list : ArrayList<SubwayCardItem>, privat
             cardTitle.text = mContext.getString(R.string.subway_card_title, item.lineName, mContext.getString(R.string.subway_current_station))
             cardSubTitle.text = mContext.getString(R.string.bus_heading_to, item.heading)
             currentStationIcon.setImageResource(item.lineIconResID)
-            when{
-                item.realtime.size >= 2 -> {
-                    cardThisSubway.text = mContext.getString(R.string.this_bus, item.realtime[0].time.toInt(), item.realtime[0].terminalStn)
-                    cardNextSubway.text = mContext.getString(R.string.this_bus, item.realtime[1].time.toInt(), item.realtime[1].terminalStn)
+
+            if(item.realtime != null) {
+                if(item.realtime.size >= 2){
+                    cardThisSubway.text = mContext.getString(
+                        R.string.this_bus,
+                        item.realtime[0].time.toInt(),
+                        item.realtime[0].terminalStn
+                    )
+                    cardNextSubway.text = mContext.getString(
+                        R.string.this_bus,
+                        item.realtime[1].time.toInt(),
+                        item.realtime[1].terminalStn
+                    )
                 }
-                item.realtime.size == 1 -> {
-                    cardThisSubway.text = mContext.getString(R.string.this_bus, item.realtime[0].time.toInt(), item.realtime[0].terminalStn)
-                    if(item.timetable.size == 1){
-                        cardNextSubway.text = mContext.getString(R.string.this_bus, Duration.between(now, LocalTime.parse(item.timetable[0].time, formatter)).toMinutes(), item.timetable[0].terminalStn)
+                else if(item.realtime.size == 1){
+                    cardThisSubway.text = mContext.getString(
+                        R.string.this_bus,
+                        item.realtime[0].time.toInt(),
+                        item.realtime[0].terminalStn
+                    )
+                    if (item.timetable != null && item.timetable.size == 1) {
+                        cardNextSubway.text = mContext.getString(
+                            R.string.this_bus,
+                            Duration.between(
+                                now,
+                                LocalTime.parse(item.timetable[0].time, formatter)
+                            ).toMinutes(),
+                            item.timetable[0].terminalStn
+                        )
                     } else {
                         cardNextSubway.text = mContext.getString(R.string.out_of_service)
                     }
                 }
-                else -> {
-                    when {
-                        item.timetable.size >= 2 -> {
-                            cardThisSubway.text = mContext.getString(R.string.this_bus, Duration.between(now, LocalTime.parse(item.timetable[0].time, formatter)).toMinutes(), item.timetable[0].terminalStn)
-                            cardNextSubway.text = mContext.getString(R.string.this_bus, Duration.between(now, LocalTime.parse(item.timetable[1].time, formatter)).toMinutes(), item.timetable[1].terminalStn)
-                        }
-                        item.timetable.size == 1 -> {
-                            cardThisSubway.text = mContext.getString(R.string.this_bus, Duration.between(now, LocalTime.parse(item.timetable[0].time, formatter)).toMinutes(), item.timetable[0].terminalStn)
-                            cardNextSubway.text = ""
-                        }
-                        else -> {
-                            cardNextSubway.text = mContext.getString(R.string.out_of_service)
-                        }
+            }else {
+                if(item.timetable != null) {
+                    if (item.timetable.size >= 2) {
+                        cardThisSubway.text = mContext.getString(
+                            R.string.this_bus,
+                            Duration.between(
+                                now,
+                                LocalTime.parse(item.timetable[0].time, formatter)
+                            ).toMinutes(),
+                            item.timetable[0].terminalStn
+                        )
+                        cardNextSubway.text = mContext.getString(
+                            R.string.this_bus,
+                            Duration.between(
+                                now,
+                                LocalTime.parse(item.timetable[1].time, formatter)
+                            ).toMinutes(),
+                            item.timetable[1].terminalStn
+                        )
+                    } else if (item.timetable.size == 1) {
+                        cardThisSubway.text = mContext.getString(
+                            R.string.this_bus,
+                            Duration.between(
+                                now,
+                                LocalTime.parse(item.timetable[0].time, formatter)
+                            ).toMinutes(),
+                            item.timetable[0].terminalStn
+                        )
+                        cardNextSubway.text = ""
                     }
                 }
+                else {
+                        cardNextSubway.text = mContext.getString(R.string.out_of_service)
+                }
             }
-
-
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {

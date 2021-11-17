@@ -6,8 +6,8 @@ data class ShuttleCardItem(
     val shuttleStopID: Int,
     val headingID: Int,
     val arrivalList: List<ShuttleItem>,
-    val subwayItemsRealtime : List<SubwayItemByLineWithRealtime>,
-    val subwayItemsTimetable: List<SubwayItemByLineWithTimetable>
+    val subwayItemsRealtime : List<SubwayItemByLineWithRealtime>?,
+    val subwayItemsTimetable: List<SubwayItemByLineWithTimetable>?
 )
 
 data class ShuttleDataItem(
