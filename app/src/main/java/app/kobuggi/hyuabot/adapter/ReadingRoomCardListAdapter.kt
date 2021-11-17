@@ -26,12 +26,11 @@ class ReadingRoomCardListAdapter(list: ArrayList<ReadingRoom>) : RecyclerView.Ad
         private val readingRoomReserveButton = itemView!!.findViewById<ImageView>(R.id.reading_room_reserve_button)
 
         fun bind(item: ReadingRoom){
-            Log.d("isReservable", item.isReservable.toString())
 
             readingRoomCardTitle.text = item.name
-            readingRoomCardSubTitle.text = if (item.isReservable) "예약 가능" else "예약 불가"
-            readingRoomCardSubTitle.setTextColor(if (item.isReservable) Color.parseColor("#33a532") else Color.parseColor("#bb1e10"))
-            readingRoomCardAll.text = mContext.getString(R.string.total_seat, item.total)
+            readingRoomCardSubTitle.text = if (item.isActive) "예약 가능" else "예약 불가"
+            readingRoomCardSubTitle.setTextColor(if (item.isActive) Color.parseColor("#33a532") else Color.parseColor("#bb1e10"))
+            readingRoomCardAll.text = mContext.getString(R.string.total_seat, item.activeTotal)
             readingRoomCardAvailable.text = mContext.getString(R.string.remained_seat, item.available)
 
             readingRoomReserveButton.setOnClickListener {
@@ -41,7 +40,7 @@ class ReadingRoomCardListAdapter(list: ArrayList<ReadingRoom>) : RecyclerView.Ad
                     R.drawable.ic_alarm_off
                 }
                 if(tag == R.drawable.ic_alarm_off){
-                    if(item.isReservable || BuildConfig.DEBUG){
+                    if(item.isActive || BuildConfig.DEBUG){
                         Toast.makeText(mContext, "${item.name}의 잔여 좌석 알림을 예약했습니다.", Toast.LENGTH_SHORT).show()
                         readingRoomReserveButton.setImageResource(R.drawable.ic_alarm_on)
                         readingRoomReserveButton.tag = R.drawable.ic_alarm_on
