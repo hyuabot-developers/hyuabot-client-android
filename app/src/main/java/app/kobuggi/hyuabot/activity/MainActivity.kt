@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.HomeShuttleCardListAdapter
-import app.kobuggi.hyuabot.adapter.RestaurantCardListAdapter
+import app.kobuggi.hyuabot.adapter.RestaurantHomeCardListAdapter
 import app.kobuggi.hyuabot.config.AppServerService
 import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.model.RestaurantList
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
     private var nativeAd : NativeAd? = null
 
-    private lateinit var restaurantCardListAdapter: RestaurantCardListAdapter
+    private lateinit var restaurantCardListAdapter: RestaurantHomeCardListAdapter
     private lateinit var shuttleCardListAdapter: HomeShuttleCardListAdapter
 
     // 네트워크 클라이언트
@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         R.drawable.menu_library, R.drawable.menu_contact, R.drawable.menu_map, R.drawable.menu_calendar
     )
     private val newActivitiesWhenButtonClicked = listOf(
-        ShuttleActivity::class.java, BusActivity::class.java, SubwayActivity::class.java, null,
+        ShuttleActivity::class.java, BusActivity::class.java, SubwayActivity::class.java, RestaurantActivity::class.java,
         ReadingRoomActivity::class.java, ContactActivity::class.java, MapActivity::class.java, CalendarActivity::class.java
     )
 
@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity() {
         request.enqueue(object : Callback<RestaurantList>{
             override fun onResponse(call: Call<RestaurantList>, response: Response<RestaurantList>) {
                 if(response.isSuccessful && response.body() != null){
-                    restaurantCardListAdapter = RestaurantCardListAdapter(response.body()!!)
+                    restaurantCardListAdapter = RestaurantHomeCardListAdapter(response.body()!!)
                     foodCardListView.layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
                     foodCardListView.adapter = restaurantCardListAdapter
                     foodCardListProgressBar.visibility = View.GONE
