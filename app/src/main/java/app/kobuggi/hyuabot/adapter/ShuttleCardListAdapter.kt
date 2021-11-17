@@ -13,6 +13,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.activity.ShuttleActivity
 import app.kobuggi.hyuabot.model.ShuttleCardItem
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -20,6 +21,7 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
     private val now = LocalTime.now()
     private val formatter = DateTimeFormatter.ofPattern("HH:mm")
     private val subwayFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+    private val updatedTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
     inner class ItemViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!){
         private val shuttleCardTitle = itemView!!.findViewById<TextView>(R.id.shuttle_card_bus_stop)
@@ -55,16 +57,15 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
                 shuttleCardNextSubway.visibility = View.VISIBLE
                 var length = 0
 
-                Log.d("realtime", item.subwayItemsRealtime.toString())
-                Log.d("timetable", item.subwayItemsTimetable.toString())
 
                 if(item.subwayItemsRealtime != null){
                     for(realtimeItem in item.subwayItemsRealtime){
-                        if(realtimeItem.pos != "null" && realtimeItem.time > Duration.between(now, LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt() && length == 0){
-                            shuttleCardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, realtimeItem.time.toInt(), realtimeItem.terminalStn)
+                        val updatedTime = LocalDateTime.parse(realtimeItem.updatedTime.replace("T", " ").replace("+09:00", ""), updatedTimeFormatter)
+                        if(realtimeItem.pos != "null" && realtimeItem.time - Duration.between(now, updatedTime).toMinutes().toInt() > Duration.between(now, LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt() && length == 0){
+                            shuttleCardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, realtimeItem.time - Duration.between(now, updatedTime).toMinutes().toInt(), realtimeItem.terminalStn)
                             length++
                         } else if(realtimeItem.pos != "null" && realtimeItem.time > Duration.between(now, LocalTime.parse(item.arrivalList[1].time, formatter)).toMinutes().toInt() && length == 1){
-                            shuttleCardNextSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, realtimeItem.time.toInt(), realtimeItem.terminalStn)
+                            shuttleCardNextSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, realtimeItem.time - Duration.between(now, updatedTime).toMinutes().toInt(), realtimeItem.terminalStn)
                             length++
                         } else if(length >= 2){
                             break
