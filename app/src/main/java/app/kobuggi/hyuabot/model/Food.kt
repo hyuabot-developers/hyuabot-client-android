@@ -8,6 +8,12 @@ data class Restaurant(
     val Time: String
 )
 
+data class MenuListItem(
+    val menuItem: MenuItem,
+    val key: String,
+    val visible: Boolean
+)
+
 data class MenuItem(
     val Menu: String,
     val Price: String
