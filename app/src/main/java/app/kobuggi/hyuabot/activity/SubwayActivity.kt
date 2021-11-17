@@ -10,13 +10,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
-import app.kobuggi.hyuabot.config.NetworkService
+import app.kobuggi.hyuabot.adapter.BusCardListAdapter
+import app.kobuggi.hyuabot.adapter.SubwayCardListAdapter
+import app.kobuggi.hyuabot.config.AppServerService
 import app.kobuggi.hyuabot.function.getDarkMode
-import app.kobuggi.hyuabot.model.CampusRequest
-import app.kobuggi.hyuabot.model.Shuttle
-import app.kobuggi.hyuabot.model.SubwayERICA
+import app.kobuggi.hyuabot.model.*
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.AdLoader
@@ -27,31 +29,48 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.DayOfWeek
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 class SubwayActivity : AppCompatActivity() {
-    private lateinit var subwayCardLine4Seoul : CardView
-    private lateinit var subwayCardLine4Oido : CardView
-    private lateinit var subwayCardLineSuinSeoul : CardView
-    private lateinit var subwayCardLineSuinIncheon : CardView
-
-    private lateinit var networkService: NetworkService
-    private lateinit var disposable : Disposable
-    private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+    // 네트워크 클라이언트
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.server_url)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    private val appServerService = retrofit.create(AppServerService::class.java)
+    private var subwayCardListAdapter: SubwayCardListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_subway)
 
         // 광고 로드
+        loadNativeAd()
+
+        val toolbar = findViewById<Toolbar>(R.id.subway_app_bar)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
+        fetchSubwayDepartureInfo()
+    }
+
+    private fun loadNativeAd(){
         val builder = AdLoader.Builder(this, BuildConfig.admob_unit_id)
         val config = this.resources.configuration
         builder.forNativeAd{
@@ -68,229 +87,48 @@ class SubwayActivity : AppCompatActivity() {
         }
         val adLoader = builder.build()
         adLoader.loadAd(AdRequest.Builder().build())
-
-        // 각 카드 ID 별로 변수 할당
-        subwayCardLine4Seoul = findViewById(R.id.subway_card_line_4_seoul)
-        subwayCardLine4Oido = findViewById(R.id.subway_card_line_4_oido)
-        subwayCardLineSuinSeoul = findViewById(R.id.subway_card_line_suin_seoul)
-        subwayCardLineSuinIncheon = findViewById(R.id.subway_card_line_suin_incheon)
-
-        // 각 카드 별 제목 및 부제목 지정
-        subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_title).text = "4호선(한대앞역)"
-        subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_subtitle).text = "서울·당고개 방면"
-
-        subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_title).text = "4호선(한대앞역)"
-        subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_subtitle).text = "안산·오이도 방면"
-
-        subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_title).text = "수인분당선(한대앞역)"
-        subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_subtitle).text = "서울·왕십리 방면"
-        subwayCardLineSuinSeoul.findViewById<ImageView>(R.id.subway_current_circle).setImageResource(R.drawable.subway_stop_circle_line_suin)
-
-        subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_title).text = "수인분당선(한대앞역)"
-        subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_subtitle).text = "인천·오이도 방면"
-        subwayCardLineSuinIncheon.findViewById<ImageView>(R.id.subway_current_circle).setImageResource(R.drawable.subway_stop_circle_line_suin)
-
-        val toolbar = findViewById<Toolbar>(R.id.subway_app_bar)
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationOnClickListener {
-            finish()
-        }
-
-        val client = OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
-
-        val gson = GsonBuilder()
-            .setLenient()
-            .create()
-
-
-        networkService = Retrofit.Builder()
-            .baseUrl(BuildConfig.server_url)
-            .client(client)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build().create(NetworkService::class.java)
-
-        disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::callAPIForSubwayActivity, this::onError)
-
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (disposable.isDisposed) {
-            disposable = Observable.interval(0, 1,
-                TimeUnit.MINUTES)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::callAPIForSubwayActivity, this::onError)
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        disposable.dispose()
-    }
-
-    private fun callAPIForSubwayActivity(aLong: Long){
-        callSubwayEndpoint()
-    }
-
-    @SuppressLint("CheckResult")
-    private fun callSubwayEndpoint(){
-        val observable = networkService.getSubwayERICA(CampusRequest(campus = "erica"))
-        observable.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { data -> data }
-            .subscribe(this::updateSubwayDepartureInfo, this::onError)
-    }
-
-    private fun onError(throwable: Throwable) {
-        Log.d("Fetch Error", throwable.message!!)
-    }
-
-
-    @SuppressLint("SetTextI18n")
-    private fun updateSubwayDepartureInfo(data: SubwayERICA) {
-        val now = LocalTime.now()
-
-        // 4호선 서울 방향
-        var realtime = data.line4.realtime.upLine
-        var timetable = data.line4.timetable.upLine
-
-        when{
-            realtime.size >= 2 -> {
-                subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_this).text = "${realtime[0].time.toInt()}분 (${realtime[0].terminalStn}행)"
-                subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_next).text = "${realtime[1].time.toInt()}분 (${realtime[1].terminalStn}행)"
-            }
-            realtime.size == 1 -> {
-                subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_this).text = "${realtime[0].time.toInt()}분 (${realtime[0].terminalStn}행)"
-                if(timetable.size == 1){
-                    subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                } else {
-                    subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_next).text = "막차 운행중"
-                }
-            }
-            else -> {
-                when {
-                    timetable.size >= 2 -> {
-                        subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                        subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[1].time, formatter)).toMinutes()}분 (${timetable[1].terminalStn}행)"
-                    }
-                    timetable.size == 1 -> {
-                        subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                        subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_next).text = ""
-                    }
-                    else -> {
-                        subwayCardLine4Seoul.findViewById<TextView>(R.id.subway_card_next).text = "운행 종료"
+    private fun fetchSubwayDepartureInfo() = Observable.interval(0, 1, TimeUnit.MINUTES)
+        .subscribe{
+            val request = appServerService.getSubwayERICA(CampusRequest("erica"))
+            request.enqueue(object : Callback<SubwayERICA> {
+                override fun onResponse(call: Call<SubwayERICA>, response: Response<SubwayERICA>) {
+                    if(response.isSuccessful && response.body() != null){
+                        if(subwayCardListAdapter == null){
+                            initSubwayDepartureInfo(response.body()!!)
+                        } else {
+                            updateSubwayDepartureInfo(response.body()!!)
+                        }
                     }
                 }
-            }
+
+                override fun onFailure(call: Call<SubwayERICA>, t: Throwable) {
+
+                }
+            })
         }
 
-        // 4호선 오이도 방향
-        realtime = data.line4.realtime.downLine
-        timetable = data.line4.timetable.downLine
+    private fun initSubwayDepartureInfo(subwayDepartureInfo : SubwayERICA){
+        val subwayDepartureData = arrayListOf(
+            SubwayCardItem(getString(R.string.subway_line_4), R.drawable.subway_stop_circle_line_4, getString(R.string.heading_to_4_seoul), subwayDepartureInfo.line4.realtime.upLine, subwayDepartureInfo.line4.timetable.upLine),
+            SubwayCardItem(getString(R.string.subway_line_4), R.drawable.subway_stop_circle_line_4, getString(R.string.heading_to_4_oido), subwayDepartureInfo.line4.realtime.downLine, subwayDepartureInfo.line4.timetable.downLine),
+            SubwayCardItem(getString(R.string.subway_line_suin), R.drawable.subway_stop_circle_line_suin, getString(R.string.heading_to_suin_seoul), subwayDepartureInfo.lineSuin.realtime.upLine, subwayDepartureInfo.lineSuin.timetable.upLine),
+            SubwayCardItem(getString(R.string.subway_line_suin), R.drawable.subway_stop_circle_line_suin, getString(R.string.heading_to_suin_incheon), subwayDepartureInfo.lineSuin.realtime.downLine, subwayDepartureInfo.lineSuin.timetable.downLine)
+        )
+        subwayCardListAdapter = SubwayCardListAdapter(subwayDepartureData, this)
+        val subwayCardListView = findViewById<RecyclerView>(R.id.subway_card_list_view)
+        subwayCardListView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        subwayCardListView.adapter = subwayCardListAdapter
+    }
 
-        when{
-            realtime.size >= 2 -> {
-                subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_this).text = "${realtime[0].time.toInt()}분 (${realtime[0].terminalStn}행)"
-                subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_next).text = "${realtime[1].time.toInt()}분 (${realtime[1].terminalStn}행)"
-            }
-            realtime.size == 1 -> {
-                subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_this).text = "${realtime[0].time.toInt()}분 (${realtime[0].terminalStn}행)"
-                if(timetable.size == 1){
-                    subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                } else {
-                    subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_next).text = "막차 운행중"
-                }
-            }
-            else -> {
-                when {
-                    timetable.size >= 2 -> {
-                        subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                        subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[1].time, formatter)).toMinutes()}분 (${timetable[1].terminalStn}행)"
-                    }
-                    timetable.size == 1 -> {
-                        subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                        subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_next).text = ""
-                    }
-                    else -> {
-                        subwayCardLine4Oido.findViewById<TextView>(R.id.subway_card_next).text = "운행 종료"
-                    }
-                }
-            }
-        }
-
-        // 수인분당선 서울 방향
-        realtime = data.lineSuin.realtime.upLine
-        timetable = data.lineSuin.timetable.upLine
-
-        when{
-            realtime.size >= 2 -> {
-                subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_this).text = "${realtime[0].time.toInt()}분 (${realtime[0].terminalStn}행)"
-                subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_next).text = "${realtime[1].time.toInt()}분 (${realtime[1].terminalStn}행)"
-            }
-            realtime.size == 1 -> {
-                subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_this).text = "${realtime[0].time.toInt()}분 (${realtime[0].terminalStn}행)"
-                if(timetable.size == 1){
-                    subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                } else {
-                    subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_next).text = "막차 운행중"
-                }
-            }
-            else -> {
-                when {
-                    timetable.size >= 2 -> {
-                        subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                        subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[1].time, formatter)).toMinutes()}분 (${timetable[1].terminalStn}행)"
-                    }
-                    timetable.size == 1 -> {
-                        subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                        subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_next).text = ""
-                    }
-                    else -> {
-                        subwayCardLineSuinSeoul.findViewById<TextView>(R.id.subway_card_next).text = "운행 종료"
-                    }
-                }
-            }
-        }
-
-        // 수인분당선 인천 방향
-        realtime = data.lineSuin.realtime.downLine
-        timetable = data.lineSuin.timetable.downLine
-
-        when{
-            realtime.size >= 2 -> {
-                subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_this).text = "${realtime[0].time.toInt()}분 (${realtime[0].terminalStn}행)"
-                subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_next).text = "${realtime[1].time.toInt()}분 (${realtime[1].terminalStn}행)"
-            }
-            realtime.size == 1 -> {
-                subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_this).text = "${realtime[0].time.toInt()}분 (${realtime[0].terminalStn}행)"
-                if(timetable.size == 1){
-                    subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                } else {
-                    subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_next).text = "막차 운행중"
-                }
-            }
-            else -> {
-                when {
-                    timetable.size >= 2 -> {
-                        subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                        subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_next).text = "${Duration.between(now, LocalTime.parse(timetable[1].time, formatter)).toMinutes()}분 (${timetable[1].terminalStn}행)"
-                    }
-                    timetable.size == 1 -> {
-                        subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_this).text = "${Duration.between(now, LocalTime.parse(timetable[0].time, formatter)).toMinutes()}분 (${timetable[0].terminalStn}행)"
-                        subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_next).text = ""
-                    }
-                    else -> {
-                        subwayCardLineSuinIncheon.findViewById<TextView>(R.id.subway_card_next).text = "운행 종료"
-                    }
-                }
-            }
-        }
+    private fun updateSubwayDepartureInfo(subwayDepartureInfo : SubwayERICA){
+        val subwayDepartureData = arrayListOf(
+            SubwayCardItem(getString(R.string.subway_line_4), R.drawable.subway_stop_circle_line_4, getString(R.string.heading_to_4_seoul), subwayDepartureInfo.line4.realtime.upLine, subwayDepartureInfo.line4.timetable.upLine),
+            SubwayCardItem(getString(R.string.subway_line_4), R.drawable.subway_stop_circle_line_4, getString(R.string.heading_to_4_oido), subwayDepartureInfo.line4.realtime.downLine, subwayDepartureInfo.line4.timetable.downLine),
+            SubwayCardItem(getString(R.string.subway_line_suin), R.drawable.subway_stop_circle_line_suin, getString(R.string.heading_to_suin_seoul), subwayDepartureInfo.lineSuin.realtime.upLine, subwayDepartureInfo.lineSuin.timetable.upLine),
+            SubwayCardItem(getString(R.string.subway_line_suin), R.drawable.subway_stop_circle_line_suin, getString(R.string.heading_to_suin_incheon), subwayDepartureInfo.lineSuin.realtime.downLine, subwayDepartureInfo.lineSuin.timetable.downLine)
+        )
+        subwayCardListAdapter!!.notifyItemRangeChanged(0, 4, subwayDepartureData)
     }
 }
