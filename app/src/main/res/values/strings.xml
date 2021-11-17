@@ -15,7 +15,7 @@
     <string name="no_next_bus">다음 버스 : -</string>
     <string name="this_bus">%d분 (%s)</string>
     <string name="next_bus">%d분 (%s)</string>
-    <string name="subway_departure_arrival">%d분 (%s)</string>
+    <string name="subway_departure_arrival">%d분 (%s행)</string>
     <string name="this_bus_home">이번 버스 : %s (%s)</string>
     <string name="next_bus_home">다음 버스 : %s (%s)</string>
     <string name="shuttle_remained_time">%d 분 후 도착</string>

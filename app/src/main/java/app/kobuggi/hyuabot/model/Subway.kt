@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.model
 
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 data class SubwayCardItem(
     val lineName : String,
@@ -11,10 +12,11 @@ data class SubwayCardItem(
 )
 
 data class SubwayItemByLineWithRealtime(
-    @SerializedName("endStn") val terminalStn: String,
-    @SerializedName("pos") val pos: String,
-    @SerializedName("time") val time: Float,
-    @SerializedName("status") val status: String
+    @SerializedName("UpdatedTime") val updatedTime: String,
+    @SerializedName("TerminalStation") val terminalStn: String,
+    @SerializedName("Position") val pos: String,
+    @SerializedName("RemainedTime") val time: Float,
+    @SerializedName("Status") val status: String
 )
 
 data class SubwayByLineWithRealtime(
