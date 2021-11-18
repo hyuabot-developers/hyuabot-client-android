@@ -15,6 +15,5 @@
 local.properties
 .idea/.name
 app/google-services.json
-nativetemplates/
-
+nativetemplates/build
 app/release/
