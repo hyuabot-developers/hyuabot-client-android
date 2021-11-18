@@ -44,7 +44,7 @@ class SubwayCardListAdapter(private val list : ArrayList<SubwayCardItem>, privat
             if(item.realtime != null){
                 for(realtimeItem in item.realtime){
                     val updatedTime = LocalDateTime.parse(realtimeItem.updatedTime.replace("T", " ").replace("+09:00", ""), updatedTimeFormatter)
-                    if(realtimeItem.pos != "null" && (realtimeItem.time - Duration.between(now, updatedTime).toMinutes()) > 0){
+                    if(realtimeItem.pos != "null" && (realtimeItem.time - Duration.between(updatedTime, now).toMinutes()) > 0){
                         if(length == 0){
                             cardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, (realtimeItem.time - Duration.between(updatedTime, now).toMinutes()).toInt(), realtimeItem.terminalStn)
                             length++
