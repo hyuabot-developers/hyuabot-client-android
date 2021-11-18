@@ -3,6 +3,7 @@ package app.kobuggi.hyuabot.adapter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,10 +29,11 @@ class SubwayCardListAdapter(private val list : ArrayList<SubwayCardItem>, privat
         private val cardNextSubway = itemView!!.findViewById<TextView>(R.id.subway_card_next)
         private val updatedTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         private val subwayFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+        private val subwayFormatterNoSecond = DateTimeFormatter.ofPattern("HH:mm")
 
 
         fun bind(item: SubwayCardItem){
-            val now = LocalTime.now()
+            val now = LocalDateTime.now()
 
             cardTitle.text = mContext.getString(R.string.subway_card_title, item.lineName, mContext.getString(R.string.subway_current_station))
             cardSubTitle.text = mContext.getString(R.string.bus_heading_to, item.heading)
@@ -63,12 +65,18 @@ class SubwayCardListAdapter(private val list : ArrayList<SubwayCardItem>, privat
                         item.realtime[0].updatedTime.replace("T", " ").replace("+09:00", ""), updatedTimeFormatter)).toMinutes()
                 }
                 for(timetableItem in item.timetable){
-                    if(Duration.between(now, LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes() > findLaterTimetable){
+                    Log.d("timetable", timetableItem.time.toString())
+                    val duration : Long = if (timetableItem.time.split(":").size == 3){
+                        Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes()
+                    } else{
+                        Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatterNoSecond)).toMinutes()
+                    }
+                    if(duration > findLaterTimetable){
                         if(length == 0){
-                            cardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, Duration.between(now, LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes(), timetableItem.terminalStn)
+                            cardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes(), timetableItem.terminalStn)
                             length++
                         } else if(length == 1){
-                            cardNextSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, Duration.between(now, LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes(), timetableItem.terminalStn)
+                            cardNextSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes(), timetableItem.terminalStn)
                             length++
                         } else{
                             break
