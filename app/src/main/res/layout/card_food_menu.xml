@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:layout_marginHorizontal="10dp"
+    android:orientation="vertical"
+    >
+    <TextView
+        android:id="@+id/food_card_menu"
+        android:layout_marginVertical="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="-"
+        android:textAlignment="center"
+        android:textColor="@color/primaryTextColor"
+        />
+
+    <TextView
+        android:id="@+id/food_card_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="0 원"
+        android:textColor="@color/hanyang_primary"
+        android:textAlignment="center"
+        />
+    <View
+        android:id="@+id/food_card_divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="20dp"
+        android:background="#7f7f7f" />
+
+</LinearLayout>
