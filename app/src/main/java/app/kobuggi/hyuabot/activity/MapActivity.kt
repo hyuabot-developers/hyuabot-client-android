@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.room.Room
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.function.AppDatabase
+import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.map.TedNaverClustering
 import app.kobuggi.hyuabot.model.DatabaseItem
 import app.kobuggi.hyuabot.model.MarkerItem
@@ -164,6 +165,8 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
         updateMarkersByCategory("building")
         naverMap.minZoom = 14.0
         naverMap.maxZoom = 18.0
+        naverMap.isNightModeEnabled = getDarkMode(this.resources.configuration)
+
         // 현위치 버튼 기능
         val uiSetting = naverMap.uiSettings
         uiSetting.isLocationButtonEnabled = false // 뷰 페이져에 가려져 이후 레이아웃에 정의 하였음.

@@ -12,12 +12,12 @@
         <item name="colorPrimary">@color/hanyang_primary</item>
         <item name="colorPrimaryVariant">@color/primaryTextColor</item>
         <item name="colorOnPrimary">@color/background</item>
+        <item name="android:statusBarColor">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/hanyang_primary</item>
         <item name="colorSecondaryVariant">@color/background</item>
         <item name="colorOnSecondary">@color/primaryTextColor</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/white</item>
         <!-- Customize your theme here. -->
         <!-- 기본 폰트 : 고도체 -->
         <item name="android:fontFamily">@font/godo_font</item>
