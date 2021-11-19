@@ -11,6 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
+import app.kobuggi.hyuabot.GlobalActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.HomeShuttleCardListAdapter
 import app.kobuggi.hyuabot.adapter.RestaurantHomeCardListAdapter
@@ -35,7 +36,7 @@ import java.time.*
 import java.util.concurrent.TimeUnit
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : GlobalActivity() {
     private var nativeAd : NativeAd? = null
 
     private lateinit var restaurantCardListAdapter: RestaurantHomeCardListAdapter
