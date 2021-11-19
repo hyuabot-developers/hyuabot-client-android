@@ -158,17 +158,46 @@ class ShuttleActivity : AppCompatActivity() {
                                 shuttleCardListview.adapter = shuttleCardListAdapter
                                 shuttleCardProgressBar.visibility = View.GONE
                                 shuttleCardListview.visibility = View.VISIBLE
+                                shuttleCardListStatus.visibility = View.GONE
                             } else {
+                                val shuttleCardList = arrayListOf(
+                                    ShuttleCardItem(R.string.dorm, R.string.station, shuttleResponseBody.Residence.forStation, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.dorm, R.string.terminal, shuttleResponseBody.Residence.forTerminal, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.shuttlecock_o, R.string.station, shuttleResponseBody.Shuttlecock_O.forStation, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.shuttlecock_o, R.string.terminal, shuttleResponseBody.Shuttlecock_O.forTerminal, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.station, R.string.campus, shuttleResponseBody.Subway.forStation, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.station, R.string.terminal, shuttleResponseBody.Subway.forTerminal, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.terminal, R.string.campus, shuttleResponseBody.Terminal.forTerminal, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.shuttlecock_i, R.string.dorm, shuttleResponseBody.Shuttlecock_I.forTerminal, listOf(), listOf()),
+                                )
+
+                                shuttleCardListAdapter = ShuttleCardListAdapter(shuttleCardList, this@ShuttleActivity, subwayDataType)
+                                shuttleCardListview.layoutManager = LinearLayoutManager(this@ShuttleActivity, RecyclerView.VERTICAL, false)
+                                shuttleCardListview.adapter = shuttleCardListAdapter
                                 shuttleCardProgressBar.visibility = View.GONE
-                                shuttleCardListStatus.text = response.message()
-                                shuttleCardListStatus.visibility = View.VISIBLE
+                                shuttleCardListview.visibility = View.VISIBLE
+                                shuttleCardListStatus.visibility = View.GONE
                             }
                         }
 
                         override fun onFailure(call: Call<SubwayERICA>, t: Throwable) {
+                            val shuttleCardList = arrayListOf(
+                                ShuttleCardItem(R.string.dorm, R.string.station, shuttleResponseBody.Residence.forStation, listOf(), listOf()),
+                                ShuttleCardItem(R.string.dorm, R.string.terminal, shuttleResponseBody.Residence.forTerminal, listOf(), listOf()),
+                                ShuttleCardItem(R.string.shuttlecock_o, R.string.station, shuttleResponseBody.Shuttlecock_O.forStation, listOf(), listOf()),
+                                ShuttleCardItem(R.string.shuttlecock_o, R.string.terminal, shuttleResponseBody.Shuttlecock_O.forTerminal, listOf(), listOf()),
+                                ShuttleCardItem(R.string.station, R.string.campus, shuttleResponseBody.Subway.forStation, listOf(), listOf()),
+                                ShuttleCardItem(R.string.station, R.string.terminal, shuttleResponseBody.Subway.forTerminal, listOf(), listOf()),
+                                ShuttleCardItem(R.string.terminal, R.string.campus, shuttleResponseBody.Terminal.forTerminal, listOf(), listOf()),
+                                ShuttleCardItem(R.string.shuttlecock_i, R.string.dorm, shuttleResponseBody.Shuttlecock_I.forTerminal, listOf(), listOf()),
+                            )
+
+                            shuttleCardListAdapter = ShuttleCardListAdapter(shuttleCardList, this@ShuttleActivity, subwayDataType)
+                            shuttleCardListview.layoutManager = LinearLayoutManager(this@ShuttleActivity, RecyclerView.VERTICAL, false)
+                            shuttleCardListview.adapter = shuttleCardListAdapter
                             shuttleCardProgressBar.visibility = View.GONE
-                            shuttleCardListStatus.text = t.message
-                            shuttleCardListStatus.visibility = View.VISIBLE
+                            shuttleCardListview.visibility = View.VISIBLE
+                            shuttleCardListStatus.visibility = View.GONE
                         }
                     })
                 } else {
