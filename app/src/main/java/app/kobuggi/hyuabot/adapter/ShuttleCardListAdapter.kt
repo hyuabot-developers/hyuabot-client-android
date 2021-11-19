@@ -39,12 +39,12 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
 
             when(item.arrivalList.size){
                 0 -> {
-                    shuttleCardThisBus.text = mContext.resources.getString(R.string.no_this_bus)
-                    shuttleCardNextBus.text = mContext.resources.getString(R.string.no_next_bus)
+                    shuttleCardThisBus.text = mContext.resources.getString(R.string.out_of_service)
+                    shuttleCardNextBus.text = ""
                 }
                 1 -> {
                     shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus, Duration.between(now, LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt(), getHeadingString(item.arrivalList[0].type))
-                    shuttleCardNextBus.text = mContext.resources.getString(R.string.no_next_bus)
+                    shuttleCardNextBus.text = mContext.resources.getString(R.string.out_of_service)
                 }
                 else ->{
                     shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus, Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt(), getHeadingString(item.arrivalList[0].type))
@@ -92,7 +92,8 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
                             break
                         }
                     }
-                } else if (length == 0){
+                }
+                if (length == 0){
                     shuttleCardMetroArrow.visibility = View.INVISIBLE
                     shuttleCardThisSubway.visibility = View.INVISIBLE
                     shuttleCardNextSubway.visibility = View.INVISIBLE
