@@ -18,13 +18,13 @@
         />
     <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@id/restaurant_app_bar"
-        android:layout_above="@id/restaurant_admob_template"
+        android:layout_above="@id/admob_template"
         android:id="@+id/restaurant_menu_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" />
     <com.google.android.ads.nativetemplates.TemplateView
-        android:id="@+id/restaurant_admob_template"
+        android:id="@+id/admob_template"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="10dp"
