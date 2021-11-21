@@ -43,7 +43,7 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
                     shuttleCardNextBus.text = ""
                 }
                 1 -> {
-                    shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus, Duration.between(now, LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt(), getHeadingString(item.arrivalList[0].type))
+                    shuttleCardThisBus.text = mContext.resources.getString(R.string.this_bus, Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt(), getHeadingString(item.arrivalList[0].type))
                     shuttleCardNextBus.text = mContext.resources.getString(R.string.out_of_service)
                 }
                 else ->{
