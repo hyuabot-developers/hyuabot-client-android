@@ -17,7 +17,7 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         />
 
-    <RelativeLayout
+    <com.naver.maps.map.MapView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/map_view"
@@ -55,7 +55,7 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
                 <Button
-                    android:id="@+id/select_category_all"
+                    android:id="@+id/select_category_building"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/map_category_button_background"
@@ -64,7 +64,7 @@
                     />
 
                 <Button
-                    android:id="@+id/select_category_exercise"
+                    android:id="@+id/select_category_korean"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/map_category_button_background"
@@ -74,7 +74,7 @@
                     />
 
                 <Button
-                    android:id="@+id/select_category_work"
+                    android:id="@+id/select_category_japanese"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/map_category_button_background"
@@ -84,7 +84,7 @@
                     />
 
                 <Button
-                    android:id="@+id/select_category_reading"
+                    android:id="@+id/select_category_chinese"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/map_category_button_background"
@@ -94,7 +94,7 @@
                     />
 
                 <Button
-                    android:id="@+id/select_category_drive"
+                    android:id="@+id/select_category_western"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/map_category_button_background"
@@ -104,7 +104,7 @@
                     />
 
                 <Button
-                    android:id="@+id/select_category_trip"
+                    android:id="@+id/select_category_vietnamese"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/map_category_button_background"
@@ -114,17 +114,17 @@
                     />
 
                 <Button
-                    android:id="@+id/select_category_programming"
+                    android:id="@+id/select_category_fast_food"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/map_category_button_background"
                     android:layout_marginStart="5dp"
-                    android:text="패스트푸드"
+                    android:text="분식/패스트푸드"
                     android:textColor="@color/white"
                     />
 
                 <Button
-                    android:id="@+id/select_category_shower"
+                    android:id="@+id/select_category_chicken"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/map_category_button_background"
@@ -150,6 +150,42 @@
                     android:background="@drawable/map_category_button_background"
                     android:layout_marginStart="5dp"
                     android:text="육류"
+                    android:textColor="@color/white"
+                    />
+                <Button
+                    android:id="@+id/select_category_other_food"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="기타 식당"
+                    android:textColor="@color/white"
+                    />
+                <Button
+                    android:id="@+id/select_category_bakery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="빵집"
+                    android:textColor="@color/white"
+                    />
+                <Button
+                    android:id="@+id/select_category_cafe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="카페"
+                    android:textColor="@color/white"
+                    />
+                <Button
+                    android:id="@+id/select_category_pub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/map_category_button_background"
+                    android:layout_marginStart="5dp"
+                    android:text="술집"
                     android:textColor="@color/white"
                     />
             </LinearLayout>
