@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
+import app.kobuggi.hyuabot.GlobalActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.ShuttleCardListAdapter
 import app.kobuggi.hyuabot.config.AppServerService
@@ -32,7 +33,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class ShuttleActivity : AppCompatActivity() {
+class ShuttleActivity : GlobalActivity() {
 
     // 네트워크 클라이언트
     private val client = OkHttpClient.Builder()
@@ -53,7 +54,7 @@ class ShuttleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shuttle)
 
-        loadNativeAds()
+        loadNativeAd()
         connectToolbarFunction()
         fetchShuttleCardPeriodically(subwayDataType)
     }
@@ -82,25 +83,6 @@ class ShuttleActivity : AppCompatActivity() {
         return true
     }
 
-    // 광고 로드
-    private fun loadNativeAds(){
-        val builder = AdLoader.Builder(this, BuildConfig.admob_unit_id)
-        val config = this.resources.configuration
-        builder.forNativeAd{
-            val template = findViewById<TemplateView>(R.id.shuttle_admob_template)
-            val bgColor = ColorDrawable(if(getDarkMode(config)) Color.BLACK else Color.WHITE)
-            val textColor = if(getDarkMode(config)) Color.WHITE else Color.BLACK
-            val templateStyle = NativeTemplateStyle.Builder()
-                .withMainBackgroundColor(bgColor)
-                .withPrimaryTextTypefaceColor(textColor)
-                .withSecondaryTextTypefaceColor(textColor)
-                .build()
-            template.setStyles(templateStyle)
-            template.setNativeAd(it)
-        }
-        val adLoader = builder.build()
-        adLoader.loadAd(AdRequest.Builder().build())
-    }
 
     // 툴바 연결
     private fun connectToolbarFunction(){

@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/shuttle_app_bar"
-        android:layout_above="@id/shuttle_admob_template"
+        android:layout_above="@id/admob_template"
         >
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/shuttle_card_list"
@@ -45,7 +45,7 @@
             android:visibility="gone"/>
     </FrameLayout>
     <com.google.android.ads.nativetemplates.TemplateView
-        android:id="@+id/shuttle_admob_template"
+        android:id="@+id/admob_template"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="10dp"

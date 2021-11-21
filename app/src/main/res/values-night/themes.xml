@@ -12,7 +12,7 @@
         <item name="colorPrimary">@color/hanyang_primary</item>
         <item name="colorPrimaryVariant">@color/primaryTextColor</item>
         <item name="colorOnPrimary">@color/background</item>
-        <item name="android:statusBarColor">@color/black</item>
+        <item name="android:statusBarColor">@color/hanyang_primary</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/hanyang_primary</item>
         <item name="colorSecondaryVariant">@color/background</item>

@@ -10,9 +10,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
+import app.kobuggi.hyuabot.GlobalActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.BusCardListAdapter
 import app.kobuggi.hyuabot.adapter.SubwayCardListAdapter
@@ -40,7 +42,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
-class SubwayActivity : AppCompatActivity() {
+class SubwayActivity : GlobalActivity() {
     // 네트워크 클라이언트
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
@@ -70,24 +72,6 @@ class SubwayActivity : AppCompatActivity() {
         fetchSubwayDepartureInfo()
     }
 
-    private fun loadNativeAd(){
-        val builder = AdLoader.Builder(this, BuildConfig.admob_unit_id)
-        val config = this.resources.configuration
-        builder.forNativeAd{
-            val template = findViewById<TemplateView>(R.id.subway_admob_template)
-            val bgColor = ColorDrawable(if(getDarkMode(config)) Color.BLACK else Color.WHITE)
-            val textColor = if(getDarkMode(config)) Color.WHITE else Color.BLACK
-            val templateStyle = NativeTemplateStyle.Builder()
-                .withMainBackgroundColor(bgColor)
-                .withPrimaryTextTypefaceColor(textColor)
-                .withSecondaryTextTypefaceColor(textColor)
-                .build()
-            template.setStyles(templateStyle)
-            template.setNativeAd(it)
-        }
-        val adLoader = builder.build()
-        adLoader.loadAd(AdRequest.Builder().build())
-    }
 
     private fun fetchSubwayDepartureInfo() = Observable.interval(0, 1, TimeUnit.MINUTES)
         .subscribe{

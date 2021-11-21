@@ -81,10 +81,6 @@ class BusCardListAdapter(private val list : ArrayList<BusCardItem>, private val 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.card_bus, parent, false)
-        view.setOnClickListener {
-            val shuttleActivity = Intent(mContext, ShuttleActivity::class.java)
-            mContext.startActivity(shuttleActivity)
-        }
         return ItemViewHolder(view)
     }
 
