@@ -61,8 +61,8 @@ class SubwayCardListAdapter(private val list : ArrayList<SubwayCardItem>, privat
             if(item.timetable != null && length < 2){
                 var findLaterTimetable = 0.0F
                 if(length == 1){
-                    findLaterTimetable = item.realtime?.get(0)!!.time - Duration.between(now, LocalDateTime.parse(
-                        item.realtime[0].updatedTime.replace("T", " ").replace("+09:00", ""), updatedTimeFormatter)).toMinutes()
+                    findLaterTimetable = item.realtime?.get(0)!!.time - Duration.between(LocalDateTime.parse(
+                        item.realtime[0].updatedTime.replace("T", " ").replace("+09:00", ""), updatedTimeFormatter), now).toMinutes()
                 }
                 for(timetableItem in item.timetable){
                     Log.d("timetable", timetableItem.time.toString())
@@ -73,10 +73,10 @@ class SubwayCardListAdapter(private val list : ArrayList<SubwayCardItem>, privat
                     }
                     if(duration > findLaterTimetable){
                         if(length == 0){
-                            cardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes(), timetableItem.terminalStn)
+                            cardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, duration, timetableItem.terminalStn)
                             length++
                         } else if(length == 1){
-                            cardNextSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes(), timetableItem.terminalStn)
+                            cardNextSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, duration, timetableItem.terminalStn)
                             length++
                         } else{
                             break
