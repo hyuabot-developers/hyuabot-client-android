@@ -111,10 +111,8 @@ class MainActivity : GlobalActivity() {
             button.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, buttonIconList[i], null))
             button.findViewById<TextView>(R.id.button_label).text = resources.getString(buttonLabelList[i])
             button.setOnClickListener {
-                if(newActivitiesWhenButtonClicked[i] != null){
-                    val newActivity = Intent(this, newActivitiesWhenButtonClicked[i])
-                    startActivity(newActivity)
-                }
+                val newActivity = Intent(this, newActivitiesWhenButtonClicked[i])
+                startActivity(newActivity)
             }
         }
     }
@@ -153,18 +151,21 @@ class MainActivity : GlobalActivity() {
                     foodCardListView.layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
                     foodCardListView.adapter = restaurantCardListAdapter
                     foodCardListProgressBar.visibility = View.GONE
+                    foodCardListStatus.visibility = View.GONE
                     foodCardListView.visibility = View.VISIBLE
                 } else {
                     foodCardListProgressBar.visibility = View.GONE
-                    foodCardListStatus.text = response.message()
                     foodCardListStatus.visibility = View.VISIBLE
+                    foodCardListStatus.text = resources.getString(R.string.fetch_food_error)
+                    foodCardListView.visibility = View.GONE
                 }
             }
 
             override fun onFailure(call: Call<RestaurantList>, t: Throwable) {
                 foodCardListProgressBar.visibility = View.GONE
-                foodCardListStatus.text = t.message
                 foodCardListStatus.visibility = View.VISIBLE
+                foodCardListStatus.text = resources.getString(R.string.fetch_food_error)
+                foodCardListView.visibility = View.GONE
             }
         })
     }
@@ -194,18 +195,21 @@ class MainActivity : GlobalActivity() {
                         shuttleCardListview.layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
                         shuttleCardListview.adapter = shuttleCardListAdapter
                         shuttleCardProgressBar.visibility = View.GONE
+                        shuttleCardListStatus.visibility = View.GONE
                         shuttleCardListview.visibility = View.VISIBLE
                     } else {
                         shuttleCardProgressBar.visibility = View.GONE
-                        shuttleCardListStatus.text = response.message()
                         shuttleCardListStatus.visibility = View.VISIBLE
+                        shuttleCardListStatus.text = resources.getString(R.string.fetch_shuttle_error)
+                        shuttleCardListview.visibility = View.GONE
                     }
                 }
 
                 override fun onFailure(call: Call<Shuttle>, t: Throwable) {
                     shuttleCardProgressBar.visibility = View.GONE
-                    shuttleCardListStatus.text = t.message
                     shuttleCardListStatus.visibility = View.VISIBLE
+                    shuttleCardListStatus.text = resources.getString(R.string.fetch_shuttle_error)
+                    shuttleCardListview.visibility = View.GONE
                 }
             })
         }
