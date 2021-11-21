@@ -26,7 +26,7 @@
         android:orientation="vertical"/>
 
     <com.google.android.ads.nativetemplates.TemplateView
-        android:id="@+id/bus_admob_template"
+        android:id="@+id/admob_template"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="10dp"

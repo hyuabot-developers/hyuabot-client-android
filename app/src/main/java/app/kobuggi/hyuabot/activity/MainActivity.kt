@@ -1,12 +1,9 @@
 package app.kobuggi.hyuabot.activity
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,14 +13,9 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.HomeShuttleCardListAdapter
 import app.kobuggi.hyuabot.adapter.RestaurantHomeCardListAdapter
 import app.kobuggi.hyuabot.config.AppServerService
-import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.model.RestaurantList
 import app.kobuggi.hyuabot.model.Shuttle
 import app.kobuggi.hyuabot.model.ShuttleDataItem
-import com.google.android.ads.nativetemplates.NativeTemplateStyle
-import com.google.android.ads.nativetemplates.TemplateView
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.nativead.NativeAd
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
@@ -117,26 +109,6 @@ class MainActivity : GlobalActivity() {
         }
     }
 
-    // 네이티브 광고 불러오기
-    private fun loadNativeAd(){
-        // 광고 로드
-        val builder = AdLoader.Builder(this, BuildConfig.admob_unit_id)
-        val config = this.resources.configuration
-        builder.forNativeAd{
-            val template = findViewById<TemplateView>(R.id.home_admob_template)
-            val bgColor = ColorDrawable(if(getDarkMode(config)) Color.BLACK else Color.WHITE)
-            val textColor = if(getDarkMode(config)) Color.WHITE else Color.BLACK
-            val templateStyle = NativeTemplateStyle.Builder()
-                .withMainBackgroundColor(bgColor)
-                .withPrimaryTextTypefaceColor(textColor)
-                .withSecondaryTextTypefaceColor(textColor)
-                .build()
-            template.setStyles(templateStyle)
-            template.setNativeAd(it)
-        }
-        val adLoader = builder.build()
-        adLoader.loadAd(AdRequest.Builder().build())
-    }
 
     // 학식을 리스트뷰로 표현
     private fun updateFoodMenuListView(){

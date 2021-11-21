@@ -20,9 +20,25 @@ import kotlin.collections.HashMap
 class ContactQueryResultListAdapter(list: ArrayList<DatabaseItem>, context: Context) : RecyclerView.Adapter<ContactQueryResultListAdapter.ItemViewHolder>(){
     private val mList = list
     private val mContext = context
-    private lateinit var categoryMap : HashMap<String, String>
+    private var categoryMap : HashMap<String, String>
 
     init {
+        categoryMap = hashMapOf(
+            "on campus" to "교내 기관",
+            "korean" to "한식",
+            "japanese" to "일식",
+            "chinese" to "중식",
+            "western" to "양식",
+            "fast food" to "분식 및 패스트푸드",
+            "chicken" to "치킨",
+            "pizza" to "피자",
+            "meat" to "육류",
+            "other food" to "기타 식당",
+            "cafe" to "카페",
+            "bakery" to "빵집",
+            "pub" to "주점"
+
+        )
        when(Locale.getDefault().language){
            "ko" -> {
                categoryMap = hashMapOf(
