@@ -25,7 +25,7 @@
         android:id="@+id/subway_card_list_view" />
 
     <com.google.android.ads.nativetemplates.TemplateView
-        android:id="@+id/subway_admob_template"
+        android:id="@+id/admob_template"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="10dp"

@@ -28,6 +28,7 @@
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="parent"
           android:orientation="horizontal"
+          android:background="@android:color/transparent"
           android:id="@+id/background"
           >
         <ImageView
@@ -69,7 +70,7 @@
               app:layout_constraintEnd_toEndOf="parent"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toTopOf="parent"
-              android:background="@color/gnt_test_background_color"
+              android:background="@android:color/transparent"
               >
 
             <TextView
@@ -87,8 +88,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                ></TextView>
+                app:layout_constraintTop_toTopOf="parent" />
           </LinearLayout>
           <LinearLayout
               android:id="@+id/row_two"
@@ -108,8 +108,8 @@
                 android:id="@+id/ad_notification_view"
                 android:layout_height="@dimen/gnt_ad_indicator_height"
                 android:layout_marginTop="@dimen/gnt_ad_indicator_top_margin"
-                android:layout_marginStart="@dimen/gnt_no_margin"
-                android:layout_marginEnd="@dimen/gnt_default_margin"
+                android:layout_marginLeft="@dimen/gnt_no_margin"
+                android:layout_marginRight="@dimen/gnt_no_margin"
                 android:text="Ad"
                 android:textColor="@color/gnt_ad_green"
                 android:textStyle="bold"
@@ -117,7 +117,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                >
+                android:layout_marginStart="@dimen/gnt_no_margin">
             </TextView>
             <RatingBar
                 android:id="@+id/rating_bar"
@@ -139,9 +139,10 @@
                 app:layout_constraintTop_toTopOf="parent">
 
             </RatingBar>
+
             <TextView
                 android:id="@+id/secondary"
-                android:background="@color/gnt_white"
+                android:background="@android:color/transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="top"
@@ -155,8 +156,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ad_notification_view"
-                app:layout_constraintTop_toTopOf="parent"
-                ></TextView>
+                app:layout_constraintTop_toTopOf="parent" />
 
           </LinearLayout>
           <androidx.appcompat.widget.AppCompatButton

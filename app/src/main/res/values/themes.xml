@@ -17,7 +17,7 @@
         <item name="colorSecondaryVariant">@color/background</item>
         <item name="colorOnSecondary">@color/primaryTextColor</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:statusBarColor">@color/hanyang_primary</item>
         <!-- Customize your theme here. -->
         <!-- 기본 폰트 : 고도체 -->
         <item name="android:fontFamily">@font/godo_font</item>
