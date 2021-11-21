@@ -54,4 +54,6 @@
     <string name="heading_to_4_oido">안산·오이도</string>
     <string name="heading_to_suin_seoul">서울·왕십리</string>
     <string name="heading_to_suin_incheon">인천·오이도</string>
+    <string name="fetch_shuttle_error">셔틀 정보를 불러오는데 실패했습니다.</string>
+    <string name="fetch_food_error">셔틀 정보를 불러오는데 실패했습니다.</string>
 </resources>
