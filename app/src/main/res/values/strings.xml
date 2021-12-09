@@ -56,4 +56,5 @@
     <string name="heading_to_suin_incheon">인천·오이도</string>
     <string name="fetch_shuttle_error">셔틀 정보를 불러오는데 실패했습니다.</string>
     <string name="fetch_food_error">셔틀 정보를 불러오는데 실패했습니다.</string>
+    <string name="do_not_show_again_this_year">올해는 다시 보지 않기</string>
 </resources>
