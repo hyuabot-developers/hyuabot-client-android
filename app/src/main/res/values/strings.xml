@@ -10,6 +10,9 @@
     <string name="shuttlecock_o">셔틀콕</string>
     <string name="shuttlecock_i">셔틀콕 건너편</string>
     <string name="campus">기숙사, 셔틀콕</string>
+    <string name="direct">직행</string>
+    <string name="cycle">순환</string>
+    <string name="shuttle_timetable_popup">%s → %s 방면 시간표입니다.</string>
     <string name="out_of_service">운행 종료</string>
     <string name="no_this_bus">이번 버스 : -</string>
     <string name="no_next_bus">다음 버스 : -</string>

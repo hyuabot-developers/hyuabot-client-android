@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.activity.ShuttleActivity
+import app.kobuggi.hyuabot.activity.ShuttleTimetableActivity
 import app.kobuggi.hyuabot.model.ShuttleCardItem
 import java.time.Duration
 import java.time.LocalDateTime
@@ -118,6 +119,34 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         holder.bind(list[position])
+        holder.itemView.setOnClickListener {
+            val intent = Intent(mContext, ShuttleTimetableActivity::class.java)
+            val shuttleStop = when(list[position].shuttleStopID){
+                R.string.dorm -> "Residence"
+                R.string.shuttlecock_o -> "Shuttlecock_O"
+                R.string.station -> "Subway"
+                R.string.terminal -> "Terminal"
+                R.string.shuttlecock_i -> "Shuttlecock_I"
+                else -> ""
+            }
+            val heading = when(list[position].headingID){
+                R.string.campus -> when(list[position].shuttleStopID){
+                    R.string.subway -> "station"
+                    R.string.terminal -> "terminal"
+                    else -> ""
+                }
+                R.string.station -> "station"
+                R.string.terminal -> "terminal"
+                R.string.dorm -> "terminal"
+                else -> ""
+            }
+            intent.putExtra("busStop", shuttleStop)
+            intent.putExtra("busStopID", list[position].shuttleStopID)
+            intent.putExtra("heading", heading)
+            intent.putExtra("headingID", list[position].headingID)
+            mContext.startActivity(intent)
+        }
+
     }
 
     override fun getItemCount(): Int {

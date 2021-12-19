@@ -19,6 +19,9 @@
             android:name=".activity.RestaurantActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.ShuttleTimetableActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.MapActivity"
             android:exported="true" />
         <activity
