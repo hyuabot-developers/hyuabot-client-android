@@ -8,9 +8,6 @@ import android.view.ViewGroup
 import app.kobuggi.hyuabot.R
 
 class ContactFragment : Fragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

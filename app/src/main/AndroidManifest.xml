@@ -16,6 +16,9 @@
         android:theme="@style/Theme.Hyuabot"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.RestaurantActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.ShuttleTimetableActivity"
             android:exported="true" />
         <activity
@@ -53,6 +56,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="${mapKey}" />
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
