@@ -62,7 +62,7 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
                 if(item.subwayItemsRealtime != null){
                     for(realtimeItem in item.subwayItemsRealtime){
                         val updatedTime = LocalDateTime.parse(realtimeItem.updatedTime.replace("T", " ").replace("+09:00", ""), updatedTimeFormatter)
-                        if(realtimeItem.pos != "null" && realtimeItem.time - Duration.between(updatedTime, now).toMinutes() > Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt() && length == 0){
+                        if(item.arrivalList.isNotEmpty() && realtimeItem.pos != "null" && realtimeItem.time - Duration.between(updatedTime, now).toMinutes() > Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt() && length == 0){
                             shuttleCardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, (realtimeItem.time - Duration.between(updatedTime, now).toMinutes()).toInt(), realtimeItem.terminalStn)
                             length++
                         }
@@ -82,10 +82,10 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
                     }
                     for(timetableItem in item.subwayItemsTimetable){
 
-                        if(Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes() > max(Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt(), findLaterTimetable.toInt()) && length == 0){
+                        if(item.arrivalList.isNotEmpty() && Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes() > max(Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt(), findLaterTimetable.toInt()) && length == 0){
                             shuttleCardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes(), timetableItem.terminalStn)
                             length++
-                        } else if(item.arrivalList.size >= 2 && Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes() >  max(Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[1].time, formatter)).toMinutes().toInt(), findLaterTimetable.toInt()) && length == 1){
+                        } else if(item.arrivalList.size >= 2 && item.arrivalList.size >= 2 && Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes() >  max(Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[1].time, formatter)).toMinutes().toInt(), findLaterTimetable.toInt()) && length == 1){
                             shuttleCardNextSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes(), timetableItem.terminalStn)
                             length++
                         } else if(length >= 2){
