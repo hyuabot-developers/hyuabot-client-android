@@ -23,6 +23,9 @@ interface AppServerService {
     @GET("/app/bus")
     fun getBus() : Call<Bus>
 
+    @POST("/app/bus/timetable")
+    fun getBusTimetable(@Body body: BusByRouteRequest) : Call<BusTimetableByDay>
+
     @POST("/app/library")
     fun getReadingRoom(@Body body : CampusRequest) : Call<ReadingRoomList>
 }

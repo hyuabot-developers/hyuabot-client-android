@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.activity.BusTimetableActivity
 import app.kobuggi.hyuabot.activity.ShuttleActivity
+import app.kobuggi.hyuabot.activity.ShuttleTimetableActivity
 import app.kobuggi.hyuabot.model.BusCardItem
 import java.time.DayOfWeek
 import java.time.Duration
@@ -86,13 +88,14 @@ class BusCardListAdapter(private val list : ArrayList<BusCardItem>, private val 
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         holder.bind(list[position])
+        holder.itemView.setOnClickListener {
+            val intent = Intent(mContext, BusTimetableActivity::class.java)
+            intent.putExtra("routeID", list[position].lineName)
+            mContext.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {
         return list.size
-    }
-
-    private fun getHeadingString(heading: String) : String{
-        return  if (heading == "C") "순환" else "직행"
     }
 }
