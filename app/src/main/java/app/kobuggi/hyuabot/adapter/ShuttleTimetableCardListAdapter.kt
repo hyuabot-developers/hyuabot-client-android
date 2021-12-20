@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,10 +22,8 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.max
 
 class ShuttleTimetableCardListAdapter(private val list: List<ShuttleItem>, private val mContext: Context) : RecyclerView.Adapter<ShuttleTimetableCardListAdapter.ItemViewHolder>(){
-    private val now = LocalDateTime.now()
+    private val now = LocalTime.now()
     private val formatter = DateTimeFormatter.ofPattern("HH:mm")
-    private val subwayFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-    private val updatedTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
     inner class ItemViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!){
         private val shuttleCardHeading = itemView!!.findViewById<TextView>(R.id.shuttle_timetable_heading)
@@ -34,6 +33,13 @@ class ShuttleTimetableCardListAdapter(private val list: List<ShuttleItem>, priva
         fun bind(item: ShuttleItem){
             shuttleCardHeading.text = getHeadingString(item.type)
             shuttleCardTime.text = item.time
+            if(now.isAfter(LocalTime.parse(item.time, formatter))){
+                shuttleCardHeading.setTextColor(Color.GRAY)
+                shuttleCardTime.setTextColor(Color.GRAY)
+            } else {
+                shuttleCardHeading.setTextColor(mContext.getColor(R.color.primaryTextColor))
+                shuttleCardTime.setTextColor(mContext.getColor(R.color.primaryTextColor))
+            }
         }
 
     }

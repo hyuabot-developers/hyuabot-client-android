@@ -20,6 +20,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:textColor="@color/primaryTextColor"
             />
         <TextView
             android:id="@+id/shuttle_timetable_time"
@@ -27,6 +28,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:textColor="@color/primaryTextColor"
             />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
