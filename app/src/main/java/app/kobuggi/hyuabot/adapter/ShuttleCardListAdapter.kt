@@ -131,7 +131,7 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
             }
             val heading = when(list[position].headingID){
                 R.string.campus -> when(list[position].shuttleStopID){
-                    R.string.subway -> "station"
+                    R.string.station -> "station"
                     R.string.terminal -> "terminal"
                     else -> ""
                 }
