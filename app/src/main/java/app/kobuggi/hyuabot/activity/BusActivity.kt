@@ -3,6 +3,7 @@ package app.kobuggi.hyuabot.activity
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,6 +53,7 @@ class BusActivity : GlobalActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
+        Toast.makeText(this, getString(R.string.bus_popup), Toast.LENGTH_SHORT).show()
         fetchBusDepartureInfo()
     }
 
