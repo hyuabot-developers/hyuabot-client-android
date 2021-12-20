@@ -32,3 +32,13 @@ data class Shuttle(
     @SerializedName("Terminal") val Terminal: ShuttleByStop,
     @SerializedName("Shuttlecock_I") val Shuttlecock_I: ShuttleByStop
 )
+
+data class ShuttleStopInfo(
+    @SerializedName("roadViewLink") val roadViewLink: String,
+    @SerializedName("firstBusForStation") val firstBusForStation: String,
+    @SerializedName("lastBusForStation") val lastBusForStation: String,
+    @SerializedName("firstBusForTerminal") val firstBusForTerminal: String,
+    @SerializedName("lastBusForTerminal") val lastBusForTerminal: String,
+    @SerializedName("weekdays") val weekdays: ShuttleByStop,
+    @SerializedName("weekends") val weekends: ShuttleByStop
+)

@@ -11,6 +11,9 @@ interface AppServerService {
     @GET("/app/shuttle")
     fun getShuttleAll() : Call<Shuttle>
 
+    @POST("/app/shuttle/by-stop")
+    fun getShuttleStopInfo(@Body body: ShuttleStopRequest) : Call<ShuttleStopInfo>
+
     @GET("/app/food")
     fun getFoodAll() : Call<RestaurantList>
 

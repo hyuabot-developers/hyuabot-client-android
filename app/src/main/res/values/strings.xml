@@ -10,6 +10,9 @@
     <string name="shuttlecock_o">셔틀콕</string>
     <string name="shuttlecock_i">셔틀콕 건너편</string>
     <string name="campus">기숙사, 셔틀콕</string>
+    <string name="direct">직행</string>
+    <string name="cycle">순환</string>
+    <string name="shuttle_timetable_popup">%s → %s 방면 시간표입니다.</string>
     <string name="out_of_service">운행 종료</string>
     <string name="no_this_bus">이번 버스 : -</string>
     <string name="no_next_bus">다음 버스 : -</string>
@@ -56,4 +59,5 @@
     <string name="heading_to_suin_incheon">인천·오이도</string>
     <string name="fetch_shuttle_error">셔틀 정보를 불러오는데 실패했습니다.</string>
     <string name="fetch_food_error">셔틀 정보를 불러오는데 실패했습니다.</string>
+    <string name="do_not_show_again_this_year">올해는 다시 보지 않기</string>
 </resources>

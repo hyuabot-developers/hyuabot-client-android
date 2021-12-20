@@ -1,9 +1,13 @@
 package app.kobuggi.hyuabot.activity
 
+import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -84,8 +88,38 @@ class MainActivity : GlobalActivity() {
 
         createButtons()
         loadNativeAd()
+        openBirthDayDialog()
         updateFoodMenuListView()
         updateShuttleListViewItem()
+    }
+
+    private fun openBirthDayDialog() {
+        val pref = getSharedPreferences("pref", Activity.MODE_PRIVATE)
+        val lastOpenedYear = pref.getInt("birthDayOpened", 0)
+        val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+
+        var dialogMessage = "안녕하세요.\n휴아봇 개발자 경원여객3102입니다.\n"
+        dialogMessage += "오늘(12/12)은 제 생일입니다.\n\n"
+        dialogMessage += "부족하지만 많이 사용하시는 학우 여러분에게\n"
+        dialogMessage += "감사의 말씀드립니다."
+
+        if (now.monthValue == 12 && now.dayOfMonth == 12 && lastOpenedYear != now.year){
+            val dialogBuilder = AlertDialog.Builder(this)
+            val dialogLayout = R.layout.dialog_with_do_not_show_checkbox
+            val dialogView = LayoutInflater.from(this).inflate(dialogLayout,null)
+            val dialogCheckBox = dialogView.findViewById<CheckBox>(R.id.do_not_show_checkbox)
+            dialogBuilder.setTitle("12/12 공지입니다.")
+            dialogBuilder.setMessage(dialogMessage)
+            dialogBuilder.setView(dialogView)
+
+            dialogBuilder.setPositiveButton("확인") { dialogInterface, _ ->
+                if (dialogCheckBox.isChecked){
+                    pref.edit().putInt("birthDayOpened", now.year).apply()
+                }
+                dialogInterface.dismiss()
+            }
+            dialogBuilder.create().show()
+        }
     }
 
     // 액티비티에서 빠져나갈 때

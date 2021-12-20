@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.activity.ShuttleActivity
+import app.kobuggi.hyuabot.activity.ShuttleTimetableActivity
 import app.kobuggi.hyuabot.model.ShuttleCardItem
 import java.time.Duration
 import java.time.LocalDateTime
@@ -62,7 +63,7 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
                 if(item.subwayItemsRealtime != null){
                     for(realtimeItem in item.subwayItemsRealtime){
                         val updatedTime = LocalDateTime.parse(realtimeItem.updatedTime.replace("T", " ").replace("+09:00", ""), updatedTimeFormatter)
-                        if(realtimeItem.pos != "null" && realtimeItem.time - Duration.between(updatedTime, now).toMinutes() > Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt() && length == 0){
+                        if(item.arrivalList.isNotEmpty() && realtimeItem.pos != "null" && realtimeItem.time - Duration.between(updatedTime, now).toMinutes() > Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt() && length == 0){
                             shuttleCardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, (realtimeItem.time - Duration.between(updatedTime, now).toMinutes()).toInt(), realtimeItem.terminalStn)
                             length++
                         }
@@ -82,10 +83,10 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
                     }
                     for(timetableItem in item.subwayItemsTimetable){
 
-                        if(Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes() > max(Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt(), findLaterTimetable.toInt()) && length == 0){
+                        if(item.arrivalList.isNotEmpty() && Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes() > max(Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[0].time, formatter)).toMinutes().toInt(), findLaterTimetable.toInt()) && length == 0){
                             shuttleCardThisSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes(), timetableItem.terminalStn)
                             length++
-                        } else if(item.arrivalList.size >= 2 && Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes() >  max(Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[1].time, formatter)).toMinutes().toInt(), findLaterTimetable.toInt()) && length == 1){
+                        } else if(item.arrivalList.size >= 2 && item.arrivalList.size >= 2 && Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes() >  max(Duration.between(now.toLocalTime(), LocalTime.parse(item.arrivalList[1].time, formatter)).toMinutes().toInt(), findLaterTimetable.toInt()) && length == 1){
                             shuttleCardNextSubway.text = mContext.resources.getString(R.string.subway_departure_arrival, Duration.between(now.toLocalTime(), LocalTime.parse(timetableItem.time, subwayFormatter)).toMinutes(), timetableItem.terminalStn)
                             length++
                         } else if(length >= 2){
@@ -118,6 +119,34 @@ class ShuttleCardListAdapter(private val list: List<ShuttleCardItem>, private va
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         holder.bind(list[position])
+        holder.itemView.setOnClickListener {
+            val intent = Intent(mContext, ShuttleTimetableActivity::class.java)
+            val shuttleStop = when(list[position].shuttleStopID){
+                R.string.dorm -> "Residence"
+                R.string.shuttlecock_o -> "Shuttlecock_O"
+                R.string.station -> "Subway"
+                R.string.terminal -> "Terminal"
+                R.string.shuttlecock_i -> "Shuttlecock_I"
+                else -> ""
+            }
+            val heading = when(list[position].headingID){
+                R.string.campus -> when(list[position].shuttleStopID){
+                    R.string.subway -> "station"
+                    R.string.terminal -> "terminal"
+                    else -> ""
+                }
+                R.string.station -> "station"
+                R.string.terminal -> "terminal"
+                R.string.dorm -> "terminal"
+                else -> ""
+            }
+            intent.putExtra("busStop", shuttleStop)
+            intent.putExtra("busStopID", list[position].shuttleStopID)
+            intent.putExtra("heading", heading)
+            intent.putExtra("headingID", list[position].headingID)
+            mContext.startActivity(intent)
+        }
+
     }
 
     override fun getItemCount(): Int {
