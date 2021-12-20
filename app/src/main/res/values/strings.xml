@@ -22,6 +22,7 @@
     <string name="this_bus_home">이번 버스 : %s (%s)</string>
     <string name="next_bus_home">다음 버스 : %s (%s)</string>
     <string name="shuttle_remained_time">%d 분 후 도착</string>
+    <string name="bus_popup">노선버스의 시간표를 확인하시려면 각 항목을 클릭해주세요.</string>
     <string name="bus_timetable_popup">%s 노선의 시점 출발 시간표입니다.</string>
     <string name="shuttle">셔틀버스</string>
     <string name="bus">노선버스</string>
