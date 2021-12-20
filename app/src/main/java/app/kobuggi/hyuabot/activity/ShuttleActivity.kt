@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -54,6 +55,7 @@ class ShuttleActivity : GlobalActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shuttle)
 
+        Toast.makeText(this, resources.getString(R.string.shuttle_popup), Toast.LENGTH_SHORT).show()
         loadNativeAd()
         connectToolbarFunction()
         fetchShuttleCardPeriodically(subwayDataType)
