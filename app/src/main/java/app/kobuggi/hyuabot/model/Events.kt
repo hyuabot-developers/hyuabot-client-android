@@ -8,13 +8,3 @@ data class Events(
     val startDate: LocalDate,
     val endDate: LocalDate
 )
-
-data class EventsJson(
-    @SerializedName("events") val events : List<EventsJsonItem>
-)
-
-data class EventsJsonItem(
-    @SerializedName("title") val title: String,
-    @SerializedName("start") val startDate: String,
-    @SerializedName("end") val endDate: String
-)

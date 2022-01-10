@@ -1,111 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/home_root_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity.MainActivity">
+>
+    <data>
+        <variable name="shuttleViewModel" type="app.kobuggi.hyuabot.ui.main.ShuttleViewModel" />
+        <variable name="restaurantMenuViewModel" type="app.kobuggi.hyuabot.ui.main.RestaurantMenuViewModel" />
+    </data>
 
-    <ScrollView
+    <RelativeLayout
+        android:id="@+id/home_root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:layout_above="@id/admob_template"
-        >
-        <LinearLayout
+        tools:context=".ui.main.MainActivity">
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="15dp"
-            android:layout_marginTop="10dp"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:layout_above="@id/admob_template"
             >
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:animateLayoutChanges="true">
-                <!-- 메뉴 expand/shrink -->
+                android:paddingHorizontal="15dp"
+                android:layout_marginTop="10dp"
+                >
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginHorizontal="15dp"
-                    >
-                    <TextView
+                    android:orientation="vertical"
+                    android:animateLayoutChanges="true">
+                    <!-- 메뉴 expand/shrink -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/menu"
-                        android:textColor="@color/primaryTextColor"
-                        android:textSize="18sp"
-                        android:paddingVertical="5dp"
+                        android:orientation="horizontal"
+                        android:layout_marginHorizontal="15dp"
+                        >
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/menu"
+                            android:textColor="@color/primaryTextColor"
+                            android:textSize="18sp"
+                            android:paddingVertical="5dp"
+                            />
+                        <TextView
+                            android:id="@+id/expanded_menu_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/show_all_menu"
+                            android:textColor="@color/hanyang_primary"
+                            android:textSize="18sp"
+                            android:textAlignment="textEnd"
+                            android:paddingVertical="5dp"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:orientation="horizontal"
+                        >
+                        <include
+                            android:id="@+id/menu_shuttle_button"
+                            layout="@layout/menu_button_item"
+                            />
+                        <include
+                            android:id="@+id/menu_bus_button"
+                            layout="@layout/menu_button_item"
+                            />
+                        <include
+                            android:id="@+id/menu_subway_button"
+                            layout="@layout/menu_button_item"
+                            />
+                        <include
+                            android:id="@+id/menu_food_button"
+                            layout="@layout/menu_button_item"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:orientation="horizontal"
+                        android:id="@+id/expanded_menu"
+                        android:visibility="gone"
+                        >
+                        <include
+                            android:id="@+id/menu_library_button"
+                            layout="@layout/menu_button_item"
+                            />
+                        <include
+                            android:id="@+id/menu_contact_button"
+                            layout="@layout/menu_button_item"
+                            />
+                        <include
+                            android:id="@+id/menu_map_button"
+                            layout="@layout/menu_button_item"
+                            />
+                        <include
+                            android:id="@+id/menu_calendar_button"
+                            layout="@layout/menu_button_item"
+                            />
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#4D7F7F7F"
+                        android:layout_marginTop="10dp"
                         />
-                    <TextView
-                        android:id="@+id/expanded_menu_button"
+                    <!-- 메뉴 expand/shrink -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/show_all_menu"
-                        android:textColor="@color/hanyang_primary"
-                        android:textSize="18sp"
-                        android:textAlignment="textEnd"
-                        android:paddingVertical="5dp"
+                        android:orientation="horizontal"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginTop="10dp"
+                        >
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/shuttle"
+                            android:textColor="@color/primaryTextColor"
+                            android:textSize="18sp"
+                            android:paddingVertical="5dp"
+                            />
+                        <TextView
+                            android:id="@+id/shuttle_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/show_all_shuttle_info"
+                            android:textColor="@color/hanyang_primary"
+                            android:textSize="18sp"
+                            android:textAlignment="textEnd"
+                            android:paddingVertical="5dp"
+                            />
+                    </LinearLayout>
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp">
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/shuttle_card_list_home"
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:overScrollMode="never"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="30dp"
+                            android:scrollbars="none"
+                            android:visibility="visible"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:viewModel="@{shuttleViewModel}"
+                            app:repositories="@{shuttleViewModel.shuttleCardItems}"
                         />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:orientation="horizontal"
-                    >
-                    <include
-                        android:id="@+id/menu_shuttle_button"
-                        layout="@layout/menu_button_item"
-                        />
-                    <include
-                        android:id="@+id/menu_bus_button"
-                        layout="@layout/menu_button_item"
-                        />
-                    <include
-                        android:id="@+id/menu_subway_button"
-                        layout="@layout/menu_button_item"
-                        />
-                    <include
-                        android:id="@+id/menu_food_button"
-                        layout="@layout/menu_button_item"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:orientation="horizontal"
-                    android:id="@+id/expanded_menu"
-                    android:visibility="gone"
-                    >
-                    <include
-                        android:id="@+id/menu_library_button"
-                        layout="@layout/menu_button_item"
-                        />
-                    <include
-                        android:id="@+id/menu_contact_button"
-                        layout="@layout/menu_button_item"
-                        />
-                    <include
-                        android:id="@+id/menu_map_button"
-                        layout="@layout/menu_button_item"
-                        />
-                    <include
-                        android:id="@+id/menu_calendar_button"
-                        layout="@layout/menu_button_item"
-                        />
+                    </FrameLayout>
                 </LinearLayout>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="#4D7F7F7F"
                     android:layout_marginTop="10dp"
-                />
-                <!-- 메뉴 expand/shrink -->
+                    />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -117,17 +177,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/shuttle"
+                        android:text="@string/food"
                         android:textColor="@color/primaryTextColor"
                         android:textSize="18sp"
                         android:paddingVertical="5dp"
                         />
                     <TextView
-                        android:id="@+id/shuttle_button"
+                        android:id="@+id/food_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/show_all_shuttle_info"
+                        android:text="@string/show_all_food_info"
                         android:textColor="@color/hanyang_primary"
                         android:textSize="18sp"
                         android:textAlignment="textEnd"
@@ -136,9 +196,11 @@
                 </LinearLayout>
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
+                    android:layout_height="200dp"
+                    android:layout_marginBottom="10dp"
+                    >
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/shuttle_card_list_home"
+                        android:id="@+id/food_card_list"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
                         android:overScrollMode="never"
@@ -148,87 +210,26 @@
                         android:visibility="gone"
                         />
                     <ProgressBar
-                        android:id="@+id/shuttle_card_list_loading_bar"
+                        android:id="@+id/food_card_list_loading_bar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center" />
                     <TextView
-                        android:id="@+id/shuttle_card_list_status"
+                        android:id="@+id/food_card_list_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:visibility="gone"/>
                 </FrameLayout>
             </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#4D7F7F7F"
-                android:layout_marginTop="10dp"
-                />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginTop="10dp"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/food"
-                    android:textColor="@color/primaryTextColor"
-                    android:textSize="18sp"
-                    android:paddingVertical="5dp"
-                    />
-                <TextView
-                    android:id="@+id/food_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/show_all_food_info"
-                    android:textColor="@color/hanyang_primary"
-                    android:textSize="18sp"
-                    android:textAlignment="textEnd"
-                    android:paddingVertical="5dp"
-                    />
-            </LinearLayout>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginBottom="10dp"
-                >
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/food_card_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:overScrollMode="never"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="30dp"
-                    android:scrollbars="none"
-                    android:visibility="gone"
-                    />
-                <ProgressBar
-                    android:id="@+id/food_card_list_loading_bar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center" />
-                <TextView
-                    android:id="@+id/food_card_list_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:visibility="gone"/>
-            </FrameLayout>
-        </LinearLayout>
-    </ScrollView>
-    <com.google.android.ads.nativetemplates.TemplateView
-        android:id="@+id/admob_template"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="15dp"
-        android:layout_marginTop="5dp"
-        android:layout_alignParentBottom="true"
-        app:gnt_template_type="@layout/gnt_small_template_view"/>
-</RelativeLayout>
+        </ScrollView>
+        <com.google.android.ads.nativetemplates.TemplateView
+            android:id="@+id/admob_template"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentBottom="true"
+            app:gnt_template_type="@layout/gnt_small_template_view"/>
+    </RelativeLayout>
+</layout>

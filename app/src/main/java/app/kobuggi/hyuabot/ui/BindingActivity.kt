@@ -22,7 +22,7 @@ abstract class BindingActivity<T: ViewDataBinding> : AppCompatActivity() {
     @LayoutRes
     abstract fun getLayoutResourceID(): Int
 
-    private lateinit var binding: T
+    lateinit var binding: T
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

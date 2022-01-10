@@ -1,23 +1,15 @@
 package app.kobuggi.hyuabot.activity
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
-import app.kobuggi.hyuabot.GlobalActivity
+import app.kobuggi.hyuabot.ui.BindingActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.RestaurantCardListAdapter
 import app.kobuggi.hyuabot.config.AppServerService
-import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.model.RestaurantList
-import com.google.android.ads.nativetemplates.NativeTemplateStyle
-import com.google.android.ads.nativetemplates.TemplateView
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,7 +18,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class RestaurantActivity : GlobalActivity() {
+class RestaurantActivity : BindingActivity() {
     lateinit var restaurantCardListAdapter: RestaurantCardListAdapter
 
     // 네트워크 클라이언트

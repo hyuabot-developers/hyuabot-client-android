@@ -1,7 +1,6 @@
 package app.kobuggi.hyuabot.activity
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -17,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.ContactQueryResultListAdapter
-import app.kobuggi.hyuabot.function.AppDatabase
+import app.kobuggi.hyuabot.data.database.AppDatabase
 import app.kobuggi.hyuabot.model.DatabaseItem
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.*

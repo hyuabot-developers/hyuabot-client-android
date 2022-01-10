@@ -1,30 +1,21 @@
 package app.kobuggi.hyuabot.activity
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
-import app.kobuggi.hyuabot.GlobalActivity
+import app.kobuggi.hyuabot.ui.BindingActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.ShuttleCardListAdapter
 import app.kobuggi.hyuabot.config.AppServerService
-import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.model.*
-import com.google.android.ads.nativetemplates.NativeTemplateStyle
-import com.google.android.ads.nativetemplates.TemplateView
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -34,7 +25,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class ShuttleActivity : GlobalActivity() {
+class ShuttleActivity : BindingActivity() {
 
     // 네트워크 클라이언트
     private val client = OkHttpClient.Builder()

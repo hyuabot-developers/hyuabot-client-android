@@ -1,6 +1,5 @@
-package app.kobuggi.hyuabot.adapter
+package app.kobuggi.hyuabot.ui.main
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.text.Spannable
@@ -10,21 +9,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.activity.ShuttleActivity
+import app.kobuggi.hyuabot.databinding.ItemShuttleHomeBinding
 import app.kobuggi.hyuabot.model.ShuttleDataItem
+import app.kobuggi.hyuabot.ui.BindingViewHolder
 import java.time.Duration
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-class HomeShuttleCardListAdapter(private val list: List<ShuttleDataItem>, private val mContext: Context) : RecyclerView.Adapter<HomeShuttleCardListAdapter.ItemViewHolder>(){
+class ShuttleCardListAdapter(private val list: List<ShuttleDataItem> = listOf(), private val viewModel: ShuttleViewModel, private val mContext: Context) : RecyclerView.Adapter<ShuttleCardListAdapter.ItemViewHolder>(){
     private val now = LocalTime.now()
     private val formatter = DateTimeFormatter.ofPattern("HH:mm")
 
 
-    inner class ItemViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!){
+    inner class ItemViewHolder(itemView: View) : BindingViewHolder<ItemShuttleHomeBinding>(itemView){
         private val shuttleCardTitle = itemView!!.findViewById<TextView>(R.id.shuttle_card_title)
         private val shuttleCardRemainedTime = itemView!!.findViewById<TextView>(R.id.shuttle_card_time)
         private val shuttleCardThisBus = itemView!!.findViewById<TextView>(R.id.shuttle_card_this_bus)
@@ -62,7 +62,7 @@ class HomeShuttleCardListAdapter(private val list: List<ShuttleDataItem>, privat
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.card_shuttle_home, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_shuttle_home, parent, false)
         view.setOnClickListener {
             val shuttleActivity = Intent(mContext, ShuttleActivity::class.java)
             mContext.startActivity(shuttleActivity)
@@ -71,7 +71,7 @@ class HomeShuttleCardListAdapter(private val list: List<ShuttleDataItem>, privat
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.bind(list[position])
+        holder.binding.item = list[position]
     }
 
     override fun getItemCount(): Int {

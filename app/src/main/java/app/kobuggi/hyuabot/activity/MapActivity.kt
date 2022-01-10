@@ -1,9 +1,7 @@
 package app.kobuggi.hyuabot.activity
 
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.HorizontalScrollView
@@ -12,7 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.room.Room
 import app.kobuggi.hyuabot.R
-import app.kobuggi.hyuabot.function.AppDatabase
+import app.kobuggi.hyuabot.data.database.AppDatabase
 import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.map.TedNaverClustering
 import app.kobuggi.hyuabot.model.DatabaseItem
@@ -24,9 +22,7 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.InfoWindow
 import com.naver.maps.map.overlay.Marker
-import com.naver.maps.map.overlay.Overlay
 import com.naver.maps.map.overlay.OverlayImage
-import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlin.coroutines.CoroutineContext
