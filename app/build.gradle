@@ -6,7 +6,6 @@ plugins {
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
 android {
     compileSdkVersion 32
     buildToolsVersion "32.0.0"
@@ -23,6 +22,10 @@ android {
             keyAlias properties["SIGNED_KEY_ALIAS"]
             keyPassword properties["SIGNED_KEY_PASSWORD"]
         }
+    }
+
+    buildFeatures {
+        dataBinding = true
     }
 
     defaultConfig {
@@ -82,6 +85,14 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:20.5.0' // Admob Library
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
+
+    // Koin
+    implementation "io.insert-koin:koin-core:$koin_version"
+    implementation "io.insert-koin:koin-android:$koin_version"
+    implementation "io.insert-koin:koin-android-compat:$koin_version"
+    implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
+    implementation "io.insert-koin:koin-androidx-navigation:$koin_version"
+    implementation "io.insert-koin:koin-androidx-compose:$koin_version"
 
     /* Retrofit2 */
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
