@@ -1,23 +1,35 @@
-package app.kobuggi.hyuabot
+package app.kobuggi.hyuabot.ui
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.WindowManager
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import app.kobuggi.hyuabot.BuildConfig
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.function.getDarkMode
 import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 
-abstract class GlobalActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        val window = this.window
+abstract class BindingActivity<T: ViewDataBinding> : AppCompatActivity() {
+    @LayoutRes
+    abstract fun getLayoutResourceID(): Int
 
+    private lateinit var binding: T
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = DataBindingUtil.setContentView(this, getLayoutResourceID())
+
+        val window = this.window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.statusBarColor = ContextCompat.getColor(this, android.R.color.black)
     }
