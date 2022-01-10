@@ -22,7 +22,7 @@
         android:layout_height="match_parent"
         android:id="@+id/reading_room_swipe_refresh_layout"
         android:layout_below="@id/reading_room_app_bar"
-        android:layout_above="@id/reading_room_admob_template"
+        android:layout_above="@id/admob_template"
         >
         <FrameLayout
             android:layout_width="match_parent"
@@ -47,7 +47,7 @@
         </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <com.google.android.ads.nativetemplates.TemplateView
-        android:id="@+id/reading_room_admob_template"
+        android:id="@+id/admob_template"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="10dp"

@@ -1,28 +1,25 @@
 package app.kobuggi.hyuabot.activity
 
+import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
+import app.kobuggi.hyuabot.GlobalActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.HomeShuttleCardListAdapter
 import app.kobuggi.hyuabot.adapter.RestaurantHomeCardListAdapter
 import app.kobuggi.hyuabot.config.AppServerService
-import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.model.RestaurantList
 import app.kobuggi.hyuabot.model.Shuttle
 import app.kobuggi.hyuabot.model.ShuttleDataItem
-import com.google.android.ads.nativetemplates.NativeTemplateStyle
-import com.google.android.ads.nativetemplates.TemplateView
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.nativead.NativeAd
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
@@ -35,7 +32,7 @@ import java.time.*
 import java.util.concurrent.TimeUnit
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : GlobalActivity() {
     private var nativeAd : NativeAd? = null
 
     private lateinit var restaurantCardListAdapter: RestaurantHomeCardListAdapter
@@ -91,8 +88,38 @@ class MainActivity : AppCompatActivity() {
 
         createButtons()
         loadNativeAd()
+        openBirthDayDialog()
         updateFoodMenuListView()
         updateShuttleListViewItem()
+    }
+
+    private fun openBirthDayDialog() {
+        val pref = getSharedPreferences("pref", Activity.MODE_PRIVATE)
+        val lastOpenedYear = pref.getInt("birthDayOpened", 0)
+        val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+
+        var dialogMessage = "안녕하세요.\n휴아봇 개발자 경원여객3102입니다.\n"
+        dialogMessage += "오늘(12/12)은 제 생일입니다.\n\n"
+        dialogMessage += "부족하지만 많이 사용하시는 학우 여러분에게\n"
+        dialogMessage += "감사의 말씀드립니다."
+
+        if (now.monthValue == 12 && now.dayOfMonth == 12 && lastOpenedYear != now.year){
+            val dialogBuilder = AlertDialog.Builder(this)
+            val dialogLayout = R.layout.dialog_with_do_not_show_checkbox
+            val dialogView = LayoutInflater.from(this).inflate(dialogLayout,null)
+            val dialogCheckBox = dialogView.findViewById<CheckBox>(R.id.do_not_show_checkbox)
+            dialogBuilder.setTitle("12/12 공지입니다.")
+            dialogBuilder.setMessage(dialogMessage)
+            dialogBuilder.setView(dialogView)
+
+            dialogBuilder.setPositiveButton("확인") { dialogInterface, _ ->
+                if (dialogCheckBox.isChecked){
+                    pref.edit().putInt("birthDayOpened", now.year).apply()
+                }
+                dialogInterface.dismiss()
+            }
+            dialogBuilder.create().show()
+        }
     }
 
     // 액티비티에서 빠져나갈 때
@@ -110,34 +137,12 @@ class MainActivity : AppCompatActivity() {
             button.findViewById<ImageView>(R.id.button_icon).setImageDrawable(ResourcesCompat.getDrawable(resources, buttonIconList[i], null))
             button.findViewById<TextView>(R.id.button_label).text = resources.getString(buttonLabelList[i])
             button.setOnClickListener {
-                if(newActivitiesWhenButtonClicked[i] != null){
-                    val newActivity = Intent(this, newActivitiesWhenButtonClicked[i])
-                    startActivity(newActivity)
-                }
+                val newActivity = Intent(this, newActivitiesWhenButtonClicked[i])
+                startActivity(newActivity)
             }
         }
     }
 
-    // 네이티브 광고 불러오기
-    private fun loadNativeAd(){
-        // 광고 로드
-        val builder = AdLoader.Builder(this, BuildConfig.admob_unit_id)
-        val config = this.resources.configuration
-        builder.forNativeAd{
-            val template = findViewById<TemplateView>(R.id.home_admob_template)
-            val bgColor = ColorDrawable(if(getDarkMode(config)) Color.BLACK else Color.WHITE)
-            val textColor = if(getDarkMode(config)) Color.WHITE else Color.BLACK
-            val templateStyle = NativeTemplateStyle.Builder()
-                .withMainBackgroundColor(bgColor)
-                .withPrimaryTextTypefaceColor(textColor)
-                .withSecondaryTextTypefaceColor(textColor)
-                .build()
-            template.setStyles(templateStyle)
-            template.setNativeAd(it)
-        }
-        val adLoader = builder.build()
-        adLoader.loadAd(AdRequest.Builder().build())
-    }
 
     // 학식을 리스트뷰로 표현
     private fun updateFoodMenuListView(){
@@ -152,18 +157,21 @@ class MainActivity : AppCompatActivity() {
                     foodCardListView.layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
                     foodCardListView.adapter = restaurantCardListAdapter
                     foodCardListProgressBar.visibility = View.GONE
+                    foodCardListStatus.visibility = View.GONE
                     foodCardListView.visibility = View.VISIBLE
                 } else {
                     foodCardListProgressBar.visibility = View.GONE
-                    foodCardListStatus.text = response.message()
                     foodCardListStatus.visibility = View.VISIBLE
+                    foodCardListStatus.text = resources.getString(R.string.fetch_food_error)
+                    foodCardListView.visibility = View.GONE
                 }
             }
 
             override fun onFailure(call: Call<RestaurantList>, t: Throwable) {
                 foodCardListProgressBar.visibility = View.GONE
-                foodCardListStatus.text = t.message
                 foodCardListStatus.visibility = View.VISIBLE
+                foodCardListStatus.text = resources.getString(R.string.fetch_food_error)
+                foodCardListView.visibility = View.GONE
             }
         })
     }
@@ -193,18 +201,21 @@ class MainActivity : AppCompatActivity() {
                         shuttleCardListview.layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.HORIZONTAL, false)
                         shuttleCardListview.adapter = shuttleCardListAdapter
                         shuttleCardProgressBar.visibility = View.GONE
+                        shuttleCardListStatus.visibility = View.GONE
                         shuttleCardListview.visibility = View.VISIBLE
                     } else {
                         shuttleCardProgressBar.visibility = View.GONE
-                        shuttleCardListStatus.text = response.message()
                         shuttleCardListStatus.visibility = View.VISIBLE
+                        shuttleCardListStatus.text = resources.getString(R.string.fetch_shuttle_error)
+                        shuttleCardListview.visibility = View.GONE
                     }
                 }
 
                 override fun onFailure(call: Call<Shuttle>, t: Throwable) {
                     shuttleCardProgressBar.visibility = View.GONE
-                    shuttleCardListStatus.text = t.message
                     shuttleCardListStatus.visibility = View.VISIBLE
+                    shuttleCardListStatus.text = resources.getString(R.string.fetch_shuttle_error)
+                    shuttleCardListview.visibility = View.GONE
                 }
             })
         }

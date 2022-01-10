@@ -3,11 +3,13 @@ package app.kobuggi.hyuabot.activity
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
+import app.kobuggi.hyuabot.GlobalActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.BusCardListAdapter
 import app.kobuggi.hyuabot.config.AppServerService
@@ -27,7 +29,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class BusActivity : AppCompatActivity() {
+class BusActivity : GlobalActivity() {
     // 네트워크 클라이언트
     private val client = OkHttpClient.Builder()
         .connectTimeout(5, TimeUnit.SECONDS)
@@ -51,27 +53,8 @@ class BusActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
+        Toast.makeText(this, getString(R.string.bus_popup), Toast.LENGTH_SHORT).show()
         fetchBusDepartureInfo()
-    }
-
-    private fun loadNativeAd(){
-        // 광고 로드
-        val builder = AdLoader.Builder(this, BuildConfig.admob_unit_id)
-        val config = this.resources.configuration
-        builder.forNativeAd{
-            val template = findViewById<TemplateView>(R.id.bus_admob_template)
-            val bgColor = ColorDrawable(if(getDarkMode(config)) Color.BLACK else Color.WHITE)
-            val textColor = if(getDarkMode(config)) Color.WHITE else Color.BLACK
-            val templateStyle = NativeTemplateStyle.Builder()
-                .withMainBackgroundColor(bgColor)
-                .withPrimaryTextTypefaceColor(textColor)
-                .withSecondaryTextTypefaceColor(textColor)
-                .build()
-            template.setStyles(templateStyle)
-            template.setNativeAd(it)
-        }
-        val adLoader = builder.build()
-        adLoader.loadAd(AdRequest.Builder().build())
     }
 
     private fun fetchBusDepartureInfo() = Observable.interval(0, 1, TimeUnit.MINUTES)

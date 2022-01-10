@@ -1,0 +1,28 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 스플래시 스크린 테마 -->
+    <style name="Theme.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.Hyuabot</item>
+    </style>
+
+    <!-- 주간 테마 -->
+    <style name="Theme.Hyuabot" parent="Theme.AppCompat.DayNight">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/hanyang_primary</item>
+        <item name="colorPrimaryVariant">@color/primaryTextColor</item>
+        <item name="colorOnPrimary">@color/background</item>
+        <item name="android:statusBarColor">@color/hanyang_primary</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/hanyang_primary</item>
+        <item name="colorSecondaryVariant">@color/background</item>
+        <item name="colorOnSecondary">@color/primaryTextColor</item>
+        <!-- Status bar color. -->
+        <!-- Customize your theme here. -->
+        <!-- 기본 폰트 : 고도체 -->
+        <item name="android:fontFamily">@font/godo_font</item>
+        <!-- 타이틀 바 삭제 -->
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>

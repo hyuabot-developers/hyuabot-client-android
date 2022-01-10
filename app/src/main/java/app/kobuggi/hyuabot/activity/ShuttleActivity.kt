@@ -9,11 +9,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
+import app.kobuggi.hyuabot.GlobalActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.adapter.ShuttleCardListAdapter
 import app.kobuggi.hyuabot.config.AppServerService
@@ -32,7 +34,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class ShuttleActivity : AppCompatActivity() {
+class ShuttleActivity : GlobalActivity() {
 
     // 네트워크 클라이언트
     private val client = OkHttpClient.Builder()
@@ -53,7 +55,8 @@ class ShuttleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shuttle)
 
-        loadNativeAds()
+        Toast.makeText(this, resources.getString(R.string.shuttle_popup), Toast.LENGTH_SHORT).show()
+        loadNativeAd()
         connectToolbarFunction()
         fetchShuttleCardPeriodically(subwayDataType)
     }
@@ -82,25 +85,6 @@ class ShuttleActivity : AppCompatActivity() {
         return true
     }
 
-    // 광고 로드
-    private fun loadNativeAds(){
-        val builder = AdLoader.Builder(this, BuildConfig.admob_unit_id)
-        val config = this.resources.configuration
-        builder.forNativeAd{
-            val template = findViewById<TemplateView>(R.id.shuttle_admob_template)
-            val bgColor = ColorDrawable(if(getDarkMode(config)) Color.BLACK else Color.WHITE)
-            val textColor = if(getDarkMode(config)) Color.WHITE else Color.BLACK
-            val templateStyle = NativeTemplateStyle.Builder()
-                .withMainBackgroundColor(bgColor)
-                .withPrimaryTextTypefaceColor(textColor)
-                .withSecondaryTextTypefaceColor(textColor)
-                .build()
-            template.setStyles(templateStyle)
-            template.setNativeAd(it)
-        }
-        val adLoader = builder.build()
-        adLoader.loadAd(AdRequest.Builder().build())
-    }
 
     // 툴바 연결
     private fun connectToolbarFunction(){
@@ -158,17 +142,46 @@ class ShuttleActivity : AppCompatActivity() {
                                 shuttleCardListview.adapter = shuttleCardListAdapter
                                 shuttleCardProgressBar.visibility = View.GONE
                                 shuttleCardListview.visibility = View.VISIBLE
+                                shuttleCardListStatus.visibility = View.GONE
                             } else {
+                                val shuttleCardList = arrayListOf(
+                                    ShuttleCardItem(R.string.dorm, R.string.station, shuttleResponseBody.Residence.forStation, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.dorm, R.string.terminal, shuttleResponseBody.Residence.forTerminal, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.shuttlecock_o, R.string.station, shuttleResponseBody.Shuttlecock_O.forStation, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.shuttlecock_o, R.string.terminal, shuttleResponseBody.Shuttlecock_O.forTerminal, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.station, R.string.campus, shuttleResponseBody.Subway.forStation, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.station, R.string.terminal, shuttleResponseBody.Subway.forTerminal, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.terminal, R.string.campus, shuttleResponseBody.Terminal.forTerminal, listOf(), listOf()),
+                                    ShuttleCardItem(R.string.shuttlecock_i, R.string.dorm, shuttleResponseBody.Shuttlecock_I.forTerminal, listOf(), listOf()),
+                                )
+
+                                shuttleCardListAdapter = ShuttleCardListAdapter(shuttleCardList, this@ShuttleActivity, subwayDataType)
+                                shuttleCardListview.layoutManager = LinearLayoutManager(this@ShuttleActivity, RecyclerView.VERTICAL, false)
+                                shuttleCardListview.adapter = shuttleCardListAdapter
                                 shuttleCardProgressBar.visibility = View.GONE
-                                shuttleCardListStatus.text = response.message()
-                                shuttleCardListStatus.visibility = View.VISIBLE
+                                shuttleCardListview.visibility = View.VISIBLE
+                                shuttleCardListStatus.visibility = View.GONE
                             }
                         }
 
                         override fun onFailure(call: Call<SubwayERICA>, t: Throwable) {
+                            val shuttleCardList = arrayListOf(
+                                ShuttleCardItem(R.string.dorm, R.string.station, shuttleResponseBody.Residence.forStation, listOf(), listOf()),
+                                ShuttleCardItem(R.string.dorm, R.string.terminal, shuttleResponseBody.Residence.forTerminal, listOf(), listOf()),
+                                ShuttleCardItem(R.string.shuttlecock_o, R.string.station, shuttleResponseBody.Shuttlecock_O.forStation, listOf(), listOf()),
+                                ShuttleCardItem(R.string.shuttlecock_o, R.string.terminal, shuttleResponseBody.Shuttlecock_O.forTerminal, listOf(), listOf()),
+                                ShuttleCardItem(R.string.station, R.string.campus, shuttleResponseBody.Subway.forStation, listOf(), listOf()),
+                                ShuttleCardItem(R.string.station, R.string.terminal, shuttleResponseBody.Subway.forTerminal, listOf(), listOf()),
+                                ShuttleCardItem(R.string.terminal, R.string.campus, shuttleResponseBody.Terminal.forTerminal, listOf(), listOf()),
+                                ShuttleCardItem(R.string.shuttlecock_i, R.string.dorm, shuttleResponseBody.Shuttlecock_I.forTerminal, listOf(), listOf()),
+                            )
+
+                            shuttleCardListAdapter = ShuttleCardListAdapter(shuttleCardList, this@ShuttleActivity, subwayDataType)
+                            shuttleCardListview.layoutManager = LinearLayoutManager(this@ShuttleActivity, RecyclerView.VERTICAL, false)
+                            shuttleCardListview.adapter = shuttleCardListAdapter
                             shuttleCardProgressBar.visibility = View.GONE
-                            shuttleCardListStatus.text = t.message
-                            shuttleCardListStatus.visibility = View.VISIBLE
+                            shuttleCardListview.visibility = View.VISIBLE
+                            shuttleCardListStatus.visibility = View.GONE
                         }
                     })
                 } else {

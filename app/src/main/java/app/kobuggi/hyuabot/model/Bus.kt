@@ -38,3 +38,7 @@ data class Bus(
     @SerializedName("707-1") val blueBus: BusByRoute,
     @SerializedName("3102") val redBus: BusByRoute,
 )
+
+data class BusByRouteRequest(
+    @SerializedName("routeID") val routeID: String
+)

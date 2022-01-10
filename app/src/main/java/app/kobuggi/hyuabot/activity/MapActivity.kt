@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.room.Room
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.function.AppDatabase
+import app.kobuggi.hyuabot.function.getDarkMode
 import app.kobuggi.hyuabot.map.TedNaverClustering
 import app.kobuggi.hyuabot.model.DatabaseItem
 import app.kobuggi.hyuabot.model.MarkerItem
@@ -118,10 +119,6 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
             withContext(Main){
                 tedNaverClustering.clearItems()
                 tedNaverClustering.addItems(markers)
-                // 지도 위치 이동
-                val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.30016859443061, 126.83779653945606))
-                map.moveCamera(cameraUpdate)
-                map.moveCamera(CameraUpdate.zoomTo(16.0))
             }
         }
     }
@@ -168,6 +165,8 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
         updateMarkersByCategory("building")
         naverMap.minZoom = 14.0
         naverMap.maxZoom = 18.0
+        naverMap.isNightModeEnabled = getDarkMode(this.resources.configuration)
+
         // 현위치 버튼 기능
         val uiSetting = naverMap.uiSettings
         uiSetting.isLocationButtonEnabled = false // 뷰 페이져에 가려져 이후 레이아웃에 정의 하였음.
@@ -176,29 +175,47 @@ class MapActivity : AppCompatActivity(), CoroutineScope, OnMapReadyCallback {
         tedNaverClustering = TedNaverClustering.with<MarkerItem>(this, naverMap)
             .customMarker{
                 Marker().apply {
+                    icon = if (it.category == "building"){
+                        OverlayImage.fromResource(R.drawable.marker_school)
+                    } else if (it.category == "bakery"){
+                        OverlayImage.fromResource(R.drawable.marker_bakery)
+                    } else if(it.category == "cafe"){
+                        OverlayImage.fromResource(R.drawable.marker_cafe)
+                    } else if(it.category == "pub"){
+                        OverlayImage.fromResource(R.drawable.marker_pub)
+                    } else {
+                        OverlayImage.fromResource(R.drawable.marker_restaurant)
+                    }
                     width = 100
                     height = 100
                     captionText = it.name
                     captionColor = getColor(R.color.hanyang_primary)
-                    icon = OverlayImage.fromResource(R.drawable.marker_school)
                     isHideCollidedSymbols = true
                     isHideCollidedMarkers = true
                     isHideCollidedCaptions = true
                 }
             }
             .markerClickListener { markerItem ->
-                val position = markerItem.position
-                Toast.makeText(
-                    this,
-                    "${position.latitude},${position.longitude} 클릭됨",
-                    Toast.LENGTH_SHORT
-                ).show()
+                val description = markerItem.content.toString()
+                if (description.startsWith("건물 번호 :")){
+                    Toast.makeText(
+                        this,
+                        description,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else{
+                    Toast.makeText(
+                        this,
+                        "메뉴 : $description",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
             .minClusterSize(10)
             .make()
-        naverMap.addOnCameraChangeListener { _, _ ->
-            Log.d(
-                "Current Zoom", naverMap.cameraPosition.zoom.toString())
-        }
+        // 지도 위치 이동
+        val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.30016859443061, 126.83779653945606))
+        map.moveCamera(cameraUpdate)
+        map.moveCamera(CameraUpdate.zoomTo(16.0))
     }
 }
