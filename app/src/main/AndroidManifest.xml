@@ -19,26 +19,32 @@
             android:name=".activity.RestaurantActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.ShuttleTimetableActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.MapActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".activity.ContactActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".activity.ReadingRoomActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".activity.SubwayActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".activity.BusActivity"
-            android:exported="true" />
+            android:exported="false" />
+        <activity
+            android:name=".activity.BusTimetableActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.ShuttleActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".activity.CalendarActivity"
-            android:exported="true" />
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
