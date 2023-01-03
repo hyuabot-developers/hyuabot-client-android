@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/fragment_shuttle"
+    android:id="@+id/nav_graph">
+    <fragment
+        android:id="@+id/fragment_shuttle"
+        android:name="app.kobuggi.hyuabot.ui.shuttle.realtime.RealtimeFragment"
+        tools:layout="@layout/fragment_shuttle_realtime">
+        <action
+            android:id="@+id/open_shuttle_timetable"
+            app:destination="@id/fragment_shuttle_timetable" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_shuttle_timetable"
+        android:name="app.kobuggi.hyuabot.ui.shuttle.timetable.TimetableFragment"
+        tools:layout="@layout/fragment_shuttle_timetable" />
+    <fragment
+        android:id="@+id/fragment_bus"
+        android:name="app.kobuggi.hyuabot.ui.bus.realtime.RealtimeFragment"
+        tools:layout="@layout/fragment_bus_realtime">
+        <action
+            android:id="@+id/open_bus_timetable"
+            app:destination="@id/fragment_bus_timetable" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_bus_timetable"
+        android:name="app.kobuggi.hyuabot.ui.bus.timetable.TimetableFragment"
+        tools:layout="@layout/fragment_bus_timetable" />
+    <fragment
+        android:id="@+id/fragment_subway"
+        android:name="app.kobuggi.hyuabot.ui.subway.realtime.RealtimeFragment"
+        tools:layout="@layout/fragment_subway_realtime">
+        <action
+            android:id="@+id/open_subway_timetable"
+            app:destination="@id/fragment_subway_timetable" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_subway_timetable"
+        android:name="app.kobuggi.hyuabot.ui.subway.timetable.TimetableFragment"
+        tools:layout="@layout/fragment_subway_timetable" />
+    <fragment
+        android:id="@+id/fragment_cafeteria"
+        android:name="app.kobuggi.hyuabot.ui.cafeteria.CafeteriaFragment"
+        tools:layout="@layout/fragment_cafeteria" />
+    <fragment
+        android:id="@+id/fragment_menu"
+        android:name="app.kobuggi.hyuabot.ui.menu.MenuFragment"
+        tools:layout="@layout/fragment_menu">
+        <action
+            android:id="@+id/openLibraryFragment"
+            app:destination="@id/fragment_library" />
+        <action
+            android:id="@+id/openMapFragment"
+            app:destination="@id/fragment_map" />
+        <action
+            android:id="@+id/openContactFragment"
+            app:destination="@id/fragment_contact" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_library"
+        android:name="app.kobuggi.hyuabot.ui.library.LibraryFragment"
+        tools:layout="@layout/fragment_library" />
+    <fragment
+        android:id="@+id/fragment_map"
+        android:name="app.kobuggi.hyuabot.ui.map.MapFragment"
+        tools:layout="@layout/fragment_map" />
+    <fragment
+        android:id="@+id/fragment_contact"
+        android:name="app.kobuggi.hyuabot.ui.contact.ContactFragment"
+        tools:layout="@layout/fragment_contact" />
+</navigation>
