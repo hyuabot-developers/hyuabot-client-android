@@ -3,6 +3,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.dagger.hilt.android'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 Properties properties = new Properties()
@@ -25,7 +26,6 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-        signingConfig signingConfigs.defaultKey
         buildConfigField "String", "ADMOB_ID", properties["ADMOB_APP_ID"]
         buildConfigField "String", "ADMOB_NATIVE_ID", properties["ADMOB_NATIVE_ID"]
         manifestPlaceholders = [mapKey: "${properties.getProperty("MAP_API_KEY")}"]
@@ -45,9 +45,11 @@ android {
             ndk {
                 debugSymbolLevel 'FULL'
             }
+            signingConfig signingConfigs.defaultKey
         }
         debug {
             buildConfigField "String", "API_URL", properties["DEBUG_API_URL"]
+            signingConfig signingConfigs.defaultKey
         }
     }
     bundle {
@@ -71,9 +73,10 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     // Navigation component
     def nav_version = "2.5.3"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -83,6 +86,37 @@ dependencies {
     def hilt_version = "2.44"
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    // Gson
+    implementation 'com.google.code.gson:gson:2.10'
+    // Retrofit
+    def retrofit_version = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    // OkHttp
+    def okHttp_version = "5.0.0-alpha.10"
+    implementation "com.squareup.okhttp3:okhttp:$okHttp_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttp_version"
+    // Coroutine
+    def coroutine_version = "1.6.4"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    // RxKotlin
+    def rxkotlin_version = "3.0.1"
+    implementation "io.reactivex.rxjava3:rxkotlin:$rxkotlin_version"
+    // RxAndroid
+    def rx_android_version = "3.0.2"
+    implementation "io.reactivex.rxjava3:rxandroid:$rx_android_version"
+    // RxJava
+    def rxjava_version = "3.1.5"
+    implementation "io.reactivex.rxjava3:rxjava:$rxjava_version"
+    // Datastore
+    def datastore_version = "1.0.0"
+    implementation "androidx.datastore:datastore-preferences:$datastore_version"
+    implementation "androidx.datastore:datastore-preferences-rxjava3:$datastore_version"
+    // Map
+    implementation 'com.google.maps.android:android-maps-utils:2.3.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    // ViewPager2
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
 }
 
 kapt {

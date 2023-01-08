@@ -15,7 +15,16 @@
     <fragment
         android:id="@+id/fragment_shuttle_timetable"
         android:name="app.kobuggi.hyuabot.ui.shuttle.timetable.TimetableFragment"
-        tools:layout="@layout/fragment_shuttle_timetable" />
+        tools:layout="@layout/fragment_shuttle_timetable">
+        <argument
+            android:name="stop"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <argument
+            android:name="destination"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
     <fragment
         android:id="@+id/fragment_bus"
         android:name="app.kobuggi.hyuabot.ui.bus.realtime.RealtimeFragment"

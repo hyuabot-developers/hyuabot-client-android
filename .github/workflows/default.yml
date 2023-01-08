@@ -63,7 +63,7 @@ jobs:
       - name: Build Release App Bundle
         run: ./gradlew bundleRelease
       - name: Upload App Bundle
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: app-release
           path: app/build/outputs/bundle/release/app-release.aab

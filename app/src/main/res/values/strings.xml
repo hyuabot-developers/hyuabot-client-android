@@ -5,4 +5,67 @@
     <string name="subway">전철</string>
     <string name="cafeteria">학식</string>
     <string name="menu">메뉴</string>
+    <!-- 셔틀버스 정류장 이름 -->
+    <string name="dormitory_o">기숙사</string>
+    <string name="shuttlecock_o">셔틀콕</string>
+    <string name="station">한대앞역</string>
+    <string name="terminal">예술인</string>
+    <string name="jungang_stn">중앙역</string>
+    <string name="shuttlecock_i">셔틀콕 건너편</string>
+    <!-- 셔틀버스 목적지 이름 -->
+    <string name="shuttle_bound_for_station">한대앞 방면</string>
+    <string name="shuttle_bound_for_terminal">예술인 방면</string>
+    <string name="shuttle_bound_for_campus">캠퍼스 방면</string>
+    <string name="shuttle_bound_for_jungang_stn">중앙역 방면</string>
+    <string name="shuttle_bound_for_dormitory">기숙사 방면</string>
+    <!-- 셔틀버스 노선 이름 -->
+    <string name="D">직행</string>
+    <string name="C">순환</string>
+    <!-- 셔틀버스 도착 시간 -->
+    <string name="shuttle_arrival_time">%1$d분 후 출발</string>
+    <!-- 셔틀버스 서브 카드 텍스트 -->
+    <string name="shuttle_sub_card_subway_title">전철이 올까요?</string>
+    <string name="shuttle_sub_card_subway_subtitle">안올 것 같으면 버스를 타세요…</string>
+    <string name="shuttle_sub_card_subway_left_title">수인분당선(하행)</string>
+    <string name="shuttle_sub_card_subway_right_title">수인분당선(상행)</string>
+    <string name="shuttle_sub_card_subway_item">%1$d분(%2$s행)</string>
+    <string name="shuttle_sub_card_suwon_title">울부짖는 수원 통학러</string>
+    <string name="shuttle_sub_card_suwon_subtitle">집에 가다니 어림도 없지!</string>
+    <string name="shuttle_sub_card_suwon_left_title">한대앞역(전철)</string>
+    <string name="shuttle_sub_card_suwon_right_title">정문(707–1)</string>
+    <string name="shuttle_sub_card_sangnoksu_title">어디서 내릴까요?</string>
+    <string name="shuttle_sub_card_sangnoksu_subtitle">미리 알아봐요</string>
+    <string name="shuttle_sub_card_sangnoksu_left_title">한대앞역(셔틀)</string>
+    <string name="shuttle_sub_card_sangnoksu_right_title">상록수역(10–1)</string>
+    <string name="shuttle_sub_card_gwangmyeong_title">광명역 가는 빠른 길</string>
+    <string name="shuttle_sub_card_gwangmyeong_subtitle">50번(예술인-광명역)</string>
+    <string name="shuttle_sub_card_gwangmyeong_left_title">광명역 출발</string>
+    <string name="shuttle_sub_card_gwangmyeong_right_title">예술인 출발</string>
+    <string name="shuttle_sub_card_bus_item_seat">%1$d분 후 도착(%2$d석)</string>
+    <string name="shuttle_sub_card_bus_item">%1$d분 후 도착</string>
+    <string name="shuttle_sub_card_shuttle_item">%1$d분 후 도착</string>
+    <!-- 셔틀버스 도착 정보 없을 때 -->
+    <string name="shuttle_no_arrival_time">운행 종료</string>
+    <!-- 셔틀버스 첫차/막차 -->
+    <string name="shuttle_running_time">셔틀 운행 시간</string>
+    <string name="shuttle_destination">목적지</string>
+    <string name="shuttle_weekday">일자</string>
+    <string name="shuttle_first_time">첫차</string>
+    <string name="shuttle_last_time">막차</string>
+    <string name="shuttle_departure_time_unloaded">--:--</string>
+    <string name="shuttle_departure_time_loaded">%1$s:%2$s</string>
+    <string name="shuttle_bound_for_station_header">한대앞</string>
+    <string name="shuttle_bound_for_terminal_header">예술인</string>
+    <string name="shuttle_bound_for_campus_header">캠퍼스</string>
+    <string name="shuttle_bound_for_jungang_stn_header">중앙역</string>
+    <string name="shuttle_bound_for_dormitory_header">기숙사</string>
+    <string name="weekdays">평일</string>
+    <string name="weekends">주말</string>
+    <string name="close">닫기</string>
+    <string name="shuttle_show_all">전체 시간표</string>
+    <string name="shuttle_timetable_title">%1$s → %2$s</string>
+    <!-- 셔틀버스 전체 시간표 -->
+    <string name="shuttle_timetable_item">%1$s시 %2$s분</string>
+    <string name="shuttle_no_timetable">운행 시간표 없음</string>
+    <string name="out_of_service">운행 종료</string>
 </resources>

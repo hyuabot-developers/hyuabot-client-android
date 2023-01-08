@@ -16,5 +16,17 @@
         <!-- 타이틀 바 삭제 -->
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
+        <!-- 커스텀 글꼴 -->
+        <item name="android:textViewStyle">@style/customTextViewFontStyle</item>
+        <item name="android:buttonStyle">@style/customButtonFontStyle</item>
+        <item name="android:editTextStyle">@style/customEditTextFontStyle</item>
+        <item name="android:radioButtonStyle">@style/customRadioButtonFontStyle</item>
+        <item name="android:checkboxStyle">@style/customCheckboxFontStyle</item>
+    </style>
+    <style name="Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/hanyang_primary</item>
     </style>
 </resources>
