@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import app.kobuggi.hyuabot.component.card.shuttle.ShuttleRealtimeStopCardAdapter
+import app.kobuggi.hyuabot.component.card.shuttle.RealtimeStopCardAdapter
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,7 +28,7 @@ class RealtimeFragment : Fragment(), DialogInterface.OnDismissListener {
         viewModel.fetchData()
         viewModel.getBookmark()
         viewModel.start()
-        val shuttleRealtimeStopCardAdapter = ShuttleRealtimeStopCardAdapter(
+        val shuttleRealtimeStopCardAdapter = RealtimeStopCardAdapter(
             requireContext(),
             0,
             { index -> viewModel.setBookmark(index) },

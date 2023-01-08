@@ -15,7 +15,7 @@ import app.kobuggi.hyuabot.model.subway.SubwayRealtimeListResponse
 import java.time.Duration
 import java.time.LocalTime
 
-class ShuttleSubCardItemAdapter (private val cardIndex: Int, private val subCardItemList: SubCardItem, private val textAlignment: Int, private val count: Int = 3) : RecyclerView.Adapter<ShuttleSubCardItemAdapter.ViewHolder>() {
+class SubCardItemAdapter (private val cardIndex: Int, private val subCardItemList: SubCardItem, private val textAlignment: Int, private val count: Int = 3) : RecyclerView.Adapter<SubCardItemAdapter.ViewHolder>() {
     private val shuttleArrivalList = arrayListOf<Int>()
     init {
         if (subCardItemList.javaClass == ArrivalListStopItem::class.java){

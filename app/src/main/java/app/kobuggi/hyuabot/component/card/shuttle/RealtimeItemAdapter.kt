@@ -10,7 +10,7 @@ import app.kobuggi.hyuabot.databinding.ItemShuttleRealtimeBinding
 import app.kobuggi.hyuabot.model.shuttle.ArrivalItem
 import app.kobuggi.hyuabot.model.shuttle.Destination
 
-class ShuttleRealtimeItemAdapter (private val destination: Destination, private var arrivalItemList: List<ArrivalItem>, private val count: Int = 3) : RecyclerView.Adapter<ShuttleRealtimeItemAdapter.ViewHolder>() {
+class RealtimeItemAdapter (private val destination: Destination, private var arrivalItemList: List<ArrivalItem>, private val count: Int = 3) : RecyclerView.Adapter<RealtimeItemAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(arrivalItem: ArrivalItem) {
             val resources = GlobalApplication.getAppResources()

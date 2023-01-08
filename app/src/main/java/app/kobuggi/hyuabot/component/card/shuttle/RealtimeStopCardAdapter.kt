@@ -1,7 +1,6 @@
 package app.kobuggi.hyuabot.component.card.shuttle
 
 import android.content.Context
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,13 +17,13 @@ import app.kobuggi.hyuabot.model.shuttle.ArrivalListStopItem
 import app.kobuggi.hyuabot.model.shuttle.Destination
 import app.kobuggi.hyuabot.model.subway.SubwayRealtimeListResponse
 
-class ShuttleRealtimeStopCardAdapter(
+class RealtimeStopCardAdapter(
     private val context: Context,
     private var bookmarkIndex: Int,
     private val onClickBookmark: (Int) -> Unit,
     private val onClickInformation: (Int) -> Unit,
     private val onClickTimetableButton: (Int, Int) -> Unit
-) : RecyclerView.Adapter<ShuttleRealtimeStopCardAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<RealtimeStopCardAdapter.ViewHolder>() {
     private val stopList: List<StopItem> = arrayListOf(
         StopItem(R.string.dormitory_o, listOf(Destination.STATION, Destination.TERMINAL, Destination.JUNGANG_STN), listOf()),
         StopItem(R.string.shuttlecock_o, listOf(Destination.STATION, Destination.TERMINAL, Destination.JUNGANG_STN), listOf()),
@@ -33,33 +32,33 @@ class ShuttleRealtimeStopCardAdapter(
         StopItem(R.string.jungang_stn, listOf(Destination.CAMPUS), listOf()),
         StopItem(R.string.shuttlecock_i, listOf(Destination.DORMITORY), listOf()),
     )
-    private val subCardDataList: List<ShuttleSubCardData> = listOf(
-        ShuttleSubCardData(R.string.shuttle_sub_card_subway_title, R.string.shuttle_sub_card_subway_subtitle, R.string.shuttle_sub_card_subway_left_title, R.string.shuttle_sub_card_subway_right_title,
+    private val subCardDataList: List<SubCardData> = listOf(
+        SubCardData(R.string.shuttle_sub_card_subway_title, R.string.shuttle_sub_card_subway_subtitle, R.string.shuttle_sub_card_subway_left_title, R.string.shuttle_sub_card_subway_right_title,
             SubCardItemList(SubwayRealtimeListResponse(listOf(), listOf()), SubwayRealtimeListResponse(listOf(), listOf()))),
-        ShuttleSubCardData(R.string.shuttle_sub_card_suwon_title, R.string.shuttle_sub_card_suwon_subtitle, R.string.shuttle_sub_card_suwon_left_title, R.string.shuttle_sub_card_suwon_right_title,
+        SubCardData(R.string.shuttle_sub_card_suwon_title, R.string.shuttle_sub_card_suwon_subtitle, R.string.shuttle_sub_card_suwon_left_title, R.string.shuttle_sub_card_suwon_right_title,
             SubCardItemList(
                 SubwayRealtimeListResponse(listOf(), listOf()),
                 BusStopRouteItem(0, "", BusRouteStartStopItem(0, "", listOf()), listOf())
             ),
         ),
-        ShuttleSubCardData(R.string.shuttle_sub_card_sangnoksu_title, R.string.shuttle_sub_card_sangnoksu_subtitle, R.string.shuttle_sub_card_sangnoksu_left_title, R.string.shuttle_sub_card_sangnoksu_right_title,
+        SubCardData(R.string.shuttle_sub_card_sangnoksu_title, R.string.shuttle_sub_card_sangnoksu_subtitle, R.string.shuttle_sub_card_sangnoksu_left_title, R.string.shuttle_sub_card_sangnoksu_right_title,
             SubCardItemList(
                 ArrivalListStopItem("", listOf()),
                 BusStopRouteItem(0, "", BusRouteStartStopItem(0, "", listOf()), listOf())
             ),
         ),
-        ShuttleSubCardData(R.string.shuttle_sub_card_gwangmyeong_title, R.string.shuttle_sub_card_gwangmyeong_subtitle, R.string.shuttle_sub_card_gwangmyeong_left_title, R.string.shuttle_sub_card_gwangmyeong_right_title,
+        SubCardData(R.string.shuttle_sub_card_gwangmyeong_title, R.string.shuttle_sub_card_gwangmyeong_subtitle, R.string.shuttle_sub_card_gwangmyeong_left_title, R.string.shuttle_sub_card_gwangmyeong_right_title,
             SubCardItemList(
                 BusStopRouteItem(0, "", BusRouteStartStopItem(0, "", listOf()), listOf()),
                 BusStopRouteItem(0, "", BusRouteStartStopItem(0, "", listOf()), listOf())
             ),
         ),
-        ShuttleSubCardData(-1, -1, -1, -1, SubCardItemList(ArrivalListStopItem("", listOf()), ArrivalListStopItem("", listOf()))),
-        ShuttleSubCardData(-1, -1, -1, -1, SubCardItemList(ArrivalListStopItem("", listOf()), ArrivalListStopItem("", listOf()))),
+        SubCardData(-1, -1, -1, -1, SubCardItemList(ArrivalListStopItem("", listOf()), ArrivalListStopItem("", listOf()))),
+        SubCardData(-1, -1, -1, -1, SubCardItemList(ArrivalListStopItem("", listOf()), ArrivalListStopItem("", listOf()))),
     )
     data class StopItem(val stopID: Int, val routeType: List<Destination>, var arrivalList: List<ArrivalListRouteStopItem>)
     inner class ViewHolder(private val binding: CardShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(index: Int, stopItem: StopItem, subCardData: ShuttleSubCardData) {
+        fun bind(index: Int, stopItem: StopItem, subCardData: SubCardData) {
             val resources = GlobalApplication.getAppResources()
             binding.shuttleRealtimeStopName.text = resources.getString(stopItem.stopID)
             binding.shuttleRealtimeToStationHeaderTimetable.setOnClickListener { onClickTimetableButton(stopItem.stopID, R.string.shuttle_bound_for_station) }
@@ -133,9 +132,9 @@ class ShuttleRealtimeStopCardAdapter(
                                 }
                             }
                         }
-                    val adapterToStation = ShuttleRealtimeItemAdapter(Destination.STATION, arrivalToStation.sortedBy { it.time })
-                    val adapterToTerminal = ShuttleRealtimeItemAdapter(Destination.TERMINAL, arrivalToTerminal.sortedBy { it.time })
-                    val adapterToJungangStn = ShuttleRealtimeItemAdapter(Destination.JUNGANG_STN, arrivalToJungangStn.sortedBy { it.time })
+                    val adapterToStation = RealtimeItemAdapter(Destination.STATION, arrivalToStation.sortedBy { it.time })
+                    val adapterToTerminal = RealtimeItemAdapter(Destination.TERMINAL, arrivalToTerminal.sortedBy { it.time })
+                    val adapterToJungangStn = RealtimeItemAdapter(Destination.JUNGANG_STN, arrivalToJungangStn.sortedBy { it.time })
                     binding.shuttleRealtimeToStationRecyclerView.adapter = adapterToStation
                     binding.shuttleRealtimeToTerminalRecyclerView.adapter = adapterToTerminal
                     binding.shuttleRealtimeToJungangStnRecyclerView.adapter = adapterToJungangStn
@@ -184,9 +183,9 @@ class ShuttleRealtimeStopCardAdapter(
                                 }
                             }
                         }
-                    val adapterToCampus = ShuttleRealtimeItemAdapter(Destination.CAMPUS, arrivalToCampus.sortedBy { it.time })
-                    val adapterToTerminal = ShuttleRealtimeItemAdapter(Destination.TERMINAL, arrivalToTerminal.sortedBy { it.time })
-                    val adapterToJungangStn = ShuttleRealtimeItemAdapter(Destination.JUNGANG_STN, arrivalToJungangStn.sortedBy { it.time })
+                    val adapterToCampus = RealtimeItemAdapter(Destination.CAMPUS, arrivalToCampus.sortedBy { it.time })
+                    val adapterToTerminal = RealtimeItemAdapter(Destination.TERMINAL, arrivalToTerminal.sortedBy { it.time })
+                    val adapterToJungangStn = RealtimeItemAdapter(Destination.JUNGANG_STN, arrivalToJungangStn.sortedBy { it.time })
                     binding.shuttleRealtimeToCampusRecyclerView.adapter = adapterToCampus
                     binding.shuttleRealtimeToTerminalRecyclerView.adapter = adapterToTerminal
                     binding.shuttleRealtimeToJungangStnRecyclerView.adapter = adapterToJungangStn
@@ -222,7 +221,7 @@ class ShuttleRealtimeStopCardAdapter(
                             arrivalToCampus.add(ArrivalItem(it.routeTag, it.routeName, arrivalTime))
                         }
                     }
-                    val adapterToCampus = ShuttleRealtimeItemAdapter(Destination.CAMPUS, arrivalToCampus.sortedBy { it.time }, 11)
+                    val adapterToCampus = RealtimeItemAdapter(Destination.CAMPUS, arrivalToCampus.sortedBy { it.time }, 11)
                     binding.shuttleRealtimeToCampusRecyclerView.adapter = adapterToCampus
                     binding.shuttleRealtimeToCampusRecyclerView.layoutManager = LinearLayoutManager(context)
                     if (arrivalToCampus.size > 0){
@@ -241,7 +240,7 @@ class ShuttleRealtimeStopCardAdapter(
                             arrivalToDormitory.add(ArrivalItem(it.routeTag, it.routeName, arrivalTime))
                         }
                     }
-                    val adapterToDormitory = ShuttleRealtimeItemAdapter(Destination.DORMITORY, arrivalToDormitory.sortedBy { it.time }, 11)
+                    val adapterToDormitory = RealtimeItemAdapter(Destination.DORMITORY, arrivalToDormitory.sortedBy { it.time }, 11)
                     binding.shuttleRealtimeToDormitoryRecyclerView.adapter = adapterToDormitory
                     binding.shuttleRealtimeToDormitoryRecyclerView.layoutManager = LinearLayoutManager(context)
                     if (arrivalToDormitory.size > 0){
@@ -258,8 +257,8 @@ class ShuttleRealtimeStopCardAdapter(
                 binding.shuttleSubCardSubtitle.text = resources.getString(subCardData.subtitle)
                 binding.shuttleSubCardLeftTitle.text = resources.getString(subCardData.leftTitle)
                 binding.shuttleSubCardRightTitle.text = resources.getString(subCardData.rightTitle)
-                val leftAdapter = ShuttleSubCardItemAdapter(index, subCardData.data.left, View.TEXT_ALIGNMENT_VIEW_START)
-                val rightAdapter = ShuttleSubCardItemAdapter(index, subCardData.data.right, View.TEXT_ALIGNMENT_VIEW_END)
+                val leftAdapter = SubCardItemAdapter(index, subCardData.data.left, View.TEXT_ALIGNMENT_VIEW_START)
+                val rightAdapter = SubCardItemAdapter(index, subCardData.data.right, View.TEXT_ALIGNMENT_VIEW_END)
                 if (leftAdapter.itemCount > 0){
                     binding.shuttleSubCardLeftRecyclerView.adapter = leftAdapter
                     binding.shuttleSubCardLeftRecyclerView.layoutManager = LinearLayoutManager(context)

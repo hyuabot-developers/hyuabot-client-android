@@ -68,4 +68,25 @@
     <string name="shuttle_timetable_item">%1$s시 %2$s분</string>
     <string name="shuttle_no_timetable">운행 시간표 없음</string>
     <string name="out_of_service">운행 종료</string>
+    <!-- 노선버스 -->
+    <string name="bus_city">시내버스</string>
+    <string name="bus_seoul">강남역</string>
+    <string name="bus_suwon">수원역</string>
+    <string name="sangnoksu_stn">상록수역</string>
+    <string name="main_gate">한양대정문</string>
+    <string name="convention_center">컨벤션센터</string>
+    <string name="seongan_high_school">한양대입구</string>
+    <string name="bus_route_name">%1$s번 (%2$s)</string>
+    <string name="bus_show_all">전체 시간표</string>
+    <string name="bus_route_name_without_stop">%1$s번</string>
+    <string name="bus_arrival_realtime_with_seat_route">(%1$s번) %2$d분 후 도착(%3$d석)</string>
+    <string name="bus_arrival_realtime_with_seat">%1$d분 후 도착(%2$d석)</string>
+    <string name="bus_arrival_realtime">%1$d분 후 도착</string>
+    <string name="bus_arrival_timetable">%1$s시 %2$s분 출발(회차점 대기)</string>
+    <string name="bus_arrival_no_data">도착 정보 없음</string>
+    <string name="bus_timetable_title">%1$s번 시간표</string>
+    <string name="bus_timetable_item">%1$s시 %2$s분</string>
+    <string name="saturdays">토요일</string>
+    <string name="sundays">일요일</string>
+    <string name="bus_no_timetable">출발 시간표 미제공</string>
 </resources>

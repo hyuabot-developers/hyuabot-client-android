@@ -7,7 +7,7 @@
     android:background="@color/cardBackground"
     >
     <TextView
-        android:id="@+id/no_shuttle_timetable"
+        android:id="@+id/no_bus_timetable"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -15,12 +15,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="@string/shuttle_no_timetable"
+        android:text="@string/bus_no_timetable"
         android:gravity="center"
         android:textAlignment="center"
         android:visibility="gone" />
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/shuttle_timetable_list"
+        android:id="@+id/bus_timetable_list"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

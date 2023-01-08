@@ -17,6 +17,18 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+        binding.bottomNavigationMenu.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener{
+            _, destination, _ ->
+            when(destination.id){
+                R.id.fragment_shuttle_timetable, R.id.fragment_bus_timetable -> {
+                    binding.bottomNavigationMenu.visibility = View.GONE
+                }
+                else -> {
+                    binding.bottomNavigationMenu.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 }

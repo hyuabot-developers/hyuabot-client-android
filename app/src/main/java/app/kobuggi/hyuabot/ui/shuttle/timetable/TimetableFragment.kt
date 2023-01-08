@@ -36,7 +36,7 @@ class TimetableFragment : Fragment() {
             findNavController().navigateUp()
         }
         binding.shuttleTimetableViewpager.adapter = TimetablePagerAdapter(this)
-        if (now.dayOfWeek.value in 2..6) {
+        if (now.dayOfWeek.value in 1..5) {
             binding.shuttleTimetableViewpager.setCurrentItem(0, false)
         } else {
             binding.shuttleTimetableViewpager.setCurrentItem(1, false)

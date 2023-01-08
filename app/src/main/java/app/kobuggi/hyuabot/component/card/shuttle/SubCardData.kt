@@ -1,6 +1,6 @@
 package app.kobuggi.hyuabot.component.card.shuttle
 
-data class ShuttleSubCardData(
+data class SubCardData(
     val title: Int,
     val subtitle: Int,
     val leftTitle: Int,

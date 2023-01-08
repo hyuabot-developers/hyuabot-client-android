@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.service.rest
 
 import app.kobuggi.hyuabot.model.bus.BusStopItem
+import app.kobuggi.hyuabot.model.bus.BusTimetableResponse
 import app.kobuggi.hyuabot.model.shuttle.ArrivalListResponse
 import app.kobuggi.hyuabot.model.shuttle.StopItemResponse
 import app.kobuggi.hyuabot.model.shuttle.TimetableResponse
@@ -30,4 +31,8 @@ interface APIService {
     @Headers("Content-Type: application/json")
     @GET("bus/stop/{stopID}")
     suspend fun busStopItem(@Path("stopID") stopID: Int) : Response<BusStopItem>
+
+    @Headers("Content-Type: application/json")
+    @GET("bus/route/{routeID}/timetable/{stopID}")
+    suspend fun busTimetableItem(@Path("routeID") routeID: Int, @Path("stopID") stopID: Int) : Response<BusTimetableResponse>
 }
