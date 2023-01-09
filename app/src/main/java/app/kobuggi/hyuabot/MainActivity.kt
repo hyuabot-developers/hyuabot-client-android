@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener{
             _, destination, _ ->
             when(destination.id){
-                R.id.fragment_shuttle_timetable, R.id.fragment_bus_timetable -> {
+                R.id.fragment_shuttle_timetable, R.id.fragment_bus_timetable, R.id.fragment_subway_timetable -> {
                     binding.bottomNavigationMenu.visibility = View.GONE
                 }
                 else -> {

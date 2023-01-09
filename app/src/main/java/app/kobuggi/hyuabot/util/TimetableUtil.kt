@@ -7,7 +7,7 @@ class TimetableUtil {
             val hour = time[0].toInt()
             val minute = time[1].toInt()
             return if (hour < 4) {
-                "${hour + 24}:$minute"
+                "${hour + 24}:${minute.toString().padStart(2, '0')}"
             } else {
                 timeItem
             }

@@ -17,7 +17,7 @@ class SwipeLayoutManager : LinearLayoutManager {
         attrs: AttributeSet?
     ): RecyclerView.LayoutParams = scaledLayoutParams(super.generateLayoutParams(c, attrs))
     private fun scaledLayoutParams(params: RecyclerView.LayoutParams): RecyclerView.LayoutParams {
-        val width = (width * 0.8f).toInt()
+        val width = (width * 0.9f).toInt()
         params.width = width
         return params
     }

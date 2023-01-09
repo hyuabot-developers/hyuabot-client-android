@@ -61,7 +61,16 @@
     <fragment
         android:id="@+id/fragment_subway_timetable"
         android:name="app.kobuggi.hyuabot.ui.subway.timetable.TimetableFragment"
-        tools:layout="@layout/fragment_subway_timetable" />
+        tools:layout="@layout/fragment_subway_timetable">
+        <argument
+            android:name="station"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="heading"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
     <fragment
         android:id="@+id/fragment_cafeteria"
         android:name="app.kobuggi.hyuabot.ui.cafeteria.CafeteriaFragment"

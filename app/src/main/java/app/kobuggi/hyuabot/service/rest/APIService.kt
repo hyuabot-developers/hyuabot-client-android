@@ -6,10 +6,12 @@ import app.kobuggi.hyuabot.model.shuttle.ArrivalListResponse
 import app.kobuggi.hyuabot.model.shuttle.StopItemResponse
 import app.kobuggi.hyuabot.model.shuttle.TimetableResponse
 import app.kobuggi.hyuabot.model.subway.SubwayStationResponse
+import app.kobuggi.hyuabot.model.subway.SubwayTimetableResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface APIService {
     @Headers("Content-Type: application/json")
@@ -26,7 +28,11 @@ interface APIService {
 
     @Headers("Content-Type: application/json")
     @GET("subway/station/{stationID}")
-    suspend fun subwayStationItem(@Path("stationID") stationID: String) : Response<SubwayStationResponse>
+    suspend fun subwayStationItem(@Path("stationID") stationID: String, @Query("all") entireTimetable: Boolean = false) : Response<SubwayStationResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("subway/station/{stationID}/timetable")
+    suspend fun subwayStationTimetable(@Path("stationID") stationID: String) : Response<SubwayTimetableResponse>
 
     @Headers("Content-Type: application/json")
     @GET("bus/stop/{stopID}")
