@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp" >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp" >
+            <TextView
+                android:id="@+id/cafeteria_time_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textSize="24sp"
+                android:textColor="@color/primaryTextColor"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cafeteria_restaurant_recycler_view"
+                app:layout_constraintTop_toBottomOf="@id/cafeteria_time_name"
+                app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/cafeteria_no_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cafeteria_no_data"
+                android:visibility="gone"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@id/cafeteria_time_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

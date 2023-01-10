@@ -106,4 +106,9 @@
     <string name="subway_timetable_title">전철 시간표(%1$s)</string>
     <string name="subway_timetable_item">%1$s시 %2$s분</string>
     <string name="subway_no_timetable">운행 시간표 없음</string>
+    <string name="breakfast">조식</string>
+    <string name="lunch">중식</string>
+    <string name="dinner">석식</string>
+    <string name="food_price">%1$s 원</string>
+    <string name="cafeteria_no_data">제공되는 식단이 존재하지 않습니다.</string>
 </resources>
