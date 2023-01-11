@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.shuttle.timetable
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -11,12 +12,13 @@ import app.kobuggi.hyuabot.databinding.ItemShuttleTimetableBinding
 import java.time.LocalTime
 
 class TimetableItemAdapter (
+    private val context: Context,
     private val stopID: Int,
     private var timetable: List<TimetableItem>) : RecyclerView.Adapter<TimetableItemAdapter.ViewHolder>() {
     private var now = LocalTime.now()
     inner class ViewHolder(private val binding: ItemShuttleTimetableBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(timetableItem: TimetableItem) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             if (stopID == R.string.shuttlecock_i) {
                 binding.shuttleTimetableItemRoute.text = resources.getString(R.string.D)
                 binding.shuttleTimetableItemRoute.setTextColor(ResourcesCompat.getColor(resources, R.color.primaryTextColor, null))
@@ -32,7 +34,7 @@ class TimetableItemAdapter (
                     }
                 }
             }
-            binding.shuttleTimetableItemTime.text = GlobalApplication.getAppResources().getString(R.string.shuttle_timetable_item,
+            binding.shuttleTimetableItemTime.text = resources.getString(R.string.shuttle_timetable_item,
                 timetableItem.departureTime.split(":")[0],
                 timetableItem.departureTime.split(":")[1],
             )

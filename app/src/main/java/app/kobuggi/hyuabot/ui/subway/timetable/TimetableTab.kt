@@ -33,7 +33,7 @@ class TimetableTab(private val index: Int) : Fragment() {
                 parentViewModel.weekendsTimetable
             }
         }
-        val adapter = TimetableItemAdapter(listOf())
+        val adapter = TimetableItemAdapter(requireContext(), listOf())
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
         binding.subwayTimetableList.addItemDecoration(decoration)
         binding.subwayTimetableList.adapter = adapter

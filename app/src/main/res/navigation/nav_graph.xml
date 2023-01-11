@@ -88,6 +88,9 @@
         <action
             android:id="@+id/openContactFragment"
             app:destination="@id/fragment_contact" />
+        <action
+            android:id="@+id/openCalendarFragment"
+            app:destination="@id/fragment_calendar" />
     </fragment>
     <fragment
         android:id="@+id/fragment_library"
@@ -101,4 +104,8 @@
         android:id="@+id/fragment_contact"
         android:name="app.kobuggi.hyuabot.ui.contact.ContactFragment"
         tools:layout="@layout/fragment_contact" />
+    <fragment
+        android:id="@+id/fragment_calendar"
+        android:name="app.kobuggi.hyuabot.ui.calendar.CalendarFragment"
+        tools:layout="@layout/fragment_calendar" />
 </navigation>

@@ -27,7 +27,7 @@ class TimetableFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val res = GlobalApplication.getAppResources()
+        val res = resources
         val args = TimetableFragmentArgs.fromBundle(requireArguments())
         val now = LocalDate.now()
         binding.subwayTimetableTitle.title = res.getString(R.string.subway_timetable_title, resources.getString(if(args.heading == "up") R.string.heading_up else R.string.heading_down))

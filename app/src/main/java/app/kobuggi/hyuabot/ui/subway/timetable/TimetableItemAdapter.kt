@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.subway.timetable
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -11,11 +12,11 @@ import app.kobuggi.hyuabot.databinding.ItemSubwayTimetableBinding
 import app.kobuggi.hyuabot.model.subway.SubwayTimetableItemResponse
 import java.time.LocalTime
 
-class TimetableItemAdapter (private var timetable: List<SubwayTimetableItemResponse>) : RecyclerView.Adapter<TimetableItemAdapter.ViewHolder>() {
+class TimetableItemAdapter (private val context: Context, private var timetable: List<SubwayTimetableItemResponse>) : RecyclerView.Adapter<TimetableItemAdapter.ViewHolder>() {
     private var now = LocalTime.now()
     inner class ViewHolder(private val binding: ItemSubwayTimetableBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(timetableItem: SubwayTimetableItemResponse) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.subwayTimetableItemTerminal.text = resources.getString(R.string.subway_realtime_terminal, timetableItem.terminalStation)
             binding.subwayTimetableItemTime.text = resources.getString(R.string.subway_timetable_item, timetableItem.departureTime.split(":")[0], timetableItem.departureTime.split(":")[1])
             if (timetableItem.departureTime.split(":")[0].toInt() < now.hour) {

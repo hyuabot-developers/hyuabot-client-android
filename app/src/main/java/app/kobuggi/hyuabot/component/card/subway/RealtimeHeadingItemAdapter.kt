@@ -19,7 +19,7 @@ class RealtimeHeadingItemAdapter (
     val now: LocalTime = LocalTime.now()
     inner class ViewHolder(private val binding: ItemSubwayHeadingBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(headingItem: Int) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.subwayHeadingName.text = resources.getString(headingItem)
             if (headingItem == R.string.heading_up || headingItem == R.string.heading_down) {
                 binding.subwayTimetableButton.setOnClickListener {
@@ -28,6 +28,7 @@ class RealtimeHeadingItemAdapter (
                 val realtime = if (headingItem == R.string.heading_up) cardItem.realtimeList.up else cardItem.realtimeList.down
                 val timetable = if (headingItem == R.string.heading_up) cardItem.timetableList.up else cardItem.timetableList.down
                 val adapter = RealtimeItemAdapter(
+                    context,
                     realtime,
                     timetable.filter {
                         val hour = it.departureTime.split(":")[0].toInt()
@@ -64,7 +65,7 @@ class RealtimeHeadingItemAdapter (
                         transferList.add(TransferItem(it, R.string.line_suinbundang))
                     }
                 }
-                val adapter = RealtimeItemAdapter(listOf(), listOf(), transferList.sortedBy { it.from.time })
+                val adapter = RealtimeItemAdapter(context, listOf(), listOf(), transferList.sortedBy { it.from.time })
                 if (adapter.itemCount > 0) {
                     binding.subwayArrivalList.adapter = adapter
                     binding.subwayArrivalList.layoutManager = LinearLayoutManager(context)
@@ -92,7 +93,7 @@ class RealtimeHeadingItemAdapter (
                         transferList.add(TransferItem(it, R.string.line_suinbundang))
                     }
                 }
-                val adapter = RealtimeItemAdapter(listOf(), listOf(), transferList.sortedBy { it.from.time })
+                val adapter = RealtimeItemAdapter(context, listOf(), listOf(), transferList.sortedBy { it.from.time })
                 if (adapter.itemCount > 0) {
                     binding.subwayArrivalList.adapter = adapter
                     binding.subwayArrivalList.layoutManager = LinearLayoutManager(context)

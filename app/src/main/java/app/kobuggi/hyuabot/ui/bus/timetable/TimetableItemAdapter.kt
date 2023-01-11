@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.bus.timetable
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -10,12 +11,12 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemBusTimetableBinding
 import java.time.LocalTime
 
-class TimetableItemAdapter (private var timetable: List<String>) : RecyclerView.Adapter<TimetableItemAdapter.ViewHolder>() {
+class TimetableItemAdapter (private val context: Context, private var timetable: List<String>) : RecyclerView.Adapter<TimetableItemAdapter.ViewHolder>() {
     private var now = LocalTime.now()
     inner class ViewHolder(private val binding: ItemBusTimetableBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(timetableItem: String) {
-            val resources = GlobalApplication.getAppResources()
-            binding.busTimetableItemTime.text = GlobalApplication.getAppResources().getString(R.string.bus_timetable_item,
+            val resources = context.resources
+            binding.busTimetableItemTime.text = resources.getString(R.string.bus_timetable_item,
                 timetableItem.split(":")[0],
                 timetableItem.split(":")[1],
             )

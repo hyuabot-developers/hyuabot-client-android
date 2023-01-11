@@ -1,10 +1,10 @@
 package app.kobuggi.hyuabot.component.card.shuttle
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import app.kobuggi.hyuabot.GlobalApplication
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemShuttleSubCardItemBinding
 import app.kobuggi.hyuabot.model.bus.BusRouteRealtimeItem
@@ -15,7 +15,7 @@ import app.kobuggi.hyuabot.model.subway.SubwayRealtimeListResponse
 import java.time.Duration
 import java.time.LocalTime
 
-class SubCardItemAdapter (private val cardIndex: Int, private val subCardItemList: SubCardItem, private val textAlignment: Int, private val count: Int = 3) : RecyclerView.Adapter<SubCardItemAdapter.ViewHolder>() {
+class SubCardItemAdapter (private val context: Context, private val cardIndex: Int, private val subCardItemList: SubCardItem, private val textAlignment: Int, private val count: Int = 3) : RecyclerView.Adapter<SubCardItemAdapter.ViewHolder>() {
     private val shuttleArrivalList = arrayListOf<Int>()
     init {
         if (subCardItemList.javaClass == ArrivalListStopItem::class.java){
@@ -27,13 +27,13 @@ class SubCardItemAdapter (private val cardIndex: Int, private val subCardItemLis
     }
     inner class ViewHolder(private val binding: ItemShuttleSubCardItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindSubwayArrival(subwayRealtimeItem: SubwayRealtimeItemResponse) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.shuttleSubCardItem.textAlignment = textAlignment
             binding.shuttleSubCardItem.text = resources.getString(R.string.shuttle_sub_card_subway_item, subwayRealtimeItem.time, subwayRealtimeItem.terminalStation)
         }
 
         fun bindBusRealtimeArrival(realtimeItem: BusRouteRealtimeItem) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.shuttleSubCardItem.textAlignment = textAlignment
             if (realtimeItem.remainedSeat >= 0){
                 binding.shuttleSubCardItem.text = resources.getString(R.string.shuttle_sub_card_bus_item_seat, realtimeItem.remainedTime, realtimeItem.remainedSeat)
@@ -52,13 +52,13 @@ class SubCardItemAdapter (private val cardIndex: Int, private val subCardItemLis
             }
             val now = LocalTime.now()
             val arrivalTime = LocalTime.parse(timetableItem)
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.shuttleSubCardItem.textAlignment = textAlignment
             binding.shuttleSubCardItem.text = resources.getString(R.string.shuttle_sub_card_bus_item, Duration.between(now, arrivalTime).toMinutes() + timeDelta)
         }
 
         fun bindShuttleArrival(arrivalTime: Int) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.shuttleSubCardItem.textAlignment = textAlignment
             binding.shuttleSubCardItem.text = resources.getString(R.string.shuttle_sub_card_shuttle_item, arrivalTime)
         }

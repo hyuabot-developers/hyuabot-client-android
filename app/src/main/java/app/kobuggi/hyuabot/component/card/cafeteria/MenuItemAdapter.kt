@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.component.card.cafeteria
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,10 +9,10 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemMenuBinding
 import app.kobuggi.hyuabot.model.cafeteria.RestaurantMenuItem
 
-class MenuItemAdapter(private val menuList: List<RestaurantMenuItem>) : RecyclerView.Adapter<MenuItemAdapter.ViewHolder>() {
+class MenuItemAdapter(private val context: Context, private val menuList: List<RestaurantMenuItem>) : RecyclerView.Adapter<MenuItemAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemMenuBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(menuItem: RestaurantMenuItem) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.menuFood.text = menuItem.food
             binding.menuPrice.text = resources.getString(R.string.food_price, menuItem.price)
         }

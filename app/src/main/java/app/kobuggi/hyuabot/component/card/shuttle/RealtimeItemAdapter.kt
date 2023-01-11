@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.component.card.shuttle
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -10,10 +11,10 @@ import app.kobuggi.hyuabot.databinding.ItemShuttleRealtimeBinding
 import app.kobuggi.hyuabot.model.shuttle.ArrivalItem
 import app.kobuggi.hyuabot.model.shuttle.Destination
 
-class RealtimeItemAdapter (private val destination: Destination, private var arrivalItemList: List<ArrivalItem>, private val count: Int = 3) : RecyclerView.Adapter<RealtimeItemAdapter.ViewHolder>() {
+class RealtimeItemAdapter (private val context: Context, private val destination: Destination, private var arrivalItemList: List<ArrivalItem>, private val count: Int = 3) : RecyclerView.Adapter<RealtimeItemAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(arrivalItem: ArrivalItem) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             if (destination == Destination.DORMITORY) {
                 binding.shuttleRealtimeItemRoute.text = resources.getString(R.string.D)
                 binding.shuttleRealtimeItemRoute.setTextColor(ResourcesCompat.getColor(resources, R.color.primaryTextColor, null))
@@ -29,7 +30,7 @@ class RealtimeItemAdapter (private val destination: Destination, private var arr
                     }
                 }
             }
-            binding.shuttleRealtimeItemTime.text = GlobalApplication.getAppResources().getString(R.string.shuttle_arrival_time, arrivalItem.time)
+            binding.shuttleRealtimeItemTime.text = resources.getString(R.string.shuttle_arrival_time, arrivalItem.time)
         }
     }
 

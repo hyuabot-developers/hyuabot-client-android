@@ -27,7 +27,7 @@ class TimetableFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val res = GlobalApplication.getAppResources()
+        val res = resources
         val args = TimetableFragmentArgs.fromBundle(requireArguments())
         val now = LocalDate.now()
         binding.shuttleTimetableTitle.title = res.getString(R.string.shuttle_timetable_title,

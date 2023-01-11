@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.component.card.subway
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import app.kobuggi.hyuabot.model.subway.SubwayRealtimeItemResponse
 import app.kobuggi.hyuabot.model.subway.SubwayTimetableItemResponse
 
 class RealtimeItemAdapter(
+    private val context: Context,
     private val realtimeList: List<SubwayRealtimeItemResponse>,
     private val timetableList: List<SubwayTimetableItemResponse>,
     private val transferList: List<TransferItem>? = null,
@@ -21,13 +23,13 @@ class RealtimeItemAdapter(
 ) : RecyclerView.Adapter<RealtimeItemAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemSubwayRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(realtimeItem: SubwayRealtimeItemResponse) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.subwayRealtimeItemTerminal.text = resources.getString(R.string.subway_realtime_terminal, realtimeItem.terminalStation)
             binding.subwayRealtimeItemTime.text = resources.getString(R.string.subway_realtime_arrival, realtimeItem.time, realtimeItem.location)
         }
 
         fun bind(timetableItem: SubwayTimetableItemResponse) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.subwayRealtimeItemTerminal.text = resources.getString(R.string.subway_realtime_terminal, timetableItem.terminalStation)
             binding.subwayRealtimeItemTime.text = resources.getString(R.string.subway_timetable_arrival, timetableItem.departureTime.split(":")[0], timetableItem.departureTime.split(":")[1])
             binding.subwayRealtimeItemTerminal.setTextColor(ResourcesCompat.getColor(resources, android.R.color.darker_gray, null))
@@ -35,7 +37,7 @@ class RealtimeItemAdapter(
         }
 
         fun bind(transferItem: TransferItem) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.subwayRealtimeItemTerminal.text = resources.getString(R.string.transfer_from, transferItem.from.location, resources.getString(transferItem.fromID))
             if (transferItem.to != null) {
                 binding.subwayRealtimeItemTime.text = resources.getString(R.string.transfer_to, transferItem.to.departureTime.substring(0, 5), resources.getString(transferItem.toID!!))

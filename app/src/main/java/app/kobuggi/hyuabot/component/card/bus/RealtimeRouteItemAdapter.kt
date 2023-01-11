@@ -19,7 +19,7 @@ class RealtimeRouteItemAdapter (
 
     inner class ViewHolder(private val binding: ItemBusRouteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(routeItem: RealtimeRouteItem) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             if (routeItem.stopID > 0) {
                 binding.busRouteName.text = resources.getString(R.string.bus_route_name, routeItem.routeName, resources.getString(routeItem.stopID))
             } else if (routeItem.routeName.isNotEmpty()) {
@@ -27,6 +27,7 @@ class RealtimeRouteItemAdapter (
                 binding.busTimetableButton.visibility = View.INVISIBLE
             }
             val adapter = RealtimeItemAdapter(
+                context,
                 routeItem.stopID == 0,
                 routeItem.realtime,
                 routeItem.timetable,

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HYUABOT</string>
+    <string name="app_name">휴아봇</string>
     <string name="shuttle">셔틀버스</string>
     <string name="bus">노선버스</string>
     <string name="subway">전철</string>
@@ -111,4 +111,26 @@
     <string name="dinner">석식</string>
     <string name="food_price">%1$s 원</string>
     <string name="cafeteria_no_data">제공되는 식단이 존재하지 않습니다.</string>
+    <string name="reading_room">열람실</string>
+    <string name="map">캠퍼스 지도</string>
+    <string name="contact">캠퍼스 전화부</string>
+    <string name="calendar">학사력</string>
+    <string name="language">언어 설정</string>
+    <string name="app_theme">테마 설정</string>
+    <string name="donation">기부하기</string>
+    <string name="no_internet_app">인터넷 앱이 없어요.</string>
+    <string name="scoring">별점 주기</string>
+    <string name="developer_email">개발자 연락처(이메일)</string>
+    <string name="no_email_app">이메일 앱이 없어요.</string>
+    <string name="developer_chat">개발자 연락처(카카오톡)</string>
+    <string name="about">앱 정보</string>
+    <string name="developer_name">이름: 이정인</string>
+    <string name="developer_belong">학과: 소프트웨어학부 17</string>
+    <string name="app_theme_system">시스템 테마</string>
+    <string name="app_theme_light">주간 모드</string>
+    <string name="app_theme_dark">야간 모드</string>
+    <string name="language_korean">한국어</string>
+    <string name="language_english">English</string>
+    <string name="more_function">추가 기능</string>
+    <string name="setting">앱 설정</string>
 </resources>

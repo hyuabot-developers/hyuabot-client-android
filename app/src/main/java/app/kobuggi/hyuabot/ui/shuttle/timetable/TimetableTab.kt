@@ -25,7 +25,7 @@ class TimetableTab(private val index: Int) : Fragment() {
     ): View {
         val timetable = if (index == 0) parentViewModel.weekdaysTimetable else parentViewModel.weekendsTimetable
         val stopID = parentViewModel.stopID.value?: 0
-        val adapter = TimetableItemAdapter(stopID, listOf())
+        val adapter = TimetableItemAdapter(requireContext(), stopID, listOf())
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
         binding.shuttleTimetableList.addItemDecoration(decoration)
         binding.shuttleTimetableList.adapter = adapter

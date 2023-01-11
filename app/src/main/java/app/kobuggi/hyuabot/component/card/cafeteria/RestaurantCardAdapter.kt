@@ -22,7 +22,7 @@ class RestaurantCardAdapter (private val context: Context) : RecyclerView.Adapte
     )
     inner class ViewHolder(private val binding: CardCafeteriaBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cardItem: CardItem) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.cafeteriaTimeName.text = resources.getString(cardItem.timetypeID)
             if (cardItem.restaurantList.filter { it.menu.isNotEmpty() }.isNotEmpty()) {
                 binding.cafeteriaRestaurantRecyclerView.adapter = RestaurantItemAdapter(context, cardItem.restaurantList.filter { it.menu.isNotEmpty() })

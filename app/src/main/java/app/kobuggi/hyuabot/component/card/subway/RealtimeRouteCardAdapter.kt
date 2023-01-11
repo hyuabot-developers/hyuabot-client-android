@@ -24,7 +24,7 @@ class RealtimeRouteCardAdapter (
     )
     inner class ViewHolder(private val binding: CardSubwayRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(index: Int, cardItem: CardItem) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.subwayRouteName.text = resources.getString(cardItem.title)
             binding.addBookmarkButton.setOnClickListener {
                 onClickBookmark(adapterPosition)

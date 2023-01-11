@@ -29,7 +29,7 @@ class TimetableFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val res = GlobalApplication.getAppResources()
+        val res = resources
         val args = TimetableFragmentArgs.fromBundle(requireArguments())
         val now = LocalDate.now()
         binding.busTimetableTitle.title = res.getString(R.string.bus_timetable_title, args.routeName)

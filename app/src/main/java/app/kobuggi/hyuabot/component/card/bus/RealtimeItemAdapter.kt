@@ -1,14 +1,15 @@
 package app.kobuggi.hyuabot.component.card.bus
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import app.kobuggi.hyuabot.GlobalApplication
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemBusRealtimeBinding
 import app.kobuggi.hyuabot.ui.bus.realtime.RealtimeItem
 
 class RealtimeItemAdapter(
+    private val context: Context,
     private val showRouteName: Boolean,
     private val realtimeList: List<RealtimeItem>,
     private val timetableList: List<String>,
@@ -16,7 +17,7 @@ class RealtimeItemAdapter(
 ) : RecyclerView.Adapter<RealtimeItemAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemBusRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(realtimeItem: RealtimeItem) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             if (showRouteName) {
                 binding.busRealtimeItem.text = resources.getString(R.string.bus_arrival_realtime_with_seat_route,
                     realtimeItem.routeName, realtimeItem.remainedTime, realtimeItem.remainedSeat)
@@ -29,7 +30,7 @@ class RealtimeItemAdapter(
         }
 
         fun bind(timetableItem: String) {
-            val resources = GlobalApplication.getAppResources()
+            val resources = context.resources
             binding.busRealtimeItem.text = resources.getString(R.string.bus_arrival_timetable,
                 timetableItem.split(":")[0], timetableItem.split(":")[1])
         }

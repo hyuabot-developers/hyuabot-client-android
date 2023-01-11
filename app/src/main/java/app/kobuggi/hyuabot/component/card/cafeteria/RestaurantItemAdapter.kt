@@ -21,7 +21,7 @@ class RestaurantItemAdapter (private val context: Context, private val restauran
         fun bind(restaurantItem: RestaurantItemResponse) {
             val decoration = DividerItemDecoration(context, VERTICAL)
             binding.restaurantName.text = restaurantItem.name
-            binding.restaurantMenu.adapter = MenuItemAdapter(restaurantItem.menu[0].menu)
+            binding.restaurantMenu.adapter = MenuItemAdapter(context, restaurantItem.menu[0].menu)
             binding.restaurantMenu.layoutManager = LinearLayoutManager(context)
             if (restaurantItem.menu[0].menu.size > 1){
                 binding.restaurantMenu.addItemDecoration(decoration)
