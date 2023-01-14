@@ -166,4 +166,11 @@
     <string name="error_report">Error report</string>
     <string name="in_school">In school</string>
     <string name="out_school">Out of school</string>
+    <string name="no_search_result">No search result</string>
+    <string name="contact_message">Click item to call,\nand long click item to see whole name.</string>
+    <string name="call_dialog_title">Call</string>
+    <string name="call_dialog_message">Try to call %1$s(%2$s).</string>
+    <string name="call_dialog_positive">Call</string>
+    <string name="call_dialog_negative">Cancel</string>
+    <string name="no_dial_app">There is no app to call.</string>
 </resources>

@@ -167,4 +167,10 @@
     <string name="in_school">교내</string>
     <string name="out_school">교외</string>
     <string name="no_search_result">검색 결과가 없습니다.</string>
+    <string name="contact_message">각 항목을 누르면 전화걸기로,\n길게 누르면 전체 이름을 볼 수 있어요.</string>
+    <string name="call_dialog_title">전화걸기</string>
+    <string name="call_dialog_message">%1$s(%2$s)로 전화를 걸고 있습니다.</string>
+    <string name="call_dialog_positive">전화걸기</string>
+    <string name="call_dialog_negative">취소</string>
+    <string name="no_dial_app">전화를 걸 수 있는 앱이 없습니다.</string>
 </resources>
