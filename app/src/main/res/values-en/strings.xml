@@ -148,4 +148,22 @@
     <string name="schedule_item_end_time_without_minute">~ %1$d/%2$d/%3$d %4$d:00</string>
     <string name="target_grade">Grade</string>
     <string name="no_search_schedule">No schedule is found</string>
+    <string name="on_campus">On campus</string>
+    <string name="fast_food">Fast food</string>
+    <string name="food_korean">Korean</string>
+    <string name="cafe">Cafe</string>
+    <string name="food_vietnamese">Vietnamese</string>
+    <string name="food_chinese">Chinese</string>
+    <string name="chicken">Chicken</string>
+    <string name="bakery">Bakery</string>
+    <string name="food_western">Western food</string>
+    <string name="other_food">Others</string>
+    <string name="food_japanese">Japanese</string>
+    <string name="pizza">Pizza</string>
+    <string name="pub">Pub</string>
+    <string name="meat">Meat</string>
+    <string name="building">Building</string>
+    <string name="error_report">Error report</string>
+    <string name="in_school">In school</string>
+    <string name="out_school">Out of school</string>
 </resources>
