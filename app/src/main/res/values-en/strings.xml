@@ -133,4 +133,19 @@
     <string name="language_english">English</string>
     <string name="more_function">More Functions</string>
     <string name="setting">Settings</string>
+    <string name="schedule_date">%1$d/%2$d</string>
+    <string name="start_date">%1$d/%2$d %3$d:%4$d ~</string>
+    <string name="end_date">%1$d/%2$d %3$d:%4$d</string>
+    <string name="start_date_without_minute">%1$d/%2$d일 %3$d:00 ~</string>
+    <string name="end_date_without_minute">%1$d/%2$d일 %3$d:00</string>
+    <string name="month_header">%1$d.%2$d</string>
+    <string name="target_grade_1">Freshman</string>
+    <string name="target_grade_2">Sophomore</string>
+    <string name="target_grade_3">Junior</string>
+    <string name="target_grade_4">Senior ~</string>
+    <string name="target_grade_all">Grade</string>
+    <string name="schedule_item_end_time">~ %1$d/%2$d/%3$d %4$d:%5$d</string>
+    <string name="schedule_item_end_time_without_minute">~ %1$d/%2$d/%3$d %4$d:00</string>
+    <string name="target_grade">Grade</string>
+    <string name="no_search_schedule">No schedule is found</string>
 </resources>

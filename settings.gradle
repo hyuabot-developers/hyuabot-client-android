@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "HYUABOT"
 include ':app'
 include ':watch'
+include ':fast_follow_pack'

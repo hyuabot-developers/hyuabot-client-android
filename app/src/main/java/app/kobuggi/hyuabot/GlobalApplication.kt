@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot
 
 import android.app.Application
+import android.content.Context
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
@@ -20,6 +21,10 @@ class GlobalApplication : Application() {
     private val themePrefKey = stringPreferencesKey("theme")
     @Inject
     lateinit var dataStore: DataStore<Preferences>
+
+    init {
+        instance = this
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -43,6 +48,15 @@ class GlobalApplication : Application() {
         val localeCode = getSharedPreferences("hyuabot", 0).getString("locale", "")
         if (localeCode != "" && localeCode != null) {
             LocaleHelper.setLocale(localeCode)
+        }
+    }
+
+    companion object {
+        lateinit var instance: GlobalApplication
+            private set
+
+        fun getApplicationContext(): Context {
+            return instance.applicationContext
         }
     }
 }
