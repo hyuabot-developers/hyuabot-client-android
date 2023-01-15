@@ -21,14 +21,14 @@ android {
         applicationId "app.kobuggi.hyuabot"
         minSdk 28
         targetSdk 33
-        versionCode 331000001
+        versionCode 331000101
         versionName "Wear 1.0"
         signingConfig signingConfigs.defaultKey
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "API_URL", properties["RELEASE_API_URL"]
             ndk {

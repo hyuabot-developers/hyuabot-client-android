@@ -27,7 +27,7 @@ android {
         applicationId "app.kobuggi.hyuabot"
         minSdk 26
         targetSdk 33
-        versionCode 333000000
+        versionCode 333000100
         versionName "3.0"
         buildConfigField "String", "ADMOB_ID", properties["ADMOB_APP_ID"]
         buildConfigField "String", "ADMOB_NATIVE_ID", properties["ADMOB_NATIVE_ID"]
@@ -42,7 +42,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "API_URL", properties["RELEASE_API_URL"]
             ndk {
