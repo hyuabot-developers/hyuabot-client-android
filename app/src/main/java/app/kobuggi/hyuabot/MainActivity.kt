@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -132,7 +133,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
                 // FCM SDK (and your app) can post notifications.
             } else {
                 // Directly ask for the permission
-                requestPermissionLauncher.launch(POST_NOTIFICATIONS)
+                Toast.makeText(this, "알림 권한을 허용해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
     }

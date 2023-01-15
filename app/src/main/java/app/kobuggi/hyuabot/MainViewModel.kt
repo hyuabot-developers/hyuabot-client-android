@@ -19,16 +19,20 @@ class MainViewModel @Inject constructor(private val appDatabaseRepository: AppDa
             .build()
         val dao = database.databaseDao()
         viewModelScope.launch {
-            appDatabaseRepository.getAll().collect{
-                if (it.isEmpty()){
-                    initializeAppDatabase(dao)
+            appDatabaseRepository.getAll().collect{ data ->
+                dao.getAll().collect{ asset ->
+                    if (data.isEmpty() || data != asset){
+                        initializeAppDatabase(dao)
+                    }
                 }
             }
         }
         viewModelScope.launch {
             appDatabaseRepository.getAllEvents().collect{
-                if (it.isEmpty()){
-                    initializeCalendarDatabase(dao)
+                dao.getAllEvents().collect{ asset ->
+                    if (it.isEmpty() || it != asset){
+                        initializeCalendarDatabase(dao)
+                    }
                 }
             }
         }
