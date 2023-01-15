@@ -8,9 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.GlobalApplication
+import app.kobuggi.hyuabot.MainActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentShuttleTimetableBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 
@@ -54,5 +56,15 @@ class TimetableFragment : Fragment() {
             binding.shuttleTimetableProgress.visibility = if (it) View.VISIBLE else View.GONE
         }
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activity is MainActivity) {
+            (activity as MainActivity).getAnalytics().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, Bundle().apply {
+                putString(FirebaseAnalytics.Param.SCREEN_NAME, "셔틀 시간표 목록")
+                putString(FirebaseAnalytics.Param.SCREEN_CLASS, "ShuttleTimetableFragment")
+            })
+        }
     }
 }

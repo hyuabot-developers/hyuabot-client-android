@@ -13,9 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
+import app.kobuggi.hyuabot.MainActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentCalendarBinding
 import app.kobuggi.hyuabot.service.database.CalendarDatabaseItem
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
@@ -141,5 +143,11 @@ class CalendarFragment : Fragment(), DialogInterface.OnDismissListener {
     override fun onResume() {
         super.onResume()
         vm.showDaySchedule.value = false
+        if (activity is MainActivity) {
+            (activity as MainActivity).getAnalytics().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, Bundle().apply {
+                putString(FirebaseAnalytics.Param.SCREEN_NAME, "학사력 목록")
+                putString(FirebaseAnalytics.Param.SCREEN_CLASS, "CalendarFragment")
+            })
+        }
     }
 }

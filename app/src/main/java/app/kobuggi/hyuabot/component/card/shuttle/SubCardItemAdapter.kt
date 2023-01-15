@@ -83,10 +83,14 @@ class SubCardItemAdapter (private val context: Context, private val cardIndex: I
             }
         } else if (subCardItemList.javaClass == BusStopRouteItem::class.java) {
             val subCardItemList = subCardItemList as BusStopRouteItem
-            if (position < subCardItemList.realtime.size) {
-                holder.bindBusRealtimeArrival(subCardItemList.realtime[position])
+            if (cardIndex == 3 && textAlignment == View.TEXT_ALIGNMENT_VIEW_END) {
+                if (position < subCardItemList.realtime.size) {
+                    holder.bindBusRealtimeArrival(subCardItemList.realtime[position])
+                } else {
+                    holder.bindBusTimetableArrival(subCardItemList.startStop.timetable[position - subCardItemList.realtime.size])
+                }
             } else {
-                holder.bindBusTimetableArrival(subCardItemList.startStop.timetable[position - subCardItemList.realtime.size])
+                holder.bindBusTimetableArrival(subCardItemList.startStop.timetable[position])
             }
         } else if (subCardItemList.javaClass == ArrivalListStopItem::class.java) {
             holder.bindShuttleArrival(shuttleArrivalList[position])
@@ -107,7 +111,11 @@ class SubCardItemAdapter (private val context: Context, private val cardIndex: I
             }
         } else if (subCardItemList.javaClass == BusStopRouteItem::class.java) {
             val subCardItemList = subCardItemList as BusStopRouteItem
-            if (subCardItemList.realtime.size + subCardItemList.startStop.timetable.size > count) count else subCardItemList.realtime.size + subCardItemList.startStop.timetable.size
+            if (cardIndex == 3 && textAlignment == View.TEXT_ALIGNMENT_VIEW_END) {
+                if (subCardItemList.realtime.size + subCardItemList.startStop.timetable.size > count) count else subCardItemList.realtime.size + subCardItemList.startStop.timetable.size
+            } else {
+                if (subCardItemList.startStop.timetable.size > count) count else subCardItemList.startStop.timetable.size
+            }
         } else if (subCardItemList.javaClass == ArrivalListStopItem::class.java) {
             if (shuttleArrivalList.size > count) count else shuttleArrivalList.size
         } else {

@@ -199,4 +199,16 @@
     <string name="holmz_room_seoul">HOLMZ 열람석</string>
     <string name="room_name_4_3f">제4열람실[3층]</string>
     <string name="law_room_graduated_2f">법학 대학원열람실[2층]</string>
+    <string name="incheon">인천</string>
+    <string name="oido">오이도</string>
+    <string name="cheongnyeongli">청량리</string>
+    <string name="wangsimni">왕십리</string>
+    <string name="jukjeon">죽전</string>
+    <string name="gosaek">고색</string>
+    <string name="ansan">안산</string>
+    <string name="danggogae">당고개</string>
+    <string name="nowon">노원</string>
+    <string name="hansung_univ">한성대입구</string>
+    <string name="sadang">사당</string>
+    <string name="geumjeong">금정</string>
 </resources>

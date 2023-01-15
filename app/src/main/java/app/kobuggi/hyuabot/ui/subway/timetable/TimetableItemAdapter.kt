@@ -10,6 +10,7 @@ import app.kobuggi.hyuabot.GlobalApplication
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemSubwayTimetableBinding
 import app.kobuggi.hyuabot.model.subway.SubwayTimetableItemResponse
+import app.kobuggi.hyuabot.util.Subway
 import java.time.LocalTime
 
 class TimetableItemAdapter (private val context: Context, private var timetable: List<SubwayTimetableItemResponse>) : RecyclerView.Adapter<TimetableItemAdapter.ViewHolder>() {
@@ -17,7 +18,7 @@ class TimetableItemAdapter (private val context: Context, private var timetable:
     inner class ViewHolder(private val binding: ItemSubwayTimetableBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(timetableItem: SubwayTimetableItemResponse) {
             val resources = context.resources
-            binding.subwayTimetableItemTerminal.text = resources.getString(R.string.subway_realtime_terminal, timetableItem.terminalStation)
+            binding.subwayTimetableItemTerminal.text = resources.getString(R.string.subway_realtime_terminal, Subway.getSubwayStationName(context, timetableItem.terminalStation))
             binding.subwayTimetableItemTime.text = resources.getString(R.string.subway_timetable_item, timetableItem.departureTime.split(":")[0], timetableItem.departureTime.split(":")[1])
             if (timetableItem.departureTime.split(":")[0].toInt() < now.hour) {
                 binding.subwayTimetableItemTime.setTextColor(ResourcesCompat.getColor(resources, android.R.color.darker_gray, null))

@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import app.kobuggi.hyuabot.MainActivity
 import app.kobuggi.hyuabot.component.card.cafeteria.RestaurantCardAdapter
 import app.kobuggi.hyuabot.databinding.FragmentCafeteriaBinding
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -58,5 +60,15 @@ class CafeteriaFragment : Fragment() {
         binding.cafeteriaRecyclerView.adapter = adapter
         binding.cafeteriaRecyclerView.itemAnimator = null
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activity is MainActivity) {
+            (activity as MainActivity).getAnalytics().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, Bundle().apply {
+                putString(FirebaseAnalytics.Param.SCREEN_NAME, "학식 정보")
+                putString(FirebaseAnalytics.Param.SCREEN_CLASS, "CafeteriaFragment")
+            })
+        }
     }
 }

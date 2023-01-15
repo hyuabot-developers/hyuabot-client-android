@@ -198,4 +198,16 @@
     <string name="holmz_room_seoul">HOLMZ Room</string>
     <string name="room_name_4_3f">4th reading room at 3F</string>
     <string name="law_room_graduated_2f">Law graduated reading room A at 2F</string>
+    <string name="incheon">Incheon</string>
+    <string name="oido">Oido</string>
+    <string name="cheongnyeongli">Cheongnyangni</string>
+    <string name="wangsimni">Wangsimni</string>
+    <string name="jukjeon">Jukjeon</string>
+    <string name="gosaek">Gosaek</string>
+    <string name="ansan">Ansan</string>
+    <string name="danggogae">Danggogae</string>
+    <string name="nowon">Nowon</string>
+    <string name="hansung_univ">Hansung Univ.</string>
+    <string name="sadang">Sadang</string>
+    <string name="geumjeong">Geumjeong</string>
 </resources>

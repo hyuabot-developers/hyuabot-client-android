@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.kobuggi.hyuabot.MainActivity
 import app.kobuggi.hyuabot.databinding.FragmentLibraryBinding
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -51,6 +53,12 @@ class LibraryFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         vm.start()
+        if (activity is MainActivity) {
+            (activity as MainActivity).getAnalytics().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, Bundle().apply {
+                putString(FirebaseAnalytics.Param.SCREEN_NAME, "열람실 실시간 정보")
+                putString(FirebaseAnalytics.Param.SCREEN_CLASS, "ReadingRoomFragment")
+            })
+        }
     }
 
     override fun onPause() {

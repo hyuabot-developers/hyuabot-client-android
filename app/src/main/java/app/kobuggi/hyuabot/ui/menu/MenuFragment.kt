@@ -20,6 +20,7 @@ import app.kobuggi.hyuabot.ui.menu.campus.CampusDialog
 import app.kobuggi.hyuabot.ui.menu.info.AppInfoDialog
 import app.kobuggi.hyuabot.ui.menu.language.AppLanguageDialog
 import app.kobuggi.hyuabot.ui.menu.theme.AppThemeDialog
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -145,6 +146,16 @@ class MenuFragment : Fragment(), DialogInterface.OnDismissListener{
             }
         }
         return binding.root
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        if (activity is MainActivity) {
+            (activity as MainActivity).getAnalytics().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, Bundle().apply {
+                putString(FirebaseAnalytics.Param.SCREEN_NAME, "메뉴")
+                putString(FirebaseAnalytics.Param.SCREEN_CLASS, "MenuFragment")
+            })
+        }
     }
 
     override fun onPause() {

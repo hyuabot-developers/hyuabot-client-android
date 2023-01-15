@@ -20,6 +20,8 @@ import app.kobuggi.hyuabot.util.LocaleHelper
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory
 import com.google.android.play.core.assetpacks.AssetPackStateUpdateListener
 import com.google.android.play.core.assetpacks.model.AssetPackStatus
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<MainViewModel>()
     private val assetPackManager by lazy { AssetPackManagerFactory.getInstance(GlobalApplication.instance) }
+    private val firebaseAnalytics by lazy { Firebase.analytics }
     private val fastFollowAssetPack = "fast_follow_pack"
     private val navController by lazy {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -134,4 +137,5 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         }
     }
 
+    fun getAnalytics() = firebaseAnalytics
 }

@@ -8,8 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import app.kobuggi.hyuabot.MainActivity
 import app.kobuggi.hyuabot.component.card.shuttle.RealtimeStopCardAdapter
+import app.kobuggi.hyuabot.component.card.shuttle.SubCardAdapter
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,29 +38,29 @@ class RealtimeFragment : Fragment(), DialogInterface.OnDismissListener {
             { index -> viewModel.openShuttleStopInformation(index) },
             { stop, destination -> viewModel.openTimetable(stop, destination) }
         )
+        val shuttleSubCardAdapter = SubCardAdapter(requireContext())
         binding.shuttleRealtimeRecyclerView.adapter = shuttleRealtimeStopCardAdapter
         binding.shuttleRealtimeRecyclerView.itemAnimator = null
-        binding.refreshLayout.setOnRefreshListener {
-            viewModel.fetchData()
-            binding.refreshLayout.isRefreshing = false
-        }
+        binding.shuttleSubCardRecyclerView.adapter = shuttleSubCardAdapter
+        binding.shuttleSubCardRecyclerView.itemAnimator = null
         viewModel.shuttleArrivalList.observe(viewLifecycleOwner) {
             shuttleRealtimeStopCardAdapter.updateStopList(it)
+            shuttleSubCardAdapter.updateStopList(it)
         }
         viewModel.k251ArrivalList.observe(viewLifecycleOwner) {
-            shuttleRealtimeStopCardAdapter.updateSubwayArrival(it.realtime)
+            shuttleSubCardAdapter.updateSubwayArrival(it.realtime)
         }
         viewModel.suwonArrivalList.observe(viewLifecycleOwner) {
-            shuttleRealtimeStopCardAdapter.updateBusArrivalToSuwon(it)
+            shuttleSubCardAdapter.updateBusArrivalToSuwon(it)
         }
         viewModel.sangnoksuArrivalList.observe(viewLifecycleOwner) {
-            shuttleRealtimeStopCardAdapter.updateBusArrivalFromSangnoksu(it)
+            shuttleSubCardAdapter.updateBusArrivalFromSangnoksu(it)
         }
         viewModel.fromGwangmyeongArrivalList.observe(viewLifecycleOwner) {
-            shuttleRealtimeStopCardAdapter.updateBusArrivalFromGwangmyeong(it)
+            shuttleSubCardAdapter.updateBusArrivalFromGwangmyeong(it)
         }
         viewModel.toGwangmyeongArrivalList.observe(viewLifecycleOwner) {
-            shuttleRealtimeStopCardAdapter.updateBusArrivalToGwangmyeong(it)
+            shuttleSubCardAdapter.updateBusArrivalToGwangmyeong(it)
         }
         viewModel.bookmarkIndex.observe(viewLifecycleOwner) {
             if (it >= 0) {
@@ -98,6 +101,12 @@ class RealtimeFragment : Fragment(), DialogInterface.OnDismissListener {
         viewModel.start()
         viewModel.openTimetable(-1, -1)
         viewModel.openShuttleStopInformation(-1)
+        if (activity is MainActivity) {
+            (activity as MainActivity).getAnalytics().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, Bundle().apply {
+                putString(FirebaseAnalytics.Param.SCREEN_NAME, "셔틀 실시간 도착 정보")
+                putString(FirebaseAnalytics.Param.SCREEN_CLASS, "ShuttleRealtimeFragment")
+            })
+        }
     }
 
     override fun onDismiss(dialog: DialogInterface?) {

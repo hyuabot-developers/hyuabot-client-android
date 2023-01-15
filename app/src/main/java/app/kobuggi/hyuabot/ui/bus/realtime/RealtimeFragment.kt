@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import app.kobuggi.hyuabot.MainActivity
 import app.kobuggi.hyuabot.component.card.bus.RealtimeRouteCardAdapter
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeBinding
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -66,5 +68,21 @@ class RealtimeFragment : Fragment() {
             binding.refreshLayout.isRefreshing = false
         }
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.start()
+        if (activity is MainActivity) {
+            (activity as MainActivity).getAnalytics().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, Bundle().apply {
+                putString(FirebaseAnalytics.Param.SCREEN_NAME, "버스 실시간 도착 정보")
+                putString(FirebaseAnalytics.Param.SCREEN_CLASS, "BusRealtimeFragment")
+            })
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.stop()
     }
 }

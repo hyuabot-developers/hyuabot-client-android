@@ -27,7 +27,7 @@ class RealtimeRouteCardAdapter (
             val resources = context.resources
             binding.subwayRouteName.text = resources.getString(cardItem.title)
             binding.addBookmarkButton.setOnClickListener {
-                onClickBookmark(adapterPosition)
+                onClickBookmark(bindingAdapterPosition)
             }
             if (index == bookmarkIndex) {
                 binding.addBookmarkButton.setImageResource(R.drawable.ic_bookmark_checked)

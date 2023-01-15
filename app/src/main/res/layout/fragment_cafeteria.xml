@@ -22,7 +22,8 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:src="@drawable/ic_previous"
-            android:background="@null"/>
+            android:background="@null"
+            app:tint="@color/primaryTextColor" />
         <TextView
             android:id="@+id/current_date_text"
             android:layout_width="0dp"
@@ -37,7 +38,8 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:src="@drawable/ic_next"
-            android:background="@null" />
+            android:background="@null"
+            app:tint="@color/primaryTextColor" />
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cafeteria_recycler_view"

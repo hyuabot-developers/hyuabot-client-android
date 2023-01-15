@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.kobuggi.hyuabot.MainActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMapBinding
 import app.kobuggi.hyuabot.service.database.AppDatabaseItem
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.maps.android.clustering.ClusterManager
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -202,6 +204,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 binding.searchInput.onActionViewCollapsed()
                 vm.setSearchInputFocus(false)
             }
+        }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        if (activity is MainActivity) {
+            (activity as MainActivity).getAnalytics().logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, Bundle().apply {
+                putString(FirebaseAnalytics.Param.SCREEN_NAME, "캠퍼스 주변 정보")
+                putString(FirebaseAnalytics.Param.SCREEN_CLASS, "Campus Map Fragment")
+            })
         }
     }
 }

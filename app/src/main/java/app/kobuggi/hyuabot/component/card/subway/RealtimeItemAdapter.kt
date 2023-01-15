@@ -13,6 +13,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemSubwayRealtimeBinding
 import app.kobuggi.hyuabot.model.subway.SubwayRealtimeItemResponse
 import app.kobuggi.hyuabot.model.subway.SubwayTimetableItemResponse
+import app.kobuggi.hyuabot.util.Subway
 
 class RealtimeItemAdapter(
     private val context: Context,
@@ -24,13 +25,13 @@ class RealtimeItemAdapter(
     inner class ViewHolder(private val binding: ItemSubwayRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(realtimeItem: SubwayRealtimeItemResponse) {
             val resources = context.resources
-            binding.subwayRealtimeItemTerminal.text = resources.getString(R.string.subway_realtime_terminal, realtimeItem.terminalStation)
+            binding.subwayRealtimeItemTerminal.text = resources.getString(R.string.subway_realtime_terminal, Subway.getSubwayStationName(context, realtimeItem.terminalStation))
             binding.subwayRealtimeItemTime.text = resources.getString(R.string.subway_realtime_arrival, realtimeItem.time, realtimeItem.location)
         }
 
         fun bind(timetableItem: SubwayTimetableItemResponse) {
             val resources = context.resources
-            binding.subwayRealtimeItemTerminal.text = resources.getString(R.string.subway_realtime_terminal, timetableItem.terminalStation)
+            binding.subwayRealtimeItemTerminal.text = resources.getString(R.string.subway_realtime_terminal, Subway.getSubwayStationName(context, timetableItem.terminalStation))
             binding.subwayRealtimeItemTime.text = resources.getString(R.string.subway_timetable_arrival, timetableItem.departureTime.split(":")[0], timetableItem.departureTime.split(":")[1])
             binding.subwayRealtimeItemTerminal.setTextColor(ResourcesCompat.getColor(resources, android.R.color.darker_gray, null))
             binding.subwayRealtimeItemTime.setTextColor(ResourcesCompat.getColor(resources, android.R.color.darker_gray, null))
