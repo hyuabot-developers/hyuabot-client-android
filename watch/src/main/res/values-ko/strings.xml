@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">휴아봇</string>
+    <string name="dormitory_o">기숙사</string>
+    <string name="shuttlecock_o">셔틀콕</string>
+    <string name="station">한대앞</string>
+    <string name="terminal">예술인</string>
+    <string name="jungang_stn">중앙역</string>
+    <string name="shuttlecock_i">셔틀콕 건너편</string>
+    <string name="bound_station">한대앞 행</string>
+    <string name="bound_terminal">예술인 행</string>
+    <string name="bound_jungang">중앙역 행</string>
+    <string name="bound_campus">캠퍼스 행</string>
+    <string name="bound_dormitory">기숙사 행</string>
+    <string name="remaining_time">%1$d 분</string>
+    <string name="network_error">서버에 오류가 발생했습니다.</string>
+    <string name="out_of_service">정보 없음</string>
+    <string name="refresh">새로고침</string>
+</resources>
