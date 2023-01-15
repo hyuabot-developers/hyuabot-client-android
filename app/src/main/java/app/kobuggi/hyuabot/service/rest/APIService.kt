@@ -3,6 +3,7 @@ package app.kobuggi.hyuabot.service.rest
 import app.kobuggi.hyuabot.model.bus.BusStopItem
 import app.kobuggi.hyuabot.model.bus.BusTimetableResponse
 import app.kobuggi.hyuabot.model.cafeteria.RestaurantListResponse
+import app.kobuggi.hyuabot.model.library.ReadingRoomListResponse
 import app.kobuggi.hyuabot.model.shuttle.ArrivalListResponse
 import app.kobuggi.hyuabot.model.shuttle.StopItemResponse
 import app.kobuggi.hyuabot.model.shuttle.TimetableResponse
@@ -46,4 +47,8 @@ interface APIService {
     @Headers("Content-Type: application/json")
     @GET("cafeteria/campus/{campusID}/restaurant")
     suspend fun cafeteriaItem(@Path("campusID") campusID: Int, @Query("date") date: String, @Query("time") timeType: String) : Response<RestaurantListResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("library/campus/{campusID}")
+    suspend fun readingRoomList(@Path("campusID") campusID: Int) : Response<ReadingRoomListResponse>
 }

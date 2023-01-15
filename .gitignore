@@ -19,3 +19,5 @@ local.properties
 app/release/
 
 fast_follow_pack/build/intermediates/asset_pack_manifest/
+
+app/google-services.json

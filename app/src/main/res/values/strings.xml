@@ -173,4 +173,30 @@
     <string name="call_dialog_positive">전화걸기</string>
     <string name="call_dialog_negative">취소</string>
     <string name="no_dial_app">전화를 걸 수 있는 앱이 없습니다.</string>
+    <string name="current_seat_header">잔여 좌석</string>
+    <string name="total_seat_header">전체 좌석</string>
+    <string name="campus">캠퍼스 선택</string>
+    <string name="seoul_campus">서울</string>
+    <string name="erica_campus">에리카</string>
+    <string name="room_name_1_2f">제1열람실 (2F)</string>
+    <string name="room_name_2_4f">제2열람실 (4F)</string>
+    <string name="room_name_3_4f">집중열람실 (4F)</string>
+    <string name="holmz_room">노상일 HOLMZ</string>
+    <string name="law_room_1_3f">법학 제1열람실[3층]</string>
+    <string name="law_room_2a_4f">법학 제2열람실A[4층]</string>
+    <string name="law_room_2b_4f">법학 제2열람실B[4층]</string>
+    <string name="room_name_1_underground_1f">제1열람실[지하1층]</string>
+    <string name="room_name_2_underground_1f">제2열람실[지하1층]</string>
+    <string name="room_name_3_3f">제3열람실[3층]</string>
+    <string name="no_reading_room_data">조회된 열람실 목록이 없습니다.</string>
+    <string name="default_notification_channel_id" translatable="false">hyuabot_notification_channel_id</string>
+    <string name="reading_room_notification">잔여 좌석 알림</string>
+    <string name="reading_room_notification_cancel">잔여 좌석 알림 취소</string>
+    <string name="reading_room_notification_message">좌석 알림 등록 성공(%1$s)</string>
+    <string name="reading_room_notification_message_fail">좌석 알림 등록 실패(%1$s)</string>
+    <string name="reading_room_notification_cancel_message">좌석 알림 취소 성공(%1$s)</string>
+    <string name="reading_room_notification_cancel_message_fail">좌석 알림 취소 실패(%1$s)</string>
+    <string name="holmz_room_seoul">HOLMZ 열람석</string>
+    <string name="room_name_4_3f">제4열람실[3층]</string>
+    <string name="law_room_graduated_2f">법학 대학원열람실[2층]</string>
 </resources>

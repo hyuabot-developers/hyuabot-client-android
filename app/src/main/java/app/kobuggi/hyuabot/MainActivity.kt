@@ -1,11 +1,15 @@
 package app.kobuggi.hyuabot
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Context
 import android.content.DialogInterface
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -46,6 +50,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         }
         val sharedPreferences = getSharedPreferences("hyuabot", MODE_PRIVATE)
         val localeCode = sharedPreferences.getString("locale", "")
+        askNotificationPermission()
         LocaleHelper.setLocale(localeCode!!)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
@@ -109,4 +114,24 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         val assetsPath = getAbsolutePath(fastFollowAssetPack, "app.db")
         viewModel.initializeDatabase(assetsPath!!)
     }
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (!isGranted) {
+            askNotificationPermission()
+        }
+    }
+
+    private fun askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            ) {
+                // FCM SDK (and your app) can post notifications.
+            } else {
+                // Directly ask for the permission
+                requestPermissionLauncher.launch(POST_NOTIFICATIONS)
+            }
+        }
+    }
+
 }

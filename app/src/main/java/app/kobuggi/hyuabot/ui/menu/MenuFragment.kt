@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.MainActivity
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMenuBinding
+import app.kobuggi.hyuabot.ui.menu.campus.CampusDialog
 import app.kobuggi.hyuabot.ui.menu.info.AppInfoDialog
 import app.kobuggi.hyuabot.ui.menu.language.AppLanguageDialog
 import app.kobuggi.hyuabot.ui.menu.theme.AppThemeDialog
@@ -54,6 +55,7 @@ class MenuFragment : Fragment(), DialogInterface.OnDismissListener{
         binding.menuList.addItemDecoration(divider)
 
         val settingList = listOf(
+            MenuButton(R.string.campus, R.drawable.ic_campus),
             MenuButton(R.string.language, R.drawable.ic_language),
             MenuButton(R.string.app_theme, R.drawable.ic_dark_mode),
             MenuButton(R.string.donation, R.drawable.ic_donation),
@@ -89,6 +91,10 @@ class MenuFragment : Fragment(), DialogInterface.OnDismissListener{
                 R.string.calendar -> {
                     val action = MenuFragmentDirections.openCalendarFragment()
                     findNavController().navigate(action)
+                }
+                R.string.campus -> {
+                    val dialog = CampusDialog()
+                    dialog.show(childFragmentManager, "CampusDialog")
                 }
                 R.string.language -> {
                     val dialog = AppLanguageDialog()

@@ -62,4 +62,8 @@ class CafeteriaViewModel @Inject constructor(private val service: APIService) : 
     fun nextDate() {
         _currentDate.value = _currentDate.value!!.plusDays(1)
     }
+
+    fun setCampusID(id: Int) {
+        _campusID.value = id
+    }
 }

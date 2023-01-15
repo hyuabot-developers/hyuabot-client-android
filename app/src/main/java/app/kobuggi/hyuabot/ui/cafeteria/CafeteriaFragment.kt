@@ -27,6 +27,10 @@ class CafeteriaFragment : Fragment() {
     ): View {
         val adapter = RestaurantCardAdapter(requireContext())
         val now = LocalTime.now()
+        val sharedPreferences = requireActivity().getSharedPreferences("hyuabot", 0)
+        val campusID = sharedPreferences.getInt("campus", 2)
+        viewModel.setCampusID(campusID)
+
         viewModel.fetchData()
         viewModel.currentDate.observe(viewLifecycleOwner) {
             binding.currentDateText.text = it.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
