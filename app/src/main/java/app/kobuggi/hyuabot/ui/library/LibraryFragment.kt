@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.MainActivity
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentLibraryBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,6 +43,12 @@ class LibraryFragment : Fragment() {
             } else {
                 binding.readingRoomNoData.visibility = View.GONE
                 binding.readingRoomList.visibility = View.VISIBLE
+            }
+        }
+        vm.errorMessage.observe(viewLifecycleOwner) {
+            if (it) {
+                val toast = Toast.makeText(requireContext(), R.string.network_error, Toast.LENGTH_SHORT)
+                toast.show()
             }
         }
         binding.refreshLayout.setOnRefreshListener {

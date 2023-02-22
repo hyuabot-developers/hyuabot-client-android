@@ -210,4 +210,5 @@
     <string name="hansung_univ">Hansung Univ.</string>
     <string name="sadang">Sadang</string>
     <string name="geumjeong">Geumjeong</string>
+    <string name="network_error">Failed to load data from API server.</string>
 </resources>

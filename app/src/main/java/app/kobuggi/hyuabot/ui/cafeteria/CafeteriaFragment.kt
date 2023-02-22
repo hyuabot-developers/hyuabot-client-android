@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import app.kobuggi.hyuabot.MainActivity
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.component.card.cafeteria.RestaurantCardAdapter
 import app.kobuggi.hyuabot.databinding.FragmentCafeteriaBinding
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -46,6 +48,12 @@ class CafeteriaFragment : Fragment() {
         }
         viewModel.dinner.observe(viewLifecycleOwner) {
             adapter.updateData(2, it)
+        }
+        viewModel.errorMessage.observe(viewLifecycleOwner) {
+            if (it) {
+                val toast = Toast.makeText(requireContext(), R.string.network_error, Toast.LENGTH_SHORT)
+                toast.show()
+            }
         }
         if (now.hour < 10) {
             binding.cafeteriaRecyclerView.smoothScrollToPosition(0)

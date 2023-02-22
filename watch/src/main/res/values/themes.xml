@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 주간 테마 -->
+    <style name="Theme.Hyuabot" parent="@android:style/Theme.DeviceDefault">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/hanyang_primary</item>
+        <item name="colorPrimaryVariant">@color/primaryTextColor</item>
+        <item name="colorOnPrimary">@color/background</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/hanyang_primary</item>
+        <item name="colorSecondaryVariant">@color/background</item>
+        <item name="colorOnSecondary">@color/primaryTextColor</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/hanyang_primary</item>
+        <!-- Customize your theme here. -->
+        <!-- 타이틀 바 삭제 -->
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>

@@ -20,6 +20,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -40,6 +41,7 @@ class RealtimeViewModel @Inject constructor(private val service: APIService) : V
     private val _shuttleBookmarkIndex = intPreferencesKey("shuttle")
     private val _shuttleStopInformationEvent = MutableLiveData(-1)
     private val _openTimetableEvent = MutableLiveData(TimetableDataItem(-1, -1))
+    private val _errorMessage = MutableLiveData(false)
 
     val shuttleArrivalList get() = _shuttleArrivalList
     val k251ArrivalList get() = _k251ArrivalList
@@ -51,59 +53,101 @@ class RealtimeViewModel @Inject constructor(private val service: APIService) : V
     val bookmarkIndex get() = _bookmarkIndex
     val shuttleStopInformationEvent get() = _shuttleStopInformationEvent
     val openTimetableEvent get() = _openTimetableEvent
+    val errorMessage get() = _errorMessage
 
     fun fetchData() {
         _isLoading.value = true
+        _errorMessage.value = false
+        var fetchError: Boolean
         viewModelScope.launch {
-            fetchShuttleArrivalList()
-            fetchK251ArrivalList()
-            fetchSuwonArrivalList()
-            fetchToGwangmyeongArrivalList()
-            fetchFromGwangmyeongArrivalList()
-            fetchSangnoksuArrivalList()
+            fetchError = fetchShuttleArrivalList()
+            fetchError = fetchK251ArrivalList()
+            fetchError = fetchSuwonArrivalList()
+            fetchError = fetchToGwangmyeongArrivalList()
+            fetchError = fetchFromGwangmyeongArrivalList()
+            fetchError = fetchSangnoksuArrivalList()
+            if (!fetchError) {
+                _errorMessage.value = true
+            }
         }
         _isLoading.value = false
     }
 
-    private suspend fun fetchShuttleArrivalList() {
-        val response = service.entireShuttleArrivalList()
-        if (response.isSuccessful) {
-            _shuttleArrivalList.value = response.body()?.stopList
+    private suspend fun fetchShuttleArrivalList(): Boolean {
+        return try {
+            val response = service.entireShuttleArrivalList()
+            if (response.isSuccessful) {
+                _shuttleArrivalList.value = response.body()?.stopList
+            }
+            true
+        } catch (e: Exception) {
+            Log.e("RealtimeViewModel", "fetchShuttleArrivalList: ${e.message}")
+            false
         }
     }
 
-    private suspend fun fetchK251ArrivalList() {
-        val response = service.subwayStationItem("K251")
-        if (response.isSuccessful) {
-            _k251ArrivalList.value = response.body()
+    private suspend fun fetchK251ArrivalList(): Boolean {
+        return try {
+            val response = service.subwayStationItem("K251")
+            if (response.isSuccessful) {
+                _k251ArrivalList.value = response.body()
+            }
+            true
+        } catch (e: Exception) {
+            Log.e("RealtimeViewModel", "fetchK251ArrivalList: ${e.message}")
+            false
         }
     }
 
-    private suspend fun fetchSuwonArrivalList() {
-        val response = service.busStopItem(216000719)
-        if (response.isSuccessful) {
-            _suwonArrivalList.value = response.body()?.routes?.find { it.routeName == "707-1" }
+    private suspend fun fetchSuwonArrivalList(): Boolean {
+        return try {
+            val response = service.busStopItem(216000719)
+            if (response.isSuccessful) {
+                _suwonArrivalList.value = response.body()?.routes?.find { it.routeName == "707-1" }
+            }
+            true
+        } catch (e: Exception) {
+            Log.e("RealtimeViewModel", "fetchSuwonArrivalList: ${e.message}")
+            false
         }
     }
 
-    private suspend fun fetchToGwangmyeongArrivalList() {
-        val response = service.busStopItem(216000759)
-        if (response.isSuccessful) {
-            _toGwangmyeongArrivalList.value = response.body()?.routes?.find { it.routeName == "50" }
+    private suspend fun fetchToGwangmyeongArrivalList(): Boolean {
+        return try {
+            val response = service.busStopItem(216000759)
+            if (response.isSuccessful) {
+                _toGwangmyeongArrivalList.value = response.body()?.routes?.find { it.routeName == "50" }
+            }
+            true
+        } catch (e: Exception) {
+            Log.e("RealtimeViewModel", "fetchToGwangmyeongArrivalList: ${e.message}")
+            false
         }
     }
 
-    private suspend fun fetchFromGwangmyeongArrivalList() {
-        val response = service.busStopItem(216000117)
-        if (response.isSuccessful) {
-            _fromGwangmyeongArrivalList.value = response.body()?.routes?.find { it.routeName == "50" }
-        }
+    private suspend fun fetchFromGwangmyeongArrivalList(): Boolean {
+       return try {
+           val response = service.busStopItem(216000117)
+           if (response.isSuccessful) {
+               _fromGwangmyeongArrivalList.value = response.body()?.routes?.find { it.routeName == "50" }
+           }
+           true
+       } catch (e: Exception) {
+           Log.e("RealtimeViewModel", "fetchFromGwangmyeongArrivalList: ${e.message}")
+           false
+       }
     }
 
-    private suspend fun fetchSangnoksuArrivalList() {
-        val response = service.busStopItem(216000138)
-        if (response.isSuccessful) {
-            _sangnoksuArrivalList.value = response.body()?.routes?.find { it.routeName == "10-1" }
+    private suspend fun fetchSangnoksuArrivalList(): Boolean {
+        return try {
+            val response = service.busStopItem(216000117)
+            if (response.isSuccessful) {
+                _sangnoksuArrivalList.value = response.body()?.routes?.find { it.routeName == "50" }
+            }
+            true
+        } catch (e: Exception) {
+            Log.e("RealtimeViewModel", "fetchSangnoksuArrivalList: ${e.message}")
+            false
         }
     }
 

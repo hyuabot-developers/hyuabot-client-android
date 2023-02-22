@@ -1,29 +1,35 @@
 package app.kobuggi.hyuabot
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.data.APIService
+import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
-    private val _dormitoryArrival = mutableStateOf(listOf(-1, -1, -1))
-    private val _shuttlecockOutArrival = mutableStateOf(listOf(-1, -1, -1))
-    private val _stationArrival = mutableStateOf(listOf(-1, -1, -1))
-    private val _terminalArrival = mutableStateOf(listOf(-1))
-    private val _jungangArrival = mutableStateOf(listOf(-1))
-    private val _shuttlecockInArrival = mutableStateOf(listOf(-1, -1, -1))
+@HiltViewModel
+class MainViewModel @Inject constructor() : ViewModel() {
+    private val _dormitoryArrival: MutableLiveData<List<Int>> = MutableLiveData(listOf(-1, -1, -1))
+    private val _shuttlecockOutArrival: MutableLiveData<List<Int>> = MutableLiveData(listOf(-1, -1, -1))
+    private val _stationArrival: MutableLiveData<List<Int>> = MutableLiveData(listOf(-1, -1, -1))
+    private val _terminalArrival: MutableLiveData<List<Int>> = MutableLiveData(listOf(-1))
+    private val _jungangArrival: MutableLiveData<List<Int>> = MutableLiveData(listOf(-1))
+    private val _shuttlecockInArrival: MutableLiveData<List<Int>> = MutableLiveData(listOf(-1))
+    private val _disposable = CompositeDisposable()
+    val dormitoryArrival: MutableLiveData<List<Int>> get() = _dormitoryArrival
+    val shuttlecockOutArrival: MutableLiveData<List<Int>> get() = _shuttlecockOutArrival
+    val stationArrival: MutableLiveData<List<Int>> get() = _stationArrival
+    val terminalArrival: MutableLiveData<List<Int>> get() = _terminalArrival
+    val jungangArrival: MutableLiveData<List<Int>> get() = _jungangArrival
+    val shuttlecockInArrival: MutableLiveData<List<Int>> get() = _shuttlecockInArrival
 
-    val dormitoryArrival: List<Int> by _dormitoryArrival
-    val shuttlecockOutArrival: List<Int> by _shuttlecockOutArrival
-    val stationArrival: List<Int> by _stationArrival
-    val terminalArrival: List<Int> by _terminalArrival
-    val jungangArrival: List<Int> by _jungangArrival
-    val shuttlecockInArrival: List<Int> by _shuttlecockInArrival
-
-    var errorMessage: String by mutableStateOf("")
+    val errorMessage: MutableLiveData<String> = MutableLiveData("")
     fun getArrivalList() {
         viewModelScope.launch {
             val apiService = APIService.getInstance()
@@ -121,8 +127,23 @@ class MainViewModel : ViewModel() {
                 shuttlecockInArrival.add(shuttlecockInToDormitoryArrivalList.minOrNull() ?: -1)
                 _shuttlecockInArrival.value = shuttlecockInArrival
             } catch (e: Exception) {
-                errorMessage = e.message ?: "알 수 없는 오류가 발생했습니다."
+                errorMessage.value = e.message ?: "알 수 없는 오류가 발생했습니다."
             }
         }
+    }
+
+    fun start() {
+        _disposable.add(
+            Observable.interval(0, 1, TimeUnit.MINUTES)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    getArrivalList()
+                }
+        )
+    }
+
+    fun stop() {
+        _disposable.clear()
     }
 }

@@ -7,6 +7,7 @@ import app.kobuggi.hyuabot.model.cafeteria.RestaurantItemResponse
 import app.kobuggi.hyuabot.service.rest.APIService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -18,11 +19,15 @@ class CafeteriaViewModel @Inject constructor(private val service: APIService) : 
     private val _breakfastMenu = MutableLiveData<List<RestaurantItemResponse>>(listOf())
     private val _lunchMenu = MutableLiveData<List<RestaurantItemResponse>>(listOf())
     private val _dinnerMenu = MutableLiveData<List<RestaurantItemResponse>>(listOf())
+    private val _errorMessage = MutableLiveData(false)
+
 
     val currentDate get() = _currentDate
     val breakfast get() = _breakfastMenu
     val lunch get() = _lunchMenu
     val dinner get() = _dinnerMenu
+    val errorMessage get() = _errorMessage
+
 
     private fun setBreakfastMenu(menu: List<RestaurantItemResponse>) {
         _breakfastMenu.value = menu
@@ -36,22 +41,32 @@ class CafeteriaViewModel @Inject constructor(private val service: APIService) : 
         _dinnerMenu.value = menu
     }
 
-    private suspend fun fetchMenu(timeType: String) {
-        val response = service.cafeteriaItem(_campusID.value!!, _currentDate.value!!.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), timeType)
-        if (response.isSuccessful){
-            when (timeType) {
-                "조식" -> setBreakfastMenu(response.body()!!.restaurants)
-                "중식" -> setLunchMenu(response.body()!!.restaurants)
-                "석식" -> setDinnerMenu(response.body()!!.restaurants)
+    private suspend fun fetchMenu(timeType: String): Boolean {
+        return try {
+            val response = service.cafeteriaItem(_campusID.value!!, _currentDate.value!!.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), timeType)
+            if (response.isSuccessful){
+                when (timeType) {
+                    "조식" -> setBreakfastMenu(response.body()!!.restaurants)
+                    "중식" -> setLunchMenu(response.body()!!.restaurants)
+                    "석식" -> setDinnerMenu(response.body()!!.restaurants)
+                }
             }
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 
     fun fetchData() {
+        var fetchError: Boolean
+        _errorMessage.value = false
         viewModelScope.launch {
-            fetchMenu("조식")
-            fetchMenu("중식")
-            fetchMenu("석식")
+            fetchError = fetchMenu("조식")
+            fetchError = fetchMenu("중식")
+            fetchError = fetchMenu("석식")
+            if (!fetchError) {
+                _errorMessage.value = true
+            }
         }
     }
 

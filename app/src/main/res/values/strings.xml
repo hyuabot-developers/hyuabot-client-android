@@ -211,4 +211,5 @@
     <string name="hansung_univ">한성대입구</string>
     <string name="sadang">사당</string>
     <string name="geumjeong">금정</string>
+    <string name="network_error">데이터를 불러오는 중 오류가 발생했습니다.</string>
 </resources>

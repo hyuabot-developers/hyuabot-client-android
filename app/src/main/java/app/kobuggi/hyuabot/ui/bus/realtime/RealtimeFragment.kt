@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.MainActivity
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.component.card.bus.RealtimeRouteCardAdapter
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeBinding
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -59,6 +61,12 @@ class RealtimeFragment : Fragment() {
                 val action = RealtimeFragmentDirections.openBusTimetable(it.routeID, it.routeName, it.stopID)
                 viewModel.openTimetable(-1, "", -1)
                 findNavController().navigate(action)
+            }
+        }
+        viewModel.errorMessage.observe(viewLifecycleOwner) {
+            if (it) {
+                val toast = Toast.makeText(requireContext(), R.string.network_error, Toast.LENGTH_SHORT)
+                toast.show()
             }
         }
         binding.busRealtimeRecyclerView.adapter = adapter

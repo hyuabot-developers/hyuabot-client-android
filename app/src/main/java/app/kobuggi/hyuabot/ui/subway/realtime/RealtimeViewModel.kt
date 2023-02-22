@@ -16,6 +16,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -28,11 +29,15 @@ class RealtimeViewModel @Inject constructor(val service: APIService) : ViewModel
     private val _subwayBookmarkIndex = intPreferencesKey("subway")
     private val _openTimetableEvent = MutableLiveData(TimetableDataItem("", ""))
     private val _isLoading : MutableLiveData<Boolean> = MutableLiveData(false)
+    private val _errorMessage = MutableLiveData(false)
+
 
     private val _k449ArrivalList = MutableLiveData<SubwayStationResponse>()
     private val _k251ArrivalList = MutableLiveData<SubwayStationResponse>()
     private val _k456ArrivalList = MutableLiveData<SubwayStationResponse>()
     private val _k258ArrivalList = MutableLiveData<SubwayStationResponse>()
+    val errorMessage get() = _errorMessage
+
 
     val k449ArrivalList get() = _k449ArrivalList
     val k251ArrivalList get() = _k251ArrivalList
@@ -42,40 +47,65 @@ class RealtimeViewModel @Inject constructor(val service: APIService) : ViewModel
     val isLoading get() = _isLoading
     val openTimetableEvent get() = _openTimetableEvent
 
-    private suspend fun fetchK449ArrivalList() {
-        val response = service.subwayStationItem("K449")
-        if (response.isSuccessful) {
-            _k449ArrivalList.value = response.body()
+    private suspend fun fetchK449ArrivalList(): Boolean {
+        return try {
+            val response = service.subwayStationItem("K449")
+            if (response.isSuccessful) {
+                _k449ArrivalList.value = response.body()
+            }
+            true
+        } catch (e: Exception){
+            false
         }
     }
 
-    private suspend fun fetchK251ArrivalList() {
-        val response = service.subwayStationItem("K251")
-        if (response.isSuccessful) {
-            _k251ArrivalList.value = response.body()
+    private suspend fun fetchK251ArrivalList(): Boolean {
+        return try {
+            val response = service.subwayStationItem("K251")
+            if (response.isSuccessful) {
+                _k251ArrivalList.value = response.body()
+            }
+            true
+        } catch (e: Exception){
+            false
         }
     }
 
-    private suspend fun fetchK456ArrivalList() {
-        val response = service.subwayStationItem("K456")
-        if (response.isSuccessful) {
-            _k456ArrivalList.value = response.body()
-        }
+    private suspend fun fetchK456ArrivalList(): Boolean {
+       return try {
+           val response = service.subwayStationItem("K456")
+           if (response.isSuccessful) {
+               _k456ArrivalList.value = response.body()
+           }
+          true
+       } catch (e: Exception){
+           false
+       }
     }
 
-    private suspend fun fetchK258ArrivalList() {
-        val response = service.subwayStationItem("K258", true)
-        if (response.isSuccessful) {
-            _k258ArrivalList.value = response.body()
+    private suspend fun fetchK258ArrivalList(): Boolean {
+        return try {
+            val response = service.subwayStationItem("K258", true)
+            if (response.isSuccessful) {
+                _k258ArrivalList.value = response.body()
+            }
+            true
+        } catch (e: Exception){
+            false
         }
     }
 
     fun fetchData() {
+        _errorMessage.value = false
+        var fetchError: Boolean
         viewModelScope.launch {
-            fetchK449ArrivalList()
-            fetchK251ArrivalList()
-            fetchK456ArrivalList()
-            fetchK258ArrivalList()
+            fetchError = fetchK449ArrivalList()
+            fetchError = fetchK251ArrivalList()
+            fetchError = fetchK456ArrivalList()
+            fetchError = fetchK258ArrivalList()
+            if (!fetchError) {
+                _errorMessage.value = true
+            }
         }
     }
 
