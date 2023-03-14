@@ -74,28 +74,32 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         )
         )){
             item: AppDatabaseItem -> run {
-                if (vm.searchInputFocus.value == true) {
-                    binding.searchInput.clearFocus()
-                    binding.searchInput.onActionViewCollapsed()
-                    vm.setSearchInputFocus(false)
-                }
+                try {
+                    if (vm.searchInputFocus.value == true) {
+                        binding.searchInput.clearFocus()
+                        binding.searchInput.onActionViewCollapsed()
+                        vm.setSearchInputFocus(false)
+                    }
 
-                val categoryMarkerImageID = when(item.category) {
-                    "on campus" -> R.drawable.marker_school
-                    "cafe" -> R.drawable.marker_cafe
-                    "bakery" -> R.drawable.marker_bakery
-                    "other food" -> R.string.other_food
-                    "pub" -> R.drawable.marker_pub
-                    "building" -> R.drawable.marker_school
-                    else -> R.drawable.marker_restaurant
-                }
-                val bitmapDrawable = ResourcesCompat.getDrawable(requireContext().resources, categoryMarkerImageID, null) as BitmapDrawable
-                val markerImage = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 66, 66, false)
+                    val categoryMarkerImageID = when(item.category) {
+                        "on campus" -> R.drawable.marker_school
+                        "cafe" -> R.drawable.marker_cafe
+                        "bakery" -> R.drawable.marker_bakery
+                        "other food" -> R.string.other_food
+                        "pub" -> R.drawable.marker_pub
+                        "building" -> R.drawable.marker_school
+                        else -> R.drawable.marker_restaurant
+                    }
+                    val bitmapDrawable = ResourcesCompat.getDrawable(requireContext().resources, categoryMarkerImageID, null) as BitmapDrawable
+                    val markerImage = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 66, 66, false)
 
-                val markerOptions = MarkerOptions()
-                markerOptions.position(LatLng(item.latitude!!, item.longitude!!)).title(item.name).icon(BitmapDescriptorFactory.fromBitmap(markerImage)).snippet(if (item.description.toString().startsWith("건물 번호")) item.description else "메뉴: ${item.description}")
-                vm.setMarkerOptions(listOf(markerOptions))
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(item.latitude, item.longitude), 16f))
+                    val markerOptions = MarkerOptions()
+                    markerOptions.position(LatLng(item.latitude!!, item.longitude!!)).title(item.name).icon(BitmapDescriptorFactory.fromBitmap(markerImage)).snippet(if (item.description.toString().startsWith("건물 번호")) item.description else "메뉴: ${item.description}")
+                    vm.setMarkerOptions(listOf(markerOptions))
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(item.latitude, item.longitude), 16f))
+                } catch (e: java.lang.NullPointerException) {
+                    Log.e("MapFragment", "Error: ${e.message}")
+                }
             }
         }
         binding.searchResult.adapter = searchResultAdapter

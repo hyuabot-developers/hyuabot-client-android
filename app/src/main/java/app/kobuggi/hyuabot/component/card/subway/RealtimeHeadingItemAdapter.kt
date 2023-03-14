@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import app.kobuggi.hyuabot.GlobalApplication
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemSubwayHeadingBinding
 import java.time.LocalTime
@@ -113,8 +112,18 @@ class RealtimeHeadingItemAdapter (
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(cardItem.headingList[position])
+        holder.bind(cardItem.headingList.filter {
+            it == R.string.heading_up ||
+                    it == R.string.heading_down ||
+                    it == R.string.heading_incheon ||
+                    it == R.string.heading_ansan
+        }[position])
     }
 
-    override fun getItemCount(): Int = cardItem.headingList.size
+    override fun getItemCount(): Int = cardItem.headingList.filter {
+        it == R.string.heading_up ||
+        it == R.string.heading_down ||
+        it == R.string.heading_incheon ||
+        it == R.string.heading_ansan
+    }.size
 }
