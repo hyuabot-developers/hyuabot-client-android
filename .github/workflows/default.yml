@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - feat/*
-      - hotfix/*
+      - fix/*
       - main
   pull_request:
     branches:
