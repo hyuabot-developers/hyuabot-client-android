@@ -71,10 +71,6 @@ class RealtimeFragment : Fragment() {
         }
         binding.subwayRealtimeRecyclerView.adapter = adapter
         binding.subwayRealtimeRecyclerView.itemAnimator = null
-        binding.refreshLayout.setOnRefreshListener {
-            viewModel.fetchData()
-            binding.refreshLayout.isRefreshing = false
-        }
         return binding.root
     }
 

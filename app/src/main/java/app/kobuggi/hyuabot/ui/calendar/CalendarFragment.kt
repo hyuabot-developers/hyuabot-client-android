@@ -34,7 +34,9 @@ import java.util.*
 class CalendarFragment : Fragment(), DialogInterface.OnDismissListener {
     private val vm by viewModels<CalendarViewModel>()
     private lateinit var binding: FragmentCalendarBinding
-
+    companion object {
+        fun newInstance() = CalendarFragment()
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

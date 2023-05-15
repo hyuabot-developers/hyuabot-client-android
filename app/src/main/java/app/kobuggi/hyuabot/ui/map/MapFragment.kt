@@ -31,6 +31,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MapFragment : Fragment(), OnMapReadyCallback {
+    companion object {
+        fun newInstance() = MapFragment()
+    }
     private val vm by viewModels<MapViewModel>()
     private lateinit var binding: FragmentMapBinding
     private lateinit var map: GoogleMap

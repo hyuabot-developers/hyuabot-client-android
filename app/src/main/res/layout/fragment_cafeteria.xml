@@ -1,53 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.shuttle.realtime.RealtimeFragment">
-
-    <LinearLayout
-        android:id="@+id/current_date_header"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginVertical="15dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
-        <ImageButton
-            android:id="@+id/previous_date_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_previous"
-            android:background="@null"
-            app:tint="@color/primaryTextColor" />
-        <TextView
-            android:id="@+id/current_date_text"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="match_parent"
-            android:textColor="@color/primaryTextColor"
-            android:gravity="center"
-            android:textSize="20sp" />
-        <ImageButton
-            android:id="@+id/next_date_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_next"
-            android:background="@null"
-            app:tint="@color/primaryTextColor" />
-    </LinearLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cafeteria_recycler_view"
+    android:layout_height="match_parent" >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/current_date_header"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:orientation="horizontal"
-        app:layoutManager=".util.SwipeLayoutManager" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        tools:context=".ui.shuttle.realtime.RealtimeFragment">
+
+        <LinearLayout
+            android:id="@+id/current_date_header"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginVertical="15dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" >
+            <ImageButton
+                android:id="@+id/previous_date_button"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_previous"
+                android:background="@null"
+                app:tint="@color/primaryTextColor" />
+            <TextView
+                android:id="@+id/current_date_text"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent"
+                android:textColor="@color/primaryTextColor"
+                android:gravity="center"
+                android:textSize="20sp" />
+            <ImageButton
+                android:id="@+id/next_date_button"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_next"
+                android:background="@null"
+                app:tint="@color/primaryTextColor" />
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cafeteria_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/current_date_header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:orientation="horizontal"
+            app:layoutManager=".util.SwipeLayoutManager" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

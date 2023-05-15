@@ -19,6 +19,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class ContactFragment : Fragment() {
     private val vm by viewModels<ContactViewModel>()
     private lateinit var binding: FragmentContactBinding
+    companion object {
+        fun newInstance() = ContactFragment()
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

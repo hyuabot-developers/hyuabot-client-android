@@ -71,10 +71,6 @@ class RealtimeFragment : Fragment() {
         }
         binding.busRealtimeRecyclerView.adapter = adapter
         binding.busRealtimeRecyclerView.itemAnimator = null
-        binding.refreshLayout.setOnRefreshListener {
-            viewModel.fetchData()
-            binding.refreshLayout.isRefreshing = false
-        }
         return binding.root
     }
 

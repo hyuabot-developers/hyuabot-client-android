@@ -27,8 +27,8 @@ android {
         applicationId "app.kobuggi.hyuabot"
         minSdk 26
         targetSdk 33
-        versionCode 333000400
-        versionName "3.0"
+        versionCode 333000500
+        versionName "3.0.1"
         buildConfigField "String", "ADMOB_ID", properties["ADMOB_APP_ID"]
         buildConfigField "String", "ADMOB_NATIVE_ID", properties["ADMOB_NATIVE_ID"]
         manifestPlaceholders = [mapKey: "${properties.getProperty("MAP_API_KEY")}"]
@@ -74,8 +74,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -120,7 +120,7 @@ dependencies {
     // ViewPager2
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     // Play Asset Delivery
-    implementation 'com.google.android.play:asset-delivery:2.0.1'
+    implementation 'com.google.android.play:asset-delivery:2.0.2'
     implementation 'com.google.android.play:asset-delivery-ktx:2.0.1'
     // Room
     def room_version = "2.5.0"
@@ -134,7 +134,7 @@ dependencies {
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.1'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
     implementation 'com.google.firebase:firebase-analytics'
 }
 

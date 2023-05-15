@@ -15,7 +15,16 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.max
 import kotlin.math.min
 
-class TimetableTab(private val index: Int) : Fragment() {
+class TimetableTab : Fragment() {
+    companion object {
+        fun newInstance(index: Int): TimetableTab {
+            val bundle = Bundle(1)
+            val fragment = TimetableTab()
+            bundle.putInt("index", index)
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
     private val binding by lazy { FragmentShuttleTimetableTabBinding.inflate(layoutInflater) }
     private val parentViewModel: TimetableViewModel by viewModels({requireParentFragment()})
     override fun onCreateView(
@@ -23,6 +32,7 @@ class TimetableTab(private val index: Int) : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val index = arguments?.getInt("index") ?: 0
         val timetable = if (index == 0) parentViewModel.weekdaysTimetable else parentViewModel.weekendsTimetable
         val stopID = parentViewModel.stopID.value?: 0
         val adapter = TimetableItemAdapter(requireContext(), stopID, listOf())

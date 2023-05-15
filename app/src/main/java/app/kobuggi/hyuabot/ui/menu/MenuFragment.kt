@@ -25,6 +25,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MenuFragment : Fragment(), DialogInterface.OnDismissListener{
+    companion object {
+        fun newInstance() = MenuFragment()
+    }
     private val vm by viewModels<MenuViewModel>()
     private lateinit var binding: FragmentMenuBinding
 

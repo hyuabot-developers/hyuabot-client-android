@@ -16,6 +16,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LibraryFragment : Fragment() {
+    companion object {
+        fun newInstance() = LibraryFragment()
+    }
     private val vm by viewModels<LibraryViewModel>()
     private val binding: FragmentLibraryBinding by lazy {
         FragmentLibraryBinding.inflate(layoutInflater)
