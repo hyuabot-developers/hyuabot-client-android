@@ -174,7 +174,9 @@ class MenuFragment : Fragment(), DialogInterface.OnDismissListener{
     override fun onDismiss(dialogInterface: DialogInterface?) {
         vm.moveToSomewhere(0)
         if (requireActivity() is MainActivity){
-            (requireActivity() as MainActivity).onDismiss(dialogInterface)
+            requireActivity().runOnUiThread {
+                (requireActivity() as MainActivity).onDismiss(dialogInterface)
+            }
         }
     }
 }
