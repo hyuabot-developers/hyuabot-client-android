@@ -29,8 +29,6 @@ android {
         targetSdk 33
         versionCode 333000500
         versionName "3.0.1"
-        buildConfigField "String", "ADMOB_ID", properties["ADMOB_APP_ID"]
-        buildConfigField "String", "ADMOB_NATIVE_ID", properties["ADMOB_NATIVE_ID"]
         manifestPlaceholders = [mapKey: "${properties.getProperty("MAP_API_KEY")}"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
