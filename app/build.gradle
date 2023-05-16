@@ -27,8 +27,8 @@ android {
         applicationId "app.kobuggi.hyuabot"
         minSdk 26
         targetSdk 33
-        versionCode 333000500
-        versionName "3.0.1"
+        versionCode 333000600
+        versionName "3.0.2"
         manifestPlaceholders = [mapKey: "${properties.getProperty("MAP_API_KEY")}"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
