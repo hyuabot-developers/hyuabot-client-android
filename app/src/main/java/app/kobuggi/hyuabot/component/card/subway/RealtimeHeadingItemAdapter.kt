@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.component.card.subway
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,12 +29,12 @@ class RealtimeHeadingItemAdapter (
                 val timetable = if (headingItem == R.string.heading_up) cardItem.timetableList.up else cardItem.timetableList.down
                 val adapter = RealtimeItemAdapter(
                     context,
-                    realtime,
-                    timetable.filter {
+                    realtimeList =  realtime,
+                    timetableList = timetable.filter {
                         val hour = it.departureTime.split(":")[0].toInt()
                         val minute = it.departureTime.split(":")[1].toInt()
                         val remainingTime = (hour - now.hour) * 60 + (minute - now.minute)
-                        remainingTime > realtime.maxBy { realtimeItem -> realtimeItem.time }.time
+                        remainingTime > if (realtime.isEmpty()) 0 else realtime.maxBy { realtimeItem -> realtimeItem.time }.time
                     }
                 )
                 if (adapter.itemCount > 0) {
