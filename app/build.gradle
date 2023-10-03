@@ -28,7 +28,7 @@ android {
         minSdk 26
         //noinspection EditedTargetSdkVersion
         targetSdk 34
-        versionCode 333000700
+        versionCode 333000800
         versionName "3.0.3"
         manifestPlaceholders = [mapKey: "${properties.getProperty("MAP_API_KEY")}"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
