@@ -14,7 +14,7 @@ properties.load(project.rootProject.file("local.properties").newDataInputStream(
 android {
     assetPacks = [":fast_follow_pack"]
     namespace 'app.kobuggi.hyuabot'
-    compileSdkPreview 'UpsideDownCake'
+    compileSdk 34
     signingConfigs {
         defaultKey {
             keyAlias properties['SIGNING_KEY_ALIAS']
@@ -26,7 +26,8 @@ android {
     defaultConfig {
         applicationId "app.kobuggi.hyuabot"
         minSdk 26
-        targetSdkPreview 'UpsideDownCake'
+        //noinspection EditedTargetSdkVersion
+        targetSdk 34
         versionCode 333000700
         versionName "3.0.3"
         manifestPlaceholders = [mapKey: "${properties.getProperty("MAP_API_KEY")}"]
