@@ -212,4 +212,7 @@
     <string name="sadang">사당</string>
     <string name="geumjeong">금정</string>
     <string name="network_error">데이터를 불러오는 중 오류가 발생했습니다.</string>
+    <string name="do_not_show_again_this_year">올해는 다시 보지 않기</string>
+    <string name="dialog_title">개발자 생일 공지</string>
+    <string name="dialog_message">오늘(12/12)은 개발자의 생일입니다.\n\n항상 잘 사용해주시는 여러분이 저에게는 크나큰 선물입니다. 앞으로도 더 좋은 서비스를 제공할 수 있도록 노력하겠습니다.\n\n감사합니다.</string>
 </resources>

@@ -1,14 +1,18 @@
 package app.kobuggi.hyuabot
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.CheckBox
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -24,6 +28,8 @@ import com.google.android.play.core.assetpacks.model.AssetPackStatus
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
@@ -55,6 +61,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         val sharedPreferences = getSharedPreferences("hyuabot", MODE_PRIVATE)
         val localeCode = sharedPreferences.getString("locale", "")
         askNotificationPermission()
+        openBirthDayDialog()
         LocaleHelper.setLocale(localeCode!!)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
@@ -139,4 +146,28 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     }
 
     fun getAnalytics() = firebaseAnalytics
+
+    private fun openBirthDayDialog() {
+        val pref = getSharedPreferences("pref", Activity.MODE_PRIVATE)
+        val lastOpenedYear = pref.getInt("birthDayOpened", 0)
+        val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+
+        if (now.monthValue == 12 && now.dayOfMonth == 12 && lastOpenedYear != now.year){
+            val dialogBuilder = AlertDialog.Builder(this)
+            val dialogLayout = R.layout.dialog_birthday
+            val dialogView = LayoutInflater.from(this).inflate(dialogLayout,null)
+            val dialogCheckBox = dialogView.findViewById<CheckBox>(R.id.do_not_show_checkbox)
+            dialogBuilder.setTitle(getString(R.string.dialog_title))
+            dialogBuilder.setMessage(getString(R.string.dialog_message))
+            dialogBuilder.setView(dialogView)
+
+            dialogBuilder.setPositiveButton("확인") { dialogInterface, _ ->
+                if (dialogCheckBox.isChecked){
+                    pref.edit().putInt("birthDayOpened", now.year).apply()
+                }
+                dialogInterface.dismiss()
+            }
+            dialogBuilder.create().show()
+        }
+    }
 }
