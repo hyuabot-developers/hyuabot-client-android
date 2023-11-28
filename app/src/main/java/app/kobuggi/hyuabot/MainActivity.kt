@@ -152,18 +152,13 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
         val lastOpenedYear = pref.getInt("birthDayOpened", 0)
         val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
 
-        var dialogMessage = "안녕하세요.\n휴아봇 개발자 경원여객3102입니다.\n"
-        dialogMessage += "오늘(12/12)은 제 생일입니다.\n\n"
-        dialogMessage += "부족하지만 많이 사용하시는 학우 여러분에게\n"
-        dialogMessage += "감사의 말씀드립니다."
-
         if (now.monthValue == 12 && now.dayOfMonth == 12 && lastOpenedYear != now.year){
             val dialogBuilder = AlertDialog.Builder(this)
             val dialogLayout = R.layout.dialog_birthday
             val dialogView = LayoutInflater.from(this).inflate(dialogLayout,null)
             val dialogCheckBox = dialogView.findViewById<CheckBox>(R.id.do_not_show_checkbox)
-            dialogBuilder.setTitle("12/12 공지입니다.")
-            dialogBuilder.setMessage(dialogMessage)
+            dialogBuilder.setTitle(getString(R.string.dialog_title))
+            dialogBuilder.setMessage(getString(R.string.dialog_message))
             dialogBuilder.setView(dialogView)
 
             dialogBuilder.setPositiveButton("확인") { dialogInterface, _ ->
