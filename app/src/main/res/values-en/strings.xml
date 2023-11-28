@@ -211,4 +211,7 @@
     <string name="sadang">Sadang</string>
     <string name="geumjeong">Geumjeong</string>
     <string name="network_error">Failed to load data from API server.</string>
+    <string name="do_not_show_again_this_year">Do not show this year.</string>
+    <string name="dialog_title">Developer\'s birthday</string>
+    <string name="dialog_message">Hello, I\'m Jeongin Lee, developer of HYUABOT.\n\nToday is my birthday.\n\nPlease wish me a happy birthday!</string>
 </resources>
