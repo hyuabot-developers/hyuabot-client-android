@@ -1,0 +1,24 @@
+name: Pushed code check
+on:
+  push:
+    branches-ignore:
+      - main
+      - production
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  ktlint:
+    name: Check Kotlin code style
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+      - name: Run ktlint
+        run: ./gradlew ktlintCheck

@@ -40,10 +40,12 @@ android {
     }
 
     tasks.withType(JavaCompile::class.java) {
-        options.compilerArgs.addAll(listOf(
-            "-Xlint:unchecked",
-            "-Xlint:deprecation"
-        ))
+        options.compilerArgs.addAll(
+            listOf(
+                "-Xlint:unchecked",
+                "-Xlint:deprecation",
+            ),
+        )
     }
 }
 

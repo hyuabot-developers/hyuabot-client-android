@@ -6,7 +6,7 @@ import app.kobuggi.hyuabot.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity: AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {

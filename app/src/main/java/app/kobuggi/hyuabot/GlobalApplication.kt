@@ -7,6 +7,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltAndroidApp
-class GlobalApplication: Application() {
-    @Inject @ApplicationContext lateinit var context: Context
+class GlobalApplication : Application() {
+    @Inject @ApplicationContext
+    lateinit var context: Context
 }
