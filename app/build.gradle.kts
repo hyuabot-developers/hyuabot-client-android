@@ -3,11 +3,18 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlinKsp)
     alias(libs.plugins.hiltPlugin)
+    alias(libs.plugins.apollo)
 }
 
 android {
     namespace = "app.kobuggi.hyuabot"
     compileSdk = 34
+
+    apollo {
+        service("query") {
+            packageName = "app.kobuggi.hyuabot"
+        }
+    }
 
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
@@ -60,6 +67,37 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    // Navigation
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.navigation.dynamic.features.fragment)
+    // RXJava
+    implementation(libs.rxJava)
+    implementation(libs.rxAndroid)
+    // Networking
+    implementation(libs.gson)
+    implementation(libs.okhttp)
+    implementation(libs.apollo)
+    // DataStore
+    implementation(libs.dataStore)
+    implementation(libs.dataStoreRx)
+    // ViewPager2
+    implementation(libs.viewPager2)
+    // Room
+    implementation(libs.room)
+    implementation(libs.roomRx)
+    implementation(libs.roomKtx)
+    implementation(libs.roomPaging)
+    ksp(libs.roomCompiler)
+    // Calendar
+    implementation(libs.calendar)
+    // Firebase
+    implementation(platform(libs.firebase))
+    implementation(libs.firebaseMessaging)
+    implementation(libs.firebaseAnalytics)
+    implementation(libs.firebaseCrashlytics)
+    // Map
+    implementation(libs.kakaoMap)
 }
 
 hilt {
