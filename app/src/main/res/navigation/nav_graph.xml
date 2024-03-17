@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/shuttleRealtimeFragment">
+    <fragment
+        android:id="@+id/shuttleRealtimeFragment"
+        android:name="app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleRealtimeFragment"
+        android:label="셔틀버스 도착 정보"
+        tools:layout="@layout/fragment_shuttle_realtime">
+        <action
+            android:id="@+id/action_shuttleRealtimeFragment_to_shuttleStopDialogFragment"
+            app:destination="@id/shuttleStopDialogFragment" />
+        <action
+            android:id="@+id/action_shuttleRealtimeFragment_to_shuttleTimetableDialogFragment"
+            app:destination="@id/shuttleTimetableDialogFragment" />
+        <action
+            android:id="@+id/action_shuttleRealtimeFragment_to_shuttleTimetableFragment"
+            app:destination="@id/shuttleTimetableFragment" />
+        <action
+            android:id="@+id/action_shuttleRealtimeFragment_to_noticeWebViewFragment"
+            app:destination="@id/noticeWebViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/shuttleTimetableFragment"
+        android:name="app.kobuggi.hyuabot.ui.shuttle.timetable.ShuttleTimetableFragment"
+        android:label="셔틀버스 시간표"
+        tools:layout="@layout/fragment_shuttle_timetable">
+        <argument
+            android:name="stopID"
+            app:argType="string"
+            android:defaultValue="shuttlecock_o" />
+        <argument
+            android:name="destination"
+            app:argType="string"
+            android:defaultValue="station" />
+        <action
+            android:id="@+id/action_shuttleTimetableFragment_to_shuttleTimetableFilterDialogFragment"
+            app:destination="@id/shuttleTimetableFilterDialogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/busRealtimeFragment"
+        android:name="app.kobuggi.hyuabot.ui.bus.realtime.BusRealtimeFragment"
+        android:label="버스 도착 정보"
+        tools:layout="@layout/fragment_bus_realtime">
+        <action
+            android:id="@+id/action_busRealtimeFragment_to_busStopDialogFragment"
+            app:destination="@id/busStopDialogFragment" />
+        <action
+            android:id="@+id/action_busRealtimeFragment_to_busTimetableFragment"
+            app:destination="@id/busTimetableFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/busTimetableFragment"
+        android:name="app.kobuggi.hyuabot.ui.bus.timetable.BusTimetableFragment"
+        android:label="버스 시간표"
+        tools:layout="@layout/fragment_bus_timetable">
+        <argument
+            android:name="stopID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="routeID"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/subwayRealtimeFragment"
+        android:name="app.kobuggi.hyuabot.ui.subway.realtime.SubwayRealtimeFragment"
+        android:label="지하철 도착 정보"
+        tools:layout="@layout/fragment_subway_realtime">
+        <action
+            android:id="@+id/action_subwayRealtimeFragment_to_subwayTimetableFragment"
+            app:destination="@id/subwayTimetableFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/subwayTimetableFragment"
+        android:name="app.kobuggi.hyuabot.ui.subway.timetable.SubwayTimetableFragment"
+        android:label="지하철 시간표"
+        tools:layout="@layout/fragment_subway_timetable">
+        <argument
+            android:name="stationID"
+            app:argType="string"
+            android:defaultValue="K449" />
+        <argument
+            android:name="heading"
+            app:argType="string"
+            android:defaultValue="up" />
+    </fragment>
+    <fragment
+        android:id="@+id/cafeteriaFragment"
+        android:name="app.kobuggi.hyuabot.ui.cafeteria.CafeteriaFragment"
+        android:label="식당 정보"
+        tools:layout="@layout/fragment_cafeteria">
+        <action
+            android:id="@+id/action_cafeteriaFragment_to_cafeteriaDateDialogFragment"
+            app:destination="@id/cafeteriaDateDialogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/readingRoomFragment"
+        android:name="app.kobuggi.hyuabot.ui.readingRoom.ReadingRoomFragment"
+        android:label="열람실 정보"
+        tools:layout="@layout/fragment_reading_room" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="app.kobuggi.hyuabot.ui.setting.SettingFragment"
+        android:label="설정"
+        tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/action_settingFragment_to_languageSettingDialogFragment"
+            app:destination="@id/languageSettingDialogFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_campusSettingDialogFragment"
+            app:destination="@id/campusSettingDialogFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_themeSettingDialogFragment"
+            app:destination="@id/themeSettingDialogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/noticeFragment"
+        android:name="app.kobuggi.hyuabot.ui.notice.NoticeFragment"
+        android:label="공지사항"
+        tools:layout="@layout/fragment_notice">
+        <action
+            android:id="@+id/action_noticeFragment_to_noticeWebViewFragment"
+            app:destination="@id/noticeWebViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/noticeWebViewFragment"
+        android:name="app.kobuggi.hyuabot.ui.notice.NoticeWebviewFragment"
+        android:label="공지사항 웹뷰"
+        tools:layout="@layout/fragment_notice_webview">
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://www.hanyang.ac.kr/web/www/research" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactFragment"
+        android:name="app.kobuggi.hyuabot.ui.contact.ContactFragment"
+        android:label="전화부"
+        tools:layout="@layout/fragment_contact" />
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="app.kobuggi.hyuabot.ui.calendar.CalendarFragment"
+        android:label="학사일정"
+        tools:layout="@layout/fragment_calendar" />
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="app.kobuggi.hyuabot.ui.menu.MenuFragment"
+        android:label="메뉴"
+        tools:layout="@layout/fragment_menu">
+        <action
+            android:id="@+id/action_menuFragment_to_readingRoomFragment"
+            app:destination="@id/readingRoomFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_noticeFragment"
+            app:destination="@id/noticeFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_contactFragment"
+            app:destination="@id/contactFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_calendarFragment"
+            app:destination="@id/calendarFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/shuttleStopDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleStopDialog"
+        android:label="셔틀 정류장 정보"
+        tools:layout="@layout/dialog_shuttle_stop">
+        <argument
+            android:name="stopID"
+            app:argType="string"
+            android:defaultValue="shuttlecock_o" />
+    </dialog>
+    <dialog
+        android:id="@+id/shuttleTimetableDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleTimetableDialog"
+        android:label="셔틀 운행 정보"
+        tools:layout="@layout/dialog_shuttle_timetable">
+        <argument
+            android:name="seq"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </dialog>
+    <dialog
+        android:id="@+id/shuttleTimetableFilterDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.shuttle.timetable.ShuttleTimetableFilterDialog"
+        android:label="셔틀 시간표 필터"
+        tools:layout="@layout/dialog_shuttle_timetable_filter" />
+    <dialog
+        android:id="@+id/busStopDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.bus.realtime.BusStopDialog"
+        android:label="버스 정류장 정보"
+        tools:layout="@layout/dialog_bus_stop">
+        <argument
+            android:name="stopID"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </dialog>
+    <dialog
+        android:id="@+id/cafeteriaDateDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.cafeteria.CafeteriaDateDialog"
+        android:label="식당 날짜 선택"
+        tools:layout="@layout/dialog_cafeteria_date" />
+    <dialog
+        android:id="@+id/languageSettingDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.setting.LanguageSettingDialog"
+        android:label="언어 설정"
+        tools:layout="@layout/dialog_setting_language" />
+    <dialog
+        android:id="@+id/campusSettingDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.setting.CampusSettingDialog"
+        android:label="캠퍼스 설정"
+        tools:layout="@layout/dialog_setting_campus" />
+    <dialog
+        android:id="@+id/themeSettingDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.setting.ThemeSettingDialog"
+        android:label="테마 설정"
+        tools:layout="@layout/dialog_setting_theme" />
+</navigation>
