@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -5,6 +7,9 @@ plugins {
     alias(libs.plugins.hiltPlugin)
     alias(libs.plugins.apollo)
 }
+
+val props = Properties()
+file("../local.properties").inputStream().use { props.load(it) }
 
 android {
     namespace = "app.kobuggi.hyuabot"
@@ -16,13 +21,22 @@ android {
 //        }
 //    }
 
+    signingConfigs {
+        create("config") {
+            storeFile = file(props["SIGNING_KEY_FILE"]?.toString() ?: "keystore.jks")
+            storePassword = props["SIGNED_STORE_PASSWORD"]?.toString() ?: "storePassword"
+            keyAlias = props["SIGNED_KEY_ALIAS"]?.toString() ?: "keyAlias"
+            keyPassword = props["SIGNED_KEY_PASSWORD"]?.toString() ?: "keyPassword"
+        }
+    }
+
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
+        signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
