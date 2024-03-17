@@ -22,6 +22,7 @@ room = "2.6.1"
 calendar = "2.5.0"
 firebase = "32.7.4"
 kakaoMap = "2.9.5"
+splashScreen = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -54,6 +55,7 @@ firebaseAnalytics = { group = "com.google.firebase", name = "firebase-analytics-
 firebaseCrashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 firebaseMessaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
 kakaoMap = { group = "com.kakao.maps.open", name = "android", version.ref = "kakaoMap" }
+splashScreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

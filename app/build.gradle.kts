@@ -98,6 +98,8 @@ dependencies {
     implementation(libs.firebaseCrashlytics)
     // Map
     implementation(libs.kakaoMap)
+    // SplashScreen
+    implementation(libs.splashScreen)
 }
 
 hilt {
