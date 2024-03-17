@@ -10,11 +10,11 @@ android {
     namespace = "app.kobuggi.hyuabot"
     compileSdk = 34
 
-    apollo {
-        service("query") {
-            packageName = "app.kobuggi.hyuabot"
-        }
-    }
+//    apollo {
+//        service("query") {
+//            packageName = "app.kobuggi.hyuabot"
+//        }
+//    }
 
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
