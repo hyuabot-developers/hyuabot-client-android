@@ -1,5 +1,5 @@
 [versions]
-agp = "8.3.0"
+agp = "8.3.2"
 hilt = "2.51"
 kotlin = "1.9.23"
 coreKtx = "1.12.0"
@@ -20,7 +20,7 @@ dataStore = "1.0.0"
 viewPager2 = "1.0.0"
 room = "2.6.1"
 calendar = "2.5.0"
-firebase = "32.7.4"
+firebase = "32.8.1"
 kakaoMap = "2.9.5"
 splashScreen = "1.0.1"
 
