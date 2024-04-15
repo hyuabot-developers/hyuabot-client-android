@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="hanyang_blue">#0E4A84</color>
+    <color name="hanyang_blue_variant">#B5BED5</color>
     <color name="hanyang_silver">#898C8A</color>
     <color name="hanyang_green">#7DB928</color>
     <color name="hanyang_orange">#F08100</color>

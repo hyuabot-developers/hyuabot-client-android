@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">HYUabot</string>
+    <string name="shuttle_realtime_title">셔틀버스 도착 정보</string>
+    <string name="shuttle_bus">셔틀버스</string>
+    <string name="bus">노선버스</string>
 </resources>

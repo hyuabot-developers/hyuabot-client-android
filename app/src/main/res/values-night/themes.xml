@@ -1,16 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.HYUabot" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/hanyang_blue</item>
-        <item name="colorPrimaryVariant">@color/hanyang_blue</item>
-        <item name="colorOnPrimary">@android:color/black</item>
-        <item name="colorSecondary">@color/hanyang_green</item>
-        <item name="colorSecondaryVariant">@color/hanyang_green</item>
-        <item name="colorOnSecondary">@android:color/black</item>
+    <style name="Theme.HYUabot" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">@android:color/background_dark</item>
         <item name="android:colorBackground">@android:color/background_dark</item>
-        <item name="android:colorError">@color/hanyang_orange</item>
-        <item name="colorOnError">@color/hanyang_orange</item>
-        <item name="colorOnBackground">@color/hanyang_silver</item>
-        <item name="android:statusBarColor">@android:color/background_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>
