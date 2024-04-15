@@ -3,6 +3,19 @@
     <style name="Theme.HYUabot" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowSplashScreenBackground" tools:targetApi="s">@android:color/background_dark</item>
         <item name="android:colorBackground">@android:color/background_dark</item>
+        <item name="android:statusBarColor">@color/hanyang_blue</item>
         <item name="android:windowLightStatusBar">false</item>
+        <!-- Bottom Navigation -->
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+    </style>
+    <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+    </style>
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorSurfaceContainer">@color/hanyang_blue</item>
+        <item name="colorOnSurfaceVariant">@android:color/white</item>
+        <item name="colorOnSecondaryContainer">@android:color/black</item>
+        <item name="colorOnSurface">@android:color/white</item>
+        <item name="colorSecondaryContainer">@color/hanyang_blue_variant</item>
     </style>
 </resources>
