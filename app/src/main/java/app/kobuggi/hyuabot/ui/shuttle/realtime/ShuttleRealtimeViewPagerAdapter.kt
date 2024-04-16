@@ -11,12 +11,12 @@ class ShuttleRealtimeViewPagerAdapter(fragmentManager: FragmentManager, lifecycl
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> ShuttleRealtimeDormitoryFragment()
-            1 -> ShuttleRealtimeDormitoryFragment()
-            2 -> ShuttleRealtimeDormitoryFragment()
-            3 -> ShuttleRealtimeDormitoryFragment()
-            4 -> ShuttleRealtimeDormitoryFragment()
-            5 -> ShuttleRealtimeDormitoryFragment()
+            0 -> ShuttleTabDormitoryFragment()
+            1 -> ShuttleTabShuttlecockOutFragment()
+            2 -> ShuttleTabStationFragment()
+            3 -> ShuttleTabTerminalFragment()
+            4 -> ShuttleTabJungangStationFragment()
+            5 -> ShuttleTabShuttlecockInFragment()
             else -> throw IllegalArgumentException("Invalid position")
         }
     }
