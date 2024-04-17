@@ -90,4 +90,7 @@
     <style name="TextAppearance.App.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
         <item name="fontFamily">@font/pretendard</item>
     </style>
+    <style name="TextAppearance.App.Tab" parent="TextAppearance.App.TitleSmall">
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>

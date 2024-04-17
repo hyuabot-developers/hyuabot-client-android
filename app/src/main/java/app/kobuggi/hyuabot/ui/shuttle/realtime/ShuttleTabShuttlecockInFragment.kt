@@ -5,19 +5,55 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeTabBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.min
 
 @AndroidEntryPoint
 class ShuttleTabShuttlecockInFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeTabBinding.inflate(layoutInflater) }
+    private val parentViewModel: ShuttleRealtimeViewModel by viewModels({ requireParentFragment() })
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        val shuttleCampusAdapter = ShuttleRealtimeListAdapter(
+            requireContext(),
+            parentViewModel,
+            viewLifecycleOwner,
+            R.string.shuttle_tab_shuttlecock_in,
+            R.string.shuttle_header_bound_for_dormitory,
+            emptyList()
+        )
+
+        binding.apply {
+            realtimeViewBoundForDormitory.apply {
+                adapter = shuttleCampusAdapter
+                layoutManager = LinearLayoutManager(context)
+                addItemDecoration(decoration)
+            }
+        }
+
+        parentViewModel.result.observe(viewLifecycleOwner) { result ->
+            val shuttleForCampus = result.filter { it.stop == "shuttlecock_i" }
+            if (shuttleForCampus.isEmpty()) {
+                binding.noRealtimeDataBoundForDormitory.visibility = View.VISIBLE
+                binding.realtimeViewBoundForDormitory.visibility = View.GONE
+            } else {
+                binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
+                binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
+                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(10, shuttleForCampus.size)))
+            }
+        }
+
         binding.apply {
             headerBoundForStation.visibility = View.GONE
             realtimeViewBoundForStation.visibility = View.GONE

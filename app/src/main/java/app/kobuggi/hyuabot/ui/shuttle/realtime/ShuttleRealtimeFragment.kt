@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
 import com.google.android.material.tabs.TabLayoutMediator
@@ -14,12 +15,16 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeBinding.inflate(layoutInflater) }
+    private val viewModel: ShuttleRealtimeViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel.fetchData()
+        viewModel.start()
+
         val viewpagerAdapter = ShuttleRealtimeViewPagerAdapter(childFragmentManager, lifecycle)
         val tabLabelList = listOf(
             R.string.shuttle_tab_dormitory_out,
@@ -34,5 +39,15 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             tab.text = getString(tabLabelList[position])
         }.attach()
         return binding.root
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.stop()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.start()
     }
 }
