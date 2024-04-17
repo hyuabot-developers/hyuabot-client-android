@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeTabBinding
+import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.min
@@ -37,7 +38,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
         binding.apply {
             realtimeViewBoundForDormitory.apply {
                 adapter = shuttleCampusAdapter
-                layoutManager = LinearLayoutManager(context)
+                layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
             }
         }

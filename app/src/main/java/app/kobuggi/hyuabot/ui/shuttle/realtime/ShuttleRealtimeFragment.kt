@@ -50,4 +50,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         super.onResume()
         viewModel.start()
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.viewPager.adapter = null
+    }
 }
