@@ -32,7 +32,7 @@ class ShuttleRealtimeViewModel @Inject constructor(private val apolloClient: Apo
         val currentTime = DateTimeFormatter.ofPattern("HH:mm").format(LocalTime.now())
         viewModelScope.launch {
             val response = apolloClient.query(ShuttleRealtimePageQuery(currentTime)).execute()
-            _result.value = response.data?.shuttle?.timetable
+            _result.value = response.data?.shuttle?.timetable?.filter { it.time > currentTime }
             _isLoading.value = false
         }
     }
