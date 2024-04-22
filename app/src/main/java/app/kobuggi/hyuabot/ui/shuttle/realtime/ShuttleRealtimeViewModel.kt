@@ -11,6 +11,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
@@ -29,9 +30,11 @@ class ShuttleRealtimeViewModel @Inject constructor(private val apolloClient: Apo
 
     fun fetchData() {
         _isLoading.value = true
-        val currentTime = DateTimeFormatter.ofPattern("HH:mm").format(LocalTime.now())
+        val now = LocalDateTime.now()
+        val currentTime = DateTimeFormatter.ofPattern("HH:mm").format(now)
+        val currentDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(now)
         viewModelScope.launch {
-            val response = apolloClient.query(ShuttleRealtimePageQuery(currentTime)).execute()
+            val response = apolloClient.query(ShuttleRealtimePageQuery(currentTime, currentDateTime)).execute()
             _result.value = response.data?.shuttle?.timetable?.filter { it.time > currentTime }
             _isLoading.value = false
         }

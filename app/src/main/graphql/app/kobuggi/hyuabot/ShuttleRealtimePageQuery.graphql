@@ -1,5 +1,5 @@
-query ShuttleRealtimePageQuery ($shuttleStart: Time!) {
-  shuttle (start: $shuttleStart) {
+query ShuttleRealtimePageQuery ($shuttleStart: Time!, $shuttleDateTime: DateTime!) {
+  shuttle (start: $shuttleStart, timestamp: $shuttleDateTime) {
       timetable {
           tag, route, time, stop
       }
