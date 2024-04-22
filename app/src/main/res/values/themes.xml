@@ -93,4 +93,7 @@
     <style name="TextAppearance.App.Tab" parent="TextAppearance.App.TitleSmall">
         <item name="android:textSize">18sp</item>
     </style>
+    <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="colorOnSurfaceVariant">@android:color/white</item>
+    </style>
 </resources>

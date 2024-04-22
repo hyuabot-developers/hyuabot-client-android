@@ -4,6 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+    <FrameLayout
+        android:id="@+id/bottomSheetNavHost"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -48,7 +52,7 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:text="@string/shuttle_no_realtime_data"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_station" />
                 <Button
@@ -87,7 +91,7 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:text="@string/shuttle_no_realtime_data"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_dormitory" />
                 <Button
@@ -125,7 +129,7 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:text="@string/shuttle_no_realtime_data"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_terminal" />
                 <Button
@@ -163,7 +167,7 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:text="@string/shuttle_no_realtime_data"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_jungang_station" />
                 <Button

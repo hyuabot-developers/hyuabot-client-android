@@ -174,8 +174,8 @@
         tools:layout="@layout/dialog_shuttle_stop">
         <argument
             android:name="stopID"
-            app:argType="string"
-            android:defaultValue="shuttlecock_o" />
+            app:argType="integer"
+            android:defaultValue="1" />
     </dialog>
     <dialog
         android:id="@+id/shuttleTimetableDialogFragment"

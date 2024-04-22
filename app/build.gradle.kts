@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlinKsp)
     alias(libs.plugins.hiltPlugin)
     alias(libs.plugins.apollo)
+    alias(libs.plugins.safeArgs)
 }
 
 val props = Properties()
