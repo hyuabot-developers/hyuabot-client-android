@@ -23,6 +23,7 @@ calendar = "2.5.0"
 firebase = "32.8.1"
 kakaoMap = "2.9.5"
 splashScreen = "1.0.1"
+swipeRefreshLayout = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -56,6 +57,7 @@ firebaseCrashlytics = { group = "com.google.firebase", name = "firebase-crashlyt
 firebaseMessaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
 kakaoMap = { group = "com.kakao.maps.open", name = "android", version.ref = "kakaoMap" }
 splashScreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
+swipeRefreshLayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipeRefreshLayout" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

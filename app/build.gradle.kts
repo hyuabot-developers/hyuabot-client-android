@@ -122,6 +122,8 @@ dependencies {
     implementation(libs.kakaoMap)
     // SplashScreen
     implementation(libs.splashScreen)
+    // SwipeRefreshLayout
+    implementation(libs.swipeRefreshLayout)
 }
 
 hilt {

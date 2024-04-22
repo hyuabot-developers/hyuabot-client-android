@@ -24,6 +24,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     ): View {
         viewModel.fetchData()
         viewModel.start()
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+        }
 
         val viewpagerAdapter = ShuttleRealtimeViewPagerAdapter(childFragmentManager, lifecycle)
         val tabLabelList = listOf(
