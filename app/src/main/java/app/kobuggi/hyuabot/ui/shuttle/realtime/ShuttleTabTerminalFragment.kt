@@ -41,6 +41,15 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
             }
+            scrollView.viewTreeObserver.addOnScrollChangedListener {
+                binding.swipeRefreshLayout.isEnabled = binding.scrollView.scrollY == 0
+            }
+            swipeRefreshLayout.setOnRefreshListener {
+                parentViewModel.fetchData()
+            }
+        }
+        parentViewModel.isLoading.observe(viewLifecycleOwner) {
+            if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
 
         parentViewModel.result.observe(viewLifecycleOwner) { result ->
