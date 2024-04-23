@@ -13,6 +13,7 @@ import app.kobuggi.hyuabot.databinding.DialogShuttleStopBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.kakao.vectormap.GestureType
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -63,6 +64,12 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment() {
                 }
             }, object: KakaoMapReadyCallback() {
                 override fun onMapReady(map: KakaoMap) {
+                    map.apply {
+                        setGestureEnable(GestureType.Pan, false)
+                        setGestureEnable(GestureType.Rotate, false)
+                        setGestureEnable(GestureType.Tilt, false)
+                    }
+
                     val labelManager = map.labelManager
                     val layer = labelManager?.layer
                     val style = labelManager?.addLabelStyles(
