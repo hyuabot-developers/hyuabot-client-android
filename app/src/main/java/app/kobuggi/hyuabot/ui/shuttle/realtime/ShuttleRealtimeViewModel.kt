@@ -29,7 +29,7 @@ class ShuttleRealtimeViewModel @Inject constructor(private val apolloClient: Apo
     val showRemainingTime get() = _showRemainingTime
 
     fun fetchData() {
-        _isLoading.value = true
+        if (_result.value == null) _isLoading.value = true
         val now = LocalDateTime.now()
         val currentTime = DateTimeFormatter.ofPattern("HH:mm").format(now)
         val currentDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(now)

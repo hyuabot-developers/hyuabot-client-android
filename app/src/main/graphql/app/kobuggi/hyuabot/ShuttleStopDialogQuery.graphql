@@ -1,0 +1,7 @@
+query ShuttleStopDialogQuery ($shuttleStopID: String!) {
+    shuttle (stopName: [$shuttleStopID]) {
+        stop {
+            latitude, longitude
+        }
+    }
+}
