@@ -124,7 +124,6 @@ class ShuttleRealtimeListAdapter(
 
             val now = LocalTime.now()
             shuttleRealtimeViewModel.showRemainingTime.observe(lifecycleOwner) {
-                Log.d("ShuttleRealtimeListAdapter", "showRemainingTime: $it")
                 val time = LocalTime.parse(item.time)
                 if (it) {
                     val remainingTime = time.minusHours(now.hour.toLong()).minusMinutes(now.minute.toLong())
