@@ -37,7 +37,8 @@
     <string name="shuttle_first_last_time_title">첫차/막차 정보</string>
     <string name="shuttle_first_last_time_no_data_weekdays">--:-- (평일)</string>
     <string name="shuttle_first_last_time_no_data_weekends">--:-- (주말)</string>
-    <string name="shuttle_first_last_time_format">%1$s:%2$s</string>
+    <string name="shuttle_first_last_time_format_weekdays">%1$s:%2$s (평일)</string>
+    <string name="shuttle_first_last_time_format_weekends">%1$s:%2$s (주말)</string>
     <string name="shuttle_first_last_time_first">첫차</string>
     <string name="shuttle_first_last_time_last">막차</string>
     <string name="shuttle_first_last_time_type">행선지</string>
