@@ -19,6 +19,9 @@
             android:id="@+id/action_shuttleRealtimeFragment_to_shuttleTimetableFragment"
             app:destination="@id/shuttleTimetableFragment" />
         <action
+            android:id="@+id/action_shuttleRealtimeFragment_to_shuttleHelpDialogFragment"
+            app:destination="@id/shuttleHelpDialogFragment" />
+        <action
             android:id="@+id/action_shuttleRealtimeFragment_to_noticeWebViewFragment"
             app:destination="@id/noticeWebViewFragment" />
     </fragment>
@@ -177,6 +180,11 @@
             app:argType="integer"
             android:defaultValue="1" />
     </dialog>
+    <dialog
+        android:id="@+id/shuttleHelpDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleHelpDialog"
+        android:label="셔틀 도움말"
+        tools:layout="@layout/dialog_shuttle_help" />
     <dialog
         android:id="@+id/shuttleTimetableDialogFragment"
         android:name="app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleTimetableDialog"
