@@ -93,6 +93,33 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment() {
                 override fun getZoomLevel(): Int = 17
             })
         }
+
+        when (stopID) {
+            R.string.shuttle_tab_dormitory_out, R.string.shuttle_tab_shuttlecock_out -> {
+                binding.apply {
+                    shuttleFirstLastTimeStationLayout.visibility = View.VISIBLE
+                    shuttleFirstLastTimeDormitoryLayout.visibility = View.GONE
+                    shuttleFirstLastTimeTerminalLayout.visibility = View.VISIBLE
+                    shuttleFirstLastTimeJungangStationLayout.visibility = View.VISIBLE
+                }
+            }
+            R.string.shuttle_tab_station -> {
+                binding.apply {
+                    shuttleFirstLastTimeStationLayout.visibility = View.GONE
+                    shuttleFirstLastTimeDormitoryLayout.visibility = View.VISIBLE
+                    shuttleFirstLastTimeTerminalLayout.visibility = View.VISIBLE
+                    shuttleFirstLastTimeJungangStationLayout.visibility = View.VISIBLE
+                }
+            }
+            else -> {
+                binding.apply {
+                    shuttleFirstLastTimeStationLayout.visibility = View.GONE
+                    shuttleFirstLastTimeDormitoryLayout.visibility = View.VISIBLE
+                    shuttleFirstLastTimeTerminalLayout.visibility = View.GONE
+                    shuttleFirstLastTimeJungangStationLayout.visibility = View.GONE
+                }
+            }
+        }
         return binding.root
     }
 

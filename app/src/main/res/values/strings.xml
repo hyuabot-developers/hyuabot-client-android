@@ -33,4 +33,16 @@
     <string name="shuttle_type_shuttlecock">셔틀콕</string>
     <string name="shuttle_type_dormitory">기숙사</string>
     <string name="shuttle_type_shuttlecock_finishing">셔틀콕 종착</string>
+    <!-- 셔틀버스 첫막차 시간 -->
+    <string name="shuttle_first_last_time_title">첫차/막차 정보</string>
+    <string name="shuttle_first_last_time_no_data_weekdays">--:-- (평일)</string>
+    <string name="shuttle_first_last_time_no_data_weekends">--:-- (주말)</string>
+    <string name="shuttle_first_last_time_format">%1$s:%2$s</string>
+    <string name="shuttle_first_last_time_first">첫차</string>
+    <string name="shuttle_first_last_time_last">막차</string>
+    <string name="shuttle_first_last_time_type">행선지</string>
+    <string name="shuttle_bound_for_station">한대앞</string>
+    <string name="shuttle_bound_for_dormitory">기숙사</string>
+    <string name="shuttle_bound_for_terminal">예술인</string>
+    <string name="shuttle_bound_for_jungang_station">중앙역</string>
 </resources>
