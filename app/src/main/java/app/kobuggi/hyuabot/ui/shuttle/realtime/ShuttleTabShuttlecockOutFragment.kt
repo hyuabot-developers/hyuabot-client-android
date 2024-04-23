@@ -58,15 +58,39 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
             }
+            entireTimetableBoundForStation.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_shuttlecock_out,
+                    R.string.shuttle_header_bound_for_station
+                ).also {
+                    findNavController().navigate(it)
+                }
+            }
             realtimeViewBoundForTerminal.apply {
                 adapter = shuttleTerminalAdapter
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
             }
+            entireTimetableBoundForTerminal.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_shuttlecock_out,
+                    R.string.shuttle_header_bound_for_terminal
+                ).also {
+                    findNavController().navigate(it)
+                }
+            }
             realtimeViewBoundForJungangStation.apply {
                 adapter = shuttleJungangStationAdapter
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
+            }
+            entireTimetableBoundForJungangStation.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_shuttlecock_out,
+                    R.string.shuttle_header_bound_for_jungang_station
+                ).also {
+                    findNavController().navigate(it)
+                }
             }
             scrollView.viewTreeObserver.addOnScrollChangedListener {
                 binding.swipeRefreshLayout.isEnabled = binding.scrollView.scrollY == 0

@@ -42,6 +42,14 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
             }
+            entireTimetableBoundForDormitory.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_jungang_station,
+                    R.string.shuttle_header_bound_for_dormitory
+                ).also {
+                    findNavController().navigate(it)
+                }
+            }
             scrollView.viewTreeObserver.addOnScrollChangedListener {
                 binding.swipeRefreshLayout.isEnabled = binding.scrollView.scrollY == 0
             }

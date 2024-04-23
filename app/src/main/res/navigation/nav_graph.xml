@@ -29,12 +29,12 @@
         tools:layout="@layout/fragment_shuttle_timetable">
         <argument
             android:name="stopID"
-            app:argType="string"
-            android:defaultValue="shuttlecock_o" />
+            app:argType="integer"
+            android:defaultValue="1" />
         <argument
             android:name="destination"
-            app:argType="string"
-            android:defaultValue="station" />
+            app:argType="integer"
+            android:defaultValue="1" />
         <action
             android:id="@+id/action_shuttleTimetableFragment_to_shuttleTimetableFilterDialogFragment"
             app:destination="@id/shuttleTimetableFilterDialogFragment" />
