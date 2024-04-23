@@ -37,7 +37,7 @@ type Query {
   """
   Shuttle query
   """
-  shuttle(timestamp: DateTime = "2024-04-14T21:14:51.491334+09:00", period: [String!] = null, weekdays: [Boolean!] = null, routeName: [String!] = null, routeTag: [String!] = null, routeStart: [String!] = null, routeEnd: [String!] = null, stopName: [String!] = null, start: Time = null, end: Time = null, periodCurrent: Boolean = null, periodStart: Date = null, periodEnd: Date = null): ShuttleQuery!
+  shuttle(timestamp: DateTime = "2024-04-23T19:45:44.497628+09:00", period: [String!] = null, weekdays: [Boolean!] = null, routeName: [String!] = null, routeTag: [String!] = null, routeStart: [String!] = null, routeEnd: [String!] = null, stopName: [String!] = null, start: Time = null, end: Time = null, periodCurrent: Boolean = null, periodStart: Date = null, periodEnd: Date = null): ShuttleQuery!
 
   """
   Notice query
@@ -731,6 +731,14 @@ type ShuttleTimetableQuery {
 
   tag: String!
 
+  stop: String!
+
+  time: String!
+
+  via: [ShuttleViaQuery!]!
+}
+
+type ShuttleViaQuery {
   stop: String!
 
   time: String!

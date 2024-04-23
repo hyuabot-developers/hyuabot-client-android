@@ -13,9 +13,6 @@
             android:id="@+id/action_shuttleRealtimeFragment_to_shuttleStopDialogFragment"
             app:destination="@id/shuttleStopDialogFragment" />
         <action
-            android:id="@+id/action_shuttleRealtimeFragment_to_shuttleTimetableDialogFragment"
-            app:destination="@id/shuttleTimetableDialogFragment" />
-        <action
             android:id="@+id/action_shuttleRealtimeFragment_to_shuttleTimetableFragment"
             app:destination="@id/shuttleTimetableFragment" />
         <action
