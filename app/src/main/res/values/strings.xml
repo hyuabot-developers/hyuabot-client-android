@@ -58,4 +58,7 @@
     <string name="shuttle_help_via_content">타고자 하는 셔틀버스 정보를 클릭해보세요! 해당 버스가 어디를 경유하는지 확인할 수 있습니다.</string>
     <string name="shuttle_help_departure_title">5. 셔틀버스 출발 시간 확인</string>
     <string name="shuttle_help_departure_content">타고자 하는 셔틀버스 정보를 길게 클릭해보세요! 해당 버스의 출발 시간을 확인할 수 있습니다.</string>
+    <!-- 셔틀버스 시간표 -->
+    <string name="shuttle_timetable_tab_weekdays">평일</string>
+    <string name="shuttle_timetable_tab_weekends">주말</string>
 </resources>
