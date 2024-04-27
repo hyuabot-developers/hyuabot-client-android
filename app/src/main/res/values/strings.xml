@@ -61,4 +61,5 @@
     <!-- 셔틀버스 시간표 -->
     <string name="shuttle_timetable_tab_weekdays">평일</string>
     <string name="shuttle_timetable_tab_weekends">주말</string>
+    <string name="shuttle_timetable_empty">도착 예정인 셔틀버스가 없습니다.</string>
 </resources>
