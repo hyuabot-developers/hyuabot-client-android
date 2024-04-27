@@ -11,12 +11,13 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentShuttleTimetableBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShuttleTimetableFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleTimetableBinding.inflate(layoutInflater) }
-    val viewModel: ShuttleTimetableViewModel by viewModels()
+    private val viewModel: ShuttleTimetableViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,6 +26,7 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
     ): View {
         val stopID = arguments?.getInt("stopID") ?: 0
         val destinationID = arguments?.getInt("destinationID") ?: 0
+        val now = LocalDate.now()
 
         viewModel.stopResID.value = stopID
         viewModel.headerResID.value = destinationID
@@ -135,7 +137,10 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
             val action = ShuttleTimetableFragmentDirections.actionShuttleTimetableFragmentToShuttleTimetableFilterDialogFragment()
             findNavController().navigate(action)
         }
-        binding.viewPager.adapter = viewpagerAdapter
+        binding.viewPager.apply {
+            adapter = viewpagerAdapter
+            setCurrentItem(if (now.dayOfWeek.value < 6) 0 else 1, false)
+        }
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()

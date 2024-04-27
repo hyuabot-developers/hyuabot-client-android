@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.databinding.FragmentShuttleTimetableTabBinding
 import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,6 +30,7 @@ class ShuttleTabWeekdaysFragment @Inject constructor() : Fragment() {
             emptyList()
         )
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        val localTime = LocalTime.now()
         binding.shuttleTimetableRecyclerView.apply {
             setAdapter(adapter)
             layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -38,7 +40,11 @@ class ShuttleTabWeekdaysFragment @Inject constructor() : Fragment() {
             val timetableItems = it.filter { item -> item.weekdays }
             if (timetableItems.isNotEmpty()) {
                 adapter.updateData(timetableItems)
+                val afterNowItemIndex = timetableItems.indexOfFirst { item -> LocalTime.parse(item.time) > localTime }
                 binding.apply {
+                    if (afterNowItemIndex != -1) {
+                        shuttleTimetableRecyclerView.scrollToPosition(afterNowItemIndex)
+                    }
                     shuttleTimetableRecyclerView.visibility = View.VISIBLE
                     shuttleTimetableEmptyText.visibility = View.GONE
                 }
