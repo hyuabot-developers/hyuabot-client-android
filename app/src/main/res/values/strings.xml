@@ -62,4 +62,12 @@
     <string name="shuttle_timetable_tab_weekdays">평일</string>
     <string name="shuttle_timetable_tab_weekends">주말</string>
     <string name="shuttle_timetable_empty">도착 예정인 셔틀버스가 없습니다.</string>
+    <!-- 셔틀버스 시간표 필터 -->
+    <string name="shuttle_timetable_filter_title">셔틀버스 시간표 검색</string>
+    <!-- 셔틀버스 운행 기간 -->
+    <string name="shuttle_period">운행 기간</string>
+    <string name="shuttle_period_semester">학기 중</string>
+    <string name="shuttle_period_vacation">방학 중</string>
+    <string name="shuttle_period_vacation_session">계절학기 중</string>
+    <string name="confirm">확인</string>
 </resources>

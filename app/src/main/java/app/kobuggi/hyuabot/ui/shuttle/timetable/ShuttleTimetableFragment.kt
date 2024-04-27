@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentShuttleTimetableBinding
 import com.google.android.material.tabs.TabLayoutMediator
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ShuttleTimetableFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleTimetableBinding.inflate(layoutInflater) }
-    private val viewModel: ShuttleTimetableViewModel by viewModels()
+    val viewModel: ShuttleTimetableViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -114,12 +115,26 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
         }
+        viewModel.period.observe(viewLifecycleOwner) {
+            viewModel.fetchData()
+        }
 
         val viewpagerAdapter = ShuttleTimetableViewPagerAdapter(childFragmentManager, lifecycle)
         val tabLabelList = listOf(
             R.string.shuttle_timetable_tab_weekdays,
             R.string.shuttle_timetable_tab_weekends,
         )
+
+        binding.filterFab.setOnClickListener {
+            findNavController()
+                .currentBackStackEntry?.savedStateHandle?.apply {
+                    remove<String>("period")
+                }?.getLiveData<String>("period")?.observe(viewLifecycleOwner) {
+                    viewModel.period.value = it
+                }
+            val action = ShuttleTimetableFragmentDirections.actionShuttleTimetableFragmentToShuttleTimetableFilterDialogFragment()
+            findNavController().navigate(action)
+        }
         binding.viewPager.adapter = viewpagerAdapter
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
