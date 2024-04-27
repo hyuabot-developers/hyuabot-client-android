@@ -106,6 +106,7 @@ dependencies {
     // Networking
     implementation(libs.gson)
     implementation(libs.okhttp)
+    implementation(libs.okhttpLogging)
     implementation(libs.apollo)
     // DataStore
     implementation(libs.dataStore)
