@@ -20,7 +20,17 @@ class ShuttleTabWeekendsFragment @Inject constructor() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        val adapter = ShuttleTimetableListAdapter(
+            parentViewModel.stopResID.value ?: 0,
+            parentViewModel.headerResID.value ?: 0,
+            emptyList()
+        )
+        binding.shuttleTimetableRecyclerView.apply {
+            setAdapter(adapter)
+        }
+        parentViewModel.result.observe(viewLifecycleOwner) {
+            adapter.updateData(it.filter { item -> !item.weekdays })
+        }
         return binding.root
     }
 }

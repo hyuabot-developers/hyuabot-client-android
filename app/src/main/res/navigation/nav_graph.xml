@@ -32,7 +32,7 @@
             app:argType="integer"
             android:defaultValue="1" />
         <argument
-            android:name="destination"
+            android:name="destinationID"
             app:argType="integer"
             android:defaultValue="1" />
         <action

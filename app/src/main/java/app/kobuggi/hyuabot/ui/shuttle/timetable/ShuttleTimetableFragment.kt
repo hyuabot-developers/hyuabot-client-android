@@ -25,6 +25,9 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
         val stopID = arguments?.getInt("stopID") ?: 0
         val destinationID = arguments?.getInt("destinationID") ?: 0
 
+        viewModel.stopResID.value = stopID
+        viewModel.headerResID.value = destinationID
+
         if (stopID == R.string.shuttle_tab_dormitory_out) {
             viewModel.stopID.value = "dormitory_o"
             when (destinationID) {
@@ -84,7 +87,7 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
                 }
             }
         } else if (stopID == R.string.shuttle_tab_jungang_station) {
-            viewModel.stopID.value = "jungang_station"
+            viewModel.stopID.value = "jungang_stn"
             when (destinationID) {
                 R.string.shuttle_header_bound_for_dormitory -> {
                     viewModel.tags.value = listOf("DJ")

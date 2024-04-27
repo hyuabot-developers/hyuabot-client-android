@@ -19,6 +19,8 @@ class ShuttleTimetableViewModel @Inject constructor(private val apolloClient: Ap
 
     val stopID: MutableLiveData<String?> = MutableLiveData(null)
     val tags: MutableLiveData<List<String>?> = MutableLiveData(null)
+    val stopResID: MutableLiveData<Int?> = MutableLiveData(null)
+    val headerResID: MutableLiveData<Int?> = MutableLiveData(null)
     val period: MutableLiveData<String?> = MutableLiveData(null)
 
     fun fetchData() {

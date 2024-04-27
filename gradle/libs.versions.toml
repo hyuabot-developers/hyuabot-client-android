@@ -41,6 +41,7 @@ rxJava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxJav
 rxAndroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = "rxAndroid" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttpLogging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 apollo = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "apollo" }
 dataStore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStore" }
 dataStoreRx = { group = "androidx.datastore", name = "datastore-preferences-rxjava3", version.ref = "dataStore" }
