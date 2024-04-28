@@ -81,7 +81,14 @@ android {
 androidComponents {
     onVariants {
         it.buildConfigFields.put("API_URL", BuildConfigField("String", props["API_URL"].toString(), "API_URL"))
-        it.buildConfigFields.put("KAKAO_MAP_KEY", BuildConfigField("String", props["KAKAO_MAP_KEY"].toString(), "KAKAO_MAP_KEY"))
+        it.buildConfigFields.put(
+            "KAKAO_MAP_KEY",
+            BuildConfigField(
+                "String",
+                props["KAKAO_MAP_KEY"].toString(),
+                "KAKAO_MAP_KEY",
+            ),
+        )
     }
 }
 
