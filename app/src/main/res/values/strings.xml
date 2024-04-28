@@ -1,3 +1,73 @@
 <resources>
     <string name="app_name">HYUabot</string>
+    <string name="close">닫기</string>
+    <!-- Bottom Navigation -->
+    <string name="shuttle_bus">셔틀버스</string>
+    <string name="bus">노선버스</string>
+    <!-- 셔틀버스 -->
+    <string name="shuttle_realtime_title">셔틀버스 도착 정보</string>
+    <!-- 셔틀버스 도착 정보 탭 -->
+    <string name="shuttle_tab_dormitory_out">기숙사</string>
+    <string name="shuttle_tab_shuttlecock_out">셔틀콕</string>
+    <string name="shuttle_tab_station">한대앞</string>
+    <string name="shuttle_tab_terminal">예술인</string>
+    <string name="shuttle_tab_jungang_station">중앙역</string>
+    <string name="shuttle_tab_shuttlecock_in">셔틀콕 건너편</string>
+    <!-- 셔틀버스 도착 정보 헤더 -->
+    <string name="shuttle_header_bound_for_station">한대앞 방면</string>
+    <string name="shuttle_header_bound_for_dormitory">기숙사 방면</string>
+    <string name="shuttle_header_bound_for_terminal">예술인 방면</string>
+    <string name="shuttle_header_bound_for_jungang_station">중앙역 방면</string>
+    <!-- 셔틀버스 도착 정보 푸터 -->
+    <string name="shuttle_footer_entire_timetable">전체 시간표</string>
+    <string name="shuttle_footer_stop_info">정류장 정보</string>
+    <!-- 셔틀버스 도착 정보 없음 -->
+    <string name="shuttle_no_realtime_data">도착 정보가 없습니다.</string>
+    <!-- 셔틀버스 도착 정보 시간 -->
+    <string name="shuttle_time_type_1">%1$s시 %2$s분 출발</string>
+    <string name="shuttle_time_type_2">%1$s분 후 출발</string>
+    <!-- 셔틀버스 노선 타입 -->
+    <string name="shuttle_type_direct">직행</string>
+    <string name="shuttle_type_circular">순환</string>
+    <string name="shuttle_type_jungang">중앙역(경유)</string>
+    <string name="shuttle_type_shuttlecock">셔틀콕</string>
+    <string name="shuttle_type_dormitory">기숙사</string>
+    <string name="shuttle_type_shuttlecock_finishing">셔틀콕 종착</string>
+    <!-- 셔틀버스 첫막차 시간 -->
+    <string name="shuttle_first_last_time_title">첫차/막차 정보</string>
+    <string name="shuttle_first_last_time_no_data_weekdays">--:-- (평일)</string>
+    <string name="shuttle_first_last_time_no_data_weekends">--:-- (주말)</string>
+    <string name="shuttle_first_last_time_format_weekdays">%1$s:%2$s (평일)</string>
+    <string name="shuttle_first_last_time_format_weekends">%1$s:%2$s (주말)</string>
+    <string name="shuttle_first_last_time_first">첫차</string>
+    <string name="shuttle_first_last_time_last">막차</string>
+    <string name="shuttle_first_last_time_type">행선지</string>
+    <string name="shuttle_bound_for_station">한대앞</string>
+    <string name="shuttle_bound_for_dormitory">기숙사</string>
+    <string name="shuttle_bound_for_terminal">예술인</string>
+    <string name="shuttle_bound_for_jungang_station">중앙역</string>
+    <!-- 셔틀버스 도움말 -->
+    <string name="shuttle_help_title">셔틀버스 도움말</string>
+    <string name="shuttle_help_lost_title">1. 셔틀버스 분실물 찾기</string>
+    <string name="shuttle_help_lost_content">셔틀버스 분실물을 찾으려면 셔틀버스 사무실(031–400–4412)로 전화하거나 행복관 뒤 교육동 1층에 있는 사무실에 방문해주세요.</string>
+    <string name="shuttle_help_time_title">2. 셔틀버스 시간표 미준수</string>
+    <string name="shuttle_help_time_content">셔틀버스 시간표 미준수로 인한 불편사항은 총무인사팀(031–400–4406)로 전화해주세요</string>
+    <string name="shuttle_help_stop_title">3. 셔틀버스 정류장 위치 및 첫차 막차 시간</string>
+    <string name="shuttle_help_stop_content">셔틀버스 정류장 위치 및 첫차 막차 시간은 정류장별 화면 하단의 정류장 정보 버튼을 눌러 셔틀버스 도착 정보 화면에서 확인할 수 있습니다.</string>
+    <string name="shuttle_help_via_title">4. 셔틀버스 경유지 정보 확인</string>
+    <string name="shuttle_help_via_content">타고자 하는 셔틀버스 정보를 클릭해보세요! 해당 버스가 어디를 경유하는지 확인할 수 있습니다.</string>
+    <string name="shuttle_help_departure_title">5. 셔틀버스 출발 시간 확인</string>
+    <string name="shuttle_help_departure_content">타고자 하는 셔틀버스 정보를 길게 클릭해보세요! 해당 버스의 출발 시간을 확인할 수 있습니다.</string>
+    <!-- 셔틀버스 시간표 -->
+    <string name="shuttle_timetable_tab_weekdays">평일</string>
+    <string name="shuttle_timetable_tab_weekends">주말</string>
+    <string name="shuttle_timetable_empty">도착 예정인 셔틀버스가 없습니다.</string>
+    <!-- 셔틀버스 시간표 필터 -->
+    <string name="shuttle_timetable_filter_title">셔틀버스 시간표 검색</string>
+    <!-- 셔틀버스 운행 기간 -->
+    <string name="shuttle_period">운행 기간</string>
+    <string name="shuttle_period_semester">학기 중</string>
+    <string name="shuttle_period_vacation">방학 중</string>
+    <string name="shuttle_period_vacation_session">계절학기 중</string>
+    <string name="confirm">확인</string>
 </resources>

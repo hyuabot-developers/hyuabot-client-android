@@ -10,12 +10,15 @@ plugins {
     alias(libs.plugins.ktlint) apply false
 }
 
-allprojects {
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    configure<KtlintExtension> {
-        debug.set(true)
-        reporters {
-            reporter(ReporterType.JSON)
-        }
+allprojects {}
+
+apply(plugin = "org.jlleitschuh.gradle.ktlint")
+configure<KtlintExtension> {
+    debug.set(true)
+    reporters {
+        reporter(ReporterType.JSON)
+    }
+    filter {
+        exclude { element -> element.file.name.contains("generated/") }
     }
 }

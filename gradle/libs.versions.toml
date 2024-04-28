@@ -1,5 +1,5 @@
 [versions]
-agp = "8.3.0"
+agp = "8.3.2"
 hilt = "2.51"
 kotlin = "1.9.23"
 coreKtx = "1.12.0"
@@ -20,9 +20,10 @@ dataStore = "1.0.0"
 viewPager2 = "1.0.0"
 room = "2.6.1"
 calendar = "2.5.0"
-firebase = "32.7.4"
+firebase = "32.8.1"
 kakaoMap = "2.9.5"
 splashScreen = "1.0.1"
+swipeRefreshLayout = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +41,7 @@ rxJava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxJav
 rxAndroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = "rxAndroid" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttpLogging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 apollo = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "apollo" }
 dataStore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStore" }
 dataStoreRx = { group = "androidx.datastore", name = "datastore-preferences-rxjava3", version.ref = "dataStore" }
@@ -56,6 +58,7 @@ firebaseCrashlytics = { group = "com.google.firebase", name = "firebase-crashlyt
 firebaseMessaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
 kakaoMap = { group = "com.kakao.maps.open", name = "android", version.ref = "kakaoMap" }
 splashScreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
+swipeRefreshLayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipeRefreshLayout" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -64,4 +67,5 @@ kotlinKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hiltPlugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
+safeArgs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 

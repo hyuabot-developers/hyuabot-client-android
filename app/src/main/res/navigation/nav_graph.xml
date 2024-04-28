@@ -13,11 +13,11 @@
             android:id="@+id/action_shuttleRealtimeFragment_to_shuttleStopDialogFragment"
             app:destination="@id/shuttleStopDialogFragment" />
         <action
-            android:id="@+id/action_shuttleRealtimeFragment_to_shuttleTimetableDialogFragment"
-            app:destination="@id/shuttleTimetableDialogFragment" />
-        <action
             android:id="@+id/action_shuttleRealtimeFragment_to_shuttleTimetableFragment"
             app:destination="@id/shuttleTimetableFragment" />
+        <action
+            android:id="@+id/action_shuttleRealtimeFragment_to_shuttleHelpDialogFragment"
+            app:destination="@id/shuttleHelpDialogFragment" />
         <action
             android:id="@+id/action_shuttleRealtimeFragment_to_noticeWebViewFragment"
             app:destination="@id/noticeWebViewFragment" />
@@ -29,12 +29,12 @@
         tools:layout="@layout/fragment_shuttle_timetable">
         <argument
             android:name="stopID"
-            app:argType="string"
-            android:defaultValue="shuttlecock_o" />
+            app:argType="integer"
+            android:defaultValue="1" />
         <argument
-            android:name="destination"
-            app:argType="string"
-            android:defaultValue="station" />
+            android:name="destinationID"
+            app:argType="integer"
+            android:defaultValue="1" />
         <action
             android:id="@+id/action_shuttleTimetableFragment_to_shuttleTimetableFilterDialogFragment"
             app:destination="@id/shuttleTimetableFilterDialogFragment" />
@@ -174,9 +174,14 @@
         tools:layout="@layout/dialog_shuttle_stop">
         <argument
             android:name="stopID"
-            app:argType="string"
-            android:defaultValue="shuttlecock_o" />
+            app:argType="integer"
+            android:defaultValue="1" />
     </dialog>
+    <dialog
+        android:id="@+id/shuttleHelpDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleHelpDialog"
+        android:label="셔틀 도움말"
+        tools:layout="@layout/dialog_shuttle_help" />
     <dialog
         android:id="@+id/shuttleTimetableDialogFragment"
         android:name="app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleTimetableDialog"

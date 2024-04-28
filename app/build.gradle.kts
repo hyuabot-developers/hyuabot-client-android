@@ -1,3 +1,4 @@
+import com.android.build.api.variant.BuildConfigField
 import java.util.Properties
 
 plugins {
@@ -6,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlinKsp)
     alias(libs.plugins.hiltPlugin)
     alias(libs.plugins.apollo)
+    alias(libs.plugins.safeArgs)
 }
 
 val props = Properties()
@@ -15,11 +17,11 @@ android {
     namespace = "app.kobuggi.hyuabot"
     compileSdk = 34
 
-//    apollo {
-//        service("query") {
-//            packageName = "app.kobuggi.hyuabot"
-//        }
-//    }
+    apollo {
+        service("query") {
+            packageName = "app.kobuggi.hyuabot"
+        }
+    }
 
     signingConfigs {
         create("config") {
@@ -44,11 +46,17 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("config")
+        }
+        debug {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("config")
         }
     }
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     compileOptions {
@@ -65,6 +73,20 @@ android {
             listOf(
                 "-Xlint:unchecked",
                 "-Xlint:deprecation",
+            ),
+        )
+    }
+}
+
+androidComponents {
+    onVariants {
+        it.buildConfigFields.put("API_URL", BuildConfigField("String", props["API_URL"].toString(), "API_URL"))
+        it.buildConfigFields.put(
+            "KAKAO_MAP_KEY",
+            BuildConfigField(
+                "String",
+                props["KAKAO_MAP_KEY"].toString(),
+                "KAKAO_MAP_KEY",
             ),
         )
     }
@@ -91,6 +113,7 @@ dependencies {
     // Networking
     implementation(libs.gson)
     implementation(libs.okhttp)
+    implementation(libs.okhttpLogging)
     implementation(libs.apollo)
     // DataStore
     implementation(libs.dataStore)
@@ -114,6 +137,8 @@ dependencies {
     implementation(libs.kakaoMap)
     // SplashScreen
     implementation(libs.splashScreen)
+    // SwipeRefreshLayout
+    implementation(libs.swipeRefreshLayout)
 }
 
 hilt {
