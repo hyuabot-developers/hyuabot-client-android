@@ -1,6 +1,5 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +11,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -22,9 +20,11 @@ class ShuttleRealtimeViewModel @Inject constructor(private val apolloClient: Apo
     private val _isLoading = MutableLiveData(false)
     private val _showRemainingTime = MutableLiveData(true)
     private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Timetable>>()
+    private val _stopInfo = MutableLiveData<List<ShuttleRealtimePageQuery.Stop>>()
     private val _disposable = CompositeDisposable()
 
     val result get() = _result
+    val stopInfo get() = _stopInfo
     val isLoading get() = _isLoading
     val showRemainingTime get() = _showRemainingTime
 
@@ -36,6 +36,7 @@ class ShuttleRealtimeViewModel @Inject constructor(private val apolloClient: Apo
         viewModelScope.launch {
             val response = apolloClient.query(ShuttleRealtimePageQuery(currentTime, currentDateTime)).execute()
             _result.value = response.data?.shuttle?.timetable?.filter { it.time > currentTime }
+            _stopInfo.value = response.data?.shuttle?.stop
             _isLoading.value = false
         }
     }

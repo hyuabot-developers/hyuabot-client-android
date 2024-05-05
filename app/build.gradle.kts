@@ -139,6 +139,8 @@ dependencies {
     implementation(libs.splashScreen)
     // SwipeRefreshLayout
     implementation(libs.swipeRefreshLayout)
+    // Play Services
+    implementation(libs.playServicesLocation)
 }
 
 hilt {
