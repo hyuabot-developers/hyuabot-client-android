@@ -3,7 +3,7 @@ package app.kobuggi.hyuabot.ui.bus.realtime
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
+import app.kobuggi.hyuabot.BusRealtimePageQuery
 import com.apollographql.apollo3.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BusRealtimeViewModel @Inject constructor(private val apolloClient: ApolloClient): ViewModel() {
     private val _isLoading = MutableLiveData(false)
-    private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Timetable>>()
+    private val _result = MutableLiveData<List<BusRealtimePageQuery.Bus>>()
     private val _disposable = CompositeDisposable()
 
     val result get() = _result
@@ -28,10 +28,15 @@ class BusRealtimeViewModel @Inject constructor(private val apolloClient: ApolloC
         if (_result.value == null) _isLoading.value = true
         val now = LocalDateTime.now()
         val currentTime = DateTimeFormatter.ofPattern("HH:mm").format(now)
-        val currentDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(now)
+        val weekdays = when (now.dayOfWeek.value) {
+            1, 2, 3, 4, 5 -> "weekdays"
+            6 -> "saturday"
+            7 -> "sunday"
+            else -> "weekdays"
+        }
         viewModelScope.launch {
-            val response = apolloClient.query(ShuttleRealtimePageQuery(currentTime, currentDateTime)).execute()
-            _result.value = response.data?.shuttle?.timetable?.filter { it.time > currentTime }
+            val response = apolloClient.query(BusRealtimePageQuery(currentTime, weekdays)).execute()
+            _result.value = response.data?.bus
             _isLoading.value = false
         }
     }

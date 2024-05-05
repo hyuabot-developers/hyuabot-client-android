@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
-import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeBinding
+import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BusTabOtherFragment @Inject constructor() : Fragment() {
-    private val binding by lazy { FragmentBusRealtimeBinding.inflate(layoutInflater) }
+    private val binding by lazy { FragmentBusRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: BusRealtimeViewModel by viewModels({ requireParentFragment() })
 
     override fun onCreateView(
