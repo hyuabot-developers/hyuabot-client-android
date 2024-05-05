@@ -77,4 +77,14 @@
     <string name="bus_tab_seoul">강남역</string>
     <string name="bus_tab_suwon">수원역</string>
     <string name="bus_tab_other">기타</string>
+    <!-- 노선버스 도착 정보 헤더 -->
+    <string name="bus_header_format">%1$s (%2$s)</string>
+    <!-- 노선버스 정류장 -->
+    <string name="bus_stop_dormitory">한양대기숙사앞</string>
+    <string name="bus_stop_cluster">한국생산기술연구원</string>
+    <string name="bus_stop_convention">한양대ERICA컨벤션센터</string>
+    <string name="bus_stop_main_gate">한양대정문</string>
+    <string name="bus_stop_entrance">한양대입구</string>
+    <string name="bus_stop_sangnoksu_station">상록수역3번출구건너편</string>
+    <string name="bus_stop_terminal">안산파크푸르지오</string>
 </resources>

@@ -27,26 +27,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
-                    android:id="@+id/header_bound_for_station"
+                    android:id="@+id/header_first"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingVertical="16dp"
                     android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_station"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:textFontWeight="700"
                     android:background="@color/hanyang_blue"
                     app:layout_constraintTop_toTopOf="parent" />
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/realtime_view_bound_for_station"
+                    android:id="@+id/realtime_view_first"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_bound_for_station" />
+                    app:layout_constraintTop_toBottomOf="@id/header_first" />
                 <TextView
-                    android:id="@+id/no_realtime_data_bound_for_station"
+                    android:id="@+id/no_realtime_data_first"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
@@ -54,38 +53,37 @@
                     android:text="@string/shuttle_no_realtime_data"
                     android:textSize="16sp"
                     android:textFontWeight="700"
-                    app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_station" />
+                    app:layout_constraintTop_toBottomOf="@id/realtime_view_first" />
                 <Button
-                    android:id="@+id/entire_timetable_bound_for_station"
+                    android:id="@+id/entire_timetable_first"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/shuttle_footer_entire_timetable"
                     android:textSize="16sp"
                     android:textFontWeight="700"
                     style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_station" />
+                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_first" />
                 <TextView
-                    android:id="@+id/header_bound_for_dormitory"
+                    android:id="@+id/header_second"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingVertical="16dp"
                     android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_dormitory"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_station" />
+                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_first" />
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/realtime_view_bound_for_dormitory"
+                    android:id="@+id/realtime_view_second"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
 
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_bound_for_dormitory" />
+                    app:layout_constraintTop_toBottomOf="@id/header_second" />
                 <TextView
-                    android:id="@+id/no_realtime_data_bound_for_dormitory"
+                    android:id="@+id/no_realtime_data_second"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
@@ -93,37 +91,36 @@
                     android:text="@string/shuttle_no_realtime_data"
                     android:textSize="16sp"
                     android:textFontWeight="700"
-                    app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_dormitory" />
+                    app:layout_constraintTop_toBottomOf="@id/realtime_view_second" />
                 <Button
-                    android:id="@+id/entire_timetable_bound_for_dormitory"
+                    android:id="@+id/entire_timetable_second"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/shuttle_footer_entire_timetable"
                     android:textSize="16sp"
                     android:textFontWeight="700"
                     style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_dormitory" />
+                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_second" />
                 <TextView
-                    android:id="@+id/header_bound_for_terminal"
+                    android:id="@+id/header_third"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingVertical="16dp"
                     android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_terminal"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_dormitory" />
+                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_second" />
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/realtime_view_bound_for_terminal"
+                    android:id="@+id/realtime_view_third"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_bound_for_terminal" />
+                    app:layout_constraintTop_toBottomOf="@id/header_third" />
                 <TextView
-                    android:id="@+id/no_realtime_data_bound_for_terminal"
+                    android:id="@+id/no_realtime_data_third"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
@@ -131,37 +128,36 @@
                     android:text="@string/shuttle_no_realtime_data"
                     android:textSize="16sp"
                     android:textFontWeight="700"
-                    app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_terminal" />
+                    app:layout_constraintTop_toBottomOf="@id/realtime_view_third" />
                 <Button
-                    android:id="@+id/entire_timetable_bound_for_terminal"
+                    android:id="@+id/entire_timetable_third"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/shuttle_footer_entire_timetable"
                     android:textSize="16sp"
                     android:textFontWeight="700"
                     style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_terminal" />
+                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_third" />
                 <TextView
-                    android:id="@+id/header_bound_for_jungang_station"
+                    android:id="@+id/header_fourth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingVertical="16dp"
                     android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_jungang_station"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_terminal" />
+                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_third" />
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/realtime_view_bound_for_jungang_station"
+                    android:id="@+id/realtime_view_fourth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_bound_for_jungang_station" />
+                    app:layout_constraintTop_toBottomOf="@id/header_fourth" />
                 <TextView
-                    android:id="@+id/no_realtime_data_bound_for_jungang_station"
+                    android:id="@+id/no_realtime_data_fourth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
@@ -169,25 +165,16 @@
                     android:text="@string/shuttle_no_realtime_data"
                     android:textSize="16sp"
                     android:textFontWeight="700"
-                    app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_jungang_station" />
+                    app:layout_constraintTop_toBottomOf="@id/realtime_view_fourth" />
                 <Button
-                    android:id="@+id/entire_timetable_bound_for_jungang_station"
+                    android:id="@+id/entire_timetable_fourth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/shuttle_footer_entire_timetable"
                     android:textSize="16sp"
                     android:textFontWeight="700"
                     style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_jungang_station" />
-                <Button
-                    android:id="@+id/stop_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_stop_info"
-                    android:textSize="16sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_jungang_station" />
+                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_fourth" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

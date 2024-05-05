@@ -8,4 +8,5 @@
     <color name="hanyang_gold">#88774F</color>
     <!-- 버스 노선 색상 -->
     <color name="red_bus">#E60012</color>
+    <color name="green_bus">#33CC99</color>
 </resources>
