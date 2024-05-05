@@ -72,4 +72,9 @@
     <string name="confirm">확인</string>
     <!-- 셔틀버스 등하교 팝업 -->
     <string name="shuttle_realtime_toast">등하교 집중 시간대에는 셔틀콕에서 일부 셔틀버스가 운행하지 않을 수 있습니다.</string>
+    <!-- 노선버스 도착 정보 탭 -->
+    <string name="bus_tab_city">시내버스</string>
+    <string name="bus_tab_seoul">강남역</string>
+    <string name="bus_tab_suwon">수원역</string>
+    <string name="bus_tab_other">기타</string>
 </resources>
