@@ -38,8 +38,8 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             R.string.bus_tab_other
         )
         binding.viewPager.adapter = viewpagerAdapter
-        binding.helpFab.setOnClickListener {
-            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment().also {
+        binding.stopFab.setOnClickListener {
+            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopDialogFragment().also {
                 findNavController().navigate(it)
             }
         }

@@ -5,16 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import app.kobuggi.hyuabot.databinding.DialogShuttleHelpBinding
+import app.kobuggi.hyuabot.databinding.DialogBusStopBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BusStopSelectDialog @Inject constructor() : DialogFragment() {
-    private val binding by lazy { DialogShuttleHelpBinding.inflate(layoutInflater) }
+class BusStopDialog @Inject constructor() : DialogFragment() {
+    private val binding by lazy { DialogBusStopBinding.inflate(layoutInflater) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding.toolbar.setOnMenuItemClickListener { _ -> dismiss(); true }
+        binding.confirmButton.setOnClickListener {
+            dismiss()
+        }
         return binding.root
     }
 

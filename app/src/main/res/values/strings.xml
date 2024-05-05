@@ -87,4 +87,11 @@
     <string name="bus_stop_entrance">한양대입구</string>
     <string name="bus_stop_sangnoksu_station">상록수역3번출구건너편</string>
     <string name="bus_stop_terminal">안산파크푸르지오</string>
+    <!-- 노선 버스 정류장 선택 -->
+    <string name="bus_stop_title">정류장 선택</string>
+    <string-array name="bus_stop_list">
+        <item>@string/bus_stop_dormitory</item>
+        <item>@string/bus_stop_cluster</item>
+        <item>@string/bus_stop_convention</item>
+    </string-array>
 </resources>

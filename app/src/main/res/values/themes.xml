@@ -34,6 +34,8 @@
         <item name="textAppearanceLabelLarge">@style/TextAppearance.App.LabelLarge</item>
         <item name="textAppearanceLabelMedium">@style/TextAppearance.App.LabelMedium</item>
         <item name="textAppearanceLabelSmall">@style/TextAppearance.App.LabelSmall</item>
+        <!-- Popup Menu -->
+        <item name="popupMenuBackground">@drawable/custom_popup_background</item>
     </style>
     <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
