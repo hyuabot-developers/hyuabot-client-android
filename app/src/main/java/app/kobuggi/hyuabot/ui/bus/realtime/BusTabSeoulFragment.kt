@@ -23,6 +23,26 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        parentViewModel.selectedStopID.observe(viewLifecycleOwner) {
+            if (it == null) return@observe
+            when (it) {
+                R.string.bus_stop_convention -> {
+                    binding.apply {
+                        headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_convention))
+                    }
+                }
+                R.string.bus_stop_dormitory -> {
+                    binding.apply {
+                        headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_dormitory))
+                    }
+                }
+                R.string.bus_stop_cluster -> {
+                    binding.apply {
+                        headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_cluster))
+                    }
+                }
+            }
+        }
         binding.apply {
             headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_convention))
             headerSecond.text = getString(R.string.bus_header_format, "3100N", getString(R.string.bus_stop_main_gate))

@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.BusRealtimePageQuery
+import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import com.apollographql.apollo3.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -16,13 +17,26 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class BusRealtimeViewModel @Inject constructor(private val apolloClient: ApolloClient): ViewModel() {
+class BusRealtimeViewModel @Inject constructor(
+    private val apolloClient: ApolloClient,
+    private val userPreferencesRepository: UserPreferencesRepository
+): ViewModel() {
+    init {
+        viewModelScope.launch {
+            userPreferencesRepository.getBusStop().collect {
+                _selectedStopID.value = it
+            }
+        }
+    }
+
     private val _isLoading = MutableLiveData(false)
     private val _result = MutableLiveData<List<BusRealtimePageQuery.Bus>>()
     private val _disposable = CompositeDisposable()
+    private val _selectedStopID = MutableLiveData<Int?>(null)
 
     val result get() = _result
     val isLoading get() = _isLoading
+    val selectedStopID get() = _selectedStopID
 
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
