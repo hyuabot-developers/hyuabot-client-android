@@ -1,5 +1,7 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 
+import android.annotation.SuppressLint
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,26 +10,51 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeBinding.inflate(layoutInflater) }
     private val viewModel: ShuttleRealtimeViewModel by viewModels()
 
+    @SuppressLint("MissingPermission")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
         viewModel.fetchData()
         viewModel.start()
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
         }
+        viewModel.stopInfo.observe(viewLifecycleOwner) {stops ->
+            if (stops.isNotEmpty()) {
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                    val nearestStop = stops.mapIndexed { index, stopItem ->
+                        Pair(stopItem, calculateDistance(stopItem, location))
+                    }.minByOrNull { it.second }?.first
+                    when(nearestStop?.name) {
+                        "dormitory_o" -> binding.viewPager.setCurrentItem(0, false)
+                        "shuttlecock_o" -> binding.viewPager.setCurrentItem(1, false)
+                        "station" -> binding.viewPager.setCurrentItem(2, false)
+                        "terminal" -> binding.viewPager.setCurrentItem(3, false)
+                        "jungang_stn" -> binding.viewPager.setCurrentItem(4, false)
+                        "shuttlecock_i" -> binding.viewPager.setCurrentItem(5, false)
+                        else -> binding.viewPager.setCurrentItem(0, false)
+                    }
+                }
+            }
+        }
+
 
         val viewpagerAdapter = ShuttleRealtimeViewPagerAdapter(childFragmentManager, lifecycle)
         val tabLabelList = listOf(
@@ -63,5 +90,13 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.viewPager.adapter = null
+    }
+
+    private fun calculateDistance(stopItem: ShuttleRealtimePageQuery.Stop, location: Location): Double {
+        val distance = sqrt(
+        (stopItem.latitude - location.latitude) * (stopItem.latitude - location.latitude) +
+            (stopItem.longitude - location.longitude) * (stopItem.longitude - location.longitude)
+        )
+        return distance
     }
 }

@@ -3,5 +3,8 @@ query ShuttleRealtimePageQuery ($shuttleStart: Time!, $shuttleDateTime: DateTime
         timetable {
             tag, route, time, stop, via { stop, time }
         }
+        stop {
+            name, latitude, longitude
+        }
     }
 }
