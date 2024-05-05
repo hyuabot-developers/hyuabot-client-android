@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,6 +16,7 @@ import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.math.sqrt
 
@@ -30,6 +32,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        val now = LocalDateTime.now()
 
         viewModel.fetchData()
         viewModel.start()
@@ -74,6 +77,10 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
+        // If weekdays is from monday to friday and time is before 10:00, it is true and else false
+        if (now.dayOfWeek.value in 1..5 && now.hour < 10) {
+            Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_toast), Toast.LENGTH_SHORT).show()
+        }
         return binding.root
     }
 
