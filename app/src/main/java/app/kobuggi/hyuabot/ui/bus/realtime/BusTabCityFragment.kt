@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
+import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,6 +25,8 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
+        val busFirstAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf())
+        val busSecondAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf())
         parentViewModel.selectedStopID.observe(viewLifecycleOwner) {
             if (it == null) return@observe
             when (it) {
@@ -44,9 +47,29 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 }
             }
         }
+        parentViewModel.result.observe(viewLifecycleOwner) {
+            if (it == null) return@observe
+            val secondBusList = it.firstOrNull { stop -> stop.id == 216000138 }?.routes?.firstOrNull { route -> route.info.id == 216000068 }
+            busSecondAdapter.updateData(secondBusList?.realtime ?: listOf(), secondBusList?.timetable ?: listOf())
+            if (secondBusList?.realtime.isNullOrEmpty() && secondBusList?.timetable.isNullOrEmpty()) {
+                binding.noRealtimeDataSecond.visibility = View.VISIBLE
+            } else {
+                binding.noRealtimeDataSecond.visibility = View.GONE
+            }
+        }
         binding.apply {
             headerFirst.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))
+            realtimeViewFirst.apply {
+                adapter = busFirstAdapter
+                layoutManager = LinearLayoutManager(context)
+                addItemDecoration(decoration)
+            }
             headerSecond.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_sangnoksu_station))
+            realtimeViewSecond.apply {
+                adapter = busSecondAdapter
+                layoutManager = LinearLayoutManager(context)
+                addItemDecoration(decoration)
+            }
             headerThird.visibility = View.GONE
             realtimeViewThird.visibility = View.GONE
             entireTimetableThird.visibility = View.GONE
@@ -55,6 +78,12 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
             realtimeViewFourth.visibility = View.GONE
             entireTimetableFourth.visibility = View.GONE
             noRealtimeDataFourth.visibility = View.GONE
+            swipeRefreshLayout.setOnRefreshListener {
+                parentViewModel.fetchData()
+            }
+        }
+        parentViewModel.isLoading.observe(viewLifecycleOwner) {
+            if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
         return binding.root
     }
