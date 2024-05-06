@@ -42,14 +42,8 @@ class BusRealtimeViewModel @Inject constructor(
         if (_result.value == null) _isLoading.value = true
         val now = LocalDateTime.now()
         val currentTime = DateTimeFormatter.ofPattern("HH:mm").format(now)
-        val weekdays = when (now.dayOfWeek.value) {
-            1, 2, 3, 4, 5 -> "weekdays"
-            6 -> "saturday"
-            7 -> "sunday"
-            else -> "weekdays"
-        }
         viewModelScope.launch {
-            val response = apolloClient.query(BusRealtimePageQuery(currentTime, weekdays)).execute()
+            val response = apolloClient.query(BusRealtimePageQuery(currentTime)).execute()
             _result.value = response.data?.bus
             _isLoading.value = false
         }
