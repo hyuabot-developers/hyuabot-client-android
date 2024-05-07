@@ -26,7 +26,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="50dp">
+                android:paddingBottom="75dp">
                 <TextView
                     android:id="@+id/header_first"
                     android:layout_width="match_parent"
@@ -55,15 +55,31 @@
                     android:textSize="16sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_first" />
-                <Button
-                    android:id="@+id/entire_timetable_first"
+                <LinearLayout
+                    android:id="@+id/button_layout_first"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="16sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_first" />
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_first">
+                    <Button
+                        android:id="@+id/departure_log_first"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bus_departure_log"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        style="@style/Widget.Material3.Button.TextButton" />
+                    <Button
+                        android:id="@+id/entire_timetable_first"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/shuttle_footer_entire_timetable"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        style="@style/Widget.Material3.Button.TextButton" />
+                </LinearLayout>
                 <TextView
                     android:id="@+id/header_second"
                     android:layout_width="match_parent"
@@ -74,7 +90,7 @@
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_first" />
+                    app:layout_constraintTop_toBottomOf="@id/button_layout_first" />
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_second"
                     android:layout_width="match_parent"
@@ -93,15 +109,31 @@
                     android:textSize="16sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_second" />
-                <Button
-                    android:id="@+id/entire_timetable_second"
+                <LinearLayout
+                    android:id="@+id/button_layout_second"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="16sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_second" />
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_second">
+                    <Button
+                        android:id="@+id/departure_log_second"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bus_departure_log"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        style="@style/Widget.Material3.Button.TextButton" />
+                    <Button
+                        android:id="@+id/entire_timetable_second"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/shuttle_footer_entire_timetable"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        style="@style/Widget.Material3.Button.TextButton" />
+                </LinearLayout>
                 <TextView
                     android:id="@+id/header_third"
                     android:layout_width="match_parent"
@@ -112,7 +144,7 @@
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_second" />
+                    app:layout_constraintTop_toBottomOf="@id/button_layout_second" />
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_third"
                     android:layout_width="match_parent"
@@ -130,15 +162,31 @@
                     android:textSize="16sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_third" />
-                <Button
-                    android:id="@+id/entire_timetable_third"
+                <LinearLayout
+                    android:id="@+id/button_layout_third"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="16sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_third" />
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_third">
+                    <Button
+                        android:id="@+id/departure_log_third"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bus_departure_log"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        style="@style/Widget.Material3.Button.TextButton" />
+                    <Button
+                        android:id="@+id/entire_timetable_third"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/shuttle_footer_entire_timetable"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        style="@style/Widget.Material3.Button.TextButton" />
+                </LinearLayout>
                 <TextView
                     android:id="@+id/header_fourth"
                     android:layout_width="match_parent"
@@ -149,7 +197,7 @@
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_third" />
+                    app:layout_constraintTop_toBottomOf="@id/button_layout_third" />
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_fourth"
                     android:layout_width="match_parent"
@@ -167,15 +215,31 @@
                     android:textSize="16sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_fourth" />
-                <Button
-                    android:id="@+id/entire_timetable_fourth"
+                <LinearLayout
+                    android:id="@+id/button_layout_fourth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="16sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_fourth" />
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_fourth">
+                    <Button
+                        android:id="@+id/departure_log_fourth"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bus_departure_log"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        style="@style/Widget.Material3.Button.TextButton" />
+                    <Button
+                        android:id="@+id/entire_timetable_fourth"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/shuttle_footer_entire_timetable"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        style="@style/Widget.Material3.Button.TextButton" />
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -101,10 +101,12 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             realtimeViewThird.visibility = View.GONE
             entireTimetableThird.visibility = View.GONE
             noRealtimeDataThird.visibility = View.GONE
+            buttonLayoutThird.visibility = View.GONE
             headerFourth.visibility = View.GONE
             realtimeViewFourth.visibility = View.GONE
             entireTimetableFourth.visibility = View.GONE
             noRealtimeDataFourth.visibility = View.GONE
+            buttonLayoutFourth.visibility = View.GONE
             swipeRefreshLayout.setOnRefreshListener {
                 parentViewModel.fetchData()
             }

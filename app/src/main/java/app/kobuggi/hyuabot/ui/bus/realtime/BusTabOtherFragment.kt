@@ -76,6 +76,7 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
             realtimeViewFourth.visibility = View.GONE
             entireTimetableFourth.visibility = View.GONE
             noRealtimeDataFourth.visibility = View.GONE
+            buttonLayoutFourth.visibility = View.GONE
             swipeRefreshLayout.setOnRefreshListener {
                 parentViewModel.fetchData()
             }
