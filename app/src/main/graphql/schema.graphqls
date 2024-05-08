@@ -32,12 +32,12 @@ type Query {
   """
   Bus stop query
   """
-  bus(id_: [Int!] = null, name: String = null, route: String = null, weekdays: String = null, logDate: [Date!] = null, start: Time = null, end: Time = null): [StopQuery!]!
+  bus(id_: [Int!] = null, name: String = null, routeId: Int = null, weekdays: [String!] = null, logDate: [Date!] = null, start: Time = null, end: Time = null): [StopQuery!]!
 
   """
   Shuttle query
   """
-  shuttle(timestamp: DateTime = "2024-04-23T19:45:44.497628+09:00", period: [String!] = null, weekdays: [Boolean!] = null, routeName: [String!] = null, routeTag: [String!] = null, routeStart: [String!] = null, routeEnd: [String!] = null, stopName: [String!] = null, start: Time = null, end: Time = null, periodCurrent: Boolean = null, periodStart: Date = null, periodEnd: Date = null): ShuttleQuery!
+  shuttle(timestamp: DateTime = "2024-05-08T14:48:37.665123+09:00", period: [String!] = null, weekdays: [Boolean!] = null, routeName: [String!] = null, routeTag: [String!] = null, routeStart: [String!] = null, routeEnd: [String!] = null, stopName: [String!] = null, start: Time = null, end: Time = null, periodCurrent: Boolean = null, periodStart: Date = null, periodEnd: Date = null): ShuttleQuery!
 
   """
   Notice query
