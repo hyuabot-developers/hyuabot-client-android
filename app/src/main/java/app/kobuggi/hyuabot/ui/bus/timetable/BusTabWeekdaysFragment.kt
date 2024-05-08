@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.databinding.FragmentBusTimetableTabBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -28,7 +29,15 @@ class BusTabWeekdaysFragment @Inject constructor() : Fragment() {
 
         parentViewModel.result.observe(viewLifecycleOwner) {
             if (it == null) return@observe
-            adapter.updateData(it.filter { timetable -> timetable.weekdays == "weekdays" })
+            val localTime = LocalTime.now()
+            val timetableItems = it.filter { timetable -> timetable.weekdays == "weekdays" }
+            val afterNowItemIndex = timetableItems.indexOfFirst { item -> LocalTime.parse(item.time) > localTime }
+            adapter.apply {
+                updateData(timetableItems)
+                if (afterNowItemIndex != -1) {
+                    binding.busTimetableRecyclerView.scrollToPosition(afterNowItemIndex)
+                }
+            }
         }
         binding.apply {
             busTimetableRecyclerView.apply {
