@@ -12,6 +12,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusTimetableBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -38,6 +39,12 @@ class BusTimetableFragment @Inject constructor() : Fragment() {
             R.string.sundays
         )
         binding.viewPager.adapter = viewpagerAdapter
+        binding.viewPager.setCurrentItem(when (LocalDate.now().dayOfWeek.value) {
+            1, 2, 3, 4, 5 -> 0
+            6 -> 1
+            7 -> 2
+            else -> 0
+        }, false)
         binding.infoFab.setOnClickListener {
             BusTimetableFragmentDirections.actionBusTimetableFragmentToBusRouteInfoDialogFragment().also {
                 findNavController().navigate(it)
