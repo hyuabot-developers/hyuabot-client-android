@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,6 +34,11 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 R.string.bus_stop_convention -> {
                     binding.apply {
                         headerFirst.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))
+                        departureLogFirst.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000379, 216000068).also { direction ->
+                                findNavController().navigate(direction)
+                            }
+                        }
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                         val firstBusList = busList.firstOrNull { stop -> stop.id == 216000379 }?.routes?.firstOrNull { route -> route.info.id == 216000068 }
@@ -47,6 +53,11 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 R.string.bus_stop_cluster -> {
                     binding.apply {
                         headerFirst.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_cluster))
+                        departureLogFirst.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000381, 216000068).also { direction ->
+                                findNavController().navigate(direction)
+                            }
+                        }
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                         val firstBusList = busList.firstOrNull { stop -> stop.id == 216000381 }?.routes?.firstOrNull { route -> route.info.id == 216000068 }
@@ -61,6 +72,11 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 R.string.bus_stop_dormitory -> {
                     binding.apply {
                         headerFirst.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_dormitory))
+                        departureLogFirst.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000383, 216000068).also { direction ->
+                                findNavController().navigate(direction)
+                            }
+                        }
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                         val firstBusList = busList.firstOrNull { stop -> stop.id == 216000383 }?.routes?.firstOrNull { route -> route.info.id == 216000068 }
@@ -96,6 +112,11 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 adapter = busSecondAdapter
                 layoutManager = LinearLayoutManager(context)
                 addItemDecoration(decoration)
+            }
+            departureLogSecond.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000138, 216000068).also { direction ->
+                    findNavController().navigate(direction)
+                }
             }
             headerThird.visibility = View.GONE
             realtimeViewThird.visibility = View.GONE

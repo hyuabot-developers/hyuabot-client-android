@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
@@ -68,11 +69,21 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(context)
             }
+            departureLogFirst.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000719, 216000070).also { direction ->
+                    findNavController().navigate(direction)
+                }
+            }
             headerSecond.text = getString(R.string.bus_header_format, "110", getString(R.string.bus_stop_entrance))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(context)
+            }
+            departureLogSecond.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000070, 217000014).also { direction ->
+                    findNavController().navigate(direction)
+                }
             }
             headerThird.text = getString(R.string.bus_header_format, "7070", getString(R.string.bus_stop_entrance))
             realtimeViewThird.apply {
@@ -80,11 +91,21 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(context)
             }
+            departureLogThird.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000070, 216000104).also { direction ->
+                    findNavController().navigate(direction)
+                }
+            }
             headerFourth.text = getString(R.string.bus_header_format, "9090", getString(R.string.bus_stop_entrance))
             realtimeViewFourth.apply {
                 adapter = busFourthAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(context)
+            }
+            departureLogFourth.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000070, 200000015).also { direction ->
+                    findNavController().navigate(direction)
+                }
             }
             swipeRefreshLayout.setOnRefreshListener {
                 parentViewModel.fetchData()

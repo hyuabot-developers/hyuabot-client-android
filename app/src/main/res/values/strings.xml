@@ -104,4 +104,15 @@
     <!-- 노선버스 도착 정보 없음 -->
     <string name="bus_no_realtime_data">도착 정보가 없습니다.</string>
     <string name="bus_departure_log">출발 기록</string>
+    <string name="bus_departure_log_date_format">%1$d/%2$d(%3$s)</string>
+    <string name="bus_departure_log_date_sample">01/01(월)</string>
+    <string name="bus_departure_log_no_data">출발 기록 X</string>
+    <!-- 요일 -->
+    <string name="sunday">일</string>
+    <string name="monday">월</string>
+    <string name="tuesday">화</string>
+    <string name="wednesday">수</string>
+    <string name="thursday">목</string>
+    <string name="friday">금</string>
+    <string name="saturday">토</string>
 </resources>

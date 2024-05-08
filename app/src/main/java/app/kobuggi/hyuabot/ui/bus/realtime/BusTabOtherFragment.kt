@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
@@ -60,17 +61,32 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
             }
+            departureLogFirst.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000719, 216000026).also { direction ->
+                    findNavController().navigate(direction)
+                }
+            }
             headerSecond.text = getString(R.string.bus_header_format, "3101", getString(R.string.bus_stop_main_gate))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
             }
+            departureLogSecond.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000719, 216000043).also { direction ->
+                    findNavController().navigate(direction)
+                }
+            }
             headerThird.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
             realtimeViewThird.apply {
                 adapter = busThirdAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
+            }
+            departureLogThird.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000759, 216000075).also { direction ->
+                    findNavController().navigate(direction)
+                }
             }
             headerFourth.visibility = View.GONE
             realtimeViewFourth.visibility = View.GONE

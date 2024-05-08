@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_busRealtimeFragment_to_busTimetableFragment"
             app:destination="@id/busTimetableFragment" />
+        <action
+            android:id="@+id/action_busRealtimeFragment_to_busDepartureLogDialogFragment"
+            app:destination="@id/busDepartureLogDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/busTimetableFragment"
@@ -204,6 +207,20 @@
         tools:layout="@layout/dialog_bus_stop">
         <argument
             android:name="stopID"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </dialog>
+    <dialog
+        android:id="@+id/busDepartureLogDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.bus.realtime.BusDepartureDialog"
+        android:label="버스 출발 정보"
+        tools:layout="@layout/dialog_bus_departure_log">
+        <argument
+            android:name="stopID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="routeID"
             app:argType="integer"
             android:defaultValue="0" />
     </dialog>
