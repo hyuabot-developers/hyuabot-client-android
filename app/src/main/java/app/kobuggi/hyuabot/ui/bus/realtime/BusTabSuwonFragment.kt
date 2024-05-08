@@ -127,6 +127,7 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                     findNavController().navigate(direction)
                 }
             }
+            entireTimetableFourth.isEnabled = false
             swipeRefreshLayout.setOnRefreshListener {
                 parentViewModel.fetchData()
             }

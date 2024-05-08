@@ -120,4 +120,9 @@
     <string name="sundays">일요일</string>
     <!-- 노선버스 시간표 -->
     <string name="bus_timetable_time_format">%1$s시 %2$s분</string>
+    <!-- 노선 정보 팝업 -->
+    <string name="bus_info_title">노선 정보</string>
+    <string name="bus_info_route">노선명: %1$s</string>
+    <string name="bus_info_start_stop">기점: %1$s</string>
+    <string name="bus_info_time_from_start">기점 출발 후: %1$d분 후 도착</string>
 </resources>

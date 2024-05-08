@@ -34,12 +34,12 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                     binding.apply {
                         headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_convention))
                         departureLogFirst.setOnClickListener {
-                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000379, 216000068).also { direction ->
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000379, 216000061).also { direction ->
                                 findNavController().navigate(direction)
                             }
                         }
                         entireTimetableFirst.setOnClickListener {
-                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000379, 216000068).also { direction ->
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000379, 216000061).also { direction ->
                                 findNavController().navigate(direction)
                             }
                         }

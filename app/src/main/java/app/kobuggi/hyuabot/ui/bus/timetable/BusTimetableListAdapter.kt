@@ -19,24 +19,41 @@ class BusTimetableListAdapter(private val context: Context, private var timetabl
     inner class ViewHolder(private val binding: ItemBusRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ClickableViewAccessibility")
         fun bind(timetableItem: BusTimetablePageQuery.Timetable) {
-            val time = LocalTime.parse(timetableItem.time, dateTimeFormatter)
-            binding.apply {
-                busTimeText.text = context.getString(
-                    R.string.bus_timetable_time_format,
-                    time.hour.toString().padStart(2, '0'),
-                    time.minute.toString().padStart(2, '0')
-                )
-                busTimeText.setTextColor(
-                    if (currentTime.isAfter(time)) {
-                        context.getColor(android.R.color.darker_gray)
-                    } else {
+            if (timetableItem.time.startsWith("24:")) {
+                binding.apply {
+                    busTimeText.text = context.getString(
+                        R.string.bus_timetable_time_format,
+                        timetableItem.time.substring(0, 2),
+                        timetableItem.time.substring(3, 5)
+                    )
+                    busTimeText.setTextColor(
                         if (UIUtility.isDarkModeOn(context.resources)) {
                             context.getColor(android.R.color.white)
                         } else {
                             context.getColor(android.R.color.black)
                         }
-                    }
-                )
+                    )
+                }
+            } else {
+                val time = LocalTime.parse(timetableItem.time, dateTimeFormatter)
+                binding.apply {
+                    busTimeText.text = context.getString(
+                        R.string.bus_timetable_time_format,
+                        time.hour.toString().padStart(2, '0'),
+                        time.minute.toString().padStart(2, '0')
+                    )
+                    busTimeText.setTextColor(
+                        if (currentTime.isAfter(time)) {
+                            context.getColor(android.R.color.darker_gray)
+                        } else {
+                            if (UIUtility.isDarkModeOn(context.resources)) {
+                                context.getColor(android.R.color.white)
+                            } else {
+                                context.getColor(android.R.color.black)
+                            }
+                        }
+                    )
+                }
             }
         }
     }

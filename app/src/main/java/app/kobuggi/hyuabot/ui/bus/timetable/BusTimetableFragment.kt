@@ -46,7 +46,10 @@ class BusTimetableFragment @Inject constructor() : Fragment() {
             else -> 0
         }, false)
         binding.infoFab.setOnClickListener {
-            BusTimetableFragmentDirections.actionBusTimetableFragmentToBusRouteInfoDialogFragment().also {
+            BusTimetableFragmentDirections.actionBusTimetableFragmentToBusRouteInfoDialogFragment(
+                routeID = args.routeID,
+                stopID = args.stopID
+            ).also {
                 findNavController().navigate(it)
             }
         }
