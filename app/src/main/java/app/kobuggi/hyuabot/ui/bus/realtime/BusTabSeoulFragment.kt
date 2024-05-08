@@ -38,6 +38,11 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                                 findNavController().navigate(direction)
                             }
                         }
+                        entireTimetableFirst.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000379, 216000068).also { direction ->
+                                findNavController().navigate(direction)
+                            }
+                        }
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                         val firstBusList = busList.firstOrNull { stop -> stop.id == 216000379 }?.routes?.firstOrNull { route -> route.info.id == 216000061 }
@@ -57,6 +62,14 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                                 findNavController().navigate(direction)
                             }
                         }
+                        entireTimetableFirst.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(
+                                216000381,
+                                216000061
+                            ).also { direction ->
+                                findNavController().navigate(direction)
+                            }
+                        }
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                         val firstBusList = busList.firstOrNull { stop -> stop.id == 216000381 }?.routes?.firstOrNull { route -> route.info.id == 216000061 }
@@ -73,6 +86,14 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                         headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_dormitory))
                         departureLogFirst.setOnClickListener {
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000383, 216000061).also { direction ->
+                                findNavController().navigate(direction)
+                            }
+                        }
+                        entireTimetableFirst.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(
+                                216000383,
+                                216000061
+                            ).also { direction ->
                                 findNavController().navigate(direction)
                             }
                         }
@@ -115,6 +136,11 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             }
             departureLogSecond.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000719, 216000096).also { direction ->
+                    findNavController().navigate(direction)
+                }
+            }
+            entireTimetableSecond.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000719, 216000096).also { direction ->
                     findNavController().navigate(direction)
                 }
             }

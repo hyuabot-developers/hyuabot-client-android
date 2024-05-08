@@ -74,6 +74,11 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                     findNavController().navigate(direction)
                 }
             }
+            entireTimetableFirst.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000719, 216000070).also { direction ->
+                    findNavController().navigate(direction)
+                }
+            }
             headerSecond.text = getString(R.string.bus_header_format, "110", getString(R.string.bus_stop_entrance))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
@@ -82,6 +87,11 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
             }
             departureLogSecond.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000070, 217000014).also { direction ->
+                    findNavController().navigate(direction)
+                }
+            }
+            entireTimetableSecond.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000070, 217000014).also { direction ->
                     findNavController().navigate(direction)
                 }
             }
@@ -96,6 +106,11 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                     findNavController().navigate(direction)
                 }
             }
+            entireTimetableThird.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000070, 216000104).also { direction ->
+                    findNavController().navigate(direction)
+                }
+            }
             headerFourth.text = getString(R.string.bus_header_format, "9090", getString(R.string.bus_stop_entrance))
             realtimeViewFourth.apply {
                 adapter = busFourthAdapter
@@ -104,6 +119,11 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
             }
             departureLogFourth.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000070, 200000015).also { direction ->
+                    findNavController().navigate(direction)
+                }
+            }
+            entireTimetableFourth.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000070, 200000015).also { direction ->
                     findNavController().navigate(direction)
                 }
             }
