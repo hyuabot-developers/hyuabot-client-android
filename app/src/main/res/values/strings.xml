@@ -115,4 +115,9 @@
     <string name="thursday">목</string>
     <string name="friday">금</string>
     <string name="saturday">토</string>
+    <string name="weekdays">평일</string>
+    <string name="saturdays">토요일</string>
+    <string name="sundays">일요일</string>
+    <!-- 노선버스 시간표 -->
+    <string name="bus_timetable_time_format">%1$s시 %2$s분</string>
 </resources>

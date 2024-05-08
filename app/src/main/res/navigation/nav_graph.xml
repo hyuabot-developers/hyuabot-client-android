@@ -67,6 +67,9 @@
             android:name="routeID"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_busTimetableFragment_to_busRouteInfoDialogFragment"
+            app:destination="@id/busRouteInfoDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/subwayRealtimeFragment"
@@ -221,6 +224,20 @@
             android:defaultValue="0" />
         <argument
             android:name="routeID"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </dialog>
+    <dialog
+        android:id="@+id/busRouteInfoDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.bus.timetable.BusRouteDialog"
+        android:label="버스 노선 정보"
+        tools:layout="@layout/dialog_bus_route">
+        <argument
+            android:name="routeID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="stopID"
             app:argType="integer"
             android:defaultValue="0" />
     </dialog>
