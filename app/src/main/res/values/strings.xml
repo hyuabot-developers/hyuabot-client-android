@@ -125,4 +125,5 @@
     <string name="bus_info_route">노선명: %1$s</string>
     <string name="bus_info_start_stop">기점: %1$s</string>
     <string name="bus_info_time_from_start">기점 출발 후: %1$d분 후 도착</string>
+    <string name="subway">전철</string>
 </resources>
