@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -108,7 +109,15 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
         parentViewModel.result.observe(viewLifecycleOwner) {
             if (it == null) return@observe
             val secondBusList = it.firstOrNull { stop -> stop.id == 216000138 }?.routes?.firstOrNull { route -> route.info.id == 216000068 }
-            busSecondAdapter.updateData(secondBusList?.realtime ?: listOf(), secondBusList?.timetable ?: listOf())
+            val secondBusTimetable = if (secondBusList?.realtime?.isNotEmpty() == true) {
+                val currentTime = LocalTime.now()
+                secondBusList.timetable.filter { timetable ->
+                    LocalTime.parse(timetable.time) > currentTime.plusMinutes(secondBusList.realtime.last().time.toLong())
+                }
+            } else {
+                secondBusList?.timetable
+            }
+            busSecondAdapter.updateData(secondBusList?.realtime ?: listOf(), secondBusTimetable ?: listOf())
             if (secondBusList?.realtime.isNullOrEmpty() && secondBusList?.timetable.isNullOrEmpty()) {
                 binding.noRealtimeDataSecond.visibility = View.VISIBLE
             } else {
