@@ -9,10 +9,12 @@ import app.kobuggi.hyuabot.BusDepartureLogDialogQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemBusLogBinding
 import app.kobuggi.hyuabot.util.UIUtility
+import java.time.LocalTime
 
 class BusDepartureLogAdapter(
     private val context: Context,
     private var logList: List<BusDepartureLogDialogQuery.Log>,
+    private var currentTime: LocalTime = LocalTime.now()
 ) : RecyclerView.Adapter<BusDepartureLogAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemBusLogBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int, item: BusDepartureLogDialogQuery.Log) {
@@ -20,13 +22,21 @@ class BusDepartureLogAdapter(
                 busTimeText.text = item.departureTime.toString().substring(0, 5)
                 if (position % 2 == 0) {
                     busItem.setBackgroundColor(ResourcesCompat.getColor(context.resources, R.color.hanyang_blue, null))
-                    busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.white, null))
+                    if (currentTime.isAfter(LocalTime.parse(item.departureTime.toString().substring(0, 5)))) {
+                        busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.darker_gray, null))
+                    } else {
+                        busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.white, null))
+                    }
                 } else {
                     busItem.setBackgroundColor(ResourcesCompat.getColor(context.resources, android.R.color.transparent, null))
-                    if (UIUtility.isDarkModeOn(context.resources)) {
-                        busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.white, null))
+                    if (currentTime.isAfter(LocalTime.parse(item.departureTime.toString().substring(0, 5)))) {
+                        busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.darker_gray, null))
                     } else {
-                        busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.black, null))
+                        if (UIUtility.isDarkModeOn(context.resources)) {
+                            busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.white, null))
+                        } else {
+                            busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.black, null))
+                        }
                     }
                 }
             }
@@ -45,6 +55,7 @@ class BusDepartureLogAdapter(
     override fun getItemCount(): Int = logList.size
 
     fun updateData(newData: List<BusDepartureLogDialogQuery.Log>) {
+        currentTime = LocalTime.now()
         if (logList.size > newData.size) {
             logList = newData
             notifyItemRangeChanged(0, logList.size)
