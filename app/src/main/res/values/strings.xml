@@ -126,4 +126,10 @@
     <string name="bus_info_start_stop">기점: %1$s</string>
     <string name="bus_info_time_from_start">기점 출발 후: %1$d분 후 도착</string>
     <string name="subway">전철</string>
+    <string name="subway_tab_blue">4호선</string>
+    <string name="subway_tab_yellow">수인분당선</string>
+    <string name="subway_blue_up">상행 (당고개·사당)</string>
+    <string name="subway_blue_down">하행 (오이도·안산)</string>
+    <string name="subway_yellow_up">상행 (왕십리·수원)</string>
+    <string name="subway_yellow_down">하행 (인천·오이도)</string>
 </resources>
