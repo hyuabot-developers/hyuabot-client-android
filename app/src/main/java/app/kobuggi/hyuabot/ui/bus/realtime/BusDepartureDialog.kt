@@ -15,6 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -43,9 +44,23 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
         }
         viewModel.fetchData(stopID, routeID, queryDates.map { it.format(dateFormatter) })
         viewModel.result.observe(viewLifecycleOwner) {
-            firstLogAdapter.updateData(it.filter { log -> log.departureDate == queryDates[0].format(dateFormatter) })
-            secondLogAdapter.updateData(it.filter { log -> log.departureDate == queryDates[1].format(dateFormatter) })
-            thirdLogAdapter.updateData(it.filter { log -> log.departureDate == queryDates[2].format(dateFormatter) })
+            val timetable1 = it.filter { log -> log.departureDate == queryDates[0].format(dateFormatter) }
+            val timetable2 = it.filter { log -> log.departureDate == queryDates[1].format(dateFormatter) }
+            val timetable3 = it.filter { log -> log.departureDate == queryDates[2].format(dateFormatter) }
+            firstLogAdapter.updateData(timetable1)
+            secondLogAdapter.updateData(timetable2)
+            thirdLogAdapter.updateData(timetable3)
+
+            val currentTime = LocalTime.now()
+            binding.busDepartureLogRecyclerView1.scrollToPosition(timetable1.indexOfFirst {
+                    log -> LocalTime.parse(log.departureTime.toString().substring(0, 5)) > currentTime
+                })
+            binding.busDepartureLogRecyclerView2.scrollToPosition(timetable2.indexOfFirst {
+                    log -> LocalTime.parse(log.departureTime.toString().substring(0, 5)) > currentTime
+                })
+            binding.busDepartureLogRecyclerView3.scrollToPosition(timetable3.indexOfFirst {
+                    log -> LocalTime.parse(log.departureTime.toString().substring(0, 5)) > currentTime
+                })
             if (firstLogAdapter.itemCount == 0) {
                 binding.busDepartureLogNoData1.visibility = View.VISIBLE
             } else {
