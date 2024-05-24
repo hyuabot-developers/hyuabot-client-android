@@ -98,7 +98,7 @@
         android:id="@+id/cafeteriaFragment"
         android:name="app.kobuggi.hyuabot.ui.cafeteria.CafeteriaFragment"
         android:label="식당 정보"
-        tools:layout="@layout/fragment_cafeteria">
+        tools:layout="@layout/fragment_cafeteria_tab">
         <action
             android:id="@+id/action_cafeteriaFragment_to_cafeteriaDateDialogFragment"
             app:destination="@id/cafeteriaDateDialogFragment" />
