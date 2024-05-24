@@ -8,4 +8,8 @@
         android:id="@+id/busRealtimeFragment"
         android:icon="@drawable/ic_bus"
         android:title="@string/bus" />
+    <item
+        android:id="@+id/subwayRealtimeFragment"
+        android:icon="@drawable/ic_subway"
+        android:title="@string/subway" />
 </menu>
