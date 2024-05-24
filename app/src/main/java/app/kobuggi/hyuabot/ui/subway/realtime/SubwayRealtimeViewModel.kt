@@ -19,16 +19,12 @@ import javax.inject.Inject
 class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: ApolloClient): ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _K251 = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
-    private val _K258 = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _K449 = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
-    private val _K456 = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _disposable = CompositeDisposable()
 
     val isLoading get() = _isLoading
     val K251 get() = _K251
-    val K258 get() = _K258
     val K449 get() = _K449
-    val K456 get() = _K456
 
     fun fetchData() {
         val now = LocalDateTime.now()
@@ -41,9 +37,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
                 null
             }
             _K251.value = response?.data?.subway?.first { it.id == "K251" }
-            _K258.value = response?.data?.subway?.first { it.id == "K258" }
             _K449.value = response?.data?.subway?.first { it.id == "K449" }
-            _K456.value = response?.data?.subway?.first { it.id == "K456" }
             _isLoading.value = false
         }
     }
