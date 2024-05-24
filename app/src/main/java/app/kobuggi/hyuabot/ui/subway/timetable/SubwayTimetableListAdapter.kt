@@ -20,12 +20,20 @@ class SubwayTimetableListAdapter(
             if (upTimetableItem != null) {
                 binding.apply {
                     subwayDestinationText.text = getTerminalString(upTimetableItem.terminal.id)
-                    subwayTimeText.text = upTimetableItem.time
+                    subwayTimeText.text = context.getString(
+                        R.string.subway_timetable_time_format,
+                        upTimetableItem.time.substring(0, 2),
+                        upTimetableItem.time.substring(3, 5)
+                    )
                 }
             } else if (downTimetableItem != null) {
                 binding.apply {
                     subwayDestinationText.text = getTerminalString(downTimetableItem.terminal.id)
-                    subwayTimeText.text = downTimetableItem.time
+                    subwayTimeText.text = context.getString(
+                        R.string.subway_timetable_time_format,
+                        downTimetableItem.time.substring(0, 2),
+                        downTimetableItem.time.substring(3, 5)
+                    )
                 }
             }
         }

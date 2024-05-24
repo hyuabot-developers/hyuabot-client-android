@@ -158,4 +158,5 @@
     <!-- 전철 시간표 탭 -->
     <string name="subway_timetable_tab_weekdays">평일</string>
     <string name="subway_timetable_tab_weekends">주말</string>
+    <string name="subway_timetable_time_format">%1$s시 %2$s분</string>
 </resources>
