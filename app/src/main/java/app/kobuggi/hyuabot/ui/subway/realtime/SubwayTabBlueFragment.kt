@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,11 +38,21 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManager(requireContext())
                 addItemDecoration(decoration)
             }
+            entireTimetableUp.setOnClickListener {
+                SubwayRealtimeFragmentDirections.actionSubwayRealtimeFragmentToSubwayTimetableFragment("K449", "up").also {
+                    findNavController().navigate(it)
+                }
+            }
             headerDown.text = getString(R.string.subway_blue_down)
             realtimeViewDown.apply {
                 adapter = downAdapter
                 layoutManager = LinearLayoutManager(requireContext())
                 addItemDecoration(decoration)
+            }
+            entireTimetableDown.setOnClickListener {
+                SubwayRealtimeFragmentDirections.actionSubwayRealtimeFragmentToSubwayTimetableFragment("K449", "down").also {
+                    findNavController().navigate(it)
+                }
             }
             swipeRefreshLayout.setOnRefreshListener {
                 parentViewModel.fetchData()
