@@ -155,4 +155,7 @@
     <string name="subway_station_K444">산본</string>
     <string name="subway_station_K453">안산</string>
     <string name="subway_station_K456">오이도</string>
+    <!-- 전철 시간표 탭 -->
+    <string name="subway_timetable_tab_weekdays">평일</string>
+    <string name="subway_timetable_tab_weekends">주말</string>
 </resources>
