@@ -105,6 +105,11 @@
         android:label="열람실 정보"
         tools:layout="@layout/fragment_reading_room" />
     <fragment
+        android:id="@+id/mapFragment"
+        android:name="app.kobuggi.hyuabot.ui.map.MapFragment"
+        android:label="지도"
+        tools:layout="@layout/fragment_map" />
+    <fragment
         android:id="@+id/settingFragment"
         android:name="app.kobuggi.hyuabot.ui.setting.SettingFragment"
         android:label="설정"
@@ -168,6 +173,9 @@
         <action
             android:id="@+id/action_menuFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <dialog
         android:id="@+id/shuttleStopDialogFragment"
