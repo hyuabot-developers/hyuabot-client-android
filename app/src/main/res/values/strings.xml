@@ -164,4 +164,18 @@
     <string name="cafeteria_tab_breakfast">조식</string>
     <string name="cafeteria_tab_lunch">중식</string>
     <string name="cafeteria_tab_dinner">석식</string>
+    <!-- 학식 식당 -->
+    <string name="cafeteria_1">학생회관</string>
+    <string name="cafeteria_2">생활과학관식당</string>
+    <string name="cafeteria_4">신소재공학관 식당</string>
+    <string name="cafeteria_6">제1생활관 식당</string>
+    <string name="cafeteria_7">제2생활관 식당</string>
+    <string name="cafeteria_8">행원파크</string>
+    <string name="cafeteria_11">교직원식당</string>
+    <string name="cafeteria_12">학생식당</string>
+    <string name="cafeteria_13">창의인재원식당</string>
+    <string name="cafeteria_14">푸드코트</string>
+    <string name="cafeteria_15">창업보육센터</string>
+    <!-- 학식 가격 -->
+    <string name="cafeteria_price_format">%1$s 원</string>
 </resources>
