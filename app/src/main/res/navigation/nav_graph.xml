@@ -98,11 +98,7 @@
         android:id="@+id/cafeteriaFragment"
         android:name="app.kobuggi.hyuabot.ui.cafeteria.CafeteriaFragment"
         android:label="식당 정보"
-        tools:layout="@layout/fragment_cafeteria_tab">
-        <action
-            android:id="@+id/action_cafeteriaFragment_to_cafeteriaDateDialogFragment"
-            app:destination="@id/cafeteriaDateDialogFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_cafeteria_tab" />
     <fragment
         android:id="@+id/readingRoomFragment"
         android:name="app.kobuggi.hyuabot.ui.readingRoom.ReadingRoomFragment"
@@ -241,11 +237,6 @@
             app:argType="integer"
             android:defaultValue="0" />
     </dialog>
-    <dialog
-        android:id="@+id/cafeteriaDateDialogFragment"
-        android:name="app.kobuggi.hyuabot.ui.cafeteria.CafeteriaDateDialog"
-        android:label="식당 날짜 선택"
-        tools:layout="@layout/dialog_cafeteria_date" />
     <dialog
         android:id="@+id/languageSettingDialogFragment"
         android:name="app.kobuggi.hyuabot.ui.setting.LanguageSettingDialog"
