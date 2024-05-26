@@ -180,4 +180,12 @@
     <string name="cafeteria_price_format">%1$s 원</string>
     <string name="cafeteria_date_title">학식 날짜 선택</string>
     <string name="menu">메뉴</string>
+    <string name="menu_book">열람실 좌석 조회</string>
+    <string name="menu_contact">교내 연락처</string>
+    <string name="menu_calendar">학사력</string>
+    <string name="menu_notice">공지사항</string>
+    <string name="menu_settings">설정</string>
+    <string name="menu_chat">문의하기</string>
+    <string name="menu_donate">기부하기</string>
+    <string name="menu_map">캠퍼스 지도</string>
 </resources>
