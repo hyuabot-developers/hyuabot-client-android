@@ -179,4 +179,5 @@
     <!-- 학식 가격 -->
     <string name="cafeteria_price_format">%1$s 원</string>
     <string name="cafeteria_date_title">학식 날짜 선택</string>
+    <string name="menu">메뉴</string>
 </resources>
