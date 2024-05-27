@@ -15,11 +15,26 @@
         android:textFontWeight="700"
         android:background="@color/hanyang_blue"
         app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/subheader_cafeteria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="8dp"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textFontWeight="700"
+        app:layout_constraintTop_toBottomOf="@id/header_cafeteria" />
+    <View
+        android:id="@+id/divider_cafeteria"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@id/subheader_cafeteria" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/menu_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/header_cafeteria" />
+        app:layout_constraintTop_toBottomOf="@id/divider_cafeteria" />
 </androidx.constraintlayout.widget.ConstraintLayout>

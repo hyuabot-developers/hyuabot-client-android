@@ -19,10 +19,22 @@ class CafeteriaListAdapter(
         fun bind(cafeteriaItem: CafeteriaPageQuery.Menu) {
             val menuAdapter = MenuListAdapter(context, listOf())
             if (type == "breakfast") {
+                binding.subheaderCafeteria.text = context.getString(
+                    R.string.cafeteria_running_time_format,
+                    cafeteriaItem.runningTime.breakfast
+                )
                 menuAdapter.updateList(cafeteriaItem.menu.filter { it.type.contains("조식") }.distinctBy { it.menu } )
             } else if (type == "lunch") {
+                binding.subheaderCafeteria.text = context.getString(
+                    R.string.cafeteria_running_time_format,
+                    cafeteriaItem.runningTime.lunch
+                )
                 menuAdapter.updateList(cafeteriaItem.menu.filter { it.type.contains("중식") }.distinctBy { it.menu } )
             } else if (type == "dinner") {
+                binding.subheaderCafeteria.text = context.getString(
+                    R.string.cafeteria_running_time_format,
+                    cafeteriaItem.runningTime.dinner
+                )
                 menuAdapter.updateList(cafeteriaItem.menu.filter { it.type.contains("석식") }.distinctBy { it.menu } )
             }
             val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
