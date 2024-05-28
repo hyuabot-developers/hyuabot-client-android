@@ -81,14 +81,6 @@ android {
 androidComponents {
     onVariants {
         it.buildConfigFields.put("API_URL", BuildConfigField("String", props["API_URL"].toString(), "API_URL"))
-        it.buildConfigFields.put(
-            "KAKAO_MAP_KEY",
-            BuildConfigField(
-                "String",
-                props["KAKAO_MAP_KEY"].toString(),
-                "KAKAO_MAP_KEY",
-            ),
-        )
     }
 }
 
@@ -134,7 +126,7 @@ dependencies {
     implementation(libs.firebaseAnalytics)
     implementation(libs.firebaseCrashlytics)
     // Map
-    implementation(libs.kakaoMap)
+
     // SplashScreen
     implementation(libs.splashScreen)
     // SwipeRefreshLayout

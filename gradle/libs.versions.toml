@@ -21,7 +21,6 @@ viewPager2 = "1.1.0"
 room = "2.6.1"
 calendar = "2.5.0"
 firebase = "33.0.0"
-kakaoMap = "2.9.5"
 splashScreen = "1.0.1"
 swipeRefreshLayout = "1.1.0"
 playServices = "21.2.0"
@@ -57,7 +56,6 @@ firebase = { group = "com.google.firebase", name = "firebase-bom", version.ref =
 firebaseAnalytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebaseCrashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 firebaseMessaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
-kakaoMap = { group = "com.kakao.maps.open", name = "android", version.ref = "kakaoMap" }
 splashScreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 swipeRefreshLayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipeRefreshLayout" }
 playServicesLocation = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServices" }
