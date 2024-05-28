@@ -24,6 +24,7 @@ firebase = "33.0.0"
 splashScreen = "1.0.1"
 swipeRefreshLayout = "1.1.0"
 playServices = "21.2.0"
+playMaps = "18.2.0"
 secretsGradlePlugin = "2.0.1"
 
 [libraries]
@@ -60,6 +61,7 @@ firebaseMessaging = { group = "com.google.firebase", name = "firebase-messaging-
 splashScreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 swipeRefreshLayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipeRefreshLayout" }
 playServicesLocation = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServices" }
+playServicesMaps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playMaps" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
