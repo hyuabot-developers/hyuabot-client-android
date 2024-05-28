@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.hiltPlugin)
     alias(libs.plugins.apollo)
     alias(libs.plugins.safeArgs)
+    alias(libs.plugins.secretsGradlePlugin)
 }
 
 val props = Properties()
@@ -40,6 +41,7 @@ android {
         versionName = "1.0"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
     }
 
     buildTypes {
@@ -81,14 +83,6 @@ android {
 androidComponents {
     onVariants {
         it.buildConfigFields.put("API_URL", BuildConfigField("String", props["API_URL"].toString(), "API_URL"))
-        it.buildConfigFields.put(
-            "KAKAO_MAP_KEY",
-            BuildConfigField(
-                "String",
-                props["KAKAO_MAP_KEY"].toString(),
-                "KAKAO_MAP_KEY",
-            ),
-        )
     }
 }
 
@@ -134,7 +128,7 @@ dependencies {
     implementation(libs.firebaseAnalytics)
     implementation(libs.firebaseCrashlytics)
     // Map
-    implementation(libs.kakaoMap)
+    implementation(libs.playServicesMaps)
     // SplashScreen
     implementation(libs.splashScreen)
     // SwipeRefreshLayout

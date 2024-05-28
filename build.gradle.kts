@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinKsp) apply false
     alias(libs.plugins.hiltPlugin) apply false
     alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.secretsGradlePlugin) apply false
 }
 
 allprojects {}
