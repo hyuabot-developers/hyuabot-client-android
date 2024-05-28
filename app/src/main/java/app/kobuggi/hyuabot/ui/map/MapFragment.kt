@@ -8,20 +8,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMapBinding
-import com.kakao.vectormap.GestureType
-import com.kakao.vectormap.KakaoMap
-import com.kakao.vectormap.KakaoMapReadyCallback
-import com.kakao.vectormap.LatLng
-import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.camera.CameraUpdateFactory
-import com.kakao.vectormap.label.LabelOptions
-import com.kakao.vectormap.label.LabelStyle
-import com.kakao.vectormap.label.LabelStyles
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MapFragment @Inject constructor() : Fragment() {
+class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private val binding by lazy { FragmentMapBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<MapViewModel>()
 
@@ -30,51 +27,69 @@ class MapFragment @Inject constructor() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val labelStyle = LabelStyles.from("default", listOf(
-            LabelStyle.from(R.drawable.map_marker)
-        ))
-        binding.mapView.start(object: MapLifeCycleCallback() {
-            override fun onMapDestroy() {}
-            override fun onMapError(exception: Exception?) {}
-        }, object: KakaoMapReadyCallback() {
-            override fun onMapReady(map: KakaoMap) {
-                map.apply {
-                    moveCamera(CameraUpdateFactory.newCenterPosition(LatLng.from(37.29753535479288, 126.83544659517665)))
-                    setGestureEnable(GestureType.Rotate, false)
-                    setGestureEnable(GestureType.Tilt, false)
-                    setOnCameraMoveEndListener { map, position, _ ->
-                        val northLng = map.fromScreenPoint(0, 0)?.latitude
-                        val southLng = map.fromScreenPoint(0, map.viewport.height())?.latitude
-                        val westLat = map.fromScreenPoint(0, 0)?.longitude
-                        val eastLat = map.fromScreenPoint(map.viewport.width(), 0)?.longitude
-                        viewModel.fetchBuildings(northLng, southLng, westLat, eastLat)
-                    }
-                }
-
-                viewModel.buildings.observe(viewLifecycleOwner) { buildings ->
-                    map.apply {
-                        labelManager?.apply {
-                            clearAll()
-                            buildings.forEach { building ->
-                                layer?.addLabel(LabelOptions.from(building.name, LatLng.from(building.latitude, building.longitude)).setStyles(labelStyle))
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun getZoomLevel(): Int = 16
-        })
+        binding.mapView.apply {
+            onCreate(savedInstanceState)
+            getMapAsync(this@MapFragment)
+        }
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+        binding.mapView.onStart()
+    }
+    override fun onStop() {
+        super.onStop()
+        binding.mapView.onStop()
+    }
     override fun onResume() {
         super.onResume()
-        binding.mapView.resume()
+        binding.mapView.onResume()
     }
-
     override fun onPause() {
         super.onPause()
-        binding.mapView.pause()
+        binding.mapView.onPause()
+    }
+    override fun onLowMemory() {
+        super.onLowMemory()
+        binding.mapView.onLowMemory()
+    }
+    override fun onDestroy() {
+        binding.mapView.onDestroy()
+        super.onDestroy()
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        map.apply {
+            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(37.29753535479288, 126.83544659517665), 16f))
+            uiSettings.apply {
+                isRotateGesturesEnabled = false
+                isTiltGesturesEnabled = false
+            }
+            setOnCameraIdleListener {
+                val northLng = projection.visibleRegion.latLngBounds.northeast.latitude
+                val southLng = projection.visibleRegion.latLngBounds.southwest.latitude
+                val westLat = projection.visibleRegion.latLngBounds.southwest.longitude
+                val eastLat = projection.visibleRegion.latLngBounds.northeast.longitude
+                viewModel.fetchBuildings(northLng, southLng, westLat, eastLat)
+            }
+        }
+
+        viewModel.buildings.observe(viewLifecycleOwner) { buildings ->
+            map.apply {
+                clear()
+                buildings.forEach { building ->
+                    addMarker(MarkerOptions().apply {
+                        position(LatLng(building.latitude, building.longitude))
+                        title(building.name)
+                        icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker))
+                    })
+                }
+                setOnMarkerClickListener {
+                    it.showInfoWindow()
+                    true
+                }
+            }
+        }
     }
 }
