@@ -2,7 +2,6 @@ package app.kobuggi.hyuabot.ui.shuttle.realtime
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,23 +9,21 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogShuttleStopBinding
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.kakao.vectormap.GestureType
-import com.kakao.vectormap.KakaoMap
-import com.kakao.vectormap.KakaoMapReadyCallback
-import com.kakao.vectormap.LatLng
-import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.camera.CameraUpdateFactory
-import com.kakao.vectormap.label.LabelOptions
-import com.kakao.vectormap.label.LabelStyle
-import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment() {
+class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment(), OnMapReadyCallback {
     private val binding by lazy { DialogShuttleStopBinding.inflate(layoutInflater) }
     private val viewModel: ShuttleStopDialogViewModel by viewModels()
     private val args : ShuttleStopDialogArgs by navArgs()
@@ -51,44 +48,10 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment() {
                     true
                 }
             }
-            stopMapView.start(object: MapLifeCycleCallback() {
-                override fun onMapDestroy() {
-                    Log.d("ShuttleStopDialog", "Map Destroy")
-                }
-
-                override fun onMapError(exception: Exception?) {
-                    Log.e("ShuttleStopDialog", exception.toString())
-                }
-            }, object: KakaoMapReadyCallback() {
-                override fun onMapReady(map: KakaoMap) {
-                    map.apply {
-                        setGestureEnable(GestureType.Pan, false)
-                        setGestureEnable(GestureType.Rotate, false)
-                        setGestureEnable(GestureType.Tilt, false)
-                    }
-
-                    val labelManager = map.labelManager
-                    val layer = labelManager?.layer
-                    val style = labelManager?.addLabelStyles(
-                        LabelStyles.from(LabelStyle.from(
-                            R.drawable.ic_bus_marker
-                        ).apply {
-                            setAnchorPoint(0.5f, 1.0f)
-                            isApplyDpScale = true
-                        })
-                    )
-                    viewModel.result.observe(viewLifecycleOwner) {
-                        if (it != null) {
-                            map.moveCamera(CameraUpdateFactory.newCenterPosition(LatLng.from(it.latitude, it.longitude)))
-                            layer!!.addLabel(LabelOptions.from(
-                                LatLng.from(it.latitude, it.longitude)
-                            ).setStyles(style))
-                        }
-                    }
-                }
-
-                override fun getZoomLevel(): Int = 17
-            })
+            stopMapView.apply {
+                onCreate(savedInstanceState)
+                getMapAsync(this@ShuttleStopDialog)
+            }
         }
 
         when (stopID) {
@@ -219,13 +182,51 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment() {
         return dialog
     }
 
+    override fun onStart() {
+        super.onStart()
+        binding.stopMapView.onStart()
+    }
+    override fun onStop() {
+        super.onStop()
+        binding.stopMapView.onStop()
+    }
     override fun onResume() {
         super.onResume()
-        binding.stopMapView.resume()
+        binding.stopMapView.onResume()
     }
-
     override fun onPause() {
         super.onPause()
-        binding.stopMapView.pause()
+        binding.stopMapView.onPause()
+    }
+    override fun onLowMemory() {
+        super.onLowMemory()
+        binding.stopMapView.onLowMemory()
+    }
+    override fun onDestroy() {
+        binding.stopMapView.onDestroy()
+        super.onDestroy()
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        map.apply {
+            uiSettings.apply {
+                isZoomControlsEnabled = false
+                isZoomGesturesEnabled = false
+                isScrollGesturesEnabled = false
+                isRotateGesturesEnabled = false
+                isTiltGesturesEnabled = false
+            }
+        }
+        viewModel.result.observe(viewLifecycleOwner) {
+            if (it != null) {
+                map.apply {
+                    moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), 17f))
+                    addMarker(MarkerOptions().apply {
+                        position(LatLng(it.latitude, it.longitude))
+                        icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus_marker))
+                    })
+                }
+            }
+        }
     }
 }
