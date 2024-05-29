@@ -129,6 +129,7 @@ dependencies {
     implementation(libs.firebaseCrashlytics)
     // Map
     implementation(libs.playServicesMaps)
+    implementation(libs.mapsUtils)
     // SplashScreen
     implementation(libs.splashScreen)
     // SwipeRefreshLayout

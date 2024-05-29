@@ -25,6 +25,7 @@ splashScreen = "1.0.1"
 swipeRefreshLayout = "1.1.0"
 playServices = "21.2.0"
 playMaps = "18.2.0"
+playMapUtils = "3.8.0"
 secretsGradlePlugin = "2.0.1"
 
 [libraries]
@@ -62,6 +63,7 @@ splashScreen = { group = "androidx.core", name = "core-splashscreen", version.re
 swipeRefreshLayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipeRefreshLayout" }
 playServicesLocation = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServices" }
 playServicesMaps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playMaps" }
+mapsUtils = { group = "com.google.maps.android", name = "android-maps-utils", version.ref = "playMapUtils" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

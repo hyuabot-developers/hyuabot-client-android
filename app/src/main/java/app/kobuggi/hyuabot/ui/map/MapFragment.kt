@@ -1,11 +1,15 @@
 package app.kobuggi.hyuabot.ui.map
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import app.kobuggi.hyuabot.MapPageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMapBinding
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -13,7 +17,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.clustering.ClusterManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -21,17 +25,27 @@ import javax.inject.Inject
 class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private val binding by lazy { FragmentMapBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<MapViewModel>()
-
+    private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
+    private lateinit var clusterManager: ClusterManager<BuildingMarkerItem>
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding.mapView.apply {
-            onCreate(savedInstanceState)
-            getMapAsync(this@MapFragment)
-        }
+        val mapViewBundle = savedInstanceState?.getBundle(MAP_VIEW_BUNDLE_KEY)
+        binding.mapView.onCreate(mapViewBundle)
+        binding.mapView.getMapAsync(this)
         return binding.root
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        var mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY)
+        if (mapViewBundle == null) {
+            mapViewBundle = Bundle()
+            outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle)
+        }
+        binding.mapView.onSaveInstanceState(mapViewBundle)
     }
 
     override fun onStart() {
@@ -59,37 +73,39 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         super.onDestroy()
     }
 
+    @SuppressLint("PotentialBehaviorOverride")
     override fun onMapReady(map: GoogleMap) {
         map.apply {
-            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(37.29753535479288, 126.83544659517665), 16f))
             uiSettings.apply {
                 isRotateGesturesEnabled = false
                 isTiltGesturesEnabled = false
             }
-            setOnCameraIdleListener {
-                val northLng = projection.visibleRegion.latLngBounds.northeast.latitude
-                val southLng = projection.visibleRegion.latLngBounds.southwest.latitude
-                val westLat = projection.visibleRegion.latLngBounds.southwest.longitude
-                val eastLat = projection.visibleRegion.latLngBounds.northeast.longitude
-                viewModel.fetchBuildings(northLng, southLng, westLat, eastLat)
+            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(37.29753535479288, 126.83544659517665), 16f))
+            clusterManager = BuildingClusterManager(requireContext(), map, viewModel)
+            BuildingClusterRenderer(requireContext(), map, clusterManager)
+            setOnCameraIdleListener(clusterManager)
+            setOnMarkerClickListener(clusterManager)
+        }
+        map.setOnMapLoadedCallback {
+            viewModel.buildings.observe(viewLifecycleOwner) { buildings ->
+                addClusterItems(buildings)
             }
         }
+    }
 
-        viewModel.buildings.observe(viewLifecycleOwner) { buildings ->
-            map.apply {
-                clear()
-                buildings.forEach { building ->
-                    addMarker(MarkerOptions().apply {
-                        position(LatLng(building.latitude, building.longitude))
-                        title(building.name)
-                        icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker))
-                    })
-                }
-                setOnMarkerClickListener {
-                    it.showInfoWindow()
-                    true
-                }
+    private fun addClusterItems(buildings: List<MapPageQuery.Building>) {
+        clusterManager.apply {
+            clearItems()
+            buildings.forEach { building ->
+                clusterManager.addItem(BuildingMarkerItem(
+                    building.name,
+                    building.latitude,
+                    building.longitude,
+                    "",
+                    BitmapDescriptorFactory.fromBitmap(ResourcesCompat.getDrawable(resources, R.drawable.map_marker, null)!!.toBitmap(64, 64))
+                ))
             }
+            cluster()
         }
     }
 }
