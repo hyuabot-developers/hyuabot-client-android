@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.MapPageQuery
+import app.kobuggi.hyuabot.MapPageSearchQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMapBinding
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -30,13 +31,14 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private val viewModel by viewModels<MapViewModel>()
     private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
     private lateinit var clusterManager: ClusterManager<BuildingMarkerItem>
+    private lateinit var googleMap: GoogleMap
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val mapViewBundle = savedInstanceState?.getBundle(MAP_VIEW_BUNDLE_KEY)
-        val searchResultAdapter = BuildingSearchAdapter(requireContext(), emptyList())
+        val searchResultAdapter = BuildingSearchAdapter(requireContext(), ::onClickSearchResult, emptyList())
         binding.mapView.let {
             it.onCreate(mapViewBundle)
             it.getMapAsync(this)
@@ -58,6 +60,21 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                     }
                 }
             }
+        binding.backToMoveButton.setOnClickListener {
+            viewModel.searchRooms.value = false
+            if (this::googleMap.isInitialized) {
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(37.29753535479288, 126.83544659517665), 16f))
+            }
+        }
+        viewModel.searchRooms.observe(viewLifecycleOwner) {
+            binding.backToMoveButton.visibility = if (it) View.VISIBLE else View.GONE
+            if (this::googleMap.isInitialized) {
+                googleMap.uiSettings.apply {
+                    isScrollGesturesEnabled = !it
+                    isZoomGesturesEnabled = !it
+                }
+            }
+        }
         viewModel.rooms.observe(viewLifecycleOwner) { rooms ->
             searchResultAdapter.updateData(rooms)
         }
@@ -101,6 +118,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
 
     @SuppressLint("PotentialBehaviorOverride")
     override fun onMapReady(map: GoogleMap) {
+        googleMap = map
         map.apply {
             uiSettings.apply {
                 isRotateGesturesEnabled = false
@@ -132,6 +150,24 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                 ))
             }
             cluster()
+        }
+    }
+
+    private fun onClickSearchResult(room: MapPageSearchQuery.Room) {
+        binding.searchView.hide()
+        if (this::googleMap.isInitialized) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(room.latitude, room.longitude), 18f))
+            clusterManager.apply {
+                clearItems()
+                addItem(BuildingMarkerItem(
+                    room.name,
+                    room.latitude,
+                    room.longitude,
+                    room.buildingName,
+                    BitmapDescriptorFactory.fromBitmap(ResourcesCompat.getDrawable(resources, R.drawable.map_marker, null)!!.toBitmap(64, 64))
+                ))
+                cluster()
+            }
         }
     }
 }

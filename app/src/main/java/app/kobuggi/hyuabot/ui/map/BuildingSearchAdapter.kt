@@ -9,10 +9,15 @@ import app.kobuggi.hyuabot.MapPageSearchQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemBuildingSearchBinding
 
-class BuildingSearchAdapter(private val context: Context, private var rooms: List<MapPageSearchQuery.Room>): RecyclerView.Adapter<BuildingSearchAdapter.ViewHolder>() {
+class BuildingSearchAdapter(
+    private val context: Context,
+    private val onClick: (MapPageSearchQuery.Room) -> Unit,
+    private var rooms: List<MapPageSearchQuery.Room>
+): RecyclerView.Adapter<BuildingSearchAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemBuildingSearchBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(room: MapPageSearchQuery.Room) {
             binding.apply {
+                itemBuildingSearch.setOnClickListener { onClick(room) }
                 roomName.text = room.name
                 roomDescription.text =
                     context.getString(R.string.room_description_format, room.buildingName, room.number)

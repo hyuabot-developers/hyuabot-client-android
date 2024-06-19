@@ -17,6 +17,7 @@ class MapViewModel @Inject constructor(private val apolloClient: ApolloClient) :
 
     val buildings get() = _buildings
     val rooms get() = _rooms
+    val searchRooms = MutableLiveData(false)
 
     fun fetchBuildings(north: Double?, south: Double?, west: Double?, east: Double?) {
         viewModelScope.launch {
@@ -39,6 +40,7 @@ class MapViewModel @Inject constructor(private val apolloClient: ApolloClient) :
                 null
             }
             _rooms.value = response?.data?.room ?: emptyList()
+            searchRooms.value = true
         }
     }
 }
