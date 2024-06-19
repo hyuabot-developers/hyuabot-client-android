@@ -7,8 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.MapPageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMapBinding
@@ -33,8 +36,31 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View {
         val mapViewBundle = savedInstanceState?.getBundle(MAP_VIEW_BUNDLE_KEY)
-        binding.mapView.onCreate(mapViewBundle)
-        binding.mapView.getMapAsync(this)
+        val searchResultAdapter = BuildingSearchAdapter(requireContext(), emptyList())
+        binding.mapView.let {
+            it.onCreate(mapViewBundle)
+            it.getMapAsync(this)
+        }
+        binding.searchRecyclerView.apply {
+            setHasFixedSize(true)
+            adapter = searchResultAdapter
+            layoutManager = LinearLayoutManager(context)
+            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+        }
+        binding.searchView
+            .editText
+            .apply {
+                addTextChangedListener { editable ->
+                    if (editable.isNullOrBlank()) {
+                        searchResultAdapter.updateData(emptyList())
+                    } else {
+                        viewModel.searchRooms(editable.toString())
+                    }
+                }
+            }
+        viewModel.rooms.observe(viewLifecycleOwner) { rooms ->
+            searchResultAdapter.updateData(rooms)
+        }
         return binding.root
     }
 

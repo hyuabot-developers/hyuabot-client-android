@@ -191,4 +191,5 @@
     <string name="menu_donate">기부하기</string>
     <string name="menu_map">캠퍼스 지도</string>
     <string name="map_search_guide">검색할 강의실을 입력하세요</string>
+    <string name="room_description_format">%1$s/%2$s호</string>
 </resources>

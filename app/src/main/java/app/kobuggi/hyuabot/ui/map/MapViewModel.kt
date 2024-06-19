@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.MapPageQuery
+import app.kobuggi.hyuabot.MapPageSearchQuery
 import com.apollographql.apollo3.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -12,8 +13,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MapViewModel @Inject constructor(private val apolloClient: ApolloClient) : ViewModel() {
     private val _buildings = MutableLiveData<List<MapPageQuery.Building>>()
+    private val _rooms = MutableLiveData<List<MapPageSearchQuery.Room>>()
 
     val buildings get() = _buildings
+    val rooms get() = _rooms
 
     fun fetchBuildings(north: Double?, south: Double?, west: Double?, east: Double?) {
         viewModelScope.launch {
@@ -24,6 +27,18 @@ class MapViewModel @Inject constructor(private val apolloClient: ApolloClient) :
                 null
             }
             _buildings.value = response?.data?.building ?: emptyList()
+        }
+    }
+
+    fun searchRooms(query: String) {
+        viewModelScope.launch {
+            val response = try {
+                apolloClient.query(MapPageSearchQuery(query)).execute()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+            _rooms.value = response?.data?.room ?: emptyList()
         }
     }
 }
