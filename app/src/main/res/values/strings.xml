@@ -192,4 +192,8 @@
     <string name="menu_map">캠퍼스 지도</string>
     <string name="map_search_guide">검색할 강의실을 입력하세요</string>
     <string name="room_description_format">%1$s/%2$s호</string>
+    <string name="reading_room_alarm_description">열람실 연장 알림</string>
+    <string name="reading_room_alarm_3_hour">3시간 (시험 기간)</string>
+    <string name="reading_room_alarm_4_hour">4시간 (평시)</string>
+    <string name="reading_room_alarm_cancel">취소</string>
 </resources>
