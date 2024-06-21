@@ -202,4 +202,5 @@
     <string name="reading_room_noti_denied">알림 권한이 거부되었습니다.</string>
     <string name="reading_room_noti_rationale">잔여 좌석 알림을 위해서는 권한이 필요합니다. 설정에서 권한을 허용해주세요.</string>
     <string name="reading_room_noti_settings">설정</string>
+    <string name="reading_room_update_time">업데이트 시간: %1$s</string>
 </resources>

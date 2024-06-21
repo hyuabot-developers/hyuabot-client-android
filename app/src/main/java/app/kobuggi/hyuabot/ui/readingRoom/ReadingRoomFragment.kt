@@ -16,6 +16,9 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentReadingRoomBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -42,6 +45,17 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
             rooms.observe(viewLifecycleOwner) {
                 binding.readingRoomSwipeRefreshLayout.isRefreshing = false
                 roomListAdapter.updateData(it)
+                if (it.isNotEmpty()) {
+                    // The updatedAt field is in UTC format and converted to LocalDateTime
+                    val utcUpdatedAt = LocalDateTime.parse(it[0].updatedAt.split(".")[0]).atOffset(ZoneOffset.UTC)
+                    val localUpdatedAt = utcUpdatedAt.atZoneSameInstant(ZoneOffset.systemDefault()).toLocalDateTime()
+                    binding.readingRoomUpdateTime.text = getString(
+                        R.string.reading_room_update_time,
+                        localUpdatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                    )
+                } else {
+                    binding.readingRoomUpdateTime.text = getString(R.string.reading_room_update_time, LocalDateTime.now().toString())
+                }
             }
         }
 
