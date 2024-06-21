@@ -1,0 +1,9 @@
+query ReadingRoomPageQuery ($campus: Int!) {
+    readingRoom(campusId: $campus) {
+        name
+        active
+        occupied
+        available
+        updatedAt
+    }
+}

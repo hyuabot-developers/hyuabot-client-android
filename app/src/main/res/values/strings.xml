@@ -196,4 +196,5 @@
     <string name="reading_room_alarm_3_hour">3시간 (시험 기간)</string>
     <string name="reading_room_alarm_4_hour">4시간 (평시)</string>
     <string name="reading_room_alarm_cancel">취소</string>
+    <string name="reading_room_seat_format">%1$d/%2$d 석</string>
 </resources>
