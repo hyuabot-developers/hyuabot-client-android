@@ -1,13 +1,20 @@
 package app.kobuggi.hyuabot.ui.readingRoom
 
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentReadingRoomBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -15,12 +22,20 @@ import javax.inject.Inject
 class ReadingRoomFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentReadingRoomBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<ReadingRoomViewModel>()
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
+            Snackbar.make(binding.root, R.string.reading_room_noti_allowed, Snackbar.LENGTH_SHORT).show()
+        } else {
+            Snackbar.make(binding.root, R.string.reading_room_noti_denied, Snackbar.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        askNotificationPermission()
         val roomListAdapter = ReadingRoomListAdapter(requireContext(), emptyList())
         viewModel.apply {
             fetchRooms()
@@ -42,5 +57,21 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                // FCM SDK (and your app) can post notifications.
+            } else if (shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)) {
+                Snackbar.make(binding.root, R.string.reading_room_noti_rationale, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.reading_room_noti_settings) {
+                        requestPermissionLauncher.launch(POST_NOTIFICATIONS)
+                    }
+                    .show()
+            } else {
+                requestPermissionLauncher.launch(POST_NOTIFICATIONS)
+            }
+        }
     }
 }

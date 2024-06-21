@@ -197,4 +197,9 @@
     <string name="reading_room_alarm_4_hour">4시간 (평시)</string>
     <string name="reading_room_alarm_cancel">취소</string>
     <string name="reading_room_seat_format">%1$d/%2$d 석</string>
+    <string name="default_notification_channel_id">HYUabot notification channel ID</string>
+    <string name="reading_room_noti_allowed">알림 권한이 허용되었습니다.</string>
+    <string name="reading_room_noti_denied">알림 권한이 거부되었습니다.</string>
+    <string name="reading_room_noti_rationale">잔여 좌석 알림을 위해서는 권한이 필요합니다. 설정에서 권한을 허용해주세요.</string>
+    <string name="reading_room_noti_settings">설정</string>
 </resources>
