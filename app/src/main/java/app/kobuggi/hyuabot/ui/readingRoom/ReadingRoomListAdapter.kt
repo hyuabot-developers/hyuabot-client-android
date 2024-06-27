@@ -11,7 +11,9 @@ import app.kobuggi.hyuabot.databinding.ItemReadingRoomBinding
 
 class ReadingRoomListAdapter(
     private val context: Context,
-    private var rooms: List<ReadingRoomPageQuery.ReadingRoom>
+    private val onClick: (ReadingRoomPageQuery.ReadingRoom) -> Unit,
+    private var rooms: List<ReadingRoomPageQuery.ReadingRoom>,
+    private var notifications: Set<Int>
 ): RecyclerView.Adapter<ReadingRoomListAdapter.ViewHolder>() {
     inner class ViewHolder (private val binding: ItemReadingRoomBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(room: ReadingRoomPageQuery.ReadingRoom) {
@@ -19,6 +21,10 @@ class ReadingRoomListAdapter(
                 readingRoomName.text = room.name
                 readingRoomSeatCount.text =
                     context.getString(R.string.reading_room_seat_format, room.available, room.active)
+                readingRoomAlarmButton.apply {
+                    isSelected = notifications.contains(room.id)
+                    setOnClickListener { onClick(room) }
+                }
             }
         }
     }
@@ -37,6 +43,12 @@ class ReadingRoomListAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newData: List<ReadingRoomPageQuery.ReadingRoom>) {
         rooms = newData
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateNotifications(newNotifications: Set<Int>) {
+        notifications = newNotifications
         notifyDataSetChanged()
     }
 }

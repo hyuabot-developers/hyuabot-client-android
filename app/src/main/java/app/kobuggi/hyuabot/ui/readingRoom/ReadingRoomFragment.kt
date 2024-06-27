@@ -4,6 +4,7 @@ import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +12,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.ReadingRoomPageQuery
 import app.kobuggi.hyuabot.databinding.FragmentReadingRoomBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.lang.Integer.parseInt
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -39,7 +44,7 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         askNotificationPermission()
-        val roomListAdapter = ReadingRoomListAdapter(requireContext(), emptyList())
+        val roomListAdapter = ReadingRoomListAdapter(requireContext(), ::onClickReadingRoom, emptyList(), emptySet())
         viewModel.apply {
             fetchRooms()
             rooms.observe(viewLifecycleOwner) {
@@ -56,6 +61,10 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
                 } else {
                     binding.readingRoomUpdateTime.text = getString(R.string.reading_room_update_time, LocalDateTime.now().toString())
                 }
+            }
+            notificationList.observe(viewLifecycleOwner) {
+                Log.d("ReadingRoomFragment", "Notification list updated: $it")
+                roomListAdapter.updateNotifications(it.map { item -> parseInt(item.split("_")[2]) }.toSet())
             }
         }
 
@@ -86,6 +95,12 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
             } else {
                 requestPermissionLauncher.launch(POST_NOTIFICATIONS)
             }
+        }
+    }
+
+    private fun onClickReadingRoom(room: ReadingRoomPageQuery.ReadingRoom) {
+        viewModel.viewModelScope.launch {
+            viewModel.toggleReadingRoomNotification(room.id)
         }
     }
 }

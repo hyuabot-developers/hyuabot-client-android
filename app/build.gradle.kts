@@ -136,6 +136,8 @@ dependencies {
     implementation(libs.swipeRefreshLayout)
     // Play Services
     implementation(libs.playServicesLocation)
+    // Android LiveData
+    implementation(libs.lifeCycleLiveData)
 }
 
 hilt {

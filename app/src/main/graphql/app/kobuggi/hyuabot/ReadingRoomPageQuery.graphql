@@ -1,5 +1,6 @@
 query ReadingRoomPageQuery ($campus: Int!) {
     readingRoom(campusId: $campus) {
+        id
         name
         active
         occupied

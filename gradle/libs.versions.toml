@@ -17,6 +17,7 @@ gson = "2.10.1"
 okhttp = "5.0.0-alpha.12"
 apollo = "4.0.0-beta.5"
 dataStore = "1.1.1"
+liveData = "2.8.2"
 viewPager2 = "1.1.0"
 room = "2.6.1"
 calendar = "2.5.0"
@@ -64,6 +65,7 @@ swipeRefreshLayout = { group = "androidx.swiperefreshlayout", name = "swiperefre
 playServicesLocation = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServices" }
 playServicesMaps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playMaps" }
 mapsUtils = { group = "com.google.maps.android", name = "android-maps-utils", version.ref = "playMapUtils" }
+lifeCycleLiveData = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "liveData" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
