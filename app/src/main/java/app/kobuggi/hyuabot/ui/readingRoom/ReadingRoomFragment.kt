@@ -98,9 +98,9 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
         }
     }
 
-    private fun onClickReadingRoom(room: ReadingRoomPageQuery.ReadingRoom) {
+    private fun onClickReadingRoom(room: ReadingRoomPageQuery.ReadingRoom, subscribe: Boolean) {
         viewModel.viewModelScope.launch {
-            viewModel.toggleReadingRoomNotification(room.id)
+            viewModel.toggleReadingRoomNotification(binding, room.id, subscribe)
         }
     }
 }

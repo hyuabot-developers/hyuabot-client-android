@@ -11,7 +11,7 @@ import app.kobuggi.hyuabot.databinding.ItemReadingRoomBinding
 
 class ReadingRoomListAdapter(
     private val context: Context,
-    private val onClick: (ReadingRoomPageQuery.ReadingRoom) -> Unit,
+    private val onClick: (ReadingRoomPageQuery.ReadingRoom, Boolean) -> Unit,
     private var rooms: List<ReadingRoomPageQuery.ReadingRoom>,
     private var notifications: Set<Int>
 ): RecyclerView.Adapter<ReadingRoomListAdapter.ViewHolder>() {
@@ -23,7 +23,7 @@ class ReadingRoomListAdapter(
                     context.getString(R.string.reading_room_seat_format, room.available, room.active)
                 readingRoomAlarmButton.apply {
                     isSelected = notifications.contains(room.id)
-                    setOnClickListener { onClick(room) }
+                    setOnClickListener { onClick(room, !isSelected) }
                 }
             }
         }
