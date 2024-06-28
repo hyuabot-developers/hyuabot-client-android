@@ -28,6 +28,8 @@ playServices = "21.3.0"
 playMaps = "18.2.0"
 playMapUtils = "3.8.0"
 secretsGradlePlugin = "2.0.1"
+googleServices = "4.4.2"
+crashlytics = "2.9.9"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -76,3 +78,5 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 safeArgs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 secretsGradlePlugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
+googleServicesPlugin = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+crashlyticsPlugin = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }

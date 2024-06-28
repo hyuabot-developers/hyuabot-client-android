@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.hiltPlugin) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.secretsGradlePlugin) apply false
+    alias(libs.plugins.crashlyticsPlugin) apply false
 }
 
 allprojects {}
