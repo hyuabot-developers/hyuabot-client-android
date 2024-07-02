@@ -61,6 +61,15 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    override suspend fun turnOffNotification(readingRoomID: Int) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                val currentNotifications: Set<String> = preferences[READING_ROOM_NOTIFICATIONS_KEY] ?: emptySet()
+                preferences[READING_ROOM_NOTIFICATIONS_KEY] = currentNotifications - "reading_room_$readingRoomID"
+            }
+        }
+    }
+
     private companion object {
         private val BUS_STOP_ID_KEY = intPreferencesKey("bus_stop_id")
         private val READING_ROOM_NOTIFICATIONS_KEY = stringSetPreferencesKey("reading_room_notifications")
