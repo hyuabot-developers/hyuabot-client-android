@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -38,11 +39,14 @@ class NotificationService : FirebaseMessagingService() {
 
         val notificationChannel = NotificationChannel(CHANNEL_ID, "Reading Room Notification", NotificationManager.IMPORTANCE_DEFAULT)
         getSystemService(NotificationManager::class.java).createNotificationChannel(notificationChannel)
+
+        val libraryAppIntent = packageManager.getLaunchIntentForPackage("kr.ac.hanyang.library")
         val notification = Notification.Builder(this, CHANNEL_ID)
             .setGroup(NOTIFICATION_GROUP_ID)
             .setContentTitle(getString(R.string.reading_room_noti_title))
             .setContentText(message.data["body"])
             .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentIntent(libraryAppIntent?.let { PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_IMMUTABLE) })
             .build()
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) {
