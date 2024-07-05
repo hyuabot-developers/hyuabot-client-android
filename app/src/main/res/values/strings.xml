@@ -207,4 +207,5 @@
     <string name="reading_room_noti_on_error">열람실 알람 설정을 실패하였습니다.</string>
     <string name="reading_room_noti_off">열람실 알람을 해제하였습니다.</string>
     <string name="reading_room_noti_off_error">열람실 알람 해제를 실패하였습니다.</string>
+    <string name="reading_room_noti_title">열람실 좌석 알림</string>
 </resources>
