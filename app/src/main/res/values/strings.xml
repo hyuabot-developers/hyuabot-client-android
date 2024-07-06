@@ -208,4 +208,6 @@
     <string name="reading_room_noti_off">열람실 알람을 해제하였습니다.</string>
     <string name="reading_room_noti_off_error">열람실 알람 해제를 실패하였습니다.</string>
     <string name="reading_room_noti_title">열람실 좌석 알림</string>
+    <string name="reading_room_extend_noti_title">열람실 연장 미리 알림</string>
+    <string name="reading_room_extend_noti_content">열람실 좌석 연장이 가능합니다.</string>
 </resources>
