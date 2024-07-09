@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import app.kobuggi.hyuabot.R
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +25,18 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
         .map { preferences ->
             preferences[READING_ROOM_NOTIFICATIONS_KEY] ?: emptySet()
+        }
+
+    val readingRoomExtendNotification: Flow<String> = userDataStorePreferences.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[READING_ROOM_EXTEND_NOTIFICATION_KEY] ?: ""
         }
 
     override suspend fun setBusStop(busStopID: Int) {
@@ -70,8 +83,17 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    override suspend fun setReadingRoomExtendNotification(timeString: String?) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[READING_ROOM_EXTEND_NOTIFICATION_KEY] = timeString ?: ""
+            }
+        }
+    }
+
     private companion object {
         private val BUS_STOP_ID_KEY = intPreferencesKey("bus_stop_id")
         private val READING_ROOM_NOTIFICATIONS_KEY = stringSetPreferencesKey("reading_room_notifications")
+        private val READING_ROOM_EXTEND_NOTIFICATION_KEY = stringPreferencesKey("reading_room_extend_notification")
     }
 }

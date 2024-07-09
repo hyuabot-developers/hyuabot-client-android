@@ -23,6 +23,7 @@ class ReadingRoomViewModel @Inject constructor(
 ): ViewModel() {
     private val _rooms = MutableLiveData<List<ReadingRoomPageQuery.ReadingRoom>>()
     val notificationList = userPreferencesRepository.readingRoomNotifications.asLiveData()
+    val extendNotificationTime = userPreferencesRepository.readingRoomExtendNotification.asLiveData()
 
 
     val rooms: MutableLiveData<List<ReadingRoomPageQuery.ReadingRoom>>
@@ -56,6 +57,12 @@ class ReadingRoomViewModel @Inject constructor(
         }
         viewModelScope.launch {
             userPreferencesRepository.toggleReadingRoomNotification(readingRoomID)
+        }
+    }
+
+    fun setExtendNotificationTime(time: String?) {
+        viewModelScope.launch {
+            userPreferencesRepository.setReadingRoomExtendNotification(time)
         }
     }
 }

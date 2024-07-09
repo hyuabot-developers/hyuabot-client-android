@@ -210,4 +210,6 @@
     <string name="reading_room_noti_title">열람실 좌석 알림</string>
     <string name="reading_room_extend_noti_title">열람실 연장 미리 알림</string>
     <string name="reading_room_extend_noti_content">열람실 좌석 연장이 가능합니다.</string>
+    <string name="reading_room_alarm_extend">열람실 연장 알림입니다!</string>
+    <string name="reading_room_alarm_format">알림 시간: %1$s</string>
 </resources>

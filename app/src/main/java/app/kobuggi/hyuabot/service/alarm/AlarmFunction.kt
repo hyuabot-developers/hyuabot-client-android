@@ -6,8 +6,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -17,7 +15,6 @@ import java.util.Locale
 class AlarmFunction (private val context: Context){
 
     private lateinit var pendingIntent: PendingIntent
-    private val ioScope by lazy { CoroutineScope(Dispatchers.IO) }
 
     @SuppressLint("ScheduleExactAlarm")
     fun callAlarm(time: String, alarmCode: Int, content: String){

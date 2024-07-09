@@ -7,4 +7,5 @@ interface UserPreferencesRepositoryImpl {
     suspend fun getBusStop(): Flow<Int>
     suspend fun toggleReadingRoomNotification(readingRoomID: Int)
     suspend fun turnOffNotification(readingRoomID: Int)
+    suspend fun setReadingRoomExtendNotification(timeString: String?)
 }
