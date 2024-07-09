@@ -192,4 +192,24 @@
     <string name="menu_map">캠퍼스 지도</string>
     <string name="map_search_guide">검색할 강의실을 입력하세요</string>
     <string name="room_description_format">%1$s/%2$s호</string>
+    <string name="reading_room_alarm_description">열람실 연장 알림</string>
+    <string name="reading_room_alarm_3_hour">3시간 (시험 기간)</string>
+    <string name="reading_room_alarm_4_hour">4시간 (평시)</string>
+    <string name="reading_room_alarm_cancel">취소</string>
+    <string name="reading_room_seat_format">%1$d/%2$d 석</string>
+    <string name="default_notification_channel_id">HYUabot notification channel ID</string>
+    <string name="reading_room_noti_allowed">알림 권한이 허용되었습니다.</string>
+    <string name="reading_room_noti_denied">알림 권한이 거부되었습니다.</string>
+    <string name="reading_room_noti_rationale">잔여 좌석 알림을 위해서는 권한이 필요합니다. 설정에서 권한을 허용해주세요.</string>
+    <string name="reading_room_noti_settings">설정</string>
+    <string name="reading_room_update_time">업데이트 시간: %1$s</string>
+    <string name="reading_room_noti_on">열람실 알람을 설정했습니다.</string>
+    <string name="reading_room_noti_on_error">열람실 알람 설정을 실패하였습니다.</string>
+    <string name="reading_room_noti_off">열람실 알람을 해제하였습니다.</string>
+    <string name="reading_room_noti_off_error">열람실 알람 해제를 실패하였습니다.</string>
+    <string name="reading_room_noti_title">열람실 좌석 알림</string>
+    <string name="reading_room_extend_noti_title">열람실 연장 미리 알림</string>
+    <string name="reading_room_extend_noti_content">열람실 좌석 연장이 가능합니다.</string>
+    <string name="reading_room_alarm_extend">열람실 연장 알림입니다!</string>
+    <string name="reading_room_alarm_format">알림 시간: %1$s</string>
 </resources>

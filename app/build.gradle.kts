@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.apollo)
     alias(libs.plugins.safeArgs)
     alias(libs.plugins.secretsGradlePlugin)
+    alias(libs.plugins.googleServicesPlugin)
+    alias(libs.plugins.crashlyticsPlugin)
 }
 
 val props = Properties()
@@ -136,6 +138,8 @@ dependencies {
     implementation(libs.swipeRefreshLayout)
     // Play Services
     implementation(libs.playServicesLocation)
+    // Android LiveData
+    implementation(libs.lifeCycleLiveData)
 }
 
 hilt {
