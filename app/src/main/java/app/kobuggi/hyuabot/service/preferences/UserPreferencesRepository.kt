@@ -39,6 +39,18 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             preferences[READING_ROOM_EXTEND_NOTIFICATION_KEY] ?: ""
         }
 
+    val contactVersion: Flow<String?> = userDataStorePreferences.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[CONTACT_KEY]
+        }
+
     override suspend fun setBusStop(busStopID: Int) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
@@ -91,9 +103,32 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    override suspend fun getContactVersion(): Flow<String?> {
+        return userDataStorePreferences.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                preferences[CONTACT_KEY]
+            }
+    }
+
+    override suspend fun setContactVersion(version: String) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[CONTACT_KEY] = version
+            }
+        }
+    }
+
     private companion object {
         private val BUS_STOP_ID_KEY = intPreferencesKey("bus_stop_id")
         private val READING_ROOM_NOTIFICATIONS_KEY = stringSetPreferencesKey("reading_room_notifications")
         private val READING_ROOM_EXTEND_NOTIFICATION_KEY = stringPreferencesKey("reading_room_extend_notification")
+        private val CONTACT_KEY = stringPreferencesKey("contact_version")
     }
 }

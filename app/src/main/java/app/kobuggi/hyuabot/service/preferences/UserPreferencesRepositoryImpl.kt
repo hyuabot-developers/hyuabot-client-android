@@ -8,4 +8,6 @@ interface UserPreferencesRepositoryImpl {
     suspend fun toggleReadingRoomNotification(readingRoomID: Int)
     suspend fun turnOffNotification(readingRoomID: Int)
     suspend fun setReadingRoomExtendNotification(timeString: String?)
+    suspend fun getContactVersion(): Flow<String?>
+    suspend fun setContactVersion(version: String)
 }
