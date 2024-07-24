@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.contact
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,11 @@ class ContactFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel.fetchContactVersion()
+        viewModel.updating.observe(viewLifecycleOwner) {
+            Log.d("ContactFragment", "Updating: $it")
+            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+        }
+
         return binding.root
     }
 }

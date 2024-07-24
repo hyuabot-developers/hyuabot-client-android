@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.ui.contact
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -20,8 +21,12 @@ class ContactViewModel @Inject constructor(
     private val database: AppDatabase
 ): ViewModel() {
     private val contactVersion = userPreferencesRepository.contactVersion.asLiveData()
+    private val _updating = MutableLiveData(false)
+
+    val updating get() = _updating
 
     fun fetchContactVersion() {
+        _updating.postValue(true)
         viewModelScope.launch {
             val response = try {
                 apolloClient.query(ContactPageVersionQuery()).execute()
@@ -31,6 +36,8 @@ class ContactViewModel @Inject constructor(
             }
             if (contactVersion.value != response?.data?.contact?.version) {
                 fetchContacts()
+            } else {
+                _updating.postValue(false)
             }
         }
     }
@@ -48,6 +55,7 @@ class ContactViewModel @Inject constructor(
             response?.data?.contact?.data?.map {
                 Contact(contactID = it.id, campusID = it.campusID, name = it.name, phone = it.phone)
             }?.let { dao.insertAll(*it.toTypedArray()) }
+            _updating.postValue(false)
         }
     }
 }
