@@ -213,4 +213,7 @@
     <string name="reading_room_alarm_extend">열람실 연장 알림입니다!</string>
     <string name="reading_room_alarm_format">알림 시간: %1$s</string>
     <string name="shuttle_realtime_location_error">가장 가까운 정류장을 찾는데 실패했습니다.</string>
+    <string name="campus_settings">캠퍼스 설정</string>
+    <string name="language_settings">언어 설정</string>
+    <string name="theme_settings">테마 설정</string>
 </resources>
