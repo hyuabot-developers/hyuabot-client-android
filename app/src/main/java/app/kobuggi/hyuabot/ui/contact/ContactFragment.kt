@@ -1,13 +1,17 @@
 package app.kobuggi.hyuabot.ui.contact
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.databinding.FragmentContactBinding
+import app.kobuggi.hyuabot.service.database.entity.Contact
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -21,12 +25,27 @@ class ContactFragment @Inject constructor() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel.fetchContactVersion()
-        viewModel.updating.observe(viewLifecycleOwner) {
-            Log.d("ContactFragment", "Updating: $it")
-            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+        val listAdapter = ContactListAdapter(emptyList()) { onClickItem(it) }
+        viewModel.apply {
+            fetchContactVersion()
+            updating.observe(viewLifecycleOwner) {
+                binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+            }
+            contacts.observe(viewLifecycleOwner) {
+                listAdapter.updateData(it)
+            }
         }
-
+        binding.contactListView.apply {
+            adapter = listAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        }
         return binding.root
+    }
+
+    fun onClickItem(contact: Contact) {
+        val intent = Intent(Intent.ACTION_DIAL)
+        intent.data = Uri.parse("tel:${contact.phone}")
+        startActivity(intent)
     }
 }

@@ -21,9 +21,11 @@ class ContactViewModel @Inject constructor(
     private val database: AppDatabase
 ): ViewModel() {
     private val contactVersion = userPreferencesRepository.contactVersion.asLiveData()
+    private val _contacts = database.contactDao().getAll().asLiveData()
     private val _updating = MutableLiveData(false)
 
     val updating get() = _updating
+    val contacts get() = _contacts
 
     fun fetchContactVersion() {
         _updating.postValue(true)
