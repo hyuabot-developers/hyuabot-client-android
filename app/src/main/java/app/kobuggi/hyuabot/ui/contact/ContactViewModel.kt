@@ -36,10 +36,12 @@ class ContactViewModel @Inject constructor(
                 e.printStackTrace()
                 null
             }
-            if (contactVersion.value != response?.data?.contact?.version) {
-                fetchContacts()
-            } else {
-                _updating.postValue(false)
+            contactVersion.observeForever {
+                if (it != response?.data?.contact?.version) {
+                    fetchContacts()
+                } else {
+                    _updating.postValue(false)
+                }
             }
         }
     }
@@ -54,6 +56,7 @@ class ContactViewModel @Inject constructor(
                 null
             }
             dao.deleteAll()
+            response?.data?.contact?.version?.let { userPreferencesRepository.setContactVersion(it) }
             response?.data?.contact?.data?.map {
                 Contact(contactID = it.id, campusID = it.campusID, name = it.name, phone = it.phone)
             }?.let { dao.insertAll(*it.toTypedArray()) }
