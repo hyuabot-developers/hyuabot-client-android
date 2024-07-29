@@ -216,4 +216,8 @@
     <string name="campus_settings">캠퍼스 설정</string>
     <string name="language_settings">언어 설정</string>
     <string name="theme_settings">테마 설정</string>
+    <string name="theme_settings_description">테마를 선택해주세요.</string>
+    <string name="theme_light">라이트</string>
+    <string name="theme_dark">다크</string>
+    <string name="theme_system">시스템</string>
 </resources>

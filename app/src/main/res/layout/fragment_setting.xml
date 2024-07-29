@@ -15,6 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_campus"
+            android:backgroundTint="@android:color/darker_gray"
             android:contentDescription="@string/campus_settings"
             android:layout_gravity="center_vertical"/>
         <TextView
@@ -23,12 +24,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/campus_settings"
-            android:textSize="16sp"
+            android:textSize="18sp"
+            android:textFontWeight="700"
             android:layout_gravity="center_vertical"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_right"
+            android:backgroundTint="@android:color/darker_gray"
             android:contentDescription="@string/campus_settings"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
@@ -47,6 +50,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_language"
             android:contentDescription="@string/language_settings"
+            android:backgroundTint="@android:color/darker_gray"
             android:layout_gravity="center_vertical"/>
         <TextView
             android:layout_width="0dp"
@@ -54,13 +58,15 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/language_settings"
-            android:textSize="16sp"
+            android:textSize="18sp"
+            android:textFontWeight="700"
             android:layout_gravity="center_vertical"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_right"
             android:contentDescription="@string/language_settings"
+            android:backgroundTint="@android:color/darker_gray"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
     <View
@@ -78,6 +84,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_theme"
             android:contentDescription="@string/theme_settings"
+            android:backgroundTint="@android:color/darker_gray"
             android:layout_gravity="center_vertical"/>
         <TextView
             android:layout_width="0dp"
@@ -85,13 +92,15 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/theme_settings"
-            android:textSize="16sp"
+            android:textSize="18sp"
+            android:textFontWeight="700"
             android:layout_gravity="center_vertical"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_right"
             android:contentDescription="@string/theme_settings"
+            android:backgroundTint="@android:color/darker_gray"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
 </LinearLayout>
