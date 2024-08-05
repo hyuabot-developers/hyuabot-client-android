@@ -8,4 +8,5 @@ class MapMarkerItem(private val position: LatLng, private val title: String, pri
     override fun getPosition(): LatLng = position
     override fun getTitle(): String = title
     override fun getSnippet(): String? = snippet
+    override fun getZIndex(): Float? = null
 }
