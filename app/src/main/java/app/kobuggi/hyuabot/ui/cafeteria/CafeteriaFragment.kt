@@ -41,12 +41,16 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
         datePicker.addOnPositiveButtonClickListener {
             viewModel.apply {
                 date.value = LocalDateTime.ofEpochSecond(it / 1000, 0, ZoneOffset.ofHours(9))
-                fetchData()
+                campusID.observe(viewLifecycleOwner) { campusID ->
+                    fetchData(campusID)
+                }
             }
         }
 
         viewModel.apply {
-            fetchData()
+            campusID.observe(viewLifecycleOwner) {
+                fetchData(it)
+            }
             isLoading.observe(viewLifecycleOwner) {
                 binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
             }

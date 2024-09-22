@@ -222,4 +222,5 @@
     <string name="theme_system">시스템</string>
     <string name="campus_erica">ERICA</string>
     <string name="campus_seoul">서울</string>
+    <string name="empty_cafeteria">메뉴 정보가 없습니다.</string>
 </resources>

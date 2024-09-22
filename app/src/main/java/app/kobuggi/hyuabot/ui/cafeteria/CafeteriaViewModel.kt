@@ -2,8 +2,10 @@ package app.kobuggi.hyuabot.ui.cafeteria
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.CafeteriaPageQuery
+import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import com.apollographql.apollo3.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -11,7 +13,10 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
-class CafeteriaViewModel @Inject constructor(private val apolloClient: ApolloClient): ViewModel() {
+class CafeteriaViewModel @Inject constructor(
+    private val apolloClient: ApolloClient,
+    private val userPreferencesRepository: UserPreferencesRepository
+): ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _date = MutableLiveData(LocalDateTime.now())
     private val _breakfast = MutableLiveData<List<CafeteriaPageQuery.Menu>>()
@@ -23,6 +28,7 @@ class CafeteriaViewModel @Inject constructor(private val apolloClient: ApolloCli
     val breakfast get() = _breakfast
     val lunch get() = _lunch
     val dinner get() = _dinner
+    val campusID get() = userPreferencesRepository.campusID.asLiveData()
 
     fun fetchData(campusID: Int = 2) {
         viewModelScope.launch {
