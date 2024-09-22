@@ -2,6 +2,8 @@ package app.kobuggi.hyuabot.ui
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
@@ -14,11 +16,12 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
+import app.kobuggi.hyuabot.util.LocaleUtility
 import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedListener, NavigationBarView.OnItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedListener, NavigationBarView.OnItemSelectedListener, DialogInterface.OnDismissListener {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<MainViewModel>()
     private val navController: NavController by lazy {
@@ -41,8 +44,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 else -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) }
             }
         }
+        val sharedPreferences = getSharedPreferences("hyuabot", MODE_PRIVATE)
+        val localeCode = sharedPreferences.getString("locale", "ko")
+        LocaleUtility.setLocale(localeCode!!)
         checkLocationPermission()
-
     }
 
     private fun checkLocationPermission() {
@@ -86,5 +91,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     override fun onNavigationItemReselected(item: MenuItem) {
         val reselectedDestinationId = item.itemId
         navController.popBackStack(reselectedDestinationId, false)
+    }
+
+    override fun onDismiss(dialogInterface: DialogInterface?) {
+        recreate()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(LocaleUtility.wrap(newBase!!))
     }
 }
