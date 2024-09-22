@@ -220,4 +220,6 @@
     <string name="theme_light">라이트</string>
     <string name="theme_dark">다크</string>
     <string name="theme_system">시스템</string>
+    <string name="campus_erica">ERICA</string>
+    <string name="campus_seoul">서울</string>
 </resources>
