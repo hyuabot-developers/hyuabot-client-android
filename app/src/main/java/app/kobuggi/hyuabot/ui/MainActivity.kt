@@ -4,6 +4,7 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,10 +14,11 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
+import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedListener, NavigationBarView.OnItemSelectedListener {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<MainViewModel>()
     private val navController: NavController by lazy {
@@ -27,7 +29,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.bottomNavigation.setupWithNavController(navController)
+        binding.bottomNavigation.apply {
+            setupWithNavController(navController)
+            setOnItemSelectedListener(this@MainActivity)
+            setOnItemReselectedListener(this@MainActivity)
+        }
         viewModel.theme.observe(this) {
             when (it) {
                 "light" -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) }
@@ -66,5 +72,19 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == navController.currentDestination?.id) {
+            navController.popBackStack(navController.graph.startDestinationId, false)
+        } else {
+            navController.navigate(item.itemId)
+        }
+        return true
+    }
+
+    override fun onNavigationItemReselected(item: MenuItem) {
+        val reselectedDestinationId = item.itemId
+        navController.popBackStack(reselectedDestinationId, false)
     }
 }
