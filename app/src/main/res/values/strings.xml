@@ -225,4 +225,7 @@
     <string name="empty_cafeteria">메뉴 정보가 없습니다.</string>
     <string name="language_korean">한국어</string>
     <string name="language_english">English</string>
+    <string name="about">앱 정보</string>
+    <string name="developer_name">개발자: 이정인</string>
+    <string name="developer_belong">소속: 소프트웨어학부 17학번</string>
 </resources>

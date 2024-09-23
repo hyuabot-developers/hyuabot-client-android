@@ -103,4 +103,38 @@
             android:backgroundTint="@android:color/darker_gray"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+    <LinearLayout
+        android:id="@+id/app_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="16dp"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_info_black"
+            android:contentDescription="@string/about"
+            android:backgroundTint="@android:color/darker_gray"
+            android:layout_gravity="center_vertical"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/about"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            android:layout_gravity="center_vertical"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_right"
+            android:contentDescription="@string/about"
+            android:backgroundTint="@android:color/darker_gray"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
 </LinearLayout>

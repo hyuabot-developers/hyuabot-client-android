@@ -25,6 +25,7 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
             settingCampus.setOnClickListener { openCampusDialog() }
             settingLanguage.setOnClickListener { openLanguageDialog() }
             settingTheme.setOnClickListener { openThemeDialog() }
+            appInfo.setOnClickListener { openInfoDialog() }
         }
         return binding.root
     }
@@ -43,6 +44,12 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
 
     private fun openLanguageDialog() {
         SettingFragmentDirections.actionSettingFragmentToLanguageSettingDialogFragment().also {
+            findNavController().navigate(it)
+        }
+    }
+
+    private fun openInfoDialog() {
+        SettingFragmentDirections.actionSettingFragmentToSettingDeveloperDialogFragment().also {
             findNavController().navigate(it)
         }
     }
