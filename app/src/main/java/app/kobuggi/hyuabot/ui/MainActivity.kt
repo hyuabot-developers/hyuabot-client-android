@@ -2,20 +2,28 @@ package app.kobuggi.hyuabot.ui
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
+import app.kobuggi.hyuabot.util.LocaleUtility
+import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedListener, NavigationBarView.OnItemSelectedListener, DialogInterface.OnDismissListener {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    private val viewModel by viewModels<MainViewModel>()
     private val navController: NavController by lazy {
         val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragment.id)!! as NavHostFragment
         navHostFragment.navController
@@ -24,7 +32,21 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.bottomNavigation.setupWithNavController(navController)
+        binding.bottomNavigation.apply {
+            setupWithNavController(navController)
+            setOnItemSelectedListener(this@MainActivity)
+            setOnItemReselectedListener(this@MainActivity)
+        }
+        viewModel.theme.observe(this) {
+            when (it) {
+                "light" -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) }
+                "dark" -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) }
+                else -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) }
+            }
+        }
+        val sharedPreferences = getSharedPreferences("hyuabot", MODE_PRIVATE)
+        val localeCode = sharedPreferences.getString("locale", "ko")
+        LocaleUtility.setLocale(localeCode!!)
         checkLocationPermission()
     }
 
@@ -55,5 +77,27 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == navController.currentDestination?.id) {
+            navController.popBackStack(navController.graph.startDestinationId, false)
+        } else {
+            navController.navigate(item.itemId)
+        }
+        return true
+    }
+
+    override fun onNavigationItemReselected(item: MenuItem) {
+        val reselectedDestinationId = item.itemId
+        navController.popBackStack(reselectedDestinationId, false)
+    }
+
+    override fun onDismiss(dialogInterface: DialogInterface?) {
+        recreate()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(LocaleUtility.wrap(newBase!!))
     }
 }

@@ -39,6 +39,30 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             preferences[READING_ROOM_EXTEND_NOTIFICATION_KEY] ?: ""
         }
 
+    val theme: Flow<String?> = userDataStorePreferences.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[THEME_KEY]
+        }
+
+    val campusID: Flow<Int> = userDataStorePreferences.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[CAMPUS_ID_KEY] ?: 2
+        }
+
     override suspend fun setBusStop(busStopID: Int) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
@@ -91,9 +115,33 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    override suspend fun setTheme(theme: String?) {
+        Result.runCatching {
+            if (theme != null) {
+                userDataStorePreferences.edit { preferences ->
+                    preferences[THEME_KEY] = theme
+                }
+            } else {
+                userDataStorePreferences.edit { preferences ->
+                    preferences.remove(THEME_KEY)
+                }
+            }
+        }
+    }
+
+    override suspend fun setCampusID(campusID: Int) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[CAMPUS_ID_KEY] = campusID
+            }
+        }
+    }
+
     private companion object {
         private val BUS_STOP_ID_KEY = intPreferencesKey("bus_stop_id")
         private val READING_ROOM_NOTIFICATIONS_KEY = stringSetPreferencesKey("reading_room_notifications")
         private val READING_ROOM_EXTEND_NOTIFICATION_KEY = stringPreferencesKey("reading_room_extend_notification")
+        private val THEME_KEY = stringPreferencesKey("theme")
+        private val CAMPUS_ID_KEY = intPreferencesKey("campus_id")
     }
 }

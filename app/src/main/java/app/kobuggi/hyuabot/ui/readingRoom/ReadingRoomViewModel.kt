@@ -25,14 +25,14 @@ class ReadingRoomViewModel @Inject constructor(
     val notificationList = userPreferencesRepository.readingRoomNotifications.asLiveData()
     val extendNotificationTime = userPreferencesRepository.readingRoomExtendNotification.asLiveData()
 
-
+    val campusID get() = userPreferencesRepository.campusID.asLiveData()
     val rooms: MutableLiveData<List<ReadingRoomPageQuery.ReadingRoom>>
         get() = _rooms
 
-    fun fetchRooms() {
+    fun fetchRooms(campusID: Int = 2) {
         viewModelScope.launch {
             val response = try {
-                apolloClient.query(ReadingRoomPageQuery(campus = 2)).execute()
+                apolloClient.query(ReadingRoomPageQuery(campus = campusID)).execute()
             } catch (e: Exception) {
                 e.printStackTrace()
                 null

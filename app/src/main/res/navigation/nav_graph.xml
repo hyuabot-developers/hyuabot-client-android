@@ -123,6 +123,9 @@
         <action
             android:id="@+id/action_settingFragment_to_themeSettingDialogFragment"
             app:destination="@id/themeSettingDialogFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_settingDeveloperDialogFragment"
+            app:destination="@id/settingDeveloperDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/noticeFragment"
@@ -260,4 +263,9 @@
         android:name="app.kobuggi.hyuabot.ui.setting.ThemeSettingDialog"
         android:label="테마 설정"
         tools:layout="@layout/dialog_setting_theme" />
+    <dialog
+        android:id="@+id/settingDeveloperDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.setting.InfoSettingDialog"
+        android:label="앱 정보"
+        tools:layout="@layout/dialog_setting_developer" />
 </navigation>
