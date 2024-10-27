@@ -49,7 +49,9 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
         val roomListAdapter = ReadingRoomListAdapter(requireContext(), ::onClickReadingRoom, emptyList(), emptySet())
         alaramFunction = AlarmFunction(requireContext())
         viewModel.apply {
-            fetchRooms()
+            campusID.observe(viewLifecycleOwner) {
+                fetchRooms(it)
+            }
             rooms.observe(viewLifecycleOwner) {
                 binding.readingRoomSwipeRefreshLayout.isRefreshing = false
                 roomListAdapter.updateData(it)
@@ -85,7 +87,9 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
 
         binding.apply {
             readingRoomSwipeRefreshLayout.setOnRefreshListener {
-                viewModel.fetchRooms()
+                viewModel.campusID.observe(viewLifecycleOwner) {
+                    viewModel.fetchRooms(it)
+                }
             }
             readingRoomRecyclerView.apply {
                 setHasFixedSize(true)

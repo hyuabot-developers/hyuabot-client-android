@@ -21,6 +21,7 @@ class CafeteriaTabBreakfastFragment : Fragment() {
         parentViewModel.apply {
             breakfast.observe(viewLifecycleOwner) {
                 cafeteriaAdapter.updateList(it)
+                binding.emptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
             }
             isLoading.observe(viewLifecycleOwner) {
                 if (!it) binding.swipeRefreshLayout.isRefreshing = false
@@ -32,7 +33,9 @@ class CafeteriaTabBreakfastFragment : Fragment() {
                 addItemDecoration(decoration)
             }
             swipeRefreshLayout.setOnRefreshListener {
-                parentViewModel.fetchData()
+                parentViewModel.campusID.observe(viewLifecycleOwner) {
+                    parentViewModel.fetchData(it)
+                }
             }
         }
         return binding.root

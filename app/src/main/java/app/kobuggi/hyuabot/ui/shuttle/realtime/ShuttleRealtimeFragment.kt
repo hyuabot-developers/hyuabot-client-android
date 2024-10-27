@@ -14,6 +14,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
@@ -42,6 +43,10 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         viewModel.stopInfo.observe(viewLifecycleOwner) {stops ->
             if (stops.isNotEmpty()) {
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                    if (location == null) {
+                        Snackbar.make(binding.root, getString(R.string.shuttle_realtime_location_error), Toast.LENGTH_SHORT).show()
+                        return@addOnSuccessListener
+                    }
                     val nearestStop = stops.mapIndexed { index, stopItem ->
                         Pair(stopItem, calculateDistance(stopItem, location))
                     }.minByOrNull { it.second }?.first
