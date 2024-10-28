@@ -27,6 +27,7 @@ class ContactViewModel @Inject constructor(
     val updating get() = _updating
     val contacts get() = _contacts
     val campusID = userPreferencesRepository.campusID.asLiveData()
+    val searchResults = MutableLiveData<List<Contact>>()
 
     fun fetchContactVersion() {
         _updating.postValue(true)
@@ -62,6 +63,14 @@ class ContactViewModel @Inject constructor(
                 Contact(contactID = it.id, campusID = it.campusID, name = it.name, phone = it.phone)
             }?.let { dao.insertAll(*it.toTypedArray()) }
             _updating.postValue(false)
+        }
+    }
+
+    fun searchContacts(query: String, campusID: Int) {
+        viewModelScope.launch {
+            database.contactDao().findByNameAndCampusID("%$query%", campusID).collect {
+                searchResults.postValue(it)
+            }
         }
     }
 }

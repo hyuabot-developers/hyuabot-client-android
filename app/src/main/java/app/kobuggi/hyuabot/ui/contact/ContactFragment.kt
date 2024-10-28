@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -26,6 +27,7 @@ class ContactFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val listAdapter = ContactListAdapter(emptyList()) { onClickItem(it) }
+        val searchListAdapter = ContactListAdapter(emptyList()) { onClickItem(it) }
         viewModel.apply {
             fetchContactVersion()
             updating.observe(viewLifecycleOwner) {
@@ -36,11 +38,34 @@ class ContactFragment @Inject constructor() : Fragment() {
                     listAdapter.updateData(it.filter { contact -> contact.campusID == campusID })
                 }
             }
+            searchResults.observe(viewLifecycleOwner) {
+                searchListAdapter.updateData(it)
+            }
         }
-        binding.contactListView.apply {
-            adapter = listAdapter
-            layoutManager = LinearLayoutManager(requireContext())
-            addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        binding.apply {
+            contactListView.apply {
+                adapter = listAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+                addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+            }
+            searchView
+                .editText
+                .apply {
+                    addTextChangedListener { editable ->
+                        if (editable.isNullOrBlank()) {
+                            searchListAdapter.updateData(emptyList())
+                        } else {
+                            viewModel.campusID.observe(viewLifecycleOwner) { campusID ->
+                                viewModel.searchContacts(editable.toString(), campusID)
+                            }
+                        }
+                    }
+                }
+            contactSearchView.apply {
+                adapter = searchListAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+                addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+            }
         }
         return binding.root
     }
