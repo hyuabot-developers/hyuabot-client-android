@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import app.kobuggi.hyuabot.service.database.dao.ContactDao
 import app.kobuggi.hyuabot.service.database.entity.Contact
 
-@Database(entities = [Contact::class], version = 1)
+@Database(entities = [Contact::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun contactDao(): ContactDao
 }
