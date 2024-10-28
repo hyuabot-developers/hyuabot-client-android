@@ -10,4 +10,6 @@ interface UserPreferencesRepositoryImpl {
     suspend fun setReadingRoomExtendNotification(timeString: String?)
     suspend fun setTheme(theme: String?)
     suspend fun setCampusID(campusID: Int)
+    suspend fun getContactVersion(): Flow<String?>
+    suspend fun setContactVersion(version: String)
 }
