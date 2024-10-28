@@ -9,6 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.concurrent.TimeUnit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -22,6 +23,9 @@ object GraphQLModule {
 
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(logging)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(90, TimeUnit.SECONDS)
             .build()
 
         ApolloClient.Builder()
