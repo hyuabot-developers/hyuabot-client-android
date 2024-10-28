@@ -32,7 +32,9 @@ class ContactFragment @Inject constructor() : Fragment() {
                 binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
             }
             contacts.observe(viewLifecycleOwner) {
-                listAdapter.updateData(it)
+                campusID.observe(viewLifecycleOwner) { campusID ->
+                    listAdapter.updateData(it.filter { contact -> contact.campusID == campusID })
+                }
             }
         }
         binding.contactListView.apply {

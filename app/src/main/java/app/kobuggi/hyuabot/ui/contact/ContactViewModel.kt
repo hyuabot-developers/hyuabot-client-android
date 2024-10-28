@@ -26,6 +26,7 @@ class ContactViewModel @Inject constructor(
 
     val updating get() = _updating
     val contacts get() = _contacts
+    val campusID = userPreferencesRepository.campusID.asLiveData()
 
     fun fetchContactVersion() {
         _updating.postValue(true)
