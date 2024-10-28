@@ -16,7 +16,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
-import app.kobuggi.hyuabot.util.LocaleUtility
 import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -45,8 +44,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             }
         }
         val sharedPreferences = getSharedPreferences("hyuabot", MODE_PRIVATE)
-        val localeCode = sharedPreferences.getString("locale", "ko")
-        LocaleUtility.setLocale(localeCode!!)
         checkLocationPermission()
     }
 
@@ -95,9 +92,5 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     override fun onDismiss(dialogInterface: DialogInterface?) {
         recreate()
-    }
-
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(LocaleUtility.wrap(newBase!!))
     }
 }
