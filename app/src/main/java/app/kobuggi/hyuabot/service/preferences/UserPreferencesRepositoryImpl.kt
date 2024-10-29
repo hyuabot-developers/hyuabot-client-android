@@ -12,4 +12,5 @@ interface UserPreferencesRepositoryImpl {
     suspend fun setCampusID(campusID: Int)
     suspend fun getContactVersion(): Flow<String?>
     suspend fun setContactVersion(version: String)
+    suspend fun setCalendarVersion(version: String)
 }

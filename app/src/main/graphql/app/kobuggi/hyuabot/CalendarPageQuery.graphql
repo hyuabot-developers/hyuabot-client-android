@@ -1,0 +1,8 @@
+query CalendarPageQuery {
+    calendar {
+        version
+        data {
+            id, title, description, start, end
+        }
+    }
+}

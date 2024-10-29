@@ -20,7 +20,7 @@ abstract class AppDatabaseModule {
                 applicationContext,
                 AppDatabase::class.java,
                 "hyuabot"
-            ).build()
+            ).fallbackToDestructiveMigration().build()
             return database
         }
     }
