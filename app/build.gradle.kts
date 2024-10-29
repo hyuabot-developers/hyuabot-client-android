@@ -18,7 +18,7 @@ file("../local.properties").inputStream().use { props.load(it) }
 
 android {
     namespace = "app.kobuggi.hyuabot"
-    compileSdk = 34
+    compileSdk = 35
 
     apollo {
         service("query") {
@@ -38,7 +38,7 @@ android {
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         signingConfig = signingConfigs.getByName("config")

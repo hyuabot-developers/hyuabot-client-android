@@ -5,11 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import app.kobuggi.hyuabot.databinding.DialogSettingLanguageBinding
 import app.kobuggi.hyuabot.ui.MainActivity
-import app.kobuggi.hyuabot.util.LocaleUtility
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -23,7 +24,6 @@ class LanguageSettingDialog @Inject constructor() : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val sharedPreferences = requireActivity().getSharedPreferences("hyuabot", 0)
         binding.apply {
             languageKorean.setOnClickListener {
                 vm.setLocaleCode("ko")
@@ -33,10 +33,10 @@ class LanguageSettingDialog @Inject constructor() : DialogFragment() {
             }
         }
         vm.localeCode.observe(viewLifecycleOwner) {
-            LocaleUtility.setLocale(it)
-            sharedPreferences.edit().apply {
-                putString("locale", it)
-                apply()
+            if (it == "ko") {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ko-KR"))
+            } else if (it == "en") {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en-US"))
             }
             dismiss()
         }
