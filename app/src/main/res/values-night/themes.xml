@@ -3,8 +3,6 @@
     <style name="Theme.HYUabot" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowSplashScreenBackground" tools:targetApi="s">@android:color/background_dark</item>
         <item name="android:colorBackground">@android:color/background_dark</item>
-        <item name="android:statusBarColor">@color/hanyang_blue</item>
-        <item name="android:windowLightStatusBar">false</item>
         <!-- Bottom Navigation -->
         <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
     </style>

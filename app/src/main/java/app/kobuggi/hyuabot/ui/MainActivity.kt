@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 else -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) }
             }
         }
-        val sharedPreferences = getSharedPreferences("hyuabot", MODE_PRIVATE)
         checkLocationPermission()
     }
 
