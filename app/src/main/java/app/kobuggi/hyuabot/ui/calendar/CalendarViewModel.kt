@@ -58,7 +58,14 @@ class CalendarViewModel @Inject constructor(
             dao.deleteAll()
             response?.data?.calendar?.version?.let { userPreferencesRepository.setContactVersion(it) }
             response?.data?.calendar?.data?.map {
-                Event(eventID = it.id, title = it.title, description = it.description, startDate = it.start.toString(), endDate = it.end.toString())
+                Event(
+                    eventID = it.id,
+                    title = it.title,
+                    description = it.description,
+                    startDate = it.start.toString(),
+                    endDate = it.end.toString(),
+                    category = it.category.name
+                )
             }?.let { dao.insertAll(*it.toTypedArray()) }
             _updating.postValue(false)
         }

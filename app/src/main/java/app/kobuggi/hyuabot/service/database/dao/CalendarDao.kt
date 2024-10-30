@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CalendarDao {
-    @Query("SELECT * FROM event ORDER BY title ASC")
+    @Query("SELECT * FROM event ORDER BY startDate ASC")
     fun getAll(): Flow<List<Event>>
 
     @Insert
