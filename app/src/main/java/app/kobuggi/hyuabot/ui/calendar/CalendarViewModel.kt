@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.ui.calendar
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -56,7 +57,7 @@ class CalendarViewModel @Inject constructor(
                 null
             }
             dao.deleteAll()
-            response?.data?.calendar?.version?.let { userPreferencesRepository.setContactVersion(it) }
+            response?.data?.calendar?.version?.let { userPreferencesRepository.setCalendarVersion(it) }
             response?.data?.calendar?.data?.map {
                 Event(
                     eventID = it.id,

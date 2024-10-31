@@ -41,6 +41,9 @@ class CalendarFragment @Inject constructor() : Fragment() {
 
         viewModel.apply {
             fetchCalendarVersion()
+            updating.observe(viewLifecycleOwner) { updating ->
+                binding.loadingLayout.visibility = if (updating) View.VISIBLE else View.GONE
+            }
             events.observe(viewLifecycleOwner) { eventList ->
                 if (eventList.isEmpty()) return@observe
                 val currentMonth = YearMonth.now()
