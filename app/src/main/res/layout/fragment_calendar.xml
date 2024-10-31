@@ -15,4 +15,11 @@
         app:cv_monthHeaderResource="@layout/calendar_header_layout"
         app:cv_dayViewResource="@layout/calendar_day_layout"
         app:cv_scrollPaged="true" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/event_list_of_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/calendar_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

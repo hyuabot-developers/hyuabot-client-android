@@ -2,18 +2,22 @@ package app.kobuggi.hyuabot.ui.calendar
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentCalendarBinding
 import app.kobuggi.hyuabot.service.database.entity.Event
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
+import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,16 +37,18 @@ class CalendarFragment @Inject constructor() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val eventListAdapter = CalendarEventAdapter(requireContext(), emptyList())
+
         viewModel.apply {
             fetchCalendarVersion()
-            events.observe(viewLifecycleOwner) { it ->
-                if (it.isEmpty()) return@observe
+            events.observe(viewLifecycleOwner) { eventList ->
+                if (eventList.isEmpty()) return@observe
                 val currentMonth = YearMonth.now()
-                val firstDate = LocalDate.parse(it.first().startDate)
-                val lastDate = LocalDate.parse(it.last().endDate)
+                val firstDate = LocalDate.parse(eventList.first().startDate)
+                val lastDate = LocalDate.parse(eventList.last().endDate)
                 val firstMonth = YearMonth.of(firstDate.year, firstDate.month)
                 val lastMonth = YearMonth.of(lastDate.year, lastDate.month)
-                val eventMap = countOfEvent(it)
+                val eventMap = countOfEvent(eventList)
                 binding.calendarView.apply {
                     setup(firstMonth, lastMonth, WeekFields.of(Locale.getDefault()).firstDayOfWeek)
                     scrollToMonth(currentMonth)
@@ -74,6 +80,13 @@ class CalendarFragment @Inject constructor() : Fragment() {
                             }
                         }
                     }
+                    monthScrollListener = { month ->
+                        eventListAdapter.setEvents(eventList.filter{
+                            val startDate = LocalDate.parse(it.startDate)
+                            val endDate = LocalDate.parse(it.endDate)
+                            startDate <= month.yearMonth.atEndOfMonth() && endDate >= month.yearMonth.atStartOfMonth()
+                        }.sortedBy { it.startDate })
+                    }
                 }
             }
         }
@@ -91,6 +104,11 @@ class CalendarFragment @Inject constructor() : Fragment() {
                     }
                 }
             }
+            eventListOfMonth.apply {
+                adapter = eventListAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+                addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+            }
         }
         return binding.root
     }
@@ -98,6 +116,7 @@ class CalendarFragment @Inject constructor() : Fragment() {
     private fun countOfEvent(events: List<Event>): Map<LocalDate, List<String>> {
         val map = mutableMapOf<LocalDate, List<String>>()
         events.forEach {
+            if (it.title.contains("방학")) return@forEach
             val startDate = LocalDate.parse(it.startDate)
             val endDate = LocalDate.parse(it.endDate)
             var date = startDate
