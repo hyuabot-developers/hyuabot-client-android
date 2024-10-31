@@ -9,4 +9,6 @@
     <!-- 버스 노선 색상 -->
     <color name="red_bus">#E60012</color>
     <color name="green_bus">#33CC99</color>
+    <!-- 글자 색상 -->
+    <color name="primary_text">#000000</color>
 </resources>

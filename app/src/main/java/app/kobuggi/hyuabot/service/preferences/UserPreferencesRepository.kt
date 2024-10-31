@@ -75,6 +75,18 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             preferences[CONTACT_KEY]
         }
 
+    val calendarVersion: Flow<String?> = userDataStorePreferences.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[CALENDAR_KEY]
+        }
+
     override suspend fun setBusStop(busStopID: Int) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
@@ -171,6 +183,14 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    override suspend fun setCalendarVersion(version: String) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[CALENDAR_KEY] = version
+            }
+        }
+    }
+
     private companion object {
         private val BUS_STOP_ID_KEY = intPreferencesKey("bus_stop_id")
         private val READING_ROOM_NOTIFICATIONS_KEY = stringSetPreferencesKey("reading_room_notifications")
@@ -178,5 +198,6 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val THEME_KEY = stringPreferencesKey("theme")
         private val CAMPUS_ID_KEY = intPreferencesKey("campus_id")
         private val CONTACT_KEY = stringPreferencesKey("contact_version")
+        private val CALENDAR_KEY = stringPreferencesKey("calendar_version")
     }
 }
