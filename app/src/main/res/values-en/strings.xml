@@ -167,7 +167,7 @@
     <string name="cafeteria_12">Student Cafeteria</string>
     <string name="cafeteria_13">Dormitory Cafeteria</string>
     <string name="cafeteria_14">Food Court</string>
-    <string name="cafeteria_15">Entrepreneurship Center</string>
+    <string name="cafeteria_15">Business Incubator</string>
     <string name="cafeteria_running_time_format">Operating Hours: %1$s</string>
     <string name="cafeteria_price_format">₩ %1$s</string>
     <string name="cafeteria_date_title">Select Date</string>
