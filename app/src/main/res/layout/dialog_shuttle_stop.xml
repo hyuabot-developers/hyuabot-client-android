@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_light">
+    android:background="@color/background">
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
         android:text="@string/shuttle_first_last_time_title"
         android:textAlignment="center"
         android:textSize="18sp"
-        android:textColor="@android:color/primary_text_light"
+        android:textColor="@color/primary_text"
         android:textFontWeight="600"
         app:layout_constraintTop_toBottomOf="@id/stop_map_view" />
     <LinearLayout
@@ -55,7 +55,7 @@
             android:text="@string/shuttle_first_last_time_type"
             android:textAlignment="center"
             android:textSize="18sp"
-            android:textColor="@android:color/primary_text_light"
+            android:textColor="@color/primary_text"
             android:textFontWeight="600" />
         <TextView
             android:id="@+id/shuttle_first_last_time_first"
@@ -65,7 +65,7 @@
             android:text="@string/shuttle_first_last_time_first"
             android:textAlignment="center"
             android:textSize="18sp"
-            android:textColor="@android:color/primary_text_light"
+            android:textColor="@color/primary_text"
             android:textFontWeight="600" />
         <TextView
             android:id="@+id/shuttle_first_last_time_last"
@@ -75,7 +75,7 @@
             android:text="@string/shuttle_first_last_time_last"
             android:textAlignment="center"
             android:textSize="18sp"
-            android:textColor="@android:color/primary_text_light"
+            android:textColor="@color/primary_text"
             android:textFontWeight="600" />
     </LinearLayout>
     <LinearLayout
@@ -94,7 +94,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textSize="18sp"
-            android:textColor="@android:color/primary_text_light"
+            android:textColor="@color/primary_text"
             android:textFontWeight="600" />
         <LinearLayout
             android:id="@+id/shuttle_for_station_first"
@@ -110,7 +110,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekdays"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -119,7 +119,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekends"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/shuttle_for_station_last"
@@ -135,7 +135,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekdays"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -144,7 +144,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekends"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
@@ -163,7 +163,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textSize="18sp"
-            android:textColor="@android:color/primary_text_light"
+            android:textColor="@color/primary_text"
             android:textFontWeight="600" />
         <LinearLayout
             android:id="@+id/shuttle_for_dormitory_first"
@@ -179,7 +179,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekdays"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -188,7 +188,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekends"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/shuttle_for_dormitory_last"
@@ -204,7 +204,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekdays"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -213,7 +213,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekends"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
@@ -232,7 +232,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textSize="18sp"
-            android:textColor="@android:color/primary_text_light"
+            android:textColor="@color/primary_text"
             android:textFontWeight="600" />
         <LinearLayout
             android:id="@+id/shuttle_for_terminal_first"
@@ -248,7 +248,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekdays"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -257,7 +257,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekends"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/shuttle_for_terminal_last"
@@ -273,7 +273,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekdays"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -282,7 +282,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekends"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
@@ -301,7 +301,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textSize="18sp"
-            android:textColor="@android:color/primary_text_light"
+            android:textColor="@color/primary_text"
             android:textFontWeight="600" />
         <LinearLayout
             android:id="@+id/shuttle_for_jungang_station_first"
@@ -317,7 +317,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekdays"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -326,7 +326,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekends"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/shuttle_for_jungang_station_last"
@@ -342,7 +342,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekdays"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -351,7 +351,7 @@
                 android:text="@string/shuttle_first_last_time_no_data_weekends"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:textColor="@android:color/primary_text_light" />
+                android:textColor="@color/primary_text" />
         </LinearLayout>
     </LinearLayout>
     <View

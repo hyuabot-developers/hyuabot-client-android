@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="1dp"
-        android:background="@android:color/background_light">
+        android:background="@color/background">
         <TextView
             android:id="@+id/calendar_day_text"
             android:layout_width="wrap_content"
@@ -18,7 +18,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginEnd="4dp"
             android:gravity="center"
-            android:textColor="@android:color/primary_text_light"
+            android:textColor="@color/primary_text"
             android:textSize="12sp"
             tools:text="24" />
         <View
