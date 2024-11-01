@@ -1,7 +1,227 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">HYUabot</string>
+    <string name="close">Close</string>
+    <!-- Bottom Navigation -->
     <string name="shuttle_bus">Shuttle</string>
     <string name="bus">Bus</string>
+    <!-- 셔틀버스 도착 정보 탭 -->
     <string name="shuttle_tab_dormitory_out">Dormitory</string>
+    <string name="shuttle_tab_shuttlecock_out">Shuttlecoke</string>
+    <string name="shuttle_tab_station">Station</string>
+    <string name="shuttle_tab_terminal">Terminal</string>
+    <string name="shuttle_tab_jungang_station">Jungang Stn.</string>
+    <string name="shuttle_tab_shuttlecock_in">Shuttlecoke (Oppo.)</string>
+    <!-- 셔틀버스 도착 정보 헤더 -->
+    <string name="shuttle_header_bound_for_station">To Station</string>
+    <string name="shuttle_header_bound_for_dormitory">To Dormitory</string>
+    <string name="shuttle_header_bound_for_terminal">To Terminal</string>
+    <string name="shuttle_header_bound_for_jungang_station">To Jungang Stn.</string>
+    <!-- 셔틀버스 도착 정보 푸터 -->
+    <string name="shuttle_footer_entire_timetable">Entire Timetable</string>
+    <string name="shuttle_footer_stop_info">Stop Detail</string>
+    <!-- 셔틀버스 도착 정보 없음 -->
+    <string name="shuttle_no_realtime_data">No arrival information.</string>
+    <!-- 셔틀버스 도착 정보 시간 -->
+    <string name="shuttle_time_type_1">Depart at %1$s:%2$s</string>
+    <string name="shuttle_time_type_2">%1$s mins left</string>
+    <!-- 셔틀버스 노선 타입 -->
+    <string name="shuttle_type_direct">Direct</string>
+    <string name="shuttle_type_circular">Cycle</string>
+    <string name="shuttle_type_jungang">Jungang Stn.</string>
+    <string name="shuttle_type_shuttlecock">Shuttlecoke</string>
+    <string name="shuttle_type_dormitory">Dormitory</string>
+    <string name="shuttle_type_shuttlecock_finishing">Shuttlecoke</string>
+    <!-- 셔틀버스 첫막차 시간 -->
+    <string name="map_id">15fbba8d56d94b31</string>
+    <string name="shuttle_first_last_time_title">First/Last Shuttle</string>
+    <string name="shuttle_first_last_time_no_data_weekdays">--:--\n(Weekdays)</string>
+    <string name="shuttle_first_last_time_no_data_weekends">--:--\n(Weekends)</string>
+    <string name="shuttle_first_last_time_format_weekdays">%1$s:%2$s\n(Weekdays)</string>
+    <string name="shuttle_first_last_time_format_weekends">%1$s:%2$s\n(Weekends)</string>
+    <string name="shuttle_first_last_time_first">First</string>
+    <string name="shuttle_first_last_time_last">Last</string>
+    <string name="shuttle_first_last_time_type">Type</string>
+    <string name="shuttle_bound_for_station">Station</string>
+    <string name="shuttle_bound_for_dormitory">Dormitory</string>
+    <string name="shuttle_bound_for_terminal">Terminal</string>
+    <string name="shuttle_bound_for_jungang_station">Jungang Stn.</string>
+    <!-- 셔틀버스 도움말 -->
+    <string name="shuttle_help_title">Help</string>
+    <string name="shuttle_help_lost_title">1. Finding Lost Items on the Shuttle Bus</string>
+    <string name="shuttle_help_lost_content">To retrieve lost items on the shuttle bus, please call the shuttle bus office at 031–400–4412 or visit the office on the first floor of the Education Building behind the Haengbok Hall.</string>
+    <string name="shuttle_help_time_title">2. Shuttle Bus Schedule Issues</string>
+    <string name="shuttle_help_time_content">If you experience issues due to non-compliance with the shuttle bus schedule, please call the General Affairs and Personnel Team at 031–400–4406.</string>
+    <string name="shuttle_help_stop_title">3. Shuttle Bus Stop Locations and First/Last Bus Times</string>
+    <string name="shuttle_help_stop_content">You can check the shuttle bus stop locations and the first/last bus times by pressing the "Bus Stop Info" button at the bottom of the arrival information screen for each stop.</string>
+    <string name="shuttle_help_via_title">4. Checking Shuttle Bus Stops Along the Route</string>
+    <string name="shuttle_help_via_content">Click on the information for the shuttle bus you wish to take! You can check the stops along the route of that specific bus.</string>
+    <string name="shuttle_help_departure_title">5. Checking Shuttle Bus Departure Times</string>
+    <string name="shuttle_help_departure_content">Press and hold on the shuttle bus information you wish to view! This will show the departure times for that bus.</string>
+    <!-- 셔틀버스 시간표 -->
+    <string name="shuttle_timetable_tab_weekdays">Weekdays</string>
+    <string name="shuttle_timetable_tab_weekends">Weekends</string>
+    <string name="shuttle_timetable_empty">No arrival information.</string>
+    <!-- 셔틀버스 시간표 필터 -->
+    <string name="shuttle_timetable_filter_title">Filter Timetable</string>
+    <!-- 셔틀버스 운행 기간 -->
+    <string name="shuttle_period">Period</string>
+    <string name="shuttle_period_semester">Semester</string>
+    <string name="shuttle_period_vacation">Vacation</string>
+    <string name="shuttle_period_vacation_session">Seasonal</string>
+    <string name="confirm">Apply</string>
+    <!-- 셔틀버스 등하교 팝업 -->
+    <string name="shuttle_realtime_toast">During peak school commute hours, some shuttle may not depart from Shuttlecoke.</string>
+    <!-- 노선버스 도착 정보 탭 -->
+    <string name="bus_tab_city">Sangnoksu</string>
+    <string name="bus_tab_seoul">Gangnam</string>
+    <string name="bus_tab_suwon">Suwon</string>
+    <string name="bus_tab_other">Other</string>
+    <!-- 노선버스 도착 정보 헤더 -->
+    <string name="bus_header_format">%1$s (%2$s)</string>
+    <!-- 노선버스 정류장 -->
+    <string name="bus_stop_dormitory">Dormitory</string>
+    <string name="bus_stop_cluster">Cluster</string>
+    <string name="bus_stop_convention">Convention Center</string>
+    <string name="bus_stop_main_gate">Main Gate</string>
+    <string name="bus_stop_entrance">Seongan High School</string>
+    <string name="bus_stop_sangnoksu_station">Sangnoksu Stn.</string>
+    <string name="bus_stop_terminal">Ansan Terminal</string>
+    <!-- 노선 버스 정류장 선택 -->
+    <string name="bus_stop_title">Select Stop</string>
+    <string-array name="bus_stop_list">
+        <item>@string/bus_stop_dormitory</item>
+        <item>@string/bus_stop_cluster</item>
+        <item>@string/bus_stop_convention</item>
+    </string-array>
+    <!-- 노선버스 도착 정보 시간 -->
+    <string name="bus_realtime_format_seats">%1$d mins left</string>
+    <string name="bus_realtime_format_no_seats">%1$d mins left</string>
+    <string name="bus_timetable_format">Departs at %1$s:%2$s</string>
+    <string name="bus_realtime_format_seats_last">%1$d mins left (Last)</string>
+    <string name="bus_realtime_format_no_seats_last">%1$d mins left (Last)</string>
+    <string name="bus_timetable_format_last">Departs at %1$s:%2$s (Last)</string>
+    <!-- 노선버스 도착 정보 없음 -->
+    <string name="bus_no_realtime_data">No arrival information.</string>
+    <string name="bus_departure_log">Departure Log</string>
+    <string name="bus_departure_log_date_format">%1$d/%2$d(%3$s)</string>
+    <string name="bus_departure_log_date_sample">01/01(Mon)</string>
+    <string name="bus_departure_log_no_data">No Departure Log</string>
+    <!-- 요일 -->
+    <string name="sunday">Sun</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="weekdays">Weekdays</string>
+    <string name="saturdays">Saturday</string>
+    <string name="sundays">Sunday</string>
+    <!-- 노선버스 시간표 -->
+    <string name="bus_timetable_time_format">%1$s:%2$s</string>
+    <!-- 노선 정보 팝업 -->
+    <string name="bus_info_title">Route Info</string>
+    <string name="bus_info_route">Name: %1$s</string>
+    <string name="bus_info_start_stop">From: %1$s</string>
+    <string name="bus_info_time_from_start">From start stop: %1$d mins</string>
+    <string name="subway">Subway</string>
+    <string name="subway_tab_blue">Line 4</string>
+    <string name="subway_tab_yellow">Suin-Bundang Line</string>
+    <string name="subway_blue_up">Northbound (Danggogae·Sadang)</string>
+    <string name="subway_blue_down">Southbound (Oido·Ansan)</string>
+    <string name="subway_yellow_up">Northbound (Wangsimni·Suwon)</string>
+    <string name="subway_yellow_down">Southbound (Incheon·Oido)</string>
+    <string name="subway_no_realtime_data">No arrival information available.</string>
+    <string name="subway_realtime_destination_format">To %1$s</string>
+    <string name="subway_realtime_destination_format_last">To %1$s (Last train)</string>
+    <string name="subway_realtime_format">Arriving in %1$d minutes</string>
+    <string name="subway_realtime_timetable_format">Departs at %1$s:%2$s</string>
+    <string name="subway_station_K209">Cheongnyangni</string>
+    <string name="subway_station_K210">Wangsimni</string>
+    <string name="subway_station_K233">Jukjeon</string>
+    <string name="subway_station_K246">Gosaek</string>
+    <string name="subway_station_K258">Oido</string>
+    <string name="subway_station_K272">Incheon</string>
+    <string name="subway_station_K409">Danggogae</string>
+    <string name="subway_station_K411">Nowon</string>
+    <string name="subway_station_K419">Hansung Univ.</string>
+    <string name="subway_station_K433">Sadang</string>
+    <string name="subway_station_K443">Geumjeong</string>
+    <string name="subway_station_K444">Sanbon</string>
+    <string name="subway_station_K453">Ansan</string>
+    <string name="subway_station_K456">Oido</string>
+    <string name="subway_timetable_tab_weekdays">Weekdays</string>
+    <string name="subway_timetable_tab_weekends">Weekends</string>
+    <string name="subway_timetable_time_format">%1$s:%2$s</string>
+    <string name="cafeteria">Cafeteria</string>
+    <string name="cafeteria_tab_breakfast">Breakfast</string>
+    <string name="cafeteria_tab_lunch">Lunch</string>
+    <string name="cafeteria_tab_dinner">Dinner</string>
+    <string name="cafeteria_1">Student Hall</string>
+    <string name="cafeteria_2">Life Science Hall Cafeteria</string>
+    <string name="cafeteria_4">Materials Science Hall Cafeteria</string>
+    <string name="cafeteria_6">Dormitory 1 Cafeteria</string>
+    <string name="cafeteria_7">Dormitory 2 Cafeteria</string>
+    <string name="cafeteria_8">Haengwon Park</string>
+    <string name="cafeteria_11">Staff Cafeteria</string>
+    <string name="cafeteria_12">Student Cafeteria</string>
+    <string name="cafeteria_13">Dormitory Cafeteria</string>
+    <string name="cafeteria_14">Food Court</string>
+    <string name="cafeteria_15">Entrepreneurship Center</string>
+    <string name="cafeteria_running_time_format">Operating Hours: %1$s</string>
+    <string name="cafeteria_price_format">₩ %1$s</string>
+    <string name="cafeteria_date_title">Select Date</string>
+    <string name="menu">Menu</string>
+    <string name="menu_book">Reading Room Seat Lookup</string>
+    <string name="menu_contact">Campus Contacts</string>
+    <string name="menu_calendar">Academic Calendar</string>
+    <string name="menu_notice">Notices</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_chat">Inquiries</string>
+    <string name="menu_donate">Donate</string>
+    <string name="menu_map">Campus Map</string>
+    <string name="map_search_guide">Enter a room to search</string>
+    <string name="room_description_format">Room %1$s/%2$s</string>
+    <string name="reading_room_alarm_description">Reading Room Extension Reminder</string>
+    <string name="reading_room_alarm_3_hour">3 Hours\n(Exam Period)</string>
+    <string name="reading_room_alarm_4_hour">4 Hours\n(Normal Period)</string>
+    <string name="reading_room_alarm_cancel">Cancel</string>
+    <string name="reading_room_seat_format">%1$d/%2$d</string>
+    <string name="default_notification_channel_id">HYUabot Notification Channel ID</string>
+    <string name="reading_room_noti_allowed">Notifications enabled.</string>
+    <string name="reading_room_noti_denied">Notifications disabled.</string>
+    <string name="reading_room_noti_rationale">Permission is required for seat availability notifications. Please enable it in settings.</string>
+    <string name="reading_room_noti_settings">Settings</string>
+    <string name="reading_room_update_time">Updated: %1$s</string>
+    <string name="reading_room_noti_on">Reading room notifications set.</string>
+    <string name="reading_room_noti_on_error">Failed to set reading room notifications.</string>
+    <string name="reading_room_noti_off">Reading room notifications canceled.</string>
+    <string name="reading_room_noti_off_error">Failed to cancel reading room notifications.</string>
+    <string name="reading_room_noti_title">Reading Room Seat Notification</string>
+    <string name="reading_room_extend_noti_title">Reading Room Extension Alert</string>
+    <string name="reading_room_extend_noti_content">Reading room seat extension is available.</string>
+    <string name="reading_room_alarm_extend">Reading room extension notification!</string>
+    <string name="reading_room_alarm_format">Notification Time: %1$s</string>
+    <string name="shuttle_realtime_location_error">Failed to find the nearest stop.</string>
+    <string name="campus_settings">Campus Settings</string>
+    <string name="language_settings">Language Settings</string>
+    <string name="theme_settings">Theme Settings</string>
+    <string name="theme_settings_description">Please select a theme.</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+    <string name="campus_erica">ERICA</string>
+    <string name="campus_seoul">Seoul</string>
+    <string name="empty_cafeteria">No menu information available.</string>
+    <string name="language_korean">Korean</string>
+    <string name="language_english">English</string>
+    <string name="about">App Information</string>
+    <string name="developer_name">Developer: Jeongin Lee</string>
+    <string name="developer_belong">Department: Software Studies, Class of \'17</string>
+    <string name="contact_loading">Loading contacts…</string>
+    <string name="contact_search_guide">Enter a contact to search</string>
+    <string name="month_header">%1$d/%2$d</string>
+    <string name="event_date_format">%1$d/%2$d</string>
+    <string name="event_date_range_format">%1$d/%2$d - %3$d/%4$d</string>
+    <string name="calendar_loading">Loading academic calendar…</string>
 </resources>
