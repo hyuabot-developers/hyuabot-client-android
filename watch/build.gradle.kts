@@ -48,8 +48,8 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 28
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 400100000
+        versionName = "WearOS 2.0"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
