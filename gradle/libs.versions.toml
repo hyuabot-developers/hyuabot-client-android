@@ -30,6 +30,7 @@ playMapUtils = "3.8.0"
 secretsGradlePlugin = "2.0.1"
 googleServices = "4.4.2"
 crashlytics = "3.0.2"
+playServicesWearable = "18.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -68,6 +69,7 @@ playServicesLocation = { group = "com.google.android.gms", name = "play-services
 playServicesMaps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playMaps" }
 mapsUtils = { group = "com.google.maps.android", name = "android-maps-utils", version.ref = "playMapUtils" }
 lifeCycleLiveData = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "liveData" }
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
