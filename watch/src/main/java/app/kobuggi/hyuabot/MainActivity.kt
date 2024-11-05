@@ -8,6 +8,7 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -102,6 +103,7 @@ class MainActivity: FragmentActivity() {
         }
         viewModel.stopInfo.observe(this) {stops ->
             if (stops.isNotEmpty()) {
+                binding.shuttleProgressBar.visibility = View.GONE
                 val nearestStop = stops.mapIndexed { index, stopItem ->
                     Pair(stopItem, calculateDistance(stopItem, location))
                 }.minByOrNull { it.second }?.first
