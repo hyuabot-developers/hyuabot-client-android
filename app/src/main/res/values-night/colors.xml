@@ -2,4 +2,7 @@
 <resources>
     <!-- 글자 색상 -->
     <color name="primary_text">#FFFFFF</color>
+    <color name="secondary_text">#757575</color>
+    <!-- 배경 색상 -->
+    <color name="background">#000000</color>
 </resources>

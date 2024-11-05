@@ -61,7 +61,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@android:color/background_light"
+        android:background="@color/background"
         android:gravity="center"
         android:orientation="vertical" >
         <com.google.android.material.progressindicator.CircularProgressIndicator

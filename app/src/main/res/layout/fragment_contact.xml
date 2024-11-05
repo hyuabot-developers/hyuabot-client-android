@@ -16,7 +16,7 @@
                 android:id="@+id/search_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@android:color/background_light"
+                app:backgroundTint="@color/background"
                 android:hint="@string/contact_search_guide" />
         </com.google.android.material.appbar.AppBarLayout>
         <androidx.recyclerview.widget.RecyclerView
@@ -36,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:hint="@string/contact_search_guide"
-        app:backgroundTint="@android:color/background_light"
+        app:backgroundTint="@color/background"
         app:layout_anchor="@id/search_bar">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/contact_search_view"

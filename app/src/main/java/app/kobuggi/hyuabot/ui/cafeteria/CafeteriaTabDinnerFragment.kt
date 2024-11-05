@@ -23,19 +23,11 @@ class CafeteriaTabDinnerFragment : Fragment() {
                 cafeteriaAdapter.updateList(it)
                 binding.emptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
             }
-            isLoading.observe(viewLifecycleOwner) {
-                if (!it) binding.swipeRefreshLayout.isRefreshing = false
-            }
         }
         binding.apply {
             cafeteriaView.apply {
                 adapter = cafeteriaAdapter
                 addItemDecoration(decoration)
-            }
-            swipeRefreshLayout.setOnRefreshListener {
-                parentViewModel.campusID.observe(viewLifecycleOwner) {
-                    parentViewModel.fetchData(it)
-                }
             }
         }
         return binding.root

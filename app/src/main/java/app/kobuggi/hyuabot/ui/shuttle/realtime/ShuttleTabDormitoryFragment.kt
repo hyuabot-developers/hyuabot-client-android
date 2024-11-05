@@ -93,9 +93,6 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
                     findNavController().navigate(it)
                 }
             }
-            scrollView.viewTreeObserver.addOnScrollChangedListener {
-                binding.swipeRefreshLayout.isEnabled = binding.scrollView.scrollY == 0
-            }
             swipeRefreshLayout.setOnRefreshListener {
                 parentViewModel.fetchData()
             }

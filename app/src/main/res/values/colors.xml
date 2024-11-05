@@ -11,4 +11,7 @@
     <color name="green_bus">#33CC99</color>
     <!-- 글자 색상 -->
     <color name="primary_text">#000000</color>
+    <color name="secondary_text">#757575</color>
+    <!-- 배경 색상 -->
+    <color name="background">#FFFFFF</color>
 </resources>
