@@ -18,16 +18,7 @@ file("../local.properties").inputStream().use { props.load(it) }
 
 android {
     namespace = "app.kobuggi.hyuabot"
-    compileSdk = 35
-
-    defaultConfig {
-        applicationId = "app.kobuggi.hyuabot"
-        minSdk = 33
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
-
-    }
+    compileSdk = 34
 
     apollo {
         service("query") {
@@ -47,8 +38,8 @@ android {
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 28
-        targetSdk = 35
-        versionCode = 400100000
+        targetSdk = 34
+        versionCode = 400100001
         versionName = "WearOS 2.0"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
