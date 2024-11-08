@@ -18,7 +18,7 @@ file("../local.properties").inputStream().use { props.load(it) }
 
 android {
     namespace = "app.kobuggi.hyuabot"
-    compileSdk = 34
+    compileSdk = 35
 
     apollo {
         service("query") {
@@ -39,7 +39,7 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 28
         targetSdk = 34
-        versionCode = 400100001
+        versionCode = 400100002
         versionName = "WearOS 2.0"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -117,6 +117,8 @@ dependencies {
     implementation(libs.playServicesLocation)
     // Android LiveData
     implementation(libs.lifeCycleLiveData)
+    // SplashScreen
+    implementation(libs.splashScreen)
 }
 
 hilt {
