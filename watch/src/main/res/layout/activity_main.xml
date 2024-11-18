@@ -43,7 +43,7 @@
         app:layout_constraintBottom_toTopOf="@id/shuttle_destination_first"
         android:layout_margin="4dp"
         android:text="@string/shuttle_remaining_time"
-        android:textSize="25sp"
+        android:textSize="16sp"
         android:textColor="@android:color/darker_gray" />
     <TextView
         android:id="@+id/shuttle_destination_second"
@@ -64,7 +64,7 @@
         app:layout_constraintTop_toBottomOf="@id/shuttle_destination_second"
         android:layout_margin="4dp"
         android:text="@string/shuttle_remaining_time"
-        android:textSize="25sp"
+        android:textSize="16sp"
         android:textColor="@android:color/darker_gray" />
     <TextView
         android:id="@+id/shuttle_destination_third"
@@ -85,7 +85,7 @@
         app:layout_constraintTop_toBottomOf="@id/shuttle_destination_third"
         android:layout_margin="4dp"
         android:text="@string/shuttle_remaining_time"
-        android:textSize="25sp"
+        android:textSize="16sp"
         android:textColor="@android:color/darker_gray" />
     <TextView
         android:id="@+id/shuttle_current_stop_label"
@@ -106,7 +106,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="4dp"
         android:text="@string/shuttle_tab_shuttlecock_out"
-        android:textSize="25sp"
+        android:textSize="16sp"
         android:textColor="@android:color/darker_gray" />
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/shuttle_progress_bar"

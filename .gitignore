@@ -18,3 +18,5 @@ local.properties
 
 app/google-services.json
 watch/google-services.json
+
+*.aab

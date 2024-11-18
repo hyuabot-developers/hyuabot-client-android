@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -39,6 +40,7 @@ class MainActivity: FragmentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         checkLocationPermission()
@@ -77,7 +79,7 @@ class MainActivity: FragmentActivity() {
                 binding.apply {
                     shuttleCurrentStop.apply {
                         text = getString(R.string.shuttle_tab_shuttlecock_out)
-                        textSize = 25F
+                        textSize = 16F
                     }
                     shuttleDestinationFirst.text = getString(R.string.shuttle_header_bound_for_station)
                     shuttleDestinationSecond.text = getString(R.string.shuttle_header_bound_for_terminal)
@@ -118,7 +120,7 @@ class MainActivity: FragmentActivity() {
                             binding.apply {
                                 shuttleCurrentStop.apply {
                                     text = getString(R.string.shuttle_tab_dormitory_out)
-                                    textSize = 25F
+                                    textSize = 16F
                                 }
                                 shuttleDestinationFirst.text = getString(R.string.shuttle_header_bound_for_station)
                                 shuttleDestinationSecond.text = getString(R.string.shuttle_header_bound_for_terminal)
@@ -151,7 +153,7 @@ class MainActivity: FragmentActivity() {
                             binding.apply {
                                 shuttleCurrentStop.apply {
                                     text = getString(R.string.shuttle_tab_shuttlecock_out)
-                                    textSize = 25F
+                                    textSize = 16F
                                 }
                                 shuttleDestinationFirst.text = getString(R.string.shuttle_header_bound_for_station)
                                 shuttleDestinationSecond.text = getString(R.string.shuttle_header_bound_for_terminal)
@@ -183,7 +185,7 @@ class MainActivity: FragmentActivity() {
                             binding.apply {
                                 shuttleCurrentStop.apply {
                                     text = getString(R.string.shuttle_tab_station)
-                                    textSize = 25F
+                                    textSize = 16F
                                 }
                                 shuttleDestinationFirst.text = getString(R.string.shuttle_header_bound_for_dormitory)
                                 shuttleDestinationSecond.text = getString(R.string.shuttle_header_bound_for_terminal)
@@ -213,7 +215,7 @@ class MainActivity: FragmentActivity() {
                             binding.apply {
                                 shuttleCurrentStop.apply {
                                     text = getString(R.string.shuttle_tab_terminal)
-                                    textSize = 25F
+                                    textSize = 16F
                                 }
                                 shuttleDestinationFirst.text = getString(R.string.shuttle_header_bound_for_dormitory)
                                 shuttleDestinationSecond.text = "-"
@@ -235,7 +237,7 @@ class MainActivity: FragmentActivity() {
                             binding.apply {
                                 shuttleCurrentStop.apply {
                                     text = getString(R.string.shuttle_tab_jungang_station)
-                                    textSize = 25F
+                                    textSize = 16F
                                 }
                                 shuttleDestinationFirst.text = getString(R.string.shuttle_header_bound_for_dormitory)
                                 shuttleDestinationSecond.text = "-"
@@ -257,7 +259,7 @@ class MainActivity: FragmentActivity() {
                             binding.apply {
                                 shuttleCurrentStop.apply {
                                     text = getString(R.string.shuttle_tab_shuttlecock_in)
-                                    textSize = 16F
+                                    textSize = 11F
                                 }
                                 shuttleDestinationFirst.text = getString(R.string.shuttle_header_bound_for_dormitory)
                                 shuttleDestinationSecond.text = "-"
@@ -276,7 +278,7 @@ class MainActivity: FragmentActivity() {
                         binding.apply {
                             shuttleCurrentStop.apply {
                                 getString(R.string.shuttle_tab_shuttlecock_out)
-                                textSize = 25F
+                                textSize = 16F
                             }
                             shuttleDestinationFirst.text = getString(R.string.shuttle_header_bound_for_station)
                             shuttleDestinationSecond.text = getString(R.string.shuttle_header_bound_for_terminal)
