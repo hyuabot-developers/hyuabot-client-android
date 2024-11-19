@@ -236,4 +236,17 @@
     <string name="do_not_show_again_this_year">올해는 다시 보지 않기</string>
     <string name="dialog_title">개발자 생일 공지</string>
     <string name="dialog_message">오늘(12/12)은 개발자의 생일입니다.\n\n항상 잘 사용해주시는 여러분이 저에게는 크나큰 선물입니다. 앞으로도 더 좋은 서비스를 제공할 수 있도록 노력하겠습니다.\n\n감사합니다.</string>
+    <string name="bus_departure_log_error">출발 기록을 불러오는데 실패했습니다.</string>
+    <string name="bus_realtime_error">버스 도착 정보를 불러오는데 실패했습니다.</string>
+    <string name="bus_route_info_error">버스 노선 정보를 불러오는데 실패했습니다.</string>
+    <string name="bus_timetable_error">버스 시간표를 불러오는데 실패했습니다.</string>
+    <string name="cafeteria_error">학식 정보를 불러오는데 실패했습니다.</string>
+    <string name="calendar_error">학사 일정을 불러오는데 실패했습니다.</string>
+    <string name="contact_error">연락처를 불러오는데 실패했습니다.</string>
+    <string name="reading_room_error">열람실 좌석 정보를 불러오는데 실패했습니다.</string>
+    <string name="map_building_error">건물 정보를 불러오는데 실패했습니다.</string>
+    <string name="shuttle_realtime_error">셔틀버스 도착 정보를 불러오는데 실패했습니다.</string>
+    <string name="shuttle_stop_info_error">셔틀버스 정류장 정보를 불러오는데 실패했습니다.</string>
+    <string name="subway_realtime_error">전철 도착 정보를 불러오는데 실패했습니다.</string>
+    <string name="subway_timetable_error">전철 시간표를 불러오는데 실패했습니다.</string>
 </resources>
