@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -25,11 +26,12 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
     ): View {
         viewModel.fetchData()
         viewModel.start()
+        viewModel.queryError.observe(viewLifecycleOwner) {
+            it?.let { Toast.makeText(requireContext(), getString(R.string.bus_realtime_error), Toast.LENGTH_SHORT).show() }
+        }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
         }
-
-
         val viewpagerAdapter = BusRealtimeViewPagerAdapter(childFragmentManager, lifecycle)
         val tabLabelList = listOf(
             R.string.bus_tab_city,

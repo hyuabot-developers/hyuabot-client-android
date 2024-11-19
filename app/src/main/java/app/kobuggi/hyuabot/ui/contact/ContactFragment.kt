@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentContactBinding
 import app.kobuggi.hyuabot.service.database.entity.Contact
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +32,9 @@ class ContactFragment @Inject constructor() : Fragment() {
         val searchListAdapter = ContactListAdapter(emptyList()) { onClickItem(it) }
         viewModel.apply {
             fetchContactVersion()
+            queryError.observe(viewLifecycleOwner) {
+                it?.let { Toast.makeText(requireContext(), getString(R.string.contact_error), Toast.LENGTH_SHORT).show() }
+            }
             updating.observe(viewLifecycleOwner) {
                 binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
             }

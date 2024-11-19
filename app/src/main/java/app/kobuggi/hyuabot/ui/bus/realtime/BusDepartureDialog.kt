@@ -45,9 +45,7 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
         }
         viewModel.fetchData(stopID, routeID, queryDates.map { it.format(dateFormatter) })
         viewModel.queryError.observe(viewLifecycleOwner) {
-            if (it != null) {
-                Toast.makeText(requireContext(), getString(R.string.bus_departure_log_error), Toast.LENGTH_SHORT).show()
-            }
+            it?.let { Toast.makeText(requireContext(), getString(R.string.bus_departure_log), Toast.LENGTH_SHORT).show() }
         }
         viewModel.result.observe(viewLifecycleOwner) {
             val timetable1 = it.filter { log -> log.departureDate == queryDates[0].format(dateFormatter) }

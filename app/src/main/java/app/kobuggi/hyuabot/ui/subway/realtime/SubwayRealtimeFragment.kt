@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import app.kobuggi.hyuabot.R
@@ -27,7 +28,9 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
         }
-
+        viewModel.queryError.observe(viewLifecycleOwner) {
+            it?.let { Toast.makeText(requireContext(), getString(R.string.subway_realtime_error), Toast.LENGTH_SHORT).show() }
+        }
 
         val viewpagerAdapter = SubwayRealtimeViewPagerAdapter(childFragmentManager, lifecycle)
         val tabLabelList = listOf(

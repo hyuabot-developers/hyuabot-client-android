@@ -237,6 +237,7 @@
     <string name="reading_room_error">Failed to load reading room information.</string>
     <string name="map_building_error">Failed to load building information.</string>
     <string name="shuttle_realtime_error">Failed to load shuttle bus arrival information.</string>
+    <string name="shuttle_timetable_error">Failed to load shuttle bus timetable.</string>
     <string name="shuttle_stop_info_error">Failed to load shuttle bus stop information.</string>
     <string name="subway_realtime_error">Failed to load subway arrival information.</string>
     <string name="subway_timetable_error">Failed to load subway timetable.</string>

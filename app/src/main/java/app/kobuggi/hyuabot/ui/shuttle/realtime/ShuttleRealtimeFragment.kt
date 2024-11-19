@@ -62,7 +62,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 }
             }
         }
-
+        viewModel.queryError.observe(viewLifecycleOwner) {
+            it?.let { Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_error), Toast.LENGTH_SHORT).show() }
+        }
 
         val viewpagerAdapter = ShuttleRealtimeViewPagerAdapter(childFragmentManager, lifecycle)
         val tabLabelList = listOf(

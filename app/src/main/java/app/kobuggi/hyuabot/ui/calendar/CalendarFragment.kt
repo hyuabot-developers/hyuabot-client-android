@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -43,6 +44,9 @@ class CalendarFragment @Inject constructor() : Fragment() {
             fetchCalendarVersion()
             updating.observe(viewLifecycleOwner) { updating ->
                 binding.loadingLayout.visibility = if (updating) View.VISIBLE else View.GONE
+            }
+            queryError.observe(viewLifecycleOwner) {
+                it?.let { Toast.makeText(requireContext(), getString(R.string.calendar_error), Toast.LENGTH_SHORT).show() }
             }
             events.observe(viewLifecycleOwner) { eventList ->
                 if (eventList.isEmpty()) return@observe

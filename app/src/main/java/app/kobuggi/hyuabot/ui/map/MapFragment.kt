@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.addTextChangedListener
@@ -77,6 +78,9 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         }
         viewModel.rooms.observe(viewLifecycleOwner) { rooms ->
             searchResultAdapter.updateData(rooms)
+        }
+        viewModel.queryError.observe(viewLifecycleOwner) {
+            it?.let { Toast.makeText(requireContext(), getString(R.string.map_building_error), Toast.LENGTH_SHORT).show() }
         }
         return binding.root
     }
