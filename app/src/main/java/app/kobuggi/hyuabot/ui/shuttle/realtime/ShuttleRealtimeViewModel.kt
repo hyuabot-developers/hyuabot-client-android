@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
+import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo3.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -22,11 +23,13 @@ class ShuttleRealtimeViewModel @Inject constructor(private val apolloClient: Apo
     private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Timetable>>()
     private val _stopInfo = MutableLiveData<List<ShuttleRealtimePageQuery.Stop>>()
     private val _disposable = CompositeDisposable()
+    private val _queryError = MutableLiveData<QueryError?>(null)
 
     val result get() = _result
     val stopInfo get() = _stopInfo
     val isLoading get() = _isLoading
     val showRemainingTime get() = _showRemainingTime
+    val queryError get() = _queryError
 
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
@@ -35,8 +38,15 @@ class ShuttleRealtimeViewModel @Inject constructor(private val apolloClient: Apo
         val currentDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(now)
         viewModelScope.launch {
             val response = apolloClient.query(ShuttleRealtimePageQuery(currentTime, currentDateTime)).execute()
-            _result.value = response.data?.shuttle?.timetable?.filter { it.time > currentTime }
-            _stopInfo.value = response.data?.shuttle?.stop
+            if (response.data == null || response.exception != null) {
+                _queryError.value = QueryError.SERVER_ERROR
+            } else if (response.data?.shuttle?.timetable != null) {
+                _result.value = response.data?.shuttle?.timetable?.filter { it.time > currentTime }
+                _stopInfo.value = response.data?.shuttle?.stop
+                _queryError.value = null
+            } else {
+                _queryError.value = QueryError.UNKNOWN_ERROR
+            }
             _isLoading.value = false
         }
     }

@@ -8,6 +8,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ReadingRoomPageQuery
 import app.kobuggi.hyuabot.databinding.FragmentReadingRoomBinding
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo3.ApolloClient
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
@@ -22,22 +23,28 @@ class ReadingRoomViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ): ViewModel() {
     private val _rooms = MutableLiveData<List<ReadingRoomPageQuery.ReadingRoom>>()
+    private val _queryError = MutableLiveData<QueryError?>(null)
+
     val notificationList = userPreferencesRepository.readingRoomNotifications.asLiveData()
     val extendNotificationTime = userPreferencesRepository.readingRoomExtendNotification.asLiveData()
 
     val campusID get() = userPreferencesRepository.campusID.asLiveData()
     val rooms: MutableLiveData<List<ReadingRoomPageQuery.ReadingRoom>>
         get() = _rooms
+    val queryError: MutableLiveData<QueryError?>
+        get() = _queryError
 
     fun fetchRooms(campusID: Int = 2) {
         viewModelScope.launch {
-            val response = try {
-                apolloClient.query(ReadingRoomPageQuery(campus = campusID)).execute()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
+            val response = apolloClient.query(ReadingRoomPageQuery(campus = campusID)).execute()
+            if (response.data == null || response.exception != null) {
+                _queryError.value = QueryError.SERVER_ERROR
+            } else if (response.data?.readingRoom != null) {
+                _rooms.value = response.data?.readingRoom ?: emptyList()
+                _queryError.value = null
+            } else {
+                _queryError.value = QueryError.UNKNOWN_ERROR
             }
-            _rooms.value = response?.data?.readingRoom ?: emptyList()
         }
     }
 
