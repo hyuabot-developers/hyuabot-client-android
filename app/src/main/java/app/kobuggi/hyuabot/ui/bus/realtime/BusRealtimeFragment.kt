@@ -24,6 +24,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel.initSelectedStopID()
         viewModel.fetchData()
         viewModel.start()
         viewModel.queryError.observe(viewLifecycleOwner) {

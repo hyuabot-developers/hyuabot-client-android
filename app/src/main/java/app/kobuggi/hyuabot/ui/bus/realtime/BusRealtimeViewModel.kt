@@ -22,14 +22,6 @@ class BusRealtimeViewModel @Inject constructor(
     private val apolloClient: ApolloClient,
     private val userPreferencesRepository: UserPreferencesRepository
 ): ViewModel() {
-    init {
-        viewModelScope.launch {
-            userPreferencesRepository.getBusStop().collect {
-                _selectedStopID.value = it
-            }
-        }
-    }
-
     private val _isLoading = MutableLiveData(false)
     private val _result = MutableLiveData<List<BusRealtimePageQuery.Bus>>()
     private val _disposable = CompositeDisposable()
@@ -40,6 +32,14 @@ class BusRealtimeViewModel @Inject constructor(
     val isLoading get() = _isLoading
     val selectedStopID get() = _selectedStopID
     val queryError get() = _queryError
+
+    fun initSelectedStopID() {
+        viewModelScope.launch {
+            userPreferencesRepository.getBusStop().collect {
+                _selectedStopID.value = it
+            }
+        }
+    }
 
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
