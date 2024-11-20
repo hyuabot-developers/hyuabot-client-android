@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -82,6 +83,9 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
                     binding.readingRoomRunningAlarm.visibility = View.GONE
                     binding.readingRoomAlarmCancel.visibility = View.GONE
                 }
+            }
+            queryError.observe(viewLifecycleOwner) {
+                it?.let { Toast.makeText(requireContext(), getString(R.string.reading_room_error), Toast.LENGTH_SHORT).show() }
             }
         }
 

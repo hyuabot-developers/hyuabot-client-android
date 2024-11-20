@@ -17,6 +17,7 @@ class BusStopDialog @Inject constructor() : DialogFragment() {
     private val viewModel: BusStopDialogViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        viewModel.getBusStop()
         viewModel.selectedStopID.observe(viewLifecycleOwner) {
             when (it) {
                 R.string.bus_stop_convention -> binding.busStopDropdown.setText(getString(R.string.bus_stop_convention), false)

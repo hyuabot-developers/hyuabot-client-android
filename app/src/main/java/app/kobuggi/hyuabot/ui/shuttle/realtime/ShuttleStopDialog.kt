@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
@@ -40,6 +41,9 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment(), OnM
                 else -> "dormitory_o"
             }
         )
+        viewModel.queryError.observe(viewLifecycleOwner) {
+            it?.let { Toast.makeText(requireContext(), getString(R.string.shuttle_stop_info_error), Toast.LENGTH_SHORT).show() }
+        }
         binding.apply {
             toolbar.apply {
                 title = getString(stopID)

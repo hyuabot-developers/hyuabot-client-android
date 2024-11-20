@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -20,6 +21,9 @@ class BusRouteDialog @Inject constructor() : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         viewModel.fetchData(args.stopID, args.routeID)
+        viewModel.queryError.observe(viewLifecycleOwner) {
+            it?.let { Toast.makeText(requireContext(), getString(R.string.bus_route_info_error), Toast.LENGTH_SHORT).show() }
+        }
         viewModel.busRoute.observe(viewLifecycleOwner) {
             binding.apply {
                 busRouteName.text = getString(R.string.bus_info_route, it.info.name)

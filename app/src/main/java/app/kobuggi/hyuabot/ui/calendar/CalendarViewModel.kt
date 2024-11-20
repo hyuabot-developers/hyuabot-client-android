@@ -10,6 +10,7 @@ import app.kobuggi.hyuabot.CalendarPageVersionQuery
 import app.kobuggi.hyuabot.service.database.AppDatabase
 import app.kobuggi.hyuabot.service.database.entity.Event
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo3.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -24,50 +25,55 @@ class CalendarViewModel @Inject constructor(
     private val calendarVersion = userPreferencesRepository.calendarVersion.asLiveData()
     private val _events = database.calendarDao().getAll().asLiveData()
     private val _updating = MutableLiveData(false)
+    private val _queryError = MutableLiveData<QueryError?>(null)
 
     val updating get() = _updating
     val events get() = _events
+    val queryError get() = _queryError
 
     fun fetchCalendarVersion() {
         _updating.postValue(true)
         viewModelScope.launch {
-            val response = try {
-                apolloClient.query(CalendarPageVersionQuery()).execute()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
-            calendarVersion.observeForever {
-                if (it != response?.data?.calendar?.version) {
-                    fetchEvents()
-                } else {
-                    _updating.postValue(false)
+            val response = apolloClient.query(CalendarPageVersionQuery()).execute()
+            if (response.data == null || response.exception != null) {
+                _queryError.value = QueryError.SERVER_ERROR
+            } else if (response.data?.calendar != null) {
+                calendarVersion.observeForever {
+                    if (it != response.data?.calendar?.version) {
+                        fetchEvents()
+                    }
                 }
+                _queryError.value = null
+            } else {
+                _queryError.value = QueryError.UNKNOWN_ERROR
             }
+            _updating.postValue(false)
         }
     }
 
     private fun fetchEvents() {
         val dao = database.calendarDao()
         viewModelScope.launch {
-            val response = try {
-                apolloClient.query(CalendarPageQuery()).execute()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
+            val response = apolloClient.query(CalendarPageQuery()).execute()
+            if (response.data == null || response.exception != null) {
+                _queryError.value = QueryError.SERVER_ERROR
+            } else if (response.data?.calendar != null) {
+                dao.deleteAll()
+                response.data?.calendar?.version?.let { userPreferencesRepository.setCalendarVersion(it) }
+                response.data?.calendar?.data?.map {
+                    Event(
+                        eventID = it.id,
+                        title = it.title,
+                        description = it.description,
+                        startDate = it.start.toString(),
+                        endDate = it.end.toString(),
+                        category = it.category.name
+                    )
+                }?.let { dao.insertAll(*it.toTypedArray()) }
+                _queryError.value = null
+            } else {
+                _queryError.value = QueryError.UNKNOWN_ERROR
             }
-            dao.deleteAll()
-            response?.data?.calendar?.version?.let { userPreferencesRepository.setCalendarVersion(it) }
-            response?.data?.calendar?.data?.map {
-                Event(
-                    eventID = it.id,
-                    title = it.title,
-                    description = it.description,
-                    startDate = it.start.toString(),
-                    endDate = it.end.toString(),
-                    category = it.category.name
-                )
-            }?.let { dao.insertAll(*it.toTypedArray()) }
             _updating.postValue(false)
         }
     }

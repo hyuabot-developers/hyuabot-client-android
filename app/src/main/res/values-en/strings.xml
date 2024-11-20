@@ -224,4 +224,21 @@
     <string name="event_date_format">%1$d/%2$d</string>
     <string name="event_date_range_format">%1$d/%2$d - %3$d/%4$d</string>
     <string name="calendar_loading">Loading academic calendar…</string>
+    <string name="do_not_show_again_this_year">Do not show this year.</string>
+    <string name="dialog_title">Developer\'s birthday</string>
+    <string name="dialog_message">Hello, I\'m Jeongin Lee, developer of HYUABOT.\n\nToday is my birthday.\n\nPlease wish me a happy birthday!</string>
+    <string name="bus_departure_log_error">Failed to load departure log.</string>
+    <string name="bus_realtime_error">Failed to load bus arrival information.</string>
+    <string name="bus_route_info_error">Failed to load bus route information.</string>
+    <string name="bus_timetable_error">Failed to load bus timetable.</string>
+    <string name="cafeteria_error">Failed to load cafeteria information.</string>
+    <string name="calendar_error">Failed to load academic calendar.</string>
+    <string name="contact_error">Failed to load contacts.</string>
+    <string name="reading_room_error">Failed to load reading room information.</string>
+    <string name="map_building_error">Failed to load building information.</string>
+    <string name="shuttle_realtime_error">Failed to load shuttle bus arrival information.</string>
+    <string name="shuttle_timetable_error">Failed to load shuttle bus timetable.</string>
+    <string name="shuttle_stop_info_error">Failed to load shuttle bus stop information.</string>
+    <string name="subway_realtime_error">Failed to load subway arrival information.</string>
+    <string name="subway_timetable_error">Failed to load subway timetable.</string>
 </resources>

@@ -10,14 +10,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BusStopDialogViewModel @Inject constructor(private val userPreferencesRepository: UserPreferencesRepository): ViewModel() {
-    init { getBusStop() }
     val selectedStopID = MutableLiveData<Int?>(null)
 
     fun setBusStop(busStopID: Int) {
         viewModelScope.launch { userPreferencesRepository.setBusStop(busStopID) }
     }
 
-    private fun getBusStop() {
+    fun getBusStop() {
         viewModelScope.launch {
             userPreferencesRepository.getBusStop().collect {
                 selectedStopID.value = it

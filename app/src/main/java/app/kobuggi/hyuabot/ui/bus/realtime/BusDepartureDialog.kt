@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,6 +44,9 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
             else -> listOf(today)
         }
         viewModel.fetchData(stopID, routeID, queryDates.map { it.format(dateFormatter) })
+        viewModel.queryError.observe(viewLifecycleOwner) {
+            it?.let { Toast.makeText(requireContext(), getString(R.string.bus_departure_log), Toast.LENGTH_SHORT).show() }
+        }
         viewModel.result.observe(viewLifecycleOwner) {
             val timetable1 = it.filter { log -> log.departureDate == queryDates[0].format(dateFormatter) }
             val timetable2 = it.filter { log -> log.departureDate == queryDates[1].format(dateFormatter) }
