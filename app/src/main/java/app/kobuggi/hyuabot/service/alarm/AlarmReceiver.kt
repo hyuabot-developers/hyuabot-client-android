@@ -36,7 +36,7 @@ class AlarmReceiver: BroadcastReceiver() {
         manager.createNotificationChannel(NotificationChannel(ALARM_CHANNEL_ID, "Reading Room Extend Notification", NotificationManager.IMPORTANCE_HIGH))
         builder = NotificationCompat.Builder(context, ALARM_CHANNEL_ID)
 
-        val title = intent?.extras!!.getString("content")
+        val title = intent?.extras?.getString("content") ?: return
         val libraryAppIntent = context.packageManager.getLaunchIntentForPackage("kr.ac.hanyang.library")
         val notification = builder.setContentTitle(title)
             .setGroup(NOTIFICATION_GROUP_ID)

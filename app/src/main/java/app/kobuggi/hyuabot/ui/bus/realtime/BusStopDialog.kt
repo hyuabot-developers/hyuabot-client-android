@@ -17,7 +17,6 @@ class BusStopDialog @Inject constructor() : DialogFragment() {
     private val viewModel: BusStopDialogViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        viewModel.getBusStop()
         viewModel.selectedStopID.observe(viewLifecycleOwner) {
             when (it) {
                 R.string.bus_stop_convention -> binding.busStopDropdown.setText(getString(R.string.bus_stop_convention), false)
@@ -46,5 +45,10 @@ class BusStopDialog @Inject constructor() : DialogFragment() {
     override fun onResume() {
         super.onResume()
         dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.getBusStop()
     }
 }

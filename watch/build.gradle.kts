@@ -82,6 +82,12 @@ android {
     }
 }
 
+androidComponents {
+    onVariants {
+        it.buildConfigFields.put("API_URL", BuildConfigField("String", props["API_URL"].toString(), "API_URL"))
+    }
+}
+
 dependencies {
     implementation(libs.play.services.wearable)
     // AndroidX
