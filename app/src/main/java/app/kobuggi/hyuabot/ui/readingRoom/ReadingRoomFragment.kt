@@ -32,6 +32,7 @@ import javax.inject.Inject
 class ReadingRoomFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentReadingRoomBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<ReadingRoomViewModel>()
+    private lateinit var roomListAdapter: ReadingRoomListAdapter
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
             Snackbar.make(binding.root, R.string.reading_room_noti_allowed, Snackbar.LENGTH_SHORT).show()
@@ -39,16 +40,52 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
             Snackbar.make(binding.root, R.string.reading_room_noti_denied, Snackbar.LENGTH_SHORT).show()
         }
     }
-    private lateinit var alaramFunction: AlarmFunction
+    private lateinit var alarmFunction: AlarmFunction
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        alarmFunction = AlarmFunction(requireContext())
+        roomListAdapter = ReadingRoomListAdapter(requireContext(), ::onClickReadingRoom, emptyList(), emptySet())
+        binding.apply {
+            readingRoomSwipeRefreshLayout.setOnRefreshListener {
+                viewModel.campusID.observe(viewLifecycleOwner) {
+                    viewModel.fetchRooms(it)
+                }
+            }
+            readingRoomRecyclerView.apply {
+                setHasFixedSize(true)
+                adapter = roomListAdapter
+                layoutManager = LinearLayoutManager(context)
+            }
+            readingRoomAlarm3Hour.setOnClickListener {
+                alarmFunction.cancelAlarm(R.string.reading_room_alarm_4_hour)
+                val alarmTime = LocalDateTime.now().plusHours(3).minusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                alarmFunction.callAlarm(alarmTime, R.string.reading_room_alarm_3_hour, getString(R.string.reading_room_alarm_extend))
+                viewModel.setExtendNotificationTime(alarmTime)
+            }
+            readingRoomAlarm4Hour.setOnClickListener {
+                alarmFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
+                val alarmTime = LocalDateTime.now().plusHours(4).minusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                alarmFunction.callAlarm(alarmTime, R.string.reading_room_alarm_4_hour, getString(R.string.reading_room_alarm_extend))
+                viewModel.setExtendNotificationTime(alarmTime)
+            }
+            readingRoomAlarmCancel.setOnClickListener {
+                alarmFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
+                alarmFunction.cancelAlarm(R.string.reading_room_alarm_4_hour)
+                viewModel.setExtendNotificationTime(null)
+                readingRoomAlarmCancel.visibility = View.GONE
+            }
+        }
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         askNotificationPermission()
-        val roomListAdapter = ReadingRoomListAdapter(requireContext(), ::onClickReadingRoom, emptyList(), emptySet())
-        alaramFunction = AlarmFunction(requireContext())
         viewModel.apply {
             campusID.observe(viewLifecycleOwner) {
                 fetchRooms(it)
@@ -88,39 +125,6 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
                 it?.let { Toast.makeText(requireContext(), getString(R.string.reading_room_error), Toast.LENGTH_SHORT).show() }
             }
         }
-
-        binding.apply {
-            readingRoomSwipeRefreshLayout.setOnRefreshListener {
-                viewModel.campusID.observe(viewLifecycleOwner) {
-                    viewModel.fetchRooms(it)
-                }
-            }
-            readingRoomRecyclerView.apply {
-                setHasFixedSize(true)
-                adapter = roomListAdapter
-                layoutManager = LinearLayoutManager(context)
-            }
-            readingRoomAlarm3Hour.setOnClickListener {
-                alaramFunction.cancelAlarm(R.string.reading_room_alarm_4_hour)
-                val alarmTime = LocalDateTime.now().plusHours(3).minusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                alaramFunction.callAlarm(alarmTime, R.string.reading_room_alarm_3_hour, getString(R.string.reading_room_alarm_extend))
-                viewModel.setExtendNotificationTime(alarmTime)
-            }
-            readingRoomAlarm4Hour.setOnClickListener {
-                alaramFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
-                val alarmTime = LocalDateTime.now().plusHours(4).minusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                alaramFunction.callAlarm(alarmTime, R.string.reading_room_alarm_4_hour, getString(R.string.reading_room_alarm_extend))
-                viewModel.setExtendNotificationTime(alarmTime)
-            }
-            readingRoomAlarmCancel.setOnClickListener {
-                alaramFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
-                alaramFunction.cancelAlarm(R.string.reading_room_alarm_4_hour)
-                viewModel.setExtendNotificationTime(null)
-                readingRoomAlarmCancel.visibility = View.GONE
-            }
-        }
-
-        return binding.root
     }
 
     private fun askNotificationPermission() {

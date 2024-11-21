@@ -26,15 +26,42 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeBinding.inflate(layoutInflater) }
     private val viewModel: ShuttleRealtimeViewModel by viewModels()
 
-    @SuppressLint("MissingPermission")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         val now = LocalDateTime.now()
+        val viewpagerAdapter = ShuttleRealtimeViewPagerAdapter(childFragmentManager, lifecycle)
+        val tabLabelList = listOf(
+            R.string.shuttle_tab_dormitory_out,
+            R.string.shuttle_tab_shuttlecock_out,
+            R.string.shuttle_tab_station,
+            R.string.shuttle_tab_terminal,
+            R.string.shuttle_tab_jungang_station,
+            R.string.shuttle_tab_shuttlecock_in
+        )
+        binding.viewPager.adapter = viewpagerAdapter
+        binding.helpFab.setOnClickListener {
+            ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleHelpDialogFragment().also {
+                findNavController().navigate(it)
+            }
+        }
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = getString(tabLabelList[position])
+        }.attach()
+        // If weekdays is from monday to friday and time is before 10:00, it is true and else false
+        if (now.dayOfWeek.value in 1..5 && now.hour < 10) {
+            Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_toast), Toast.LENGTH_SHORT).show()
+        }
+        return binding.root
+    }
 
+    @SuppressLint("MissingPermission")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         viewModel.fetchData()
         viewModel.start()
         viewModel.isLoading.observe(viewLifecycleOwner) {
@@ -65,30 +92,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_error), Toast.LENGTH_SHORT).show() }
         }
-
-        val viewpagerAdapter = ShuttleRealtimeViewPagerAdapter(childFragmentManager, lifecycle)
-        val tabLabelList = listOf(
-            R.string.shuttle_tab_dormitory_out,
-            R.string.shuttle_tab_shuttlecock_out,
-            R.string.shuttle_tab_station,
-            R.string.shuttle_tab_terminal,
-            R.string.shuttle_tab_jungang_station,
-            R.string.shuttle_tab_shuttlecock_in
-        )
-        binding.viewPager.adapter = viewpagerAdapter
-        binding.helpFab.setOnClickListener {
-            ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleHelpDialogFragment().also {
-                findNavController().navigate(it)
-            }
-        }
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = getString(tabLabelList[position])
-        }.attach()
-        // If weekdays is from monday to friday and time is before 10:00, it is true and else false
-        if (now.dayOfWeek.value in 1..5 && now.hour < 10) {
-            Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_toast), Toast.LENGTH_SHORT).show()
-        }
-        return binding.root
     }
 
     override fun onPause() {
