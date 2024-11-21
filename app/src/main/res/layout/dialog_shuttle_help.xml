@@ -42,7 +42,7 @@
         android:layout_marginEnd="16dp"
         android:text="@string/shuttle_help_lost_content"
         android:textColor="@color/secondary_text"
-        android:textSize="16sp"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/lost_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -76,7 +76,7 @@
         android:layout_marginEnd="16dp"
         android:text="@string/shuttle_help_time_content"
         android:textColor="@color/secondary_text"
-        android:textSize="16sp"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/time_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -110,7 +110,7 @@
         android:layout_marginEnd="16dp"
         android:text="@string/shuttle_help_stop_content"
         android:textColor="@color/secondary_text"
-        android:textSize="16sp"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/stop_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -144,7 +144,7 @@
         android:layout_marginEnd="16dp"
         android:text="@string/shuttle_help_via_content"
         android:textColor="@color/secondary_text"
-        android:textSize="16sp"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/via_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -180,7 +180,7 @@
         android:paddingBottom="16dp"
         android:text="@string/shuttle_help_departure_content"
         android:textColor="@color/secondary_text"
-        android:textSize="16sp"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/departure_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
