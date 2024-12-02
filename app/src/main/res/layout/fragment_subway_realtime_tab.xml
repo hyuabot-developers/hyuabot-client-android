@@ -27,7 +27,7 @@
                     android:id="@+id/header_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="16dp"
+                    android:paddingVertical="6dp"
                     android:gravity="center"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
@@ -48,7 +48,7 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:text="@string/bus_no_realtime_data"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_up" />
                 <Button
@@ -57,7 +57,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/no_realtime_data_up"
                     style="@style/Widget.Material3.Button.TextButton" />
@@ -65,7 +65,7 @@
                     android:id="@+id/header_down"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="16dp"
+                    android:paddingVertical="6dp"
                     android:gravity="center"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"
@@ -86,7 +86,7 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:text="@string/bus_no_realtime_data"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_down" />
                 <Button
@@ -95,7 +95,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/no_realtime_data_down"
                     style="@style/Widget.Material3.Button.TextButton" />

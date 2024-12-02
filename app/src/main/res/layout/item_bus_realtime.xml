@@ -9,11 +9,11 @@
         android:id="@+id/bus_time_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textColor="@color/primary_text"
         android:textAlignment="center"
         android:textFontWeight="700"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:paddingVertical="12dp" />
+        android:paddingVertical="6dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

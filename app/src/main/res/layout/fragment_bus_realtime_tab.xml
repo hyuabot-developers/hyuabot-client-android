@@ -31,7 +31,7 @@
                     android:id="@+id/header_first"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="16dp"
+                    android:paddingVertical="6dp"
                     android:gravity="center"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
@@ -52,7 +52,7 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:text="@string/bus_no_realtime_data"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_first" />
                 <LinearLayout
@@ -67,7 +67,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/bus_departure_log"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                     <Button
@@ -76,7 +76,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/shuttle_footer_entire_timetable"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                 </LinearLayout>
@@ -84,7 +84,7 @@
                     android:id="@+id/header_second"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="16dp"
+                    android:paddingVertical="6dp"
                     android:gravity="center"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"
@@ -106,7 +106,7 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:text="@string/bus_no_realtime_data"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_second" />
                 <LinearLayout
@@ -121,7 +121,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/bus_departure_log"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                     <Button
@@ -130,7 +130,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/shuttle_footer_entire_timetable"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                 </LinearLayout>
@@ -138,7 +138,7 @@
                     android:id="@+id/header_third"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="16dp"
+                    android:paddingVertical="6dp"
                     android:gravity="center"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"
@@ -159,7 +159,7 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:text="@string/bus_no_realtime_data"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_third" />
                 <LinearLayout
@@ -174,7 +174,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/bus_departure_log"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                     <Button
@@ -183,7 +183,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/shuttle_footer_entire_timetable"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                 </LinearLayout>
@@ -191,7 +191,7 @@
                     android:id="@+id/header_fourth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="16dp"
+                    android:paddingVertical="6dp"
                     android:gravity="center"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"
@@ -212,7 +212,7 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:text="@string/bus_no_realtime_data"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_fourth" />
                 <LinearLayout
@@ -227,7 +227,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/bus_departure_log"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                     <Button
@@ -236,7 +236,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/shuttle_footer_entire_timetable"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                 </LinearLayout>

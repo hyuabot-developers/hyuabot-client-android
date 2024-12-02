@@ -9,7 +9,7 @@
         android:id="@+id/bus_time_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textColor="@color/primary_text"
         android:textFontWeight="700"
         android:textAlignment="center"
