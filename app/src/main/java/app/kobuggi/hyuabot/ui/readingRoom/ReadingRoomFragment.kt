@@ -35,9 +35,9 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
     private lateinit var roomListAdapter: ReadingRoomListAdapter
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
-            Snackbar.make(binding.root, R.string.reading_room_noti_allowed, Snackbar.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.reading_room_noti_allowed, Toast.LENGTH_SHORT).show()
         } else {
-            Snackbar.make(binding.root, R.string.reading_room_noti_denied, Snackbar.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.reading_room_noti_denied, Toast.LENGTH_SHORT).show()
         }
     }
     private lateinit var alarmFunction: AlarmFunction
@@ -145,7 +145,7 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
 
     private fun onClickReadingRoom(room: ReadingRoomPageQuery.ReadingRoom, subscribe: Boolean) {
         viewModel.viewModelScope.launch {
-            viewModel.toggleReadingRoomNotification(binding, room.id, subscribe)
+            viewModel.toggleReadingRoomNotification(requireContext(), room.id, subscribe)
         }
     }
 }

@@ -1,16 +1,16 @@
 package app.kobuggi.hyuabot.ui.readingRoom
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ReadingRoomPageQuery
-import app.kobuggi.hyuabot.databinding.FragmentReadingRoomBinding
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo3.ApolloClient
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,18 +48,18 @@ class ReadingRoomViewModel @Inject constructor(
         }
     }
 
-    fun toggleReadingRoomNotification(binding: FragmentReadingRoomBinding, readingRoomID: Int, subscribe: Boolean) {
+    fun toggleReadingRoomNotification(context: Context, readingRoomID: Int, subscribe: Boolean) {
         if (subscribe) {
             Firebase.messaging.subscribeToTopic("reading_room_$readingRoomID").addOnSuccessListener {
-                Snackbar.make(binding.root, R.string.reading_room_noti_on, Snackbar.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.reading_room_noti_on, Toast.LENGTH_SHORT).show()
             }.addOnFailureListener {
-                Snackbar.make(binding.root, R.string.reading_room_noti_on_error, Snackbar.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.reading_room_noti_on_error, Toast.LENGTH_SHORT).show()
             }
         } else {
             Firebase.messaging.unsubscribeFromTopic("reading_room_$readingRoomID").addOnSuccessListener {
-                Snackbar.make(binding.root, R.string.reading_room_noti_off, Snackbar.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.reading_room_noti_off, Toast.LENGTH_SHORT).show()
             }.addOnFailureListener {
-                Snackbar.make(binding.root, R.string.reading_room_noti_off_error, Snackbar.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.reading_room_noti_off_error, Toast.LENGTH_SHORT).show()
             }
         }
         viewModelScope.launch {
