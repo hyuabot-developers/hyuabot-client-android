@@ -1,13 +1,17 @@
 package app.kobuggi.hyuabot.ui.shuttle.timetable
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.kobuggi.hyuabot.ShuttlePeriodQuery
 import app.kobuggi.hyuabot.ShuttleTimetablePageQuery
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo3.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,12 +32,21 @@ class ShuttleTimetableViewModel @Inject constructor(private val apolloClient: Ap
 
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
-        val periodQuery = if (period.value == null) {
-            listOf()
-        } else {
-            listOf(period.value!!)
-        }
         viewModelScope.launch {
+            val periodQuery = if (period.value == null) {
+                val period = apolloClient.query(ShuttlePeriodQuery()).execute()
+                if (period.data == null || period.exception != null) {
+                    _queryError.value = QueryError.SERVER_ERROR
+                    return@launch
+                }
+                if (period.data?.shuttle?.period?.firstOrNull() != null) {
+                    listOf(period.data?.shuttle?.period?.first()!!.type)
+                } else {
+                    listOf()
+                }
+            } else {
+                listOf(period.value!!)
+            }
             val response = apolloClient.query(ShuttleTimetablePageQuery(
                 periodQuery,
                 stopID.value ?: "",

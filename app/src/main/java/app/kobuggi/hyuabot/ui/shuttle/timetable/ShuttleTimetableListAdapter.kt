@@ -23,7 +23,6 @@ class ShuttleTimetableListAdapter(
         fun bind(item: ShuttleTimetablePageQuery.Timetable) {
             val currentTime = LocalTime.now()
             val time = LocalTime.parse(item.time, datetimeFormatter)
-            Log.d("ShuttleTimetableListAdapter", "stopID: $stopID, headerID: $headerID, item: $item")
             if ((stopID == R.string.shuttle_tab_dormitory_out || stopID == R.string.shuttle_tab_shuttlecock_out)) {
                 if (headerID == R.string.shuttle_header_bound_for_station || headerID == R.string.shuttle_header_bound_for_jungang_station) {
                     when (item.tag) {
