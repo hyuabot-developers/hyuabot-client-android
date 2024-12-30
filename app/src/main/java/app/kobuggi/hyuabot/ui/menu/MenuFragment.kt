@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMenuBinding
+import app.kobuggi.hyuabot.service.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -50,32 +51,32 @@ class MenuFragment @Inject constructor() : Fragment() {
         when(menuItem.titleResource) {
             R.string.menu_book -> {
                 MenuFragmentDirections.actionMenuFragmentToReadingRoomFragment().also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
             R.string.menu_map -> {
                 MenuFragmentDirections.actionMenuFragmentToMapFragment().also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
             R.string.menu_contact -> {
                 MenuFragmentDirections.actionMenuFragmentToContactFragment().also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
             R.string.menu_calendar -> {
                 MenuFragmentDirections.actionMenuFragmentToCalendarFragment().also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
             R.string.menu_notice -> {
                 MenuFragmentDirections.actionMenuFragmentToNoticeFragment().also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
             R.string.menu_settings -> {
                 MenuFragmentDirections.actionMenuFragmentToSettingFragment().also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
             R.string.menu_chat -> {

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeTabBinding
+import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -63,7 +64,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
                     R.string.shuttle_tab_dormitory_out,
                     R.string.shuttle_header_bound_for_station
                 ).also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
 
             }
@@ -77,7 +78,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
                     R.string.shuttle_tab_dormitory_out,
                     R.string.shuttle_header_bound_for_terminal
                 ).also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
             realtimeViewBoundForJungangStation.apply {
@@ -90,7 +91,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
                     R.string.shuttle_tab_dormitory_out,
                     R.string.shuttle_header_bound_for_jungang_station
                 ).also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
             swipeRefreshLayout.setOnRefreshListener {
@@ -100,7 +101,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
                     R.string.shuttle_tab_dormitory_out
                 ).also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
         }

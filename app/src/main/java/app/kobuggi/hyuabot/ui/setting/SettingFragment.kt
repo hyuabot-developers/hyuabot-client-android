@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.databinding.FragmentSettingBinding
+import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -32,25 +33,25 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
 
     private fun openThemeDialog() {
         SettingFragmentDirections.actionSettingFragmentToThemeSettingDialogFragment().also {
-            findNavController().navigate(it)
+            findNavController().safeNavigate(it)
         }
     }
 
     private fun openCampusDialog() {
         SettingFragmentDirections.actionSettingFragmentToCampusSettingDialogFragment().also {
-            findNavController().navigate(it)
+            findNavController().safeNavigate(it)
         }
     }
 
     private fun openLanguageDialog() {
         SettingFragmentDirections.actionSettingFragmentToLanguageSettingDialogFragment().also {
-            findNavController().navigate(it)
+            findNavController().safeNavigate(it)
         }
     }
 
     private fun openInfoDialog() {
         SettingFragmentDirections.actionSettingFragmentToSettingDeveloperDialogFragment().also {
-            findNavController().navigate(it)
+            findNavController().safeNavigate(it)
         }
     }
 

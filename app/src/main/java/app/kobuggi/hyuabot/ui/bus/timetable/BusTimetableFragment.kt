@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusTimetableBinding
+import app.kobuggi.hyuabot.service.safeNavigate
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -53,7 +54,7 @@ class BusTimetableFragment @Inject constructor() : Fragment() {
                 routeID = args.routeID,
                 stopID = args.stopID
             ).also {
-                findNavController().navigate(it)
+                findNavController().safeNavigate(it)
             }
         }
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
