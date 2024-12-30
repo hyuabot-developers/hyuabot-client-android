@@ -3,7 +3,6 @@ package app.kobuggi.hyuabot.service.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import app.kobuggi.hyuabot.service.database.entity.Contact
 import app.kobuggi.hyuabot.service.database.entity.Event
 import kotlinx.coroutines.flow.Flow
 
