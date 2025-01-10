@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentSubwayRealtimeTabBinding
+import app.kobuggi.hyuabot.service.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -40,7 +41,7 @@ class SubwayTabYellowFragment @Inject constructor() : Fragment() {
             }
             entireTimetableUp.setOnClickListener {
                 SubwayRealtimeFragmentDirections.actionSubwayRealtimeFragmentToSubwayTimetableFragment("K251", "up").also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
             headerDown.text = getString(R.string.subway_yellow_down)
@@ -51,7 +52,7 @@ class SubwayTabYellowFragment @Inject constructor() : Fragment() {
             }
             entireTimetableDown.setOnClickListener {
                 SubwayRealtimeFragmentDirections.actionSubwayRealtimeFragmentToSubwayTimetableFragment("K251", "down").also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
             swipeRefreshLayout.setOnRefreshListener {

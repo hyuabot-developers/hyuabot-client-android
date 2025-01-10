@@ -2,7 +2,6 @@ package app.kobuggi.hyuabot.ui
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.pm.PackageManager
@@ -18,8 +17,8 @@ import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import app.kobuggi.hyuabot.databinding.ActivityMainBinding
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.ZoneId

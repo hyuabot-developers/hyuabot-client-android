@@ -42,17 +42,17 @@ class AlarmFunction (private val context: Context){
         val calendar = Calendar.getInstance()
         calendar.time = datetime
 
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,calendar.timeInMillis,pendingIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,calendar.timeInMillis,pendingIntent)
     }
 
-    fun cancelAlarm(alaramCode: Int) {
+    fun cancelAlarm(alarmCode: Int) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
 
         pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            PendingIntent.getBroadcast(context, alaramCode, intent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getBroadcast(context, alarmCode, intent, PendingIntent.FLAG_IMMUTABLE)
         }else{
-            PendingIntent.getBroadcast(context, alaramCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(context, alarmCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
         alarmManager.cancel(pendingIntent)
     }

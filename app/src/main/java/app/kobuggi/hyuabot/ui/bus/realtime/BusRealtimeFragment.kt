@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeBinding
+import app.kobuggi.hyuabot.service.safeNavigate
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -43,7 +44,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         binding.viewPager.adapter = viewpagerAdapter
         binding.stopFab.setOnClickListener {
             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopDialogFragment().also {
-                findNavController().navigate(it)
+                findNavController().safeNavigate(it)
             }
         }
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->

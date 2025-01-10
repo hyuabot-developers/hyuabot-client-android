@@ -1,6 +1,5 @@
 package app.kobuggi.hyuabot.ui.calendar
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData

@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
+import app.kobuggi.hyuabot.service.safeNavigate
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +44,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         binding.viewPager.adapter = viewpagerAdapter
         binding.helpFab.setOnClickListener {
             ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleHelpDialogFragment().also {
-                findNavController().navigate(it)
+                findNavController().safeNavigate(it)
             }
         }
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeTabBinding
+import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -47,7 +48,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                     R.string.shuttle_tab_jungang_station,
                     R.string.shuttle_header_bound_for_dormitory
                 ).also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
 
@@ -58,7 +59,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
                     R.string.shuttle_tab_jungang_station
                 ).also {
-                    findNavController().navigate(it)
+                    findNavController().safeNavigate(it)
                 }
             }
         }
