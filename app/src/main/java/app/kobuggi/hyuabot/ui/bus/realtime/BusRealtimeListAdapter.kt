@@ -59,7 +59,7 @@ class BusRealtimeListAdapter(
                     }
                 }
             } else if (timetableItem != null) {
-                if (position == realtimeList.size + timetableList.size - 1) {
+                if (position == realtimeList.size + timetableList.size - 1 && !timetableNotExist) {
                     binding.busTimeText.apply {
                         text = context.getString(R.string.bus_timetable_format_last, timetableItem.time.substring(0, 2), timetableItem.time.substring(3, 5))
                         setTextColor(context.getColor(R.color.red_bus))

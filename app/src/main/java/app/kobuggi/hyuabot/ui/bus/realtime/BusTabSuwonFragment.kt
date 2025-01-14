@@ -26,8 +26,8 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
     ): View {
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         val busFirstAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf())
-        val busSecondAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf())
-        val busThirdAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf())
+        val busSecondAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf(), true)
+        val busThirdAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf(), true)
         val busFourthAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf(), true)
         parentViewModel.result.observe(viewLifecycleOwner) {
             if (it == null) return@observe
@@ -95,6 +95,7 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                     findNavController().navigate(direction)
                 }
             }
+            entireTimetableSecond.isEnabled = false
             headerThird.text = getString(R.string.bus_header_format, "7070", getString(R.string.bus_stop_entrance))
             realtimeViewThird.apply {
                 adapter = busThirdAdapter
@@ -111,6 +112,7 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                     findNavController().navigate(direction)
                 }
             }
+            entireTimetableThird.isEnabled = false
             headerFourth.text = getString(R.string.bus_header_format, "9090", getString(R.string.bus_stop_entrance))
             realtimeViewFourth.apply {
                 adapter = busFourthAdapter
