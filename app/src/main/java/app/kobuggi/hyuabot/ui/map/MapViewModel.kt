@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.MapPageQuery
 import app.kobuggi.hyuabot.MapPageSearchQuery
 import app.kobuggi.hyuabot.util.QueryError
-import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

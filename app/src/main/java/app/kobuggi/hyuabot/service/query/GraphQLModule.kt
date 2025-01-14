@@ -1,8 +1,8 @@
 package app.kobuggi.hyuabot.service.query
 
 import app.kobuggi.hyuabot.BuildConfig
-import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.network.okHttpClient
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.network.okHttpClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

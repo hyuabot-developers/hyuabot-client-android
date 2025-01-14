@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.CafeteriaPageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
-import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime

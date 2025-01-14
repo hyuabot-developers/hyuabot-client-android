@@ -10,7 +10,7 @@ import app.kobuggi.hyuabot.service.database.AppDatabase
 import app.kobuggi.hyuabot.service.database.entity.Event
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
-import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
