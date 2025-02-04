@@ -111,6 +111,8 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         super.onPause()
         binding.mapView.onPause()
     }
+
+    @Deprecated("Deprecated in Java")
     override fun onLowMemory() {
         super.onLowMemory()
         binding.mapView.onLowMemory()
