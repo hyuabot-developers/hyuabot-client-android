@@ -119,7 +119,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
                 binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
-                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(4, shuttleForCampus.size)))
+                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(3, shuttleForCampus.size)))
             }
 
             if (shuttleForTerminal.isEmpty()) {
@@ -128,7 +128,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForTerminal.visibility = View.GONE
                 binding.realtimeViewBoundForTerminal.visibility = View.VISIBLE
-                shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(4, shuttleForTerminal.size)))
+                shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(3, shuttleForTerminal.size)))
             }
 
             if (shuttleForJungangStation.isEmpty()) {
@@ -137,7 +137,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForJungangStation.visibility = View.GONE
                 binding.realtimeViewBoundForJungangStation.visibility = View.VISIBLE
-                shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(4, shuttleForJungangStation.size)))
+                shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)))
             }
         }
 
