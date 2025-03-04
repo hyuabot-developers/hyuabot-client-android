@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BusDepartureDialogViewModel @Inject constructor(private val apolloClient: ApolloClient): ViewModel() {
-    private val _result = MutableLiveData<List<BusDepartureLogDialogQuery.Log>>()
+    private val _result = MutableLiveData<List<BusDepartureLogDialogQuery.Route>>()
     private val _queryError = MutableLiveData<QueryError?>(null)
 
     val result get() = _result
@@ -24,7 +24,7 @@ class BusDepartureDialogViewModel @Inject constructor(private val apolloClient: 
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {
-                _result.value = response.data?.bus?.firstOrNull()?.routes?.firstOrNull()?.log ?: listOf()
+                _result.value = response.data?.bus?.firstOrNull()?.routes
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR

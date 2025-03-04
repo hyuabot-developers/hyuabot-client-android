@@ -90,7 +90,12 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManager(context)
             }
             departureLogSecond.setOnClickListener {
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000070, 217000014).also { direction ->
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(
+                    216000070,
+                    217000014,
+                    216000104,
+                    200000015
+                ).also { direction ->
                     findNavController().navigate(direction)
                 }
             }

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.kobuggi.hyuabot.BusDepartureLogDialogQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogBusDepartureLogBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -51,12 +52,16 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_departure_log), Toast.LENGTH_SHORT).show() }
         }
         viewModel.result.observe(viewLifecycleOwner) {
-            val timetable1 = it.filter { log -> log.departureDate == queryDates[0].format(dateFormatter) }
-            val timetable2 = it.filter { log -> log.departureDate == queryDates[1].format(dateFormatter) }
-            val timetable3 = it.filter { log -> log.departureDate == queryDates[2].format(dateFormatter) }
-            firstLogAdapter.updateData(timetable1)
-            secondLogAdapter.updateData(timetable2)
-            thirdLogAdapter.updateData(timetable3)
+            val logItems = mutableListOf<BusDepartureLogDialogQuery.Log>()
+            it.forEach { route ->
+                logItems.addAll(route.log)
+            }
+            val timetable1 = logItems.filter { log -> log.departureDate == queryDates[0].format(dateFormatter) }
+            val timetable2 = logItems.filter { log -> log.departureDate == queryDates[1].format(dateFormatter) }
+            val timetable3 = logItems.filter { log -> log.departureDate == queryDates[2].format(dateFormatter) }
+            firstLogAdapter.updateData(timetable1.sortedBy { it.departureTime.toString() })
+            secondLogAdapter.updateData(timetable2.sortedBy { it.departureTime.toString() })
+            thirdLogAdapter.updateData(timetable3.sortedBy { it.departureTime.toString() })
 
             val currentTime = LocalTime.now()
             binding.busDepartureLogRecyclerView1.scrollToPosition(timetable1.indexOfFirst {
