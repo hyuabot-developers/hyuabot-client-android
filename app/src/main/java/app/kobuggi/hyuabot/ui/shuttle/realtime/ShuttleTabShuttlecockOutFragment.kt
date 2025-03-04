@@ -34,6 +34,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             viewLifecycleOwner,
             R.string.shuttle_tab_shuttlecock_out,
             R.string.shuttle_header_bound_for_station,
+            childFragmentManager,
             emptyList()
         )
         val shuttleTerminalAdapter = ShuttleRealtimeListAdapter(
@@ -42,6 +43,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             viewLifecycleOwner,
             R.string.shuttle_tab_shuttlecock_out,
             R.string.shuttle_header_bound_for_terminal,
+            childFragmentManager,
             emptyList()
         )
         val shuttleJungangStationAdapter = ShuttleRealtimeListAdapter(
@@ -50,6 +52,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             viewLifecycleOwner,
             R.string.shuttle_tab_shuttlecock_out,
             R.string.shuttle_header_bound_for_jungang_station,
+            childFragmentManager,
             emptyList()
         )
 
