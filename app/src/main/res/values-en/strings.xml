@@ -243,4 +243,5 @@
     <string name="subway_realtime_error">Failed to load subway arrival information.</string>
     <string name="subway_timetable_error">Failed to load subway timetable.</string>
     <string name="shuttle_via_title">Route of shuttle bus</string>
+    <string name="bus_timetable_empty">No arrival information.</string>
 </resources>

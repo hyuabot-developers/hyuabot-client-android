@@ -30,10 +30,14 @@ class BusTabWeekdaysFragment @Inject constructor() : Fragment() {
         parentViewModel.result.observe(viewLifecycleOwner) {
             if (it == null) return@observe
             val localTime = LocalTime.now()
-            val timetableItems = it.filter { timetable -> timetable.weekdays == "weekdays" }
+            val timetableItems = it.timetable.filter { timetable -> timetable.weekdays == "weekdays" }
             val afterNowItemIndex = timetableItems.indexOfFirst { item -> LocalTime.parse(item.time) > localTime }
             adapter.apply {
-                updateData(timetableItems)
+                updateData(timetableItems.map { timetableItem -> BusTimetableItem(
+                    routeName = it.info.name,
+                    weekdays = timetableItem.weekdays,
+                    time = timetableItem.time
+                )})
                 if (afterNowItemIndex != -1) {
                     binding.busTimetableRecyclerView.scrollToPosition(afterNowItemIndex)
                 }
