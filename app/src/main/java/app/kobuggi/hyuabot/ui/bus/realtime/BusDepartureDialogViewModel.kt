@@ -18,9 +18,9 @@ class BusDepartureDialogViewModel @Inject constructor(private val apolloClient: 
     val result get() = _result
     val queryError get() = _queryError
 
-    fun fetchData(stopID: Int, routeID: Int, dates: List<String> = listOf()) {
+    fun fetchData(stopID: Int, routes: List<Int>, dates: List<String> = listOf()) {
         viewModelScope.launch {
-            val response = apolloClient.query(BusDepartureLogDialogQuery(stopID, routeID, dates)).execute()
+            val response = apolloClient.query(BusDepartureLogDialogQuery(stopID, routes, dates)).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {

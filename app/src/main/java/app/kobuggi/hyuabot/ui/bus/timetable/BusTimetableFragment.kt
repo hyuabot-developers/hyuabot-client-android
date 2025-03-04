@@ -28,7 +28,11 @@ class BusTimetableFragment @Inject constructor() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel.fetchData(args.routeID, args.stopID)
+        val firstRouteID = args.firstRouteID
+        val secondRouteID = args.secondRouteID
+        val thirdRouteID = args.thirdRouteID
+        val routes = listOf(firstRouteID, secondRouteID, thirdRouteID).filter { it > 0 }
+        viewModel.fetchData(routes, args.stopID)
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_timetable_error), Toast.LENGTH_SHORT).show() }
         }
@@ -51,7 +55,7 @@ class BusTimetableFragment @Inject constructor() : Fragment() {
         }, false)
         binding.infoFab.setOnClickListener {
             BusTimetableFragmentDirections.actionBusTimetableFragmentToBusRouteInfoDialogFragment(
-                routeID = args.routeID,
+                routeID = args.firstRouteID,
                 stopID = args.stopID
             ).also {
                 findNavController().safeNavigate(it)

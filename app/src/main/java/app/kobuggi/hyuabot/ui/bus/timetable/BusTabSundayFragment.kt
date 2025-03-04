@@ -30,7 +30,16 @@ class BusTabSundayFragment @Inject constructor() : Fragment() {
         parentViewModel.result.observe(viewLifecycleOwner) {
             if (it == null) return@observe
             val localTime = LocalTime.now()
-            val timetableItems = it.timetable.filter { timetable -> timetable.weekdays == "sunday" }
+            val timetableItems = mutableListOf<BusTimetableItem>()
+            it.forEach { route ->
+                timetableItems.addAll(route.timetable.filter { it.weekdays == "sunday" }.map {
+                    BusTimetableItem(
+                        routeName = route.info.name,
+                        weekdays = it.weekdays,
+                        time = it.time
+                    )
+                })
+            }
             if (timetableItems.isEmpty()) {
                 binding.busTimetableRecyclerView.visibility = View.GONE
                 binding.busTimetableEmptyText.visibility = View.VISIBLE
@@ -41,11 +50,7 @@ class BusTabSundayFragment @Inject constructor() : Fragment() {
             }
             val afterNowItemIndex = timetableItems.indexOfFirst { item -> LocalTime.parse(item.time) > localTime }
             adapter.apply {
-                updateData(timetableItems.map { timetableItem -> BusTimetableItem(
-                    routeName = it.info.name,
-                    weekdays = timetableItem.weekdays,
-                    time = timetableItem.time
-                )})
+                updateData(timetableItems.sortedBy { it.time })
                 if (afterNowItemIndex != -1) {
                     binding.busTimetableRecyclerView.scrollToPosition(afterNowItemIndex)
                 }

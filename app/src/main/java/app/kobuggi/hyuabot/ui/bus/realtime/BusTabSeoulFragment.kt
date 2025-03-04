@@ -171,7 +171,9 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 }
             }
             entireTimetableSecond.setOnClickListener {
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000719, 216000096).also { direction ->
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(
+                    216000719, 216000096, 216000026, 216000043
+                ).also { direction ->
                     findNavController().navigate(direction)
                 }
             }
