@@ -74,7 +74,7 @@ class ContactViewModel @Inject constructor(
 
     fun searchContacts(query: String, campusID: Int) {
         viewModelScope.launch {
-            database.contactDao().findByNameAndCampusID("%$query%", campusID).collect {
+            database.contactDao().findByNameOrPhoneAndCampusID("%$query%", "%$query%", campusID).collect {
                 searchResults.postValue(it)
             }
         }

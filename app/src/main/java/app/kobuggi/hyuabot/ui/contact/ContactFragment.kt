@@ -75,7 +75,7 @@ class ContactFragment @Inject constructor() : Fragment() {
         return binding.root
     }
 
-    fun onClickItem(contact: Contact) {
+    private fun onClickItem(contact: Contact) {
         val intent = Intent(Intent.ACTION_DIAL)
         intent.data = Uri.parse("tel:${contact.phone}")
         startActivity(intent)
