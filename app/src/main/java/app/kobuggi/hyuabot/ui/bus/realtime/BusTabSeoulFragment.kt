@@ -134,16 +134,19 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
         parentViewModel.result.observe(viewLifecycleOwner) {
             if (it == null) return@observe
             val mainGate = it.firstOrNull { stop -> stop.id == 216000719 }?.routes
-            val secondBusList = mainGate?.firstOrNull { route -> route.info.id == 216000096 }
-            busSecondAdapter.updateData(
-                secondBusList?.realtime?.map { realtimeItem ->
-                    BusRealtimeItem(secondBusList.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
-                } ?: listOf(),
-                secondBusList?.timetable?.map { timetableItem ->
-                    BusTimetableItem(secondBusList.info.name, timetableItem.weekdays, timetableItem.time)
-                } ?: listOf()
-            )
-            if (secondBusList?.realtime.isNullOrEmpty() && secondBusList?.timetable.isNullOrEmpty()) {
+            val secondBusList = mainGate?.filter { route -> route.info.id == 216000096 || route.info.id == 216000026 || route.info.id == 216000043 }
+            val realtimeList = mutableListOf<BusRealtimeItem>()
+            val timetableList = mutableListOf<BusTimetableItem>()
+            secondBusList?.forEach { routeItem ->
+                realtimeList += routeItem.realtime.map { realtimeItem ->
+                    BusRealtimeItem(routeItem.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
+                }
+                timetableList += routeItem.timetable.map { timetableItem ->
+                    BusTimetableItem(routeItem.info.name, timetableItem.weekdays, timetableItem.time)
+                }
+            }
+            busSecondAdapter.updateData(realtimeList.sortedBy { it.time }, timetableList.sortedBy { it.time })
+            if (realtimeList.isEmpty() && timetableList.isEmpty()) {
                 binding.noRealtimeDataSecond.visibility = View.VISIBLE
             } else {
                 binding.noRealtimeDataSecond.visibility = View.GONE
@@ -156,7 +159,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
             }
-            headerSecond.text = getString(R.string.bus_header_format, "3100N", getString(R.string.bus_stop_main_gate))
+            headerSecond.text = getString(R.string.bus_header_format, "3100/3101/3101N", getString(R.string.bus_stop_main_gate))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
