@@ -23,6 +23,10 @@ android {
     apollo {
         service("query") {
             packageName = "app.kobuggi.hyuabot"
+            introspection {
+                endpointUrl.set("https://api.hyuabot.app/query")
+                schemaFile.set(file("src/main/graphql/schema.graphqls"))
+            }
         }
     }
 
