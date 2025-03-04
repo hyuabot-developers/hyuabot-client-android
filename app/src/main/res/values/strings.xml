@@ -24,6 +24,7 @@
     <!-- 셔틀버스 도착 정보 시간 -->
     <string name="shuttle_time_type_1">%1$s시 %2$s분 출발</string>
     <string name="shuttle_time_type_2">%1$s분 후 출발</string>
+    <string name="shuttle_time_type_3">%1$s:%2$s</string>
     <!-- 셔틀버스 노선 타입 -->
     <string name="shuttle_type_direct">직행</string>
     <string name="shuttle_type_circular">순환</string>
@@ -250,4 +251,5 @@
     <string name="shuttle_stop_info_error">셔틀버스 정류장 정보를 불러오는데 실패했습니다.</string>
     <string name="subway_realtime_error">전철 도착 정보를 불러오는데 실패했습니다.</string>
     <string name="subway_timetable_error">전철 시간표를 불러오는데 실패했습니다.</string>
+    <string name="shuttle_via_title">차량별 경로 조회</string>
 </resources>
