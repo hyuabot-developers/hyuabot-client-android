@@ -37,10 +37,38 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
             val secondBusList = entrance?.firstOrNull { route -> route.info.id == 217000014 }
             val thirdBusList = entrance?.firstOrNull { route -> route.info.id == 216000104 }
             val fourthBusList = entrance?.firstOrNull { route -> route.info.id == 200000015 }
-            busFirstAdapter.updateData(firstBusList?.realtime ?: listOf(), firstBusList?.timetable ?: listOf())
-            busSecondAdapter.updateData(secondBusList?.realtime ?: listOf(), secondBusList?.timetable ?: listOf())
-            busThirdAdapter.updateData(thirdBusList?.realtime ?: listOf(), thirdBusList?.timetable ?: listOf())
-            busFourthAdapter.updateData(fourthBusList?.realtime ?: listOf(), fourthBusList?.timetable ?: listOf())
+            busFirstAdapter.updateData(
+                firstBusList?.realtime?.map { realtimeItem ->
+                    BusRealtimeItem(firstBusList.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
+                } ?: listOf(),
+                firstBusList?.timetable?.map { timetableItem ->
+                    BusTimetableItem(firstBusList.info.name, timetableItem.weekdays, timetableItem.time)
+                } ?: listOf()
+            )
+            busSecondAdapter.updateData(
+                secondBusList?.realtime?.map { realtimeItem ->
+                    BusRealtimeItem(secondBusList.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
+                } ?: listOf(),
+                secondBusList?.timetable?.map { timetableItem ->
+                    BusTimetableItem(secondBusList.info.name, timetableItem.weekdays, timetableItem.time)
+                } ?: listOf()
+            )
+            busThirdAdapter.updateData(
+                thirdBusList?.realtime?.map { realtimeItem ->
+                    BusRealtimeItem(thirdBusList.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
+                } ?: listOf(),
+                thirdBusList?.timetable?.map { timetableItem ->
+                    BusTimetableItem(thirdBusList.info.name, timetableItem.weekdays, timetableItem.time)
+                } ?: listOf()
+            )
+            busFourthAdapter.updateData(
+                fourthBusList?.realtime?.map { realtimeItem ->
+                    BusRealtimeItem(fourthBusList.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
+                } ?: listOf(),
+                fourthBusList?.timetable?.map { timetableItem ->
+                    BusTimetableItem(fourthBusList.info.name, timetableItem.weekdays, timetableItem.time)
+                } ?: listOf()
+            )
             if (firstBusList?.realtime.isNullOrEmpty() && firstBusList?.timetable.isNullOrEmpty()) {
                 binding.noRealtimeDataFirst.visibility = View.VISIBLE
             } else {

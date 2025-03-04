@@ -6,14 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="50dp" >
     <TextView
+        android:id="@+id/bus_route_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textFontWeight="700"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingVertical="6dp" />
+    <TextView
         android:id="@+id/bus_time_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="center"
-        android:textFontWeight="700"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingTop="6dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
