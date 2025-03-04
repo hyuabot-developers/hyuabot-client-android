@@ -30,8 +30,7 @@
                 <TextView
                     android:id="@+id/header_first"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="6dp"
+                    android:layout_height="50dp"
                     android:gravity="center"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
@@ -83,8 +82,7 @@
                 <TextView
                     android:id="@+id/header_second"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="6dp"
+                    android:layout_height="50dp"
                     android:gravity="center"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"
@@ -96,7 +94,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintTop_toBottomOf="@id/header_second" />
                 <TextView
@@ -137,8 +134,7 @@
                 <TextView
                     android:id="@+id/header_third"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="6dp"
+                    android:layout_height="50dp"
                     android:gravity="center"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"
@@ -190,8 +186,7 @@
                 <TextView
                     android:id="@+id/header_fourth"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="6dp"
+                    android:layout_height="50dp"
                     android:gravity="center"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"

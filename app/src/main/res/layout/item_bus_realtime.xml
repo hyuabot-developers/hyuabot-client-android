@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bus_item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="50dp" >
     <TextView
         android:id="@+id/bus_time_text"
         android:layout_width="match_parent"
@@ -15,5 +15,5 @@
         android:textFontWeight="700"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:paddingVertical="6dp" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
