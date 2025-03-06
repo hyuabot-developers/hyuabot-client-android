@@ -24,6 +24,7 @@
     <!-- 셔틀버스 도착 정보 시간 -->
     <string name="shuttle_time_type_1">Depart at %1$s:%2$s</string>
     <string name="shuttle_time_type_2">%1$s mins left</string>
+    <string name="shuttle_time_type_3">%1$s:%2$s</string>
     <!-- 셔틀버스 노선 타입 -->
     <string name="shuttle_type_direct">Direct</string>
     <string name="shuttle_type_circular">Cycle</string>
@@ -241,4 +242,7 @@
     <string name="shuttle_stop_info_error">Failed to load shuttle bus stop information.</string>
     <string name="subway_realtime_error">Failed to load subway arrival information.</string>
     <string name="subway_timetable_error">Failed to load subway timetable.</string>
+    <string name="shuttle_via_title">Route of shuttle bus</string>
+    <string name="bus_timetable_empty">No arrival information.</string>
+    <string name="bus_stop_gwangmyeong_station">Gwangmyeong Stn.</string>
 </resources>

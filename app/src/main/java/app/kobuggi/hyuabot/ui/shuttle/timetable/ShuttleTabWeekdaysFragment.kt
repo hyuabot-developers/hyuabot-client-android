@@ -27,6 +27,7 @@ class ShuttleTabWeekdaysFragment @Inject constructor() : Fragment() {
         val adapter = ShuttleTimetableListAdapter(
             parentViewModel.stopResID.value ?: 0,
             parentViewModel.headerResID.value ?: 0,
+            childFragmentManager,
             emptyList()
         )
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)

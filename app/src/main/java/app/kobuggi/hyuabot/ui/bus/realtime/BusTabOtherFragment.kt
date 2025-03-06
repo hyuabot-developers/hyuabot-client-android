@@ -27,35 +27,39 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         val busFirstAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf())
         val busSecondAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf())
-        val busThirdAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf())
         parentViewModel.result.observe(viewLifecycleOwner) {
             if (it == null) return@observe
-            val mainGate = it.firstOrNull { stop -> stop.id == 216000719 }?.routes
             val terminal = it.firstOrNull { stop -> stop.id == 216000759 }?.routes
-            val firstBusList = mainGate?.firstOrNull { route -> route.info.id == 216000026 }
-            val secondBusList = mainGate?.firstOrNull { route -> route.info.id == 216000043 }
-            val thirdBusList = terminal?.firstOrNull { route -> route.info.id == 216000075 }
-            busFirstAdapter.updateData(firstBusList?.realtime ?: listOf(), firstBusList?.timetable ?: listOf())
-            busSecondAdapter.updateData(secondBusList?.realtime ?: listOf(), secondBusList?.timetable ?: listOf())
-            busThirdAdapter.updateData(thirdBusList?.realtime ?: listOf(), thirdBusList?.timetable ?: listOf())
+            val firstBusList = terminal?.firstOrNull { route -> route.info.id == 216000075 }
+            val gwangmyeongStation = it.firstOrNull { stop -> stop.id == 213000487 }?.routes
+            val secondBusList = gwangmyeongStation?.firstOrNull { route -> route.info.id == 216000075 }
+            busFirstAdapter.updateData(
+                firstBusList?.realtime?.map { realtimeItem ->
+                    BusRealtimeItem(firstBusList.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
+                } ?: listOf(),
+                firstBusList?.timetable?.map { timetableItem ->
+                    BusTimetableItem(firstBusList.info.name, timetableItem.weekdays, timetableItem.time)
+                } ?: listOf()
+            )
+            busSecondAdapter.updateData(
+                listOf(),
+                secondBusList?.timetable?.map { timetableItem ->
+                    BusTimetableItem(secondBusList.info.name, timetableItem.weekdays, timetableItem.time)
+                } ?: listOf()
+            )
             if (firstBusList?.realtime.isNullOrEmpty() && firstBusList?.timetable.isNullOrEmpty()) {
                 binding.noRealtimeDataFirst.visibility = View.VISIBLE
             } else {
                 binding.noRealtimeDataFirst.visibility = View.GONE
             }
-            if (secondBusList?.realtime.isNullOrEmpty() && secondBusList?.timetable.isNullOrEmpty()) {
+            if (secondBusList?.timetable.isNullOrEmpty()) {
                 binding.noRealtimeDataSecond.visibility = View.VISIBLE
             } else {
                 binding.noRealtimeDataSecond.visibility = View.GONE
             }
-            if (thirdBusList?.realtime.isNullOrEmpty() && thirdBusList?.timetable.isNullOrEmpty()) {
-                binding.noRealtimeDataThird.visibility = View.VISIBLE
-            } else {
-                binding.noRealtimeDataThird.visibility = View.GONE
-            }
         }
         binding.apply {
-            headerFirst.text = getString(R.string.bus_header_format, "3100", getString(R.string.bus_stop_main_gate))
+            headerFirst.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
             realtimeViewFirst.apply {
                 adapter = busFirstAdapter
                 addItemDecoration(decoration)
@@ -71,38 +75,22 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                     findNavController().navigate(direction)
                 }
             }
-            headerSecond.text = getString(R.string.bus_header_format, "3101", getString(R.string.bus_stop_main_gate))
+            headerSecond.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_gwangmyeong_station))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
             }
-            departureLogSecond.setOnClickListener {
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000719, 216000043).also { direction ->
-                    findNavController().navigate(direction)
-                }
-            }
             entireTimetableSecond.setOnClickListener {
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000719, 216000043).also { direction ->
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000719, 213000487).also { direction ->
                     findNavController().navigate(direction)
                 }
             }
-            headerThird.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
-            realtimeViewThird.apply {
-                adapter = busThirdAdapter
-                addItemDecoration(decoration)
-                layoutManager = LinearLayoutManager(requireContext())
-            }
-            departureLogThird.setOnClickListener {
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000759, 216000075).also { direction ->
-                    findNavController().navigate(direction)
-                }
-            }
-            entireTimetableThird.setOnClickListener {
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000759, 216000075).also { direction ->
-                    findNavController().navigate(direction)
-                }
-            }
+            headerThird.visibility = View.GONE
+            realtimeViewThird.visibility = View.GONE
+            entireTimetableThird.visibility = View.GONE
+            noRealtimeDataThird.visibility = View.GONE
+            buttonLayoutThird.visibility = View.GONE
             headerFourth.visibility = View.GONE
             realtimeViewFourth.visibility = View.GONE
             entireTimetableFourth.visibility = View.GONE

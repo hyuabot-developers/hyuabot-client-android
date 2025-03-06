@@ -64,7 +64,15 @@
             app:argType="integer"
             android:defaultValue="0" />
         <argument
-            android:name="routeID"
+            android:name="firstRouteID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="secondRouteID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="thirdRouteID"
             app:argType="integer"
             android:defaultValue="0" />
         <action
@@ -230,7 +238,15 @@
             app:argType="integer"
             android:defaultValue="0" />
         <argument
-            android:name="routeID"
+            android:name="firstRouteID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="secondRouteID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="thirdRouteID"
             app:argType="integer"
             android:defaultValue="0" />
     </dialog>

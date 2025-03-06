@@ -35,6 +35,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             viewLifecycleOwner,
             R.string.shuttle_tab_dormitory_out,
             R.string.shuttle_header_bound_for_station,
+            childFragmentManager,
             emptyList()
         )
         val shuttleTerminalAdapter = ShuttleRealtimeListAdapter(
@@ -43,6 +44,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             viewLifecycleOwner,
             R.string.shuttle_tab_dormitory_out,
             R.string.shuttle_header_bound_for_terminal,
+            childFragmentManager,
             emptyList()
         )
         val shuttleJungangStationAdapter = ShuttleRealtimeListAdapter(
@@ -51,6 +53,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             viewLifecycleOwner,
             R.string.shuttle_tab_dormitory_out,
             R.string.shuttle_header_bound_for_jungang_station,
+            childFragmentManager,
             emptyList()
         )
         binding.apply {
@@ -120,7 +123,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForStation.visibility = View.GONE
                 binding.realtimeViewBoundForStation.visibility = View.VISIBLE
-                shuttleStationAdapter.updateData(shuttleForStation.subList(0, min(4, shuttleForStation.size)))
+                shuttleStationAdapter.updateData(shuttleForStation.subList(0, min(3, shuttleForStation.size)))
             }
 
             if (shuttleForTerminal.isEmpty()) {
@@ -129,7 +132,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForTerminal.visibility = View.GONE
                 binding.realtimeViewBoundForTerminal.visibility = View.VISIBLE
-                shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(4, shuttleForTerminal.size)))
+                shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(3, shuttleForTerminal.size)))
             }
 
             if (shuttleForJungangStation.isEmpty()) {
@@ -138,7 +141,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForJungangStation.visibility = View.GONE
                 binding.realtimeViewBoundForJungangStation.visibility = View.VISIBLE
-                shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(4, shuttleForJungangStation.size)))
+                shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)))
             }
         }
         binding.apply {

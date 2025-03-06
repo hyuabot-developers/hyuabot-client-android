@@ -26,8 +26,7 @@
                 <TextView
                     android:id="@+id/header_up"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="6dp"
+                    android:layout_height="50dp"
                     android:gravity="center"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
@@ -64,8 +63,7 @@
                 <TextView
                     android:id="@+id/header_down"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="6dp"
+                    android:layout_height="50dp"
                     android:gravity="center"
                     android:textFontWeight="700"
                     android:textColor="@android:color/white"

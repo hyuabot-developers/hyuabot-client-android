@@ -3,10 +3,12 @@ package app.kobuggi.hyuabot.ui.shuttle.timetable
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleTimetablePageQuery
 import app.kobuggi.hyuabot.databinding.ItemShuttleTimetableBinding
+import app.kobuggi.hyuabot.ui.shuttle.via.ShuttleViaSheetDialog
 import app.kobuggi.hyuabot.util.UIUtility
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -14,6 +16,7 @@ import java.time.format.DateTimeFormatter
 class ShuttleTimetableListAdapter(
     private val stopID: Int,
     private val headerID: Int,
+    private val childFragmentManager: FragmentManager,
     private var shuttleList: List<ShuttleTimetablePageQuery.Timetable>,
 ) : RecyclerView.Adapter<ShuttleTimetableListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemShuttleTimetableBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -136,6 +139,10 @@ class ShuttleTimetableListAdapter(
                         }
                     }
                 )
+            }
+            binding.shuttleItem.setOnClickListener {
+                val viaSheet = ShuttleViaSheetDialog(timetableViaStops = item.via)
+                viaSheet.show(childFragmentManager, "ShuttleViaSheetDialog")
             }
         }
     }

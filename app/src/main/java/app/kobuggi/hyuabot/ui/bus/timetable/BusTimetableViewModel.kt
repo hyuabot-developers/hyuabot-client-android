@@ -13,21 +13,21 @@ import javax.inject.Inject
 @HiltViewModel
 class BusTimetableViewModel @Inject constructor(private val apolloClient: ApolloClient): ViewModel() {
     private val _isLoading = MutableLiveData(false)
-    private val _result = MutableLiveData<List<BusTimetablePageQuery.Timetable>>()
+    private val _result = MutableLiveData<List<BusTimetablePageQuery.Route>>()
     private val _queryError = MutableLiveData<QueryError?>(null)
 
     val result get() = _result
     val isLoading get() = _isLoading
     val queryError get() = _queryError
 
-    fun fetchData(routeID: Int, stopID: Int) {
+    fun fetchData(routes: List<Int>, stopID: Int) {
         if (_result.value == null) _isLoading.value = true
         viewModelScope.launch {
-            val response = apolloClient.query(BusTimetablePageQuery(routeID, stopID)).execute()
+            val response = apolloClient.query(BusTimetablePageQuery(routes, stopID)).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {
-                _result.value = response.data?.bus?.firstOrNull()?.routes?.firstOrNull()?.timetable
+                _result.value = response.data?.bus?.firstOrNull()?.routes
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR

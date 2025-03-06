@@ -23,6 +23,10 @@ android {
     apollo {
         service("query") {
             packageName = "app.kobuggi.hyuabot"
+            introspection {
+                endpointUrl.set("https://api.hyuabot.app/query")
+                schemaFile.set(file("src/main/graphql/schema.graphqls"))
+            }
         }
     }
 
@@ -39,8 +43,8 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 26
         targetSdk = 35
-        versionCode = 408000000
-        versionName = "4.0.8"
+        versionCode = 409000000
+        versionName = "4.0.9"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
