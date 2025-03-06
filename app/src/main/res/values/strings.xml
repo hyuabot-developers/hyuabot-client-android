@@ -254,4 +254,10 @@
     <string name="shuttle_via_title">차량별 경로 조회</string>
     <string name="bus_timetable_empty">운행 예정인 노선 버스가 없습니다.</string>
     <string name="bus_stop_gwangmyeong_station">광명역</string>
+    <string name="shuttle_via_format_6_stops">%1$s→%2$s→%3$s→%4$s→%5$s→%6$s</string>
+    <string name="shuttle_via_format_5_stops">%1$s→%2$s→%3$s→%4$s→%5$s</string>
+    <string name="shuttle_via_format_4_stops">%1$s→%2$s→%3$s→%4$s</string>
+    <string name="shuttle_via_format_3_stops">%1$s→%2$s→%3$s</string>
+    <string name="shuttle_via_format_2_stops">%1$s→%2$s</string>
+    <string name="shuttle_via_format_1_stop">%1$s</string>
 </resources>

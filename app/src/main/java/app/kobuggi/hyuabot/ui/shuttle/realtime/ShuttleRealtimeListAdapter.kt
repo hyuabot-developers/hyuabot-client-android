@@ -10,7 +10,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
-import app.kobuggi.hyuabot.databinding.ItemShuttleBinding
+import app.kobuggi.hyuabot.databinding.ItemShuttleRealtimeBinding
 import app.kobuggi.hyuabot.ui.shuttle.via.ShuttleViaSheetDialog
 import java.time.LocalTime
 
@@ -23,7 +23,7 @@ class ShuttleRealtimeListAdapter(
     private val childFragmentManager: FragmentManager,
     private var shuttleList: List<ShuttleRealtimePageQuery.Timetable>,
 ) : RecyclerView.Adapter<ShuttleRealtimeListAdapter.ViewHolder>() {
-    inner class ViewHolder(private val binding: ItemShuttleBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleRealtimePageQuery.Timetable) {
             if ((stopID == R.string.shuttle_tab_dormitory_out || stopID == R.string.shuttle_tab_shuttlecock_out)) {
@@ -159,8 +159,8 @@ class ShuttleRealtimeListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_shuttle, parent, false)
-        return ViewHolder(ItemShuttleBinding.bind(view))
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_shuttle_realtime, parent, false)
+        return ViewHolder(ItemShuttleRealtimeBinding.bind(view))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
