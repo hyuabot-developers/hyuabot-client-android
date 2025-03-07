@@ -251,4 +251,8 @@
     <string name="shuttle_via_format_3_stops">(→ %1$s → %2$s → %3$s)</string>
     <string name="shuttle_via_format_2_stops">(→ %1$s → %2$s)</string>
     <string name="shuttle_via_format_1_stop">(→ %1$s)</string>
+    <string name="previous_day">Prev</string>
+    <string name="next_day">Next</string>
+    <string name="show_by_destination">By Destination/Time</string>
+    <string name="show_departure_time">Departure Time</string>
 </resources>
