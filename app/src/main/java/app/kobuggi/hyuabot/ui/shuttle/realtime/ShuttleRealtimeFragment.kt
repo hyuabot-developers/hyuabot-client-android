@@ -70,11 +70,8 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         viewModel.stopInfo.observe(viewLifecycleOwner) {stops ->
             if (stops.isNotEmpty()) {
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-                    if (location == null) {
-                        Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_location_error), Toast.LENGTH_SHORT).show()
-                        return@addOnSuccessListener
-                    }
-                    val nearestStop = stops.mapIndexed { index, stopItem ->
+                    if (location == null) { return@addOnSuccessListener }
+                    val nearestStop = stops.mapIndexed { _, stopItem ->
                         Pair(stopItem, calculateDistance(stopItem, location))
                     }.minByOrNull { it.second }?.first
                     when(nearestStop?.name) {
