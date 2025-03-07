@@ -34,7 +34,6 @@ class ShuttleRealtimeViewModel @Inject constructor(
     val result get() = _result
     val stopInfo get() = _stopInfo
     val isLoading get() = _isLoading
-    val showRemainingTime get() = _showRemainingTime
     val queryError get() = _queryError
     val showDepartureTime get() = _showDepartureTime
     val showByDestination get() = _showByDestination

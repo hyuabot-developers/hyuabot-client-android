@@ -125,10 +125,10 @@ class ShuttleRealtimeListAdapter(
             }
 
             val now = LocalTime.now()
-            shuttleRealtimeViewModel.showRemainingTime.observe(lifecycleOwner) {
+            shuttleRealtimeViewModel.showDepartureTime.observe(lifecycleOwner) {
                 val time = LocalTime.parse(item.time)
-                if (it) {
-                    val remainingTime = time.minusHours(now.hour.toLong()).minusMinutes(now.minute.toLong())
+                if (!it) {
+                    val remainingTime = time.minusHours(now.hour.toLong()).minusMinutes(now.minute.toLong() + 1)
                     binding.shuttleTimeText.text = context.getString(R.string.shuttle_time_type_2, (remainingTime.hour * 60 + remainingTime.minute).toString())
                 } else {
                     binding.shuttleTimeText.text = context.getString(
