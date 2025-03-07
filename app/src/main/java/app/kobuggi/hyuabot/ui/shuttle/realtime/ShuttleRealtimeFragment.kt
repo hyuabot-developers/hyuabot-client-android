@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
@@ -17,6 +18,8 @@ import app.kobuggi.hyuabot.service.safeNavigate
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.math.sqrt
@@ -41,12 +44,27 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             R.string.shuttle_tab_jungang_station,
             R.string.shuttle_tab_shuttlecock_in
         )
+        viewModel.viewModelScope.launch {
+            viewModel.userPreferencesRepository.getShowShuttleDepartureTime().first().let {
+                binding.showDepartureTime.isChecked = it
+            }
+            viewModel.userPreferencesRepository.getShowShuttleByDestination().first().let {
+                binding.showByDestination.isChecked = it
+            }
+        }
         binding.viewPager.adapter = viewpagerAdapter
         binding.helpFab.setOnClickListener {
             ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleHelpDialogFragment().also {
                 findNavController().safeNavigate(it)
             }
         }
+        binding.showByDestination.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setShowByDestination(isChecked)
+        }
+        binding.showDepartureTime.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setShowDepartureTime(isChecked)
+        }
+
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()

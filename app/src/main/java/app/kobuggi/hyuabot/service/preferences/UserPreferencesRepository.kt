@@ -3,6 +3,7 @@ package app.kobuggi.hyuabot.service.preferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -191,6 +192,50 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    override suspend fun setShowShuttleByDestination(show: Boolean) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[SHUTTLE_SHOW_BY_DESTINATION_KEY] = show
+            }
+        }
+    }
+
+    override suspend fun getShowShuttleByDestination(): Flow<Boolean> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[SHUTTLE_SHOW_BY_DESTINATION_KEY] ?: false
+            }
+    }
+
+    override suspend fun setShowShuttleDepartureTime(show: Boolean) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[SHUTTLE_SHOW_DEPARTURE_TIME_KEY] = show
+            }
+        }
+    }
+
+    override suspend fun getShowShuttleDepartureTime(): Flow<Boolean> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[SHUTTLE_SHOW_DEPARTURE_TIME_KEY] ?: false
+            }
+    }
+
     private companion object {
         private val BUS_STOP_ID_KEY = intPreferencesKey("bus_stop_id")
         private val READING_ROOM_NOTIFICATIONS_KEY = stringSetPreferencesKey("reading_room_notifications")
@@ -199,5 +244,7 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val CAMPUS_ID_KEY = intPreferencesKey("campus_id")
         private val CONTACT_KEY = stringPreferencesKey("contact_version")
         private val CALENDAR_KEY = stringPreferencesKey("calendar_version")
+        private val SHUTTLE_SHOW_DEPARTURE_TIME_KEY = booleanPreferencesKey("shuttle_show_departure_time")
+        private val SHUTTLE_SHOW_BY_DESTINATION_KEY = booleanPreferencesKey("shuttle_show_by_destination")
     }
 }

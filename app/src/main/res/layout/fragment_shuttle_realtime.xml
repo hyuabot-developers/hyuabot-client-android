@@ -38,7 +38,7 @@
             android:text="@string/show_by_destination"
             android:textColor="@android:color/white" />
         <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/show_departure_time_layout"
+            android:id="@+id/show_departure_time"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

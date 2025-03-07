@@ -57,7 +57,7 @@
     <string name="shuttle_help_via_title">4. Checking Shuttle Bus Stops Along the Route</string>
     <string name="shuttle_help_via_content">Click on the information for the shuttle bus you wish to take! You can check the stops along the route of that specific bus.</string>
     <string name="shuttle_help_departure_title">5. Checking Shuttle Bus Departure Times</string>
-    <string name="shuttle_help_departure_content">Press and hold on the shuttle bus information you wish to view! This will show the departure times for that bus.</string>
+    <string name="shuttle_help_departure_content">Turn on switch above the shuttle bus information! This will show the departure times for that bus.</string>
     <!-- 셔틀버스 시간표 -->
     <string name="shuttle_timetable_tab_weekdays">Weekdays</string>
     <string name="shuttle_timetable_tab_weekends">Weekends</string>
