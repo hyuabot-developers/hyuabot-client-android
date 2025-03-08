@@ -14,6 +14,8 @@ import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeTabBinding
 import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -21,6 +23,7 @@ import kotlin.math.min
 class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: ShuttleRealtimeViewModel by viewModels({ requireParentFragment() })
+    private val shuttleTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -112,7 +115,8 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
         parentViewModel.result.observe(viewLifecycleOwner) { result ->
-            val shuttle = result.filter { it.stop == "shuttlecock_o" }
+            val now = LocalTime.now()
+            val shuttle = result.filter { it.stop == "shuttlecock_o" && it.time > now.format(shuttleTimeFormatter) }
             val shuttleForStation = shuttle.filter { it.tag == "DH" || it.tag == "DJ" || it.tag == "C" }
             val shuttleForTerminal = shuttle.filter { it.tag == "DY" || it.tag == "C" }
             val shuttleForJungangStation = shuttle.filter { it.tag == "DJ" }

@@ -14,6 +14,8 @@ import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeTabBinding
 import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -21,6 +23,7 @@ import kotlin.math.min
 class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: ShuttleRealtimeViewModel by viewModels({ requireParentFragment() })
+    private val shuttleTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,7 +72,8 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
         }
 
         parentViewModel.result.observe(viewLifecycleOwner) { result ->
-            val shuttleForCampus = result.filter { it.stop == "terminal" }
+            val now = LocalTime.now()
+            val shuttleForCampus = result.filter { it.stop == "terminal" && it.time > now.format(shuttleTimeFormatter) }
             if (shuttleForCampus.isEmpty()) {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.VISIBLE
                 binding.realtimeViewBoundForDormitory.visibility = View.GONE
