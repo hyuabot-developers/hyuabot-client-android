@@ -144,6 +144,12 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)))
             }
         }
+
+        parentViewModel.showByDestination.observe(viewLifecycleOwner) {
+            binding.shuttleRealtimeDestinationLayout.visibility = if (it) View.VISIBLE else View.GONE
+            binding.shuttleRealtimeTimeLayout.visibility = if (it) View.GONE else View.VISIBLE
+        }
+
         binding.apply {
             headerBoundForDormitory.visibility = View.GONE
             realtimeViewBoundForDormitory.visibility = View.GONE

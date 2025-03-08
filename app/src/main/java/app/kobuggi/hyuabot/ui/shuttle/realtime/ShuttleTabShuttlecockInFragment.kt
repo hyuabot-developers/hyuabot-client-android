@@ -80,6 +80,11 @@ class ShuttleTabShuttlecockInFragment @Inject constructor() : Fragment() {
             }
         }
 
+        parentViewModel.showByDestination.observe(viewLifecycleOwner) {
+            binding.shuttleRealtimeDestinationLayout.visibility = if (it) View.VISIBLE else View.GONE
+            binding.shuttleRealtimeTimeLayout.visibility = if (it) View.GONE else View.VISIBLE
+        }
+
         binding.apply {
             headerBoundForStation.visibility = View.GONE
             realtimeViewBoundForStation.visibility = View.GONE
