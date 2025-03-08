@@ -14,7 +14,7 @@ import app.kobuggi.hyuabot.databinding.ItemShuttleRealtimeBinding
 import app.kobuggi.hyuabot.ui.shuttle.via.ShuttleViaSheetDialog
 import java.time.LocalTime
 
-class ShuttleRealtimeByDestinationListAdapter(
+class ShuttleRealtimeByTimeListAdapter(
     private val context: Context,
     private val shuttleRealtimeViewModel: ShuttleRealtimeViewModel,
     private val lifecycleOwner: LifecycleOwner,
@@ -22,7 +22,7 @@ class ShuttleRealtimeByDestinationListAdapter(
     private val headerID: Int,
     private val childFragmentManager: FragmentManager,
     private var shuttleList: List<ShuttleRealtimePageQuery.Timetable>,
-) : RecyclerView.Adapter<ShuttleRealtimeByDestinationListAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ShuttleRealtimeByTimeListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleRealtimePageQuery.Timetable) {

@@ -31,7 +31,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        val shuttleCampusAdapter = ShuttleRealtimeListAdapter(
+        val shuttleCampusAdapter = ShuttleRealtimeByDestinationListAdapter(
             requireContext(),
             parentViewModel,
             viewLifecycleOwner,
@@ -40,7 +40,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             childFragmentManager,
             emptyList()
         )
-        val shuttleTerminalAdapter = ShuttleRealtimeListAdapter(
+        val shuttleTerminalAdapter = ShuttleRealtimeByDestinationListAdapter(
             requireContext(),
             parentViewModel,
             viewLifecycleOwner,
@@ -49,12 +49,21 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             childFragmentManager,
             emptyList()
         )
-        val shuttleJungangStationAdapter = ShuttleRealtimeListAdapter(
+        val shuttleJungangStationAdapter = ShuttleRealtimeByDestinationListAdapter(
             requireContext(),
             parentViewModel,
             viewLifecycleOwner,
             R.string.shuttle_tab_station,
             R.string.shuttle_header_bound_for_jungang_station,
+            childFragmentManager,
+            emptyList()
+        )
+        val shuttleAdapter = ShuttleRealtimeByTimeListAdapter(
+            requireContext(),
+            parentViewModel,
+            viewLifecycleOwner,
+            R.string.shuttle_tab_station,
+            R.string.shuttle_header_bound_for_dormitory,
             childFragmentManager,
             emptyList()
         )
@@ -99,7 +108,12 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(it)
                 }
             }
-
+            realtimeView.apply {
+                adapter = shuttleAdapter
+                layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
+                addItemDecoration(decoration)
+            }
+            entireTimetable.setOnClickListener {  }
             swipeRefreshLayout.setOnRefreshListener {
                 parentViewModel.fetchData()
             }
@@ -123,10 +137,15 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             if (shuttleForCampus.isEmpty()) {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.VISIBLE
                 binding.realtimeViewBoundForDormitory.visibility = View.GONE
+                binding.noRealtimeData.visibility = View.VISIBLE
+                binding.realtimeView.visibility = View.GONE
             } else {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
                 binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
+                binding.noRealtimeData.visibility = View.GONE
+                binding.realtimeView.visibility = View.VISIBLE
                 shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(3, shuttleForCampus.size)))
+                shuttleAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)))
             }
 
             if (shuttleForTerminal.isEmpty()) {
