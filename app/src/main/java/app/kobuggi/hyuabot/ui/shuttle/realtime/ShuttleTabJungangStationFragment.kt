@@ -76,7 +76,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
                 binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
-                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(10, shuttleForCampus.size)))
+                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)))
             }
         }
 
