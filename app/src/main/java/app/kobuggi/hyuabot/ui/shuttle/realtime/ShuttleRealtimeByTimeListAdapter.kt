@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.FragmentManager
@@ -13,6 +14,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.ItemShuttleRealtimeBinding
 import app.kobuggi.hyuabot.ui.shuttle.via.ShuttleViaSheetDialog
+import com.google.android.material.card.MaterialCardView
 import java.time.LocalTime
 
 class ShuttleRealtimeByTimeListAdapter(
@@ -26,7 +28,7 @@ class ShuttleRealtimeByTimeListAdapter(
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleRealtimePageQuery.Timetable) {
-            setStopText(context, binding.shuttleTypeText, stopID, item)
+            setStopText(context, binding.shuttleTypeText, binding.warningView, stopID, item)
             val now = LocalTime.now()
             shuttleRealtimeViewModel.showDepartureTime.observe(lifecycleOwner) {
                 val time = LocalTime.parse(item.time)
@@ -87,7 +89,8 @@ class ShuttleRealtimeByTimeListAdapter(
         }
     }
 
-    private fun setStopText(context: Context, textView: TextView, stopID: Int, item: ShuttleRealtimePageQuery.Timetable) {
+    private fun setStopText(context: Context, textView: TextView, warningView: MaterialCardView, stopID: Int, item: ShuttleRealtimePageQuery.Timetable) {
+        warningView.visibility = View.GONE
         when (stopID) {
             R.string.shuttle_tab_dormitory_out, R.string.shuttle_tab_shuttlecock_out -> {
                 when(item.tag) {
@@ -98,6 +101,7 @@ class ShuttleRealtimeByTimeListAdapter(
                         }
                     }
                     "DY" -> {
+                        warningView.visibility = View.VISIBLE
                         textView.apply {
                             text = context.getString(R.string.shuttle_type_school_terminal)
                             setTextColor(context.getColor(R.color.hanyang_orange))

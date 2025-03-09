@@ -271,4 +271,5 @@
     <string name="shuttle_type_school_jungang_station">한대앞/중앙역</string>
     <string name="shuttle_type_school_terminal">예술인</string>
     <string name="shuttle_type_school_station">한대앞</string>
+    <string name="shuttle_warning_text">탑승 위치 확인</string>
 </resources>
