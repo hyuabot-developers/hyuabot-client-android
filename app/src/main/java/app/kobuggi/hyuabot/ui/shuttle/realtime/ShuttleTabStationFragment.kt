@@ -114,9 +114,6 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
             }
             entireTimetable.setOnClickListener {  }
-            swipeRefreshLayout.setOnRefreshListener {
-                parentViewModel.fetchData()
-            }
             stopInfo.setOnClickListener {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
                     R.string.shuttle_tab_station
@@ -124,19 +121,14 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(it)
                 }
             }
+            stopInfo2.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
+                    R.string.shuttle_tab_station
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
+            }
         }
-        parentViewModel.isLoading.observe(viewLifecycleOwner) {
-            if (!it) binding.swipeRefreshLayout.isRefreshing = false
-        }
-        parentViewModel.result.observe(viewLifecycleOwner) { result ->
-            val now = LocalTime.now()
-            val shuttleForCampus = result.filter { it.stop == "station" && it.time > now.format(shuttleTimeFormatter) }
-            val shuttleForTerminal = shuttleForCampus.filter { it.tag == "C" }
-            val shuttleForJungangStation = shuttleForCampus.filter { it.tag == "DJ" }
-
-
-        }
-
         parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
             val now = LocalTime.now()
             val shuttle = source.result.filter { it.stop == "station" && it.time >= now.format(shuttleTimeFormatter) }

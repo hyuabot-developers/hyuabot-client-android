@@ -115,9 +115,6 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
             }
             entireTimetable.setOnClickListener {  }
-            swipeRefreshLayout.setOnRefreshListener {
-                parentViewModel.fetchData()
-            }
             stopInfo.setOnClickListener {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
                     R.string.shuttle_tab_dormitory_out
@@ -125,9 +122,13 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(it)
                 }
             }
-        }
-        parentViewModel.isLoading.observe(viewLifecycleOwner) {
-            if (!it) binding.swipeRefreshLayout.isRefreshing = false
+            stopInfo2.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
+                    R.string.shuttle_tab_dormitory_out
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
+            }
         }
         parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
             val now = LocalTime.now()

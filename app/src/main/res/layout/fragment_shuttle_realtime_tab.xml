@@ -8,225 +8,209 @@
         android:id="@+id/bottomSheetNavHost"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/shuttle_destination_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/swipe_refresh_layout" >
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/scroll_view"
+        android:paddingBottom="75dp">
+        <TextView
+            android:id="@+id/header_bound_for_station"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:scrollbars="none"
-            android:overScrollMode="never"
-            android:fillViewport="true" >
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="75dp">
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/shuttle_destination_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
-                <TextView
-                    android:id="@+id/header_bound_for_station"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_station"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toTopOf="parent" />
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/realtime_view_bound_for_station"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_bound_for_station" />
-                <TextView
-                    android:id="@+id/no_realtime_data_bound_for_station"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/shuttle_no_realtime_data"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_station" />
-                <Button
-                    android:id="@+id/entire_timetable_bound_for_station"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_station" />
-                <TextView
-                    android:id="@+id/header_bound_for_dormitory"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_dormitory"
-                    android:textFontWeight="700"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_station" />
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/realtime_view_bound_for_dormitory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_bound_for_dormitory" />
-                <TextView
-                    android:id="@+id/no_realtime_data_bound_for_dormitory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/shuttle_no_realtime_data"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_dormitory" />
-                <Button
-                    android:id="@+id/entire_timetable_bound_for_dormitory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_dormitory" />
-                <TextView
-                    android:id="@+id/header_bound_for_terminal"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_terminal"
-                    android:textFontWeight="700"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_dormitory" />
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/realtime_view_bound_for_terminal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_bound_for_terminal" />
-                <TextView
-                    android:id="@+id/no_realtime_data_bound_for_terminal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/shuttle_no_realtime_data"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_terminal" />
-                <Button
-                    android:id="@+id/entire_timetable_bound_for_terminal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_terminal" />
-                <TextView
-                    android:id="@+id/header_bound_for_jungang_station"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_jungang_station"
-                    android:textFontWeight="700"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_terminal" />
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/realtime_view_bound_for_jungang_station"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_bound_for_jungang_station" />
-                <TextView
-                    android:id="@+id/no_realtime_data_bound_for_jungang_station"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/shuttle_no_realtime_data"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_jungang_station" />
-                <Button
-                    android:id="@+id/entire_timetable_bound_for_jungang_station"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_jungang_station" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/shuttle_time_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/shuttle_destination_layout"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/realtime_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toTopOf="parent"/>
-                <TextView
-                    android:id="@+id/no_realtime_data"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/shuttle_no_realtime_data"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    app:layout_constraintTop_toBottomOf="@id/realtime_view" />
-                <Button
-                    android:id="@+id/entire_timetable"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_entire_timetable"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/no_realtime_data" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-                <Button
-                    android:id="@+id/stop_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/shuttle_footer_stop_info"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    app:layout_constraintTop_toBottomOf="@id/shuttle_time_layout" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="@string/shuttle_header_bound_for_station"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            android:background="@color/hanyang_blue"
+            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/realtime_view_bound_for_station"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/header_bound_for_station" />
+        <TextView
+            android:id="@+id/no_realtime_data_bound_for_station"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:gravity="center"
+            android:text="@string/shuttle_no_realtime_data"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_station" />
+        <Button
+            android:id="@+id/entire_timetable_bound_for_station"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shuttle_footer_entire_timetable"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            style="@style/Widget.Material3.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_station" />
+        <TextView
+            android:id="@+id/header_bound_for_dormitory"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="@string/shuttle_header_bound_for_dormitory"
+            android:textFontWeight="700"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:background="@color/hanyang_blue"
+            app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_station" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/realtime_view_bound_for_dormitory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/header_bound_for_dormitory" />
+        <TextView
+            android:id="@+id/no_realtime_data_bound_for_dormitory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:gravity="center"
+            android:text="@string/shuttle_no_realtime_data"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_dormitory" />
+        <Button
+            android:id="@+id/entire_timetable_bound_for_dormitory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shuttle_footer_entire_timetable"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            style="@style/Widget.Material3.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_dormitory" />
+        <TextView
+            android:id="@+id/header_bound_for_terminal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="@string/shuttle_header_bound_for_terminal"
+            android:textFontWeight="700"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:background="@color/hanyang_blue"
+            app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_dormitory" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/realtime_view_bound_for_terminal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/header_bound_for_terminal" />
+        <TextView
+            android:id="@+id/no_realtime_data_bound_for_terminal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:gravity="center"
+            android:text="@string/shuttle_no_realtime_data"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_terminal" />
+        <Button
+            android:id="@+id/entire_timetable_bound_for_terminal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shuttle_footer_entire_timetable"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            style="@style/Widget.Material3.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_terminal" />
+        <TextView
+            android:id="@+id/header_bound_for_jungang_station"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="@string/shuttle_header_bound_for_jungang_station"
+            android:textFontWeight="700"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:background="@color/hanyang_blue"
+            app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_terminal" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/realtime_view_bound_for_jungang_station"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/header_bound_for_jungang_station" />
+        <TextView
+            android:id="@+id/no_realtime_data_bound_for_jungang_station"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:gravity="center"
+            android:text="@string/shuttle_no_realtime_data"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_jungang_station" />
+        <Button
+            android:id="@+id/entire_timetable_bound_for_jungang_station"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shuttle_footer_entire_timetable"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            style="@style/Widget.Material3.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_jungang_station" />
+        <Button
+            android:id="@+id/stop_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shuttle_footer_stop_info"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            style="@style/Widget.Material3.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_jungang_station" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/shuttle_time_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/realtime_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/no_realtime_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:gravity="center"
+            android:text="@string/shuttle_no_realtime_data"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            app:layout_constraintTop_toBottomOf="@id/realtime_view" />
+        <Button
+            android:id="@+id/entire_timetable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shuttle_footer_entire_timetable"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            style="@style/Widget.Material3.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/no_realtime_data" />
+        <Button
+            android:id="@+id/stop_info_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shuttle_footer_stop_info"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            style="@style/Widget.Material3.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/entire_timetable" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
