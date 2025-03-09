@@ -63,7 +63,6 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             parentViewModel,
             viewLifecycleOwner,
             R.string.shuttle_tab_station,
-            R.string.shuttle_header_bound_for_dormitory,
             childFragmentManager,
             emptyList()
         )

@@ -255,4 +255,11 @@
     <string name="next_day">Next</string>
     <string name="show_by_destination">By Destination/Time</string>
     <string name="show_departure_time">Departure Time</string>
+    <string name="shuttle_type_station_circular_shuttlecock">Terminal/Shuttlecoke</string>
+    <string name="shuttle_type_station_circular_dormitory">Terminal/Dormitory</string>
+    <string name="shuttle_type_station_jungang_station">Jungang Stn./Dormitory</string>
+    <string name="shuttle_type_school_circular">Station/Terminal</string>
+    <string name="shuttle_type_school_jungang_station">Station/Jungang Stn.</string>
+    <string name="shuttle_type_school_terminal">Terminal</string>
+    <string name="shuttle_type_school_station">Station</string>
 </resources>
