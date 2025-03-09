@@ -128,40 +128,17 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
-        parentViewModel.result.observe(viewLifecycleOwner) { result ->
+
+        parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
             val now = LocalTime.now()
-            val shuttle = result.filter { it.stop == "shuttlecock_o" && it.time > now.format(shuttleTimeFormatter) }
+            val shuttle = source.result.filter { it.stop == "shuttlecock_o" && it.time >= now.format(shuttleTimeFormatter) }
             val shuttleForStation = shuttle.filter { it.tag == "DH" || it.tag == "DJ" || it.tag == "C" }
             val shuttleForTerminal = shuttle.filter { it.tag == "DY" || it.tag == "C" }
             val shuttleForJungangStation = shuttle.filter { it.tag == "DJ" }
-
-            if (shuttleForStation.isEmpty()) {
-                binding.noRealtimeDataBoundForStation.visibility = View.VISIBLE
-                binding.realtimeViewBoundForStation.visibility = View.GONE
-            } else {
-                binding.noRealtimeDataBoundForStation.visibility = View.GONE
-                binding.realtimeViewBoundForStation.visibility = View.VISIBLE
-                shuttleStationAdapter.updateData(shuttleForStation.subList(0, min(3, shuttleForStation.size)))
-            }
-
-            if (shuttleForTerminal.isEmpty()) {
-                binding.noRealtimeDataBoundForTerminal.visibility = View.VISIBLE
-                binding.realtimeViewBoundForTerminal.visibility = View.GONE
-            } else {
-                binding.noRealtimeDataBoundForTerminal.visibility = View.GONE
-                binding.realtimeViewBoundForTerminal.visibility = View.VISIBLE
-                shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(3, shuttleForTerminal.size)))
-            }
-
-            if (shuttleForJungangStation.isEmpty()) {
-                binding.noRealtimeDataBoundForJungangStation.visibility = View.VISIBLE
-                binding.realtimeViewBoundForJungangStation.visibility = View.GONE
-            } else {
-                binding.noRealtimeDataBoundForJungangStation.visibility = View.GONE
-                binding.realtimeViewBoundForJungangStation.visibility = View.VISIBLE
-                shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)))
-            }
-
+            // Hide the layout by showing the destination conf
+            binding.shuttleDestinationLayout.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
+            binding.shuttleTimeLayout.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
+            // Update the recycler view
             if (shuttle.isEmpty()) {
                 binding.noRealtimeData.visibility = View.VISIBLE
                 binding.realtimeView.visibility = View.GONE
@@ -170,11 +147,30 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 binding.realtimeView.visibility = View.VISIBLE
                 shuttleAdapter.updateData(shuttle.subList(0, min(8, shuttle.size)))
             }
-        }
-
-        parentViewModel.showByDestination.observe(viewLifecycleOwner) {
-            binding.shuttleRealtimeDestinationLayout.visibility = if (it) View.VISIBLE else View.GONE
-            binding.shuttleRealtimeTimeLayout.visibility = if (it) View.GONE else View.VISIBLE
+            if (shuttleForStation.isEmpty()) {
+                binding.noRealtimeDataBoundForStation.visibility = View.VISIBLE
+                binding.realtimeViewBoundForStation.visibility = View.GONE
+            } else {
+                binding.noRealtimeDataBoundForStation.visibility = View.GONE
+                binding.realtimeViewBoundForStation.visibility = View.VISIBLE
+                shuttleStationAdapter.updateData(shuttleForStation.subList(0, min(3, shuttleForStation.size)))
+            }
+            if (shuttleForTerminal.isEmpty()) {
+                binding.noRealtimeDataBoundForTerminal.visibility = View.VISIBLE
+                binding.realtimeViewBoundForTerminal.visibility = View.GONE
+            } else {
+                binding.noRealtimeDataBoundForTerminal.visibility = View.GONE
+                binding.realtimeViewBoundForTerminal.visibility = View.VISIBLE
+                shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(3, shuttleForTerminal.size)))
+            }
+            if (shuttleForJungangStation.isEmpty()) {
+                binding.noRealtimeDataBoundForJungangStation.visibility = View.VISIBLE
+                binding.realtimeViewBoundForJungangStation.visibility = View.GONE
+            } else {
+                binding.noRealtimeDataBoundForJungangStation.visibility = View.GONE
+                binding.realtimeViewBoundForJungangStation.visibility = View.VISIBLE
+                shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)))
+            }
         }
 
         binding.apply {

@@ -85,10 +85,14 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        parentViewModel.result.observe(viewLifecycleOwner) { result ->
+        parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
             val now = LocalTime.now()
-            val shuttleForCampus = result.filter { it.stop == "terminal" && it.time > now.format(shuttleTimeFormatter) }
-            if (shuttleForCampus.isEmpty()) {
+            val shuttle = source.result.filter { it.stop == "terminal" && it.time > now.format(shuttleTimeFormatter) }
+            // Hide the layout by showing the destination conf
+            binding.shuttleDestinationLayout.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
+            binding.shuttleTimeLayout.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
+            // Update the recycler view
+            if (shuttle.isEmpty()) {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.VISIBLE
                 binding.realtimeViewBoundForDormitory.visibility = View.GONE
                 binding.noRealtimeData.visibility = View.VISIBLE
@@ -98,14 +102,9 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
                 binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
                 binding.noRealtimeData.visibility = View.GONE
                 binding.realtimeView.visibility = View.VISIBLE
-                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)))
-                shuttleAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)))
+                shuttleCampusAdapter.updateData(shuttle.subList(0, min(8, shuttle.size)))
+                shuttleAdapter.updateData(shuttle.subList(0, min(8, shuttle.size)))
             }
-        }
-
-        parentViewModel.showByDestination.observe(viewLifecycleOwner) {
-            binding.shuttleRealtimeDestinationLayout.visibility = if (it) View.VISIBLE else View.GONE
-            binding.shuttleRealtimeTimeLayout.visibility = if (it) View.GONE else View.VISIBLE
         }
 
         binding.apply {

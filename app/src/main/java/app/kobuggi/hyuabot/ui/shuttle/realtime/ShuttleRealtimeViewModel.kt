@@ -2,6 +2,8 @@ package app.kobuggi.hyuabot.ui.shuttle.realtime
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
@@ -11,6 +13,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -37,6 +41,9 @@ class ShuttleRealtimeViewModel @Inject constructor(
     val queryError get() = _queryError
     val showDepartureTime get() = _showDepartureTime
     val showByDestination get() = _showByDestination
+    val latestShuttleResult = combine(result.asFlow(), showByDestination.asFlow()) { result, showByDestination ->
+        ShuttleTabData(result, showByDestination)
+    }.onStart { emit(ShuttleTabData(listOf(), false)) }.asLiveData()
 
 
     fun fetchData() {
