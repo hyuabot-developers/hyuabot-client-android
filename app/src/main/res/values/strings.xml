@@ -28,7 +28,7 @@
     <!-- 셔틀버스 노선 타입 -->
     <string name="shuttle_type_direct">직행</string>
     <string name="shuttle_type_circular">순환</string>
-    <string name="shuttle_type_jungang">중앙역(경유)</string>
+    <string name="shuttle_type_jungang">중앙역</string>
     <string name="shuttle_type_shuttlecock">셔틀콕</string>
     <string name="shuttle_type_dormitory">기숙사</string>
     <string name="shuttle_type_shuttlecock_finishing">셔틀콕 종착</string>
@@ -264,12 +264,12 @@
     <string name="next_day">다음</string>
     <string name="show_by_destination">목적지/시간 순서</string>
     <string name="show_departure_time">출발 시간/남은 시간</string>
-    <string name="shuttle_type_station_circular_shuttlecock">예술인/셔틀콕</string>
-    <string name="shuttle_type_station_circular_dormitory">예술인/기숙사</string>
-    <string name="shuttle_type_station_jungang_station">중앙역/기숙사</string>
-    <string name="shuttle_type_school_circular">한대앞/예술인</string>
-    <string name="shuttle_type_school_jungang_station">한대앞/중앙역</string>
-    <string name="shuttle_type_school_terminal">예술인</string>
-    <string name="shuttle_type_school_station">한대앞</string>
+    <string name="shuttle_type_station_circular_shuttlecock">순환</string>
+    <string name="shuttle_type_station_circular_dormitory">순환</string>
+    <string name="shuttle_type_station_jungang_station">중앙역</string>
+    <string name="shuttle_type_school_circular">순환</string>
+    <string name="shuttle_type_school_jungang_station">중앙역</string>
+    <string name="shuttle_type_school_terminal">예술인 직행</string>
+    <string name="shuttle_type_school_station">한대앞 직행</string>
     <string name="shuttle_warning_text">탑승 위치 확인</string>
 </resources>

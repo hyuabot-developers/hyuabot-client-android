@@ -112,7 +112,13 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
             }
-            entireTimetable.setOnClickListener {  }
+            entireTimetable.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_shuttlecock_out,
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
+            }
             stopInfo.setOnClickListener {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
                     R.string.shuttle_tab_shuttlecock_out

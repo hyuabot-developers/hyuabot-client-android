@@ -3,6 +3,7 @@ package app.kobuggi.hyuabot.ui.shuttle.timetable
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
@@ -25,48 +26,80 @@ class ShuttleTimetableListAdapter(
         fun bind(item: ShuttleTimetablePageQuery.Timetable) {
             val currentTime = LocalTime.now()
             val time = LocalTime.parse(item.time, datetimeFormatter)
-            if ((stopID == R.string.shuttle_tab_dormitory_out || stopID == R.string.shuttle_tab_shuttlecock_out)) {
-                if (headerID == R.string.shuttle_header_bound_for_station || headerID == R.string.shuttle_header_bound_for_jungang_station) {
-                    when (item.tag) {
-                        "DH" -> {
+            if (headerID == 1) {
+                setStopText(binding.shuttleTypeText, stopID, item)
+            } else {
+                if ((stopID == R.string.shuttle_tab_dormitory_out || stopID == R.string.shuttle_tab_shuttlecock_out)) {
+                    if (headerID == R.string.shuttle_header_bound_for_station || headerID == R.string.shuttle_header_bound_for_jungang_station) {
+                        when (item.tag) {
+                            "DH" -> {
+                                binding.shuttleTypeText.apply {
+                                    visibility = ViewGroup.VISIBLE
+                                    text = context.getString(R.string.shuttle_type_direct)
+                                    setTextColor(context.getColor(R.color.red_bus))
+                                }
+                            }
+
+                            "C" -> {
+                                binding.shuttleTypeText.apply {
+                                    visibility = ViewGroup.VISIBLE
+                                    text = context.getString(R.string.shuttle_type_circular)
+                                    setTextColor(context.getColor(R.color.hanyang_blue))
+                                }
+                            }
+
+                            "DJ" -> {
+                                binding.shuttleTypeText.apply {
+                                    visibility = ViewGroup.VISIBLE
+                                    text = context.getString(R.string.shuttle_type_jungang)
+                                    setTextColor(context.getColor(R.color.hanyang_green))
+                                }
+                            }
+                        }
+                    } else if (headerID == R.string.shuttle_header_bound_for_terminal) {
+                        if (item.tag == "DY") {
                             binding.shuttleTypeText.apply {
                                 visibility = ViewGroup.VISIBLE
                                 text = context.getString(R.string.shuttle_type_direct)
                                 setTextColor(context.getColor(R.color.red_bus))
                             }
-                        }
-                        "C" -> {
+                        } else if (item.tag == "C") {
                             binding.shuttleTypeText.apply {
                                 visibility = ViewGroup.VISIBLE
                                 text = context.getString(R.string.shuttle_type_circular)
                                 setTextColor(context.getColor(R.color.hanyang_blue))
                             }
                         }
-                        "DJ" -> {
+                    }
+                } else if (stopID == R.string.shuttle_tab_station) {
+                    if (headerID == R.string.shuttle_header_bound_for_dormitory) {
+                        if (item.route.endsWith("S")) {
                             binding.shuttleTypeText.apply {
                                 visibility = ViewGroup.VISIBLE
-                                text = context.getString(R.string.shuttle_type_jungang)
-                                setTextColor(context.getColor(R.color.hanyang_green))
+                                text = context.getString(R.string.shuttle_type_shuttlecock)
+                                setTextColor(context.getColor(R.color.red_bus))
+                            }
+                        } else if (item.route.endsWith("D")) {
+                            binding.shuttleTypeText.apply {
+                                visibility = ViewGroup.VISIBLE
+                                text = context.getString(R.string.shuttle_type_dormitory)
+                                setTextColor(context.getColor(R.color.hanyang_blue))
                             }
                         }
-                    }
-                } else if (headerID == R.string.shuttle_header_bound_for_terminal) {
-                    if (item.tag == "DY") {
-                        binding.shuttleTypeText.apply {
-                            visibility = ViewGroup.VISIBLE
-                            text = context.getString(R.string.shuttle_type_direct)
-                            setTextColor(context.getColor(R.color.red_bus))
-                        }
-                    } else if (item.tag == "C") {
+                    } else if (headerID == R.string.shuttle_header_bound_for_terminal) {
                         binding.shuttleTypeText.apply {
                             visibility = ViewGroup.VISIBLE
                             text = context.getString(R.string.shuttle_type_circular)
                             setTextColor(context.getColor(R.color.hanyang_blue))
                         }
+                    } else if (headerID == R.string.shuttle_header_bound_for_jungang_station) {
+                        binding.shuttleTypeText.apply {
+                            visibility = ViewGroup.VISIBLE
+                            text = context.getString(R.string.shuttle_type_jungang)
+                            setTextColor(context.getColor(R.color.hanyang_green))
+                        }
                     }
-                }
-            } else if (stopID == R.string.shuttle_tab_station) {
-                if (headerID == R.string.shuttle_header_bound_for_dormitory) {
+                } else if (stopID == R.string.shuttle_tab_terminal || stopID == R.string.shuttle_tab_jungang_station) {
                     if (item.route.endsWith("S")) {
                         binding.shuttleTypeText.apply {
                             visibility = ViewGroup.VISIBLE
@@ -80,45 +113,19 @@ class ShuttleTimetableListAdapter(
                             setTextColor(context.getColor(R.color.hanyang_blue))
                         }
                     }
-                } else if (headerID == R.string.shuttle_header_bound_for_terminal) {
-                    binding.shuttleTypeText.apply {
-                        visibility = ViewGroup.VISIBLE
-                        text = context.getString(R.string.shuttle_type_circular)
-                        setTextColor(context.getColor(R.color.hanyang_blue))
-                    }
-                } else if (headerID == R.string.shuttle_header_bound_for_jungang_station) {
-                    binding.shuttleTypeText.apply {
-                        visibility = ViewGroup.VISIBLE
-                        text = context.getString(R.string.shuttle_type_jungang)
-                        setTextColor(context.getColor(R.color.hanyang_green))
-                    }
-                }
-            } else if (stopID == R.string.shuttle_tab_terminal || stopID == R.string.shuttle_tab_jungang_station) {
-                if (item.route.endsWith("S")) {
-                    binding.shuttleTypeText.apply {
-                        visibility = ViewGroup.VISIBLE
-                        text = context.getString(R.string.shuttle_type_shuttlecock)
-                        setTextColor(context.getColor(R.color.red_bus))
-                    }
-                } else if (item.route.endsWith("D")) {
-                    binding.shuttleTypeText.apply {
-                        visibility = ViewGroup.VISIBLE
-                        text = context.getString(R.string.shuttle_type_dormitory)
-                        setTextColor(context.getColor(R.color.hanyang_blue))
-                    }
-                }
-            } else if (stopID == R.string.shuttle_tab_shuttlecock_in) {
-                if (item.route.endsWith("S")) {
-                    binding.shuttleTypeText.apply {
-                        visibility = ViewGroup.VISIBLE
-                        text = context.getString(R.string.shuttle_type_shuttlecock_finishing)
-                        setTextColor(context.getColor(R.color.red_bus))
-                    }
-                } else if (item.route.endsWith("D")) {
-                    binding.shuttleTypeText.apply {
-                        visibility = ViewGroup.VISIBLE
-                        text = context.getString(R.string.shuttle_type_dormitory)
-                        setTextColor(context.getColor(R.color.hanyang_blue))
+                } else if (stopID == R.string.shuttle_tab_shuttlecock_in) {
+                    if (item.route.endsWith("S")) {
+                        binding.shuttleTypeText.apply {
+                            visibility = ViewGroup.VISIBLE
+                            text = context.getString(R.string.shuttle_type_shuttlecock_finishing)
+                            setTextColor(context.getColor(R.color.red_bus))
+                        }
+                    } else if (item.route.endsWith("D")) {
+                        binding.shuttleTypeText.apply {
+                            visibility = ViewGroup.VISIBLE
+                            text = context.getString(R.string.shuttle_type_dormitory)
+                            setTextColor(context.getColor(R.color.hanyang_blue))
+                        }
                     }
                 }
             }
@@ -170,6 +177,107 @@ class ShuttleTimetableListAdapter(
         } else {
             shuttleList = newData
             notifyItemRangeChanged(0, shuttleList.size)
+        }
+    }
+
+    private fun setStopText(textView: TextView, stopID: Int, item: ShuttleTimetablePageQuery.Timetable) {
+        when (stopID) {
+            R.string.shuttle_tab_dormitory_out, R.string.shuttle_tab_shuttlecock_out -> {
+                when(item.tag) {
+                    "DH" -> {
+                        textView.apply {
+                            text = context.getString(R.string.shuttle_type_school_station)
+                            setTextColor(context.getColor(R.color.red_bus))
+                        }
+                    }
+                    "DY" -> {
+                        textView.apply {
+                            text = context.getString(R.string.shuttle_type_school_terminal)
+                            setTextColor(context.getColor(R.color.hanyang_orange))
+                        }
+                    }
+                    "DJ" -> {
+                        textView.apply {
+                            text = context.getString(R.string.shuttle_type_school_jungang_station)
+                            setTextColor(context.getColor(R.color.hanyang_green))
+                        }
+                    }
+                    "C" -> {
+                        textView.apply {
+                            text = context.getString(R.string.shuttle_type_school_circular)
+                            setTextColor(context.getColor(R.color.hanyang_blue))
+                        }
+                    }
+                }
+            }
+            R.string.shuttle_tab_station -> {
+                when (item.tag) {
+                    "DH" -> {
+                        if (item.route.endsWith("S")) {
+                            textView.apply {
+                                text = context.getString(R.string.shuttle_type_shuttlecock)
+                                setTextColor(context.getColor(R.color.red_bus))
+                            }
+                        } else if (item.route.endsWith("D")) {
+                            textView.apply {
+                                text = context.getString(R.string.shuttle_type_dormitory)
+                                setTextColor(context.getColor(R.color.red_bus))
+                            }
+                        }
+                    }
+                    "DJ" -> {
+                        textView.apply {
+                            text = context.getString(R.string.shuttle_type_station_jungang_station)
+                            setTextColor(context.getColor(R.color.hanyang_green))
+                        }
+                    }
+                    "C" -> {
+                        if (item.route.endsWith("S")) {
+                            textView.apply {
+                                text = context.getString(R.string.shuttle_type_station_circular_shuttlecock)
+                                setTextColor(context.getColor(R.color.hanyang_blue))
+                            }
+                        } else if (item.route.endsWith("D")) {
+                            textView.apply {
+                                text = context.getString(R.string.shuttle_type_station_circular_dormitory)
+                                setTextColor(context.getColor(R.color.hanyang_blue))
+                            }
+                        }
+                    }
+                }
+            }
+            R.string.shuttle_tab_terminal -> {
+                if (item.route.endsWith("S")) {
+                    textView.apply {
+                        text = context.getString(R.string.shuttle_type_shuttlecock)
+                        setTextColor(context.getColor(R.color.hanyang_blue))
+                    }
+                } else if (item.route.endsWith("D")) {
+                    textView.apply {
+                        text = context.getString(R.string.shuttle_type_dormitory)
+                        setTextColor(context.getColor(R.color.hanyang_blue))
+                    }
+                }
+            }
+            R.string.shuttle_tab_jungang_station -> {
+                textView.apply {
+                    text = context.getString(R.string.shuttle_type_dormitory)
+                    setTextColor(context.getColor(R.color.hanyang_blue))
+                }
+            }
+            R.string.shuttle_tab_shuttlecock_in -> {
+                if (item.route.endsWith("S")) {
+                    textView.apply {
+                        text = context.getString(R.string.shuttle_type_shuttlecock_finishing)
+                        setTextColor(context.getColor(R.color.red_bus))
+                    }
+                } else if (item.route.endsWith("D")) {
+                    textView.apply {
+                        text = context.getString(R.string.shuttle_type_dormitory)
+                        setTextColor(context.getColor(R.color.hanyang_blue))
+                    }
+                }
+            }
         }
     }
 }

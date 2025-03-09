@@ -68,7 +68,13 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
             }
-            entireTimetable.setOnClickListener {  }
+            entireTimetable.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_jungang_station,
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
+            }
             stopInfo.setOnClickListener {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
                     R.string.shuttle_tab_jungang_station
