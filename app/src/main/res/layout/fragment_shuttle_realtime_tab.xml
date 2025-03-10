@@ -195,14 +195,41 @@
             android:textFontWeight="700"
             app:layout_constraintTop_toBottomOf="@id/realtime_view" />
         <Button
-            android:id="@+id/entire_timetable"
+            android:id="@+id/entire_timetable_station"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/shuttle_footer_entire_timetable"
+            android:text="@string/shuttle_footer_entire_timetable_station"
             android:textSize="18sp"
             android:textFontWeight="700"
             style="@style/Widget.Material3.Button.TextButton"
             app:layout_constraintTop_toBottomOf="@id/no_realtime_data" />
+        <Button
+            android:id="@+id/entire_timetable_dormitory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shuttle_footer_entire_timetable_dormitory"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            style="@style/Widget.Material3.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/entire_timetable_station" />
+        <Button
+            android:id="@+id/entire_timetable_terminal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shuttle_footer_entire_timetable_terminal"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            style="@style/Widget.Material3.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/entire_timetable_dormitory" />
+        <Button
+            android:id="@+id/entire_timetable_jungang_station"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shuttle_footer_entire_timetable_jungang_station"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            style="@style/Widget.Material3.Button.TextButton"
+            app:layout_constraintTop_toBottomOf="@id/entire_timetable_terminal" />
         <Button
             android:id="@+id/stop_info_2"
             android:layout_width="match_parent"
@@ -211,6 +238,6 @@
             android:textSize="18sp"
             android:textFontWeight="700"
             style="@style/Widget.Material3.Button.TextButton"
-            app:layout_constraintTop_toBottomOf="@id/entire_timetable" />
+            app:layout_constraintTop_toBottomOf="@id/entire_timetable_jungang_station" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

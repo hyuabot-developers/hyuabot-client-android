@@ -63,17 +63,18 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(it)
                 }
             }
+            entireTimetableDormitory.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_terminal,
+                    R.string.shuttle_header_bound_for_dormitory
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
+            }
             realtimeView.apply {
                 adapter = shuttleAdapter
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
-            }
-            entireTimetable.setOnClickListener {
-                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
-                    R.string.shuttle_tab_terminal,
-                ).also {
-                    findNavController().safeNavigate(it)
-                }
             }
             stopInfo.setOnClickListener {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
@@ -117,14 +118,17 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
             realtimeViewBoundForStation.visibility = View.GONE
             noRealtimeDataBoundForStation.visibility = View.GONE
             entireTimetableBoundForStation.visibility = View.GONE
+            entireTimetableStation.visibility = View.GONE
             headerBoundForTerminal.visibility = View.GONE
             realtimeViewBoundForTerminal.visibility = View.GONE
             noRealtimeDataBoundForTerminal.visibility = View.GONE
             entireTimetableBoundForTerminal.visibility = View.GONE
+            entireTimetableTerminal.visibility = View.GONE
             headerBoundForJungangStation.visibility = View.GONE
             realtimeViewBoundForJungangStation.visibility = View.GONE
             noRealtimeDataBoundForJungangStation.visibility = View.GONE
             entireTimetableBoundForJungangStation.visibility = View.GONE
+            entireTimetableJungangStation.visibility = View.GONE
         }
         return binding.root
     }
