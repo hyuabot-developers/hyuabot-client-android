@@ -14,6 +14,8 @@ import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeTabBinding
 import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -21,6 +23,7 @@ import kotlin.math.min
 class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: ShuttleRealtimeViewModel by viewModels({ requireParentFragment() })
+    private val shuttleTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,12 +31,20 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        val shuttleCampusAdapter = ShuttleRealtimeListAdapter(
+        val shuttleCampusAdapter = ShuttleRealtimeByDestinationListAdapter(
             requireContext(),
             parentViewModel,
             viewLifecycleOwner,
             R.string.shuttle_tab_jungang_station,
             R.string.shuttle_header_bound_for_dormitory,
+            childFragmentManager,
+            emptyList()
+        )
+        val shuttleAdapter = ShuttleRealtimeByTimeListAdapter(
+            requireContext(),
+            parentViewModel,
+            viewLifecycleOwner,
+            R.string.shuttle_tab_jungang_station,
             childFragmentManager,
             emptyList()
         )
@@ -52,9 +63,17 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(it)
                 }
             }
-
-            swipeRefreshLayout.setOnRefreshListener {
-                parentViewModel.fetchData()
+            realtimeView.apply {
+                adapter = shuttleAdapter
+                layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
+                addItemDecoration(decoration)
+            }
+            entireTimetable.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_jungang_station,
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
             }
             stopInfo.setOnClickListener {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
@@ -63,20 +82,33 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(it)
                 }
             }
+            stopInfo2.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
+                    R.string.shuttle_tab_jungang_station
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
+            }
         }
-        parentViewModel.isLoading.observe(viewLifecycleOwner) {
-            if (!it) binding.swipeRefreshLayout.isRefreshing = false
-        }
-
-        parentViewModel.result.observe(viewLifecycleOwner) { result ->
-            val shuttleForCampus = result.filter { it.stop == "jungang_stn" }
-            if (shuttleForCampus.isEmpty()) {
+        parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
+            val now = LocalTime.now()
+            val shuttle = source.result.filter { it.stop == "jungang_stn" && it.time > now.format(shuttleTimeFormatter) }
+            // Hide the layout by showing the destination conf
+            binding.shuttleDestinationLayout.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
+            binding.shuttleTimeLayout.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
+            // Update the recycler view
+            if (shuttle.isEmpty()) {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.VISIBLE
                 binding.realtimeViewBoundForDormitory.visibility = View.GONE
+                binding.noRealtimeData.visibility = View.VISIBLE
+                binding.realtimeView.visibility = View.GONE
             } else {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
                 binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
-                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(10, shuttleForCampus.size)))
+                binding.noRealtimeData.visibility = View.GONE
+                binding.realtimeView.visibility = View.VISIBLE
+                shuttleCampusAdapter.updateData(shuttle.subList(0, min(8, shuttle.size)))
+                shuttleAdapter.updateData(shuttle.subList(0, min(8, shuttle.size)))
             }
         }
 

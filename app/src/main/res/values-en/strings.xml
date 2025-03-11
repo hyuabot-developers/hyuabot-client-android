@@ -57,7 +57,7 @@
     <string name="shuttle_help_via_title">4. Checking Shuttle Bus Stops Along the Route</string>
     <string name="shuttle_help_via_content">Click on the information for the shuttle bus you wish to take! You can check the stops along the route of that specific bus.</string>
     <string name="shuttle_help_departure_title">5. Checking Shuttle Bus Departure Times</string>
-    <string name="shuttle_help_departure_content">Press and hold on the shuttle bus information you wish to view! This will show the departure times for that bus.</string>
+    <string name="shuttle_help_departure_content">Turn on switch above the shuttle bus information! This will show the departure times for that bus.</string>
     <!-- 셔틀버스 시간표 -->
     <string name="shuttle_timetable_tab_weekdays">Weekdays</string>
     <string name="shuttle_timetable_tab_weekends">Weekends</string>
@@ -245,4 +245,22 @@
     <string name="shuttle_via_title">Route of shuttle bus</string>
     <string name="bus_timetable_empty">No arrival information.</string>
     <string name="bus_stop_gwangmyeong_station">Gwangmyeong Stn.</string>
+    <string name="shuttle_via_format_6_stops">(→ %1$s → %2$s → %3$s → %4$s → %5$s → %6$s)</string>
+    <string name="shuttle_via_format_5_stops">(→ %1$s → %2$s → %3$s → %4$s → %5$s)</string>
+    <string name="shuttle_via_format_4_stops">(→ %1$s → %2$s → %3$s → %4$s)</string>
+    <string name="shuttle_via_format_3_stops">(→ %1$s → %2$s → %3$s)</string>
+    <string name="shuttle_via_format_2_stops">(→ %1$s → %2$s)</string>
+    <string name="shuttle_via_format_1_stop">(→ %1$s)</string>
+    <string name="previous_day">Prev</string>
+    <string name="next_day">Next</string>
+    <string name="show_by_destination">By Destination/Time</string>
+    <string name="show_departure_time">Departure Time</string>
+    <string name="shuttle_type_station_circular_shuttlecock">Terminal/Shuttlecoke</string>
+    <string name="shuttle_type_station_circular_dormitory">Terminal/Dormitory</string>
+    <string name="shuttle_type_station_jungang_station">Jungang Stn./Dormitory</string>
+    <string name="shuttle_type_school_circular">Station/Terminal</string>
+    <string name="shuttle_type_school_jungang_station">Station/Jungang Stn.</string>
+    <string name="shuttle_type_school_terminal">Terminal</string>
+    <string name="shuttle_type_school_station">Station</string>
+    <string name="shuttle_warning_text">Check Destination</string>
 </resources>

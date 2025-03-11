@@ -103,4 +103,12 @@
     <style name="StatusBarStyle" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="backgroundColor">@color/hanyang_blue</item>
     </style>
+    <style name="Widget.App.Switch.Shuttle" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Switch</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Switch" parent="">
+        <item name="colorPrimary">@android:color/white</item>
+        <item name="colorOnPrimary">@color/hanyang_blue</item>
+    </style>
 </resources>

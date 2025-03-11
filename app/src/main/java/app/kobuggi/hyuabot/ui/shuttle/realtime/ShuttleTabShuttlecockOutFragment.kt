@@ -14,6 +14,8 @@ import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeTabBinding
 import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -21,6 +23,7 @@ import kotlin.math.min
 class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: ShuttleRealtimeViewModel by viewModels({ requireParentFragment() })
+    private val shuttleTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,7 +31,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        val shuttleStationAdapter = ShuttleRealtimeListAdapter(
+        val shuttleStationAdapter = ShuttleRealtimeByDestinationListAdapter(
             requireContext(),
             parentViewModel,
             viewLifecycleOwner,
@@ -37,7 +40,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             childFragmentManager,
             emptyList()
         )
-        val shuttleTerminalAdapter = ShuttleRealtimeListAdapter(
+        val shuttleTerminalAdapter = ShuttleRealtimeByDestinationListAdapter(
             requireContext(),
             parentViewModel,
             viewLifecycleOwner,
@@ -46,12 +49,20 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             childFragmentManager,
             emptyList()
         )
-        val shuttleJungangStationAdapter = ShuttleRealtimeListAdapter(
+        val shuttleJungangStationAdapter = ShuttleRealtimeByDestinationListAdapter(
             requireContext(),
             parentViewModel,
             viewLifecycleOwner,
             R.string.shuttle_tab_shuttlecock_out,
             R.string.shuttle_header_bound_for_jungang_station,
+            childFragmentManager,
+            emptyList()
+        )
+        val shuttleAdapter = ShuttleRealtimeByTimeListAdapter(
+            requireContext(),
+            parentViewModel,
+            viewLifecycleOwner,
+            R.string.shuttle_tab_shuttlecock_out,
             childFragmentManager,
             emptyList()
         )
@@ -96,9 +107,17 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(it)
                 }
             }
-
-            swipeRefreshLayout.setOnRefreshListener {
-                parentViewModel.fetchData()
+            realtimeView.apply {
+                adapter = shuttleAdapter
+                layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
+                addItemDecoration(decoration)
+            }
+            entireTimetable.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_shuttlecock_out,
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
             }
             stopInfo.setOnClickListener {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
@@ -107,16 +126,32 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(it)
                 }
             }
+            stopInfo2.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
+                    R.string.shuttle_tab_shuttlecock_in
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
+            }
         }
-        parentViewModel.isLoading.observe(viewLifecycleOwner) {
-            if (!it) binding.swipeRefreshLayout.isRefreshing = false
-        }
-        parentViewModel.result.observe(viewLifecycleOwner) { result ->
-            val shuttle = result.filter { it.stop == "shuttlecock_o" }
+        parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
+            val now = LocalTime.now()
+            val shuttle = source.result.filter { it.stop == "shuttlecock_o" && it.time >= now.format(shuttleTimeFormatter) }
             val shuttleForStation = shuttle.filter { it.tag == "DH" || it.tag == "DJ" || it.tag == "C" }
             val shuttleForTerminal = shuttle.filter { it.tag == "DY" || it.tag == "C" }
             val shuttleForJungangStation = shuttle.filter { it.tag == "DJ" }
-
+            // Hide the layout by showing the destination conf
+            binding.shuttleDestinationLayout.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
+            binding.shuttleTimeLayout.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
+            // Update the recycler view
+            if (shuttle.isEmpty()) {
+                binding.noRealtimeData.visibility = View.VISIBLE
+                binding.realtimeView.visibility = View.GONE
+            } else {
+                binding.noRealtimeData.visibility = View.GONE
+                binding.realtimeView.visibility = View.VISIBLE
+                shuttleAdapter.updateData(shuttle.subList(0, min(8, shuttle.size)))
+            }
             if (shuttleForStation.isEmpty()) {
                 binding.noRealtimeDataBoundForStation.visibility = View.VISIBLE
                 binding.realtimeViewBoundForStation.visibility = View.GONE
@@ -125,7 +160,6 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 binding.realtimeViewBoundForStation.visibility = View.VISIBLE
                 shuttleStationAdapter.updateData(shuttleForStation.subList(0, min(3, shuttleForStation.size)))
             }
-
             if (shuttleForTerminal.isEmpty()) {
                 binding.noRealtimeDataBoundForTerminal.visibility = View.VISIBLE
                 binding.realtimeViewBoundForTerminal.visibility = View.GONE
@@ -134,7 +168,6 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 binding.realtimeViewBoundForTerminal.visibility = View.VISIBLE
                 shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(3, shuttleForTerminal.size)))
             }
-
             if (shuttleForJungangStation.isEmpty()) {
                 binding.noRealtimeDataBoundForJungangStation.visibility = View.VISIBLE
                 binding.realtimeViewBoundForJungangStation.visibility = View.GONE
@@ -144,6 +177,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)))
             }
         }
+
         binding.apply {
             headerBoundForDormitory.visibility = View.GONE
             realtimeViewBoundForDormitory.visibility = View.GONE

@@ -14,6 +14,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,6 +27,7 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val viewpagerAdapter = CafeteriaViewPagerAdapter(childFragmentManager, lifecycle)
+        val selectedDateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd.")
         val tabLabelList = listOf(
             R.string.cafeteria_tab_breakfast,
             R.string.cafeteria_tab_lunch,
@@ -58,11 +60,15 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
             queryError.observe(viewLifecycleOwner) {
                 it?.let { Toast.makeText(requireContext(), getString(R.string.cafeteria_error), Toast.LENGTH_SHORT).show() }
             }
+            date.observe(viewLifecycleOwner) {
+                binding.dateText.text = it.format(selectedDateFormatter)
+                fetchData(campusID.value ?: 2)
+            }
         }
         binding.viewPager.adapter = viewpagerAdapter
-        binding.dateFab.setOnClickListener {
-            datePicker.show(childFragmentManager, "datePicker")
-        }
+        binding.dateButton.setOnClickListener { datePicker.show(childFragmentManager, "datePicker") }
+        binding.prevButton.setOnClickListener { viewModel.date.value = viewModel.date.value?.minusDays(1) }
+        binding.nextButton.setOnClickListener { viewModel.date.value = viewModel.date.value?.plusDays(1) }
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
