@@ -43,7 +43,7 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 26
         targetSdk = 35
-        versionCode = 410000000
+        versionCode = 410000001
         versionName = "4.1.0"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

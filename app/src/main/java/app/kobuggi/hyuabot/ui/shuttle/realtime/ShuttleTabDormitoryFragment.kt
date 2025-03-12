@@ -82,12 +82,28 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
                 }
 
             }
+            entireTimetableStation.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_dormitory_out,
+                    R.string.shuttle_header_bound_for_station
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
+            }
             realtimeViewBoundForTerminal.apply {
                 adapter = shuttleTerminalAdapter
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
             }
             entireTimetableBoundForTerminal.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_dormitory_out,
+                    R.string.shuttle_header_bound_for_terminal
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
+            }
+            entireTimetableTerminal.setOnClickListener {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
                     R.string.shuttle_tab_dormitory_out,
                     R.string.shuttle_header_bound_for_terminal
@@ -108,17 +124,18 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(it)
                 }
             }
+            entireTimetableJungangStation.setOnClickListener {
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
+                    R.string.shuttle_tab_dormitory_out,
+                    R.string.shuttle_header_bound_for_jungang_station
+                ).also {
+                    findNavController().safeNavigate(it)
+                }
+            }
             realtimeView.apply {
                 adapter = shuttleAdapter
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
                 addItemDecoration(decoration)
-            }
-            entireTimetable.setOnClickListener {
-                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
-                    R.string.shuttle_tab_dormitory_out,
-                ).also {
-                    findNavController().safeNavigate(it)
-                }
             }
             stopInfo.setOnClickListener {
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
@@ -183,6 +200,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             realtimeViewBoundForDormitory.visibility = View.GONE
             noRealtimeDataBoundForDormitory.visibility = View.GONE
             entireTimetableBoundForDormitory.visibility = View.GONE
+            entireTimetableDormitory.visibility = View.GONE
         }
         return binding.root
     }
