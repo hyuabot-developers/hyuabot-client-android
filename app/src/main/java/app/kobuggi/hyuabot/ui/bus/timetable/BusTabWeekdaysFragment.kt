@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.databinding.FragmentBusTimetableTabBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,6 +27,7 @@ class BusTabWeekdaysFragment @Inject constructor() : Fragment() {
     ): View {
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
         val adapter = BusTimetableListAdapter(requireContext(), listOf())
+        val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
         parentViewModel.result.observe(viewLifecycleOwner) {
             if (it == null) return@observe
@@ -40,7 +42,7 @@ class BusTabWeekdaysFragment @Inject constructor() : Fragment() {
                     )
                 })
             }
-            val afterNowItemIndex = timetableItems.indexOfFirst { item -> LocalTime.parse(item.time) > localTime }
+            val afterNowItemIndex = timetableItems.indexOfFirst { item -> item.time > localTime.format(dateTimeFormatter) }
             adapter.apply {
                 updateData(timetableItems.sortedBy { it.time })
                 if (afterNowItemIndex != -1) {
