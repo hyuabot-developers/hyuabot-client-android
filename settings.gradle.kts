@@ -22,4 +22,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "HYUabot"
 include(":app")
-include(":watch")
