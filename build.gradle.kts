@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.secretsGradlePlugin) apply false
     alias(libs.plugins.crashlyticsPlugin) apply false
+    alias(libs.plugins.kotlinCompose) apply false
 }
 
 allprojects {}
