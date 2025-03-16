@@ -1,6 +1,8 @@
 package app.kobuggi.hyuabot.tile
 
 import android.content.Context
+import androidx.wear.protolayout.ActionBuilders
+import androidx.wear.protolayout.ActionBuilders.LaunchAction
 import androidx.wear.protolayout.DeviceParametersBuilders
 import androidx.wear.protolayout.ModifiersBuilders
 import androidx.wear.protolayout.ResourceBuilders
@@ -46,7 +48,9 @@ class ShuttleTileService: SuspendingTileService() {
             "중앙역",
         )
 
-        private val emptyClickable = ModifiersBuilders.Clickable.Builder().build()
+        private fun getClickable(action: LaunchAction) = ModifiersBuilders.Clickable.Builder()
+            .setOnClick(action)
+            .build()
 
         fun getShuttleTileLayout(
             context: Context,
@@ -62,8 +66,16 @@ class ShuttleTileService: SuspendingTileService() {
             )
             .build()
 
-        private fun getShuttleButtonLayout(context: Context, name: String, clickable: ModifiersBuilders.Clickable = emptyClickable): Button {
-            return Button.Builder(context, clickable)
+        private fun getShuttleButtonLayout(context: Context, name: String): Button {
+            val launchAction = LaunchAction.Builder()
+                .setAndroidActivity(
+                    ActionBuilders.AndroidActivity.Builder()
+                        .setPackageName(context.packageName)
+                        .setClassName("app.kobuggi.hyuabot.presentation.MainActivity")
+                        .addKeyToExtraMapping("stopID", ActionBuilders.stringExtra(name))
+                        .build()
+                ).build()
+            return Button.Builder(context, getClickable(launchAction))
                 .setContentDescription(name)
                 .setTextContent(name, Typography.TYPOGRAPHY_CAPTION1)
                 .build()
