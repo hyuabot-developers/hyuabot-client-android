@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.secretsGradlePlugin) apply false
     alias(libs.plugins.crashlyticsPlugin) apply false
     alias(libs.plugins.kotlinCompose) apply false
+    alias(libs.plugins.apollo) apply false
 }
 
 allprojects {}

@@ -1,13 +1,28 @@
+import com.android.build.api.variant.BuildConfigField
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlinCompose)
+    alias(libs.plugins.apollo)
 }
+
+val props = Properties()
+file("../local.properties").inputStream().use { props.load(it) }
 
 android {
     namespace = "app.kobuggi.hyuabot"
     compileSdk = 35
-
+    apollo {
+        service("query") {
+            packageName = "app.kobuggi.hyuabot"
+            introspection {
+                endpointUrl.set("https://api.hyuabot.app/query")
+                schemaFile.set(file("src/main/graphql/schema.graphqls"))
+            }
+        }
+    }
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 33
@@ -16,7 +31,6 @@ android {
         versionName = "1.0"
 
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -27,14 +41,29 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+    tasks.withType(JavaCompile::class.java) {
+        options.compilerArgs.addAll(
+            listOf(
+                "-Xlint:unchecked",
+                "-Xlint:deprecation",
+            ),
+        )
+    }
+}
+
+androidComponents {
+    onVariants {
+        it.buildConfigFields.put("API_URL", BuildConfigField("String", props["API_URL"].toString(), "API_URL"))
     }
 }
 
@@ -60,6 +89,11 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     // Material
     implementation(libs.materialCompose)
+    // Networking
+    implementation(libs.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttpLogging)
+    implementation(libs.apollo)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
