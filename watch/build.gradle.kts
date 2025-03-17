@@ -94,6 +94,10 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
     implementation(libs.apollo)
+    // RXJava
+    implementation(libs.rxJava)
+    implementation(libs.rxAndroid)
+    implementation(libs.androidx.runtime.livedata)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
