@@ -14,7 +14,7 @@ class NavigationUtils {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = startRoute) {
                 composable(Screen.Main.route) {
-                    MainActivity.MainScreen()
+                    MainActivity.MainScreen(navController)
                 }
                 composable(
                     route = Screen.Detail.route + "/{stopID}",
