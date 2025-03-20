@@ -5,6 +5,7 @@
 
 package app.kobuggi.hyuabot.presentation
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -514,9 +515,10 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        @SuppressLint("DefaultLocale")
         private fun shuttleTime(departureTimeString: String): String {
             val departureTime: LocalTime = LocalTime.parse(departureTimeString)
-            return "${departureTime.hour}:${departureTime.minute}"
+            return String.format("%02d:%02d", departureTime.hour, departureTime.minute)
         }
     }
 }
