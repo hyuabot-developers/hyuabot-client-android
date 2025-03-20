@@ -85,6 +85,8 @@ dependencies {
     implementation(libs.horologist.compose.tools)
     implementation(libs.horologist.tiles)
     implementation(libs.androidx.watchface.complications.data.source.ktx)
+    // SplashScreen
+    implementation(libs.splashScreen)
     // Navigation
     implementation(libs.androidx.navigation.compose)
     // Material
