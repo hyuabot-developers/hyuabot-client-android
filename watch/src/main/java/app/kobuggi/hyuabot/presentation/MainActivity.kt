@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -65,7 +64,7 @@ class MainActivity : ComponentActivity() {
         fun NavHostScreen(stopID: String?) {
             HYUabotTheme {
                 Box(
-                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+                    modifier = Modifier.fillMaxSize().background(Color(0xFF000000)),
                     contentAlignment = Alignment.Center
                 ) {
                     NavigationStack(if (stopID != null) "detail/${stopID}" else Screen.Main.route)
