@@ -27,7 +27,7 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 33
         targetSdk = 34
-        versionCode = 400100004
+        versionCode = 400100005
         versionName = "4.0.0"
 
     }
