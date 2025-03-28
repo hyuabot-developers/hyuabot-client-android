@@ -4,13 +4,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.kotlinKsp)
-    alias(libs.plugins.hiltPlugin)
+    alias(libs.plugins.kotlinCompose)
     alias(libs.plugins.apollo)
-    alias(libs.plugins.safeArgs)
-    alias(libs.plugins.secretsGradlePlugin)
-    alias(libs.plugins.googleServicesPlugin)
-    alias(libs.plugins.crashlyticsPlugin)
 }
 
 val props = Properties()
@@ -19,59 +14,43 @@ file("../local.properties").inputStream().use { props.load(it) }
 android {
     namespace = "app.kobuggi.hyuabot"
     compileSdk = 35
-
     apollo {
         service("query") {
             packageName = "app.kobuggi.hyuabot"
+            introspection {
+                endpointUrl.set("https://api.hyuabot.app/query")
+                schemaFile.set(file("src/main/graphql/schema.graphqls"))
+            }
         }
     }
-
-    signingConfigs {
-        create("config") {
-            storeFile = file(props["SIGNING_KEY_FILE"]?.toString() ?: "keystore.jks")
-            storePassword = props["SIGNED_STORE_PASSWORD"]?.toString() ?: "storePassword"
-            keyAlias = props["SIGNED_KEY_ALIAS"]?.toString() ?: "keyAlias"
-            keyPassword = props["SIGNED_KEY_PASSWORD"]?.toString() ?: "keyPassword"
-        }
-    }
-
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
-        minSdk = 28
+        minSdk = 33
         targetSdk = 34
-        versionCode = 400100002
-        versionName = "WearOS 2.0"
-        signingConfig = signingConfigs.getByName("config")
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
-    }
+        versionCode = 400100006
+        versionName = "4.0.0"
 
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("config")
-        }
-        debug {
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("config")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
-
-    buildFeatures {
-        viewBinding = true
-        buildConfig = true
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
     kotlinOptions {
         jvmTarget = "17"
     }
-
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
     tasks.withType(JavaCompile::class.java) {
         options.compilerArgs.addAll(
             listOf(
@@ -89,44 +68,41 @@ androidComponents {
 }
 
 dependencies {
+
     implementation(libs.play.services.wearable)
-    // AndroidX
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.wear.tooling.preview)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.splashScreen)
+    implementation(libs.androidx.tiles)
+    implementation(libs.androidx.tiles.material)
+    implementation(libs.androidx.tiles.tooling.preview)
+    implementation(libs.horologist.compose.tools)
+    implementation(libs.horologist.tiles)
+    implementation(libs.androidx.watchface.complications.data.source.ktx)
+    // SplashScreen
+    implementation(libs.splashScreen)
     // Navigation
-    implementation(libs.navigation.fragment.ktx)
-    implementation(libs.navigation.ui.ktx)
-    implementation(libs.navigation.dynamic.features.fragment)
-    // RXJava
-    implementation(libs.rxJava)
-    implementation(libs.rxAndroid)
+    implementation(libs.androidx.navigation.compose)
+    // Material
+    implementation(libs.materialCompose)
     // Networking
     implementation(libs.gson)
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
     implementation(libs.apollo)
-    // DataStore
-    implementation(libs.dataStore)
-    implementation(libs.dataStoreRx)
-    // Firebase
-    implementation(platform(libs.firebase))
-    implementation(libs.firebaseMessaging)
-    implementation(libs.firebaseAnalytics)
-    implementation(libs.firebaseCrashlytics)
-    // SwipeRefreshLayout
-    implementation(libs.swipeRefreshLayout)
-    // Play Services
-    implementation(libs.playServicesLocation)
-    // Android LiveData
-    implementation(libs.lifeCycleLiveData)
-    // SplashScreen
-    implementation(libs.splashScreen)
-}
-
-hilt {
-    enableAggregatingTask = true
+    // RXJava
+    implementation(libs.rxJava)
+    implementation(libs.rxAndroid)
+    implementation(libs.androidx.runtime.livedata)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+    debugImplementation(libs.androidx.tiles.tooling)
 }
