@@ -66,7 +66,11 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
             }
         }
         binding.viewPager.adapter = viewpagerAdapter
-        binding.dateButton.setOnClickListener { datePicker.show(childFragmentManager, "datePicker") }
+        binding.dateButton.setOnClickListener {
+            if (!datePicker.isAdded) {
+                datePicker.show(childFragmentManager, "CafeteriaDatePicker")
+            }
+        }
         binding.prevButton.setOnClickListener { viewModel.date.value = viewModel.date.value?.minusDays(1) }
         binding.nextButton.setOnClickListener { viewModel.date.value = viewModel.date.value?.plusDays(1) }
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
