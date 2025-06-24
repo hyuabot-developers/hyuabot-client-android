@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
+import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -67,12 +68,12 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
             }
             departureLogFirst.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000719, 216000026).also { direction ->
-                    findNavController().navigate(direction)
+                    findNavController().safeNavigate(direction)
                 }
             }
             entireTimetableFirst.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000719, 216000026).also { direction ->
-                    findNavController().navigate(direction)
+                    findNavController().safeNavigate(direction)
                 }
             }
             headerSecond.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_gwangmyeong_station))
@@ -83,7 +84,7 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
             }
             entireTimetableSecond.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000719, 213000487).also { direction ->
-                    findNavController().navigate(direction)
+                    findNavController().safeNavigate(direction)
                 }
             }
             headerThird.visibility = View.GONE

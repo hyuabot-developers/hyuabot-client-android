@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
+import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -75,12 +76,12 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
             }
             departureLogFirst.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000719, 216000070).also { direction ->
-                    findNavController().navigate(direction)
+                    findNavController().safeNavigate(direction)
                 }
             }
             entireTimetableFirst.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000719, 216000070).also { direction ->
-                    findNavController().navigate(direction)
+                    findNavController().safeNavigate(direction)
                 }
             }
             headerSecond.text = getString(R.string.bus_header_format, "110/7070/9090", getString(R.string.bus_stop_entrance))
@@ -96,12 +97,12 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                     216000104,
                     200000015
                 ).also { direction ->
-                    findNavController().navigate(direction)
+                    findNavController().safeNavigate(direction)
                 }
             }
             entireTimetableSecond.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000070, 217000014).also { direction ->
-                    findNavController().navigate(direction)
+                    findNavController().safeNavigate(direction)
                 }
             }
             entireTimetableSecond.isEnabled = false
