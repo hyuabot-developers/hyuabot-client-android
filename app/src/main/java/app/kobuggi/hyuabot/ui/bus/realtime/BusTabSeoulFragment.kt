@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
+import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -35,12 +36,12 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                         headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_convention))
                         departureLogFirst.setOnClickListener {
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000379, 216000061).also { direction ->
-                                findNavController().navigate(direction)
+                                findNavController().safeNavigate(direction)
                             }
                         }
                         entireTimetableFirst.setOnClickListener {
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000379, 216000061).also { direction ->
-                                findNavController().navigate(direction)
+                                findNavController().safeNavigate(direction)
                             }
                         }
                     }
@@ -66,7 +67,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                         headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_cluster))
                         departureLogFirst.setOnClickListener {
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000381, 216000061).also { direction ->
-                                findNavController().navigate(direction)
+                                findNavController().safeNavigate(direction)
                             }
                         }
                         entireTimetableFirst.setOnClickListener {
@@ -74,7 +75,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                                 216000381,
                                 216000061
                             ).also { direction ->
-                                findNavController().navigate(direction)
+                                findNavController().safeNavigate(direction)
                             }
                         }
                     }
@@ -100,7 +101,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                         headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_dormitory))
                         departureLogFirst.setOnClickListener {
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000383, 216000061).also { direction ->
-                                findNavController().navigate(direction)
+                                findNavController().safeNavigate(direction)
                             }
                         }
                         entireTimetableFirst.setOnClickListener {
@@ -108,7 +109,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                                 216000383,
                                 216000061
                             ).also { direction ->
-                                findNavController().navigate(direction)
+                                findNavController().safeNavigate(direction)
                             }
                         }
                     }
@@ -172,14 +173,14 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                     216000026,
                     216000043
                 ).also { direction ->
-                    findNavController().navigate(direction)
+                    findNavController().safeNavigate(direction)
                 }
             }
             entireTimetableSecond.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(
                     216000719, 216000096, 216000026, 216000043
                 ).also { direction ->
-                    findNavController().navigate(direction)
+                    findNavController().safeNavigate(direction)
                 }
             }
             headerThird.visibility = View.GONE

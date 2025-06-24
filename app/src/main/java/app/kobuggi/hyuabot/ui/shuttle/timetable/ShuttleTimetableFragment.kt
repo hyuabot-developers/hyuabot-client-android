@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentShuttleTimetableBinding
+import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -139,7 +140,7 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
                     viewModel.period.value = it
                 }
             val action = ShuttleTimetableFragmentDirections.actionShuttleTimetableFragmentToShuttleTimetableFilterDialogFragment()
-            findNavController().navigate(action)
+            findNavController().safeNavigate(action)
         }
         binding.viewPager.apply {
             adapter = viewpagerAdapter

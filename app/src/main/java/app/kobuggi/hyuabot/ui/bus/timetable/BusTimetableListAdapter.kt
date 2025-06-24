@@ -79,7 +79,7 @@ class BusTimetableListAdapter(private val context: Context, private var timetabl
     }
 
     fun getRouteColor(routeName: String): Int {
-        val redBusList = listOf("110", "707-1", "3100", "3100N", "3101", "3102", "7070", "9090")
+        val redBusList = listOf("3100", "3100N", "3101", "3102", "7070", "9090")
         return if (redBusList.contains(routeName)) {
             R.color.red_bus
         } else {

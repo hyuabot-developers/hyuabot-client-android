@@ -1,4 +1,3 @@
-import com.android.build.api.variant.BuildConfigField
 import java.util.Properties
 
 plugins {
@@ -49,7 +48,7 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
+        buildConfig = false
     }
     tasks.withType(JavaCompile::class.java) {
         options.compilerArgs.addAll(
@@ -59,11 +58,15 @@ android {
             ),
         )
     }
-}
 
-androidComponents {
-    onVariants {
-        it.buildConfigFields.put("API_URL", BuildConfigField("String", props["API_URL"].toString(), "API_URL"))
+    flavorDimensions.add("appType")
+    productFlavors {
+        create("dev") {
+            dimension = "appType"
+        }
+        create("production") {
+            dimension = "appType"
+        }
     }
 }
 

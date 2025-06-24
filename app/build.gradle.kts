@@ -1,4 +1,3 @@
-import com.android.build.api.variant.BuildConfigField
 import java.util.Properties
 
 plugins {
@@ -43,8 +42,8 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 26
         targetSdk = 35
-        versionCode = 411000000
-        versionName = "4.1.1"
+        versionCode = 412000000
+        versionName = "4.1.2"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
@@ -64,7 +63,7 @@ android {
 
     buildFeatures {
         viewBinding = true
-        buildConfig = true
+        buildConfig = false
     }
 
     compileOptions {
@@ -76,6 +75,16 @@ android {
         jvmTarget = "17"
     }
 
+    flavorDimensions.add("appType")
+    productFlavors {
+        create("dev") {
+            dimension = "appType"
+        }
+        create("production") {
+            dimension = "appType"
+        }
+    }
+
     tasks.withType(JavaCompile::class.java) {
         options.compilerArgs.addAll(
             listOf(
@@ -83,12 +92,6 @@ android {
                 "-Xlint:deprecation",
             ),
         )
-    }
-}
-
-androidComponents {
-    onVariants {
-        it.buildConfigFields.put("API_URL", BuildConfigField("String", props["API_URL"].toString(), "API_URL"))
     }
 }
 

@@ -30,7 +30,6 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
         val stopID = args.stopID
         val firstRouteID: Int = args.firstRouteID
         val secondRouteID: Int = args.secondRouteID
-        val thirdRouteID: Int = args.thirdRouteID
         val today = LocalDate.now()
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val firstLogAdapter = BusDepartureLogAdapter(requireContext(), listOf())
@@ -46,7 +45,7 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
             7 -> listOf(today.minusDays(21), today.minusDays(14), today.minusDays(7))
             else -> listOf(today)
         }
-        val routes = listOf(firstRouteID, secondRouteID, thirdRouteID).filter { it > 0 }
+        val routes = listOf(firstRouteID, secondRouteID).filter { it > 0 }
         viewModel.fetchData(stopID, routes, queryDates.map { it.format(dateFormatter) })
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_departure_log), Toast.LENGTH_SHORT).show() }

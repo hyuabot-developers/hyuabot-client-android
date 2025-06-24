@@ -1,6 +1,5 @@
 package app.kobuggi.hyuabot.service.query
 
-import app.kobuggi.hyuabot.BuildConfig
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.network.okHttpClient
 import dagger.Module
@@ -14,7 +13,7 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object GraphQLModule {
-    private const val BASE_URL = "${BuildConfig.API_URL}/query"
+    private val BASE_URL = "${SdBuildConfig.API_URL}/query"
 
     private val apolloClient = {
         val logging = HttpLoggingInterceptor().apply {
