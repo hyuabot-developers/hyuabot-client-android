@@ -2,26 +2,27 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.kotlinCompose)
     alias(libs.plugins.apollo)
+    alias(libs.plugins.composeCompiler)
 }
 
 val props = Properties()
 file("../local.properties").inputStream().use { props.load(it) }
 
-android {
-    namespace = "app.kobuggi.hyuabot"
-    compileSdk = 35
-    apollo {
-        service("query") {
-            packageName = "app.kobuggi.hyuabot"
-            introspection {
-                endpointUrl.set("https://api.hyuabot.app/query")
-                schemaFile.set(file("src/main/graphql/schema.graphqls"))
-            }
+apollo {
+    service("query") {
+        packageName = "app.kobuggi.hyuabot"
+        introspection {
+            endpointUrl.set("https://api.hyuabot.app/query")
+            schemaFile.set(file("src/main/graphql/schema.graphqls"))
         }
     }
+}
+
+android {
+    namespace = "app.kobuggi.hyuabot"
+    compileSdk = 36
+
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 33
@@ -30,6 +31,7 @@ android {
         versionName = "4.0.0"
 
     }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -39,17 +41,17 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+
     buildFeatures {
         compose = true
         buildConfig = false
     }
+
     tasks.withType(JavaCompile::class.java) {
         options.compilerArgs.addAll(
             listOf(

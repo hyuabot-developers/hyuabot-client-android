@@ -2,7 +2,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlinKsp)
     alias(libs.plugins.hiltPlugin)
     alias(libs.plugins.apollo)
@@ -15,19 +14,19 @@ plugins {
 val props = Properties()
 file("../local.properties").inputStream().use { props.load(it) }
 
-android {
-    namespace = "app.kobuggi.hyuabot"
-    compileSdk = 35
-
-    apollo {
-        service("query") {
-            packageName = "app.kobuggi.hyuabot"
-            introspection {
-                endpointUrl.set("https://api.hyuabot.app/query")
-                schemaFile.set(file("src/main/graphql/schema.graphqls"))
-            }
+apollo {
+    service("query") {
+        packageName = "app.kobuggi.hyuabot"
+        introspection {
+            endpointUrl.set("https://api.hyuabot.app/query")
+            schemaFile.set(file("src/main/graphql/schema.graphqls"))
         }
     }
+}
+
+android {
+    namespace = "app.kobuggi.hyuabot"
+    compileSdk = 36
 
     signingConfigs {
         create("config") {
@@ -41,7 +40,7 @@ android {
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 412000000
         versionName = "4.1.2"
         signingConfig = signingConfigs.getByName("config")
@@ -71,8 +70,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
+    sourceSets {
+        named("main") {
+            kotlin.directories.addAll(listOf(
+                "src/dev/kotlin",
+            ))
+        }
     }
 
     flavorDimensions.add("appType")
