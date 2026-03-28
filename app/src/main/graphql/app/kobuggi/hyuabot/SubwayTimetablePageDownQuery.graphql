@@ -1,7 +1,15 @@
 query SubwayTimetablePageDownQuery($station: String!) {
-    subway (id_: [$station]) {
+    subway (
+        input: {
+            keys: [
+                { stationID: $station, direction: ["down"], weekdays: ["weekdays", "weekends"] },
+            ]
+        }) {
         timetable {
-            down { weekdays, time, terminal { id } }
+            weekday
+            direction
+            time
+            terminal { stationID, name }
         }
     }
 }

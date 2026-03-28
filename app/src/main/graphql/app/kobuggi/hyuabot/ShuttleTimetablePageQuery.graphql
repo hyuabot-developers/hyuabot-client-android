@@ -1,7 +1,23 @@
-query ShuttleTimetablePageQuery ($period: [String!]!, $stopID: String!, $tag: [String!]!) {
-    shuttle (stopName: [$stopID], period: $period, routeTag: $tag, weekdays: [true, false]) {
-        timetable {
-            tag, route, period, weekdays, time, stop, via { stop, time }
+query ShuttleTimetablePageQuery ($period: [String!]!, $stopID: String!) {
+    shuttle (
+        input: {
+            stops: [{ name: $stopID, limit: { order: null, destination: null } }],
+            periods: $period
+        }
+    ) {
+        stops {
+            timetable {
+                destination {
+                    destination
+                    entries {
+                        time
+                        weekday
+                        route {
+                            tag
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -21,6 +21,9 @@ apollo {
             endpointUrl.set("https://api.hyuabot.app/query")
             schemaFile.set(file("src/main/graphql/schema.graphqls"))
         }
+        mapScalar("Date", "java.time.LocalDate", "app.kobuggi.hyuabot.service.query.LocalDateAdapter")
+        mapScalar("LocalTime", "java.time.LocalTime", "app.kobuggi.hyuabot.service.query.LocalTimeAdapter")
+        mapScalar("DateTime", "java.time.ZonedDateTime", "app.kobuggi.hyuabot.service.query.ZonedDateTimeAdapter")
     }
 }
 
