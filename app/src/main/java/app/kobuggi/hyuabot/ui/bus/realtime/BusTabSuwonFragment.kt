@@ -13,6 +13,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
 import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,30 +27,13 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        val busSecondAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf(), true)
-        parentViewModel.result.observe(viewLifecycleOwner) {
-            if (it == null) return@observe
-            val entrance = it.firstOrNull { stop -> stop.id == 216000070 }?.routes
-            val secondBusList = entrance?.filter { route -> route.info.id == 216000104 || route.info.id == 200000015 }
-            val realtimeList = mutableListOf<BusRealtimeItem>()
-            val timetableList = mutableListOf<BusTimetableItem>()
-            secondBusList?.forEach { route ->
-                realtimeList.addAll(route.realtime.map { realtimeItem ->
-                    BusRealtimeItem(route.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
-                })
-                timetableList.addAll(route.timetable.map { timetableItem ->
-                    BusTimetableItem(route.info.name, timetableItem.weekdays, timetableItem.time)
-                })
-            }
-            busSecondAdapter.updateData(
-                realtimeList.sortedBy { it.time },
-                timetableList.sortedBy { it.time }
-            )
-            if (realtimeList.isEmpty() && timetableList.isEmpty()) {
-                binding.noRealtimeDataFirst.visibility = View.VISIBLE
-            } else {
-                binding.noRealtimeDataFirst.visibility = View.GONE
-            }
+        val busSecondAdapter = BusRealtimeListAdapter()
+        parentViewModel.result.observe(viewLifecycleOwner) { busList ->
+            if (busList == null) return@observe
+            val routes = busList.filter { route -> route.stop.seq == 216000070 && (route.route.seq == 216000104 || route.route.seq == 200000015) }
+            val arrivalList = routes.flatMap { route -> route.arrival.map { BusArrivalItem(route.route.name, it) } }
+            busSecondAdapter.updateData(arrivalList.sortedWith(compareBy({ it.item.minutes ?: Int.MAX_VALUE }, { it.item.time ?: LocalTime.MAX })))
+            binding.noRealtimeDataFirst.visibility = if (arrivalList.isEmpty()) View.VISIBLE else View.GONE
         }
         binding.apply {
             headerFirst.text = getString(R.string.bus_header_format, "7070/9090", getString(R.string.bus_stop_entrance))

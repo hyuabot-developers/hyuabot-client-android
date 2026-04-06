@@ -19,17 +19,17 @@ class BusDepartureLogAdapter(
     inner class ViewHolder(private val binding: ItemBusLogBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int, item: BusDepartureLogDialogQuery.Log) {
             binding.apply {
-                busTimeText.text = item.departureTime.toString().substring(0, 5)
+                busTimeText.text = item.time.toString().substring(0, 5)
                 if (position % 2 == 0) {
                     busItem.setBackgroundColor(ResourcesCompat.getColor(context.resources, R.color.hanyang_blue, null))
-                    if (currentTime.isAfter(LocalTime.parse(item.departureTime.toString().substring(0, 5)))) {
+                    if (currentTime.isAfter(LocalTime.parse(item.time.toString().substring(0, 5)))) {
                         busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.darker_gray, null))
                     } else {
                         busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.white, null))
                     }
                 } else {
                     busItem.setBackgroundColor(ResourcesCompat.getColor(context.resources, android.R.color.transparent, null))
-                    if (currentTime.isAfter(LocalTime.parse(item.departureTime.toString().substring(0, 5)))) {
+                    if (currentTime.isAfter(LocalTime.parse(item.time.toString().substring(0, 5)))) {
                         busTimeText.setTextColor(ResourcesCompat.getColor(context.resources, android.R.color.darker_gray, null))
                     } else {
                         if (UIUtility.isDarkModeOn(context.resources)) {

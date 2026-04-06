@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.databinding.FragmentBusTimetableTabBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,24 +26,32 @@ class BusTabWeekdaysFragment @Inject constructor() : Fragment() {
     ): View {
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
         val adapter = BusTimetableListAdapter(requireContext(), listOf())
-        val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
         parentViewModel.result.observe(viewLifecycleOwner) {
             if (it == null) return@observe
             val localTime = LocalTime.now()
             val timetableItems = mutableListOf<BusTimetableItem>()
             it.forEach { route ->
-                timetableItems.addAll(route.timetable.filter { it.weekdays == "weekdays" }.map {
+                timetableItems.addAll(route.timetable.filter { timetable ->  timetable.weekday == "weekdays" }.map { timetable ->
                     BusTimetableItem(
-                        routeName = route.info.name,
-                        weekdays = it.weekdays,
-                        time = it.time
+                        routeName = route.route.name,
+                        weekdays = timetable.weekday,
+                        time = timetable.time
                     )
                 })
             }
-            val afterNowItemIndex = timetableItems.indexOfFirst { item -> item.time > localTime.format(dateTimeFormatter) }
+            timetableItems.sortBy { timetable -> timetable.time }
+            val afterNowItemIndex = timetableItems.indexOfFirst { item ->  item.time > localTime }
+            if (timetableItems.isEmpty()) {
+                binding.busTimetableRecyclerView.visibility = View.GONE
+                binding.busTimetableEmptyText.visibility = View.VISIBLE
+                return@observe
+            } else {
+                binding.busTimetableRecyclerView.visibility = View.VISIBLE
+                binding.busTimetableEmptyText.visibility = View.GONE
+            }
             adapter.apply {
-                updateData(timetableItems.sortedBy { it.time })
+                updateData(timetableItems.sortedBy { timetable -> timetable.time })
                 if (afterNowItemIndex != -1) {
                     binding.busTimetableRecyclerView.scrollToPosition(afterNowItemIndex)
                 }

@@ -28,8 +28,8 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
-        val busFirstAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf())
-        val busSecondAdapter = BusRealtimeListAdapter(requireContext(), listOf(), listOf())
+        val busFirstAdapter = BusRealtimeListAdapter()
+        val busSecondAdapter = BusRealtimeListAdapter()
         parentViewModel.selectedStopID.observe(viewLifecycleOwner) {
             if (it == null) return@observe
             when (it) {
@@ -48,20 +48,9 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                         }
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
-                        val firstBusList = busList.firstOrNull { stop -> stop.id == 216000379 }?.routes?.firstOrNull { route -> route.info.id == 216000068 }
-                        busFirstAdapter.updateData(
-                            firstBusList?.realtime?.map { realtimeItem ->
-                                BusRealtimeItem(firstBusList.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
-                            } ?: listOf(),
-                            firstBusList?.timetable?.map { timetableItem ->
-                                BusTimetableItem(firstBusList.info.name, timetableItem.weekdays, timetableItem.time)
-                            } ?: listOf()
-                        )
-                        if (firstBusList?.realtime.isNullOrEmpty() && firstBusList?.timetable.isNullOrEmpty()) {
-                            binding.noRealtimeDataFirst.visibility = View.VISIBLE
-                        } else {
-                            binding.noRealtimeDataFirst.visibility = View.GONE
-                        }
+                        val firstBusList = busList.first { bus -> bus.stop.seq == 216000379 && bus.route.seq == 216000068 }
+                        busFirstAdapter.updateData(firstBusList.arrival.map { arrival -> BusArrivalItem(firstBusList.route.name, arrival) })
+                        binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
                     }
                 }
                 R.string.bus_stop_cluster -> {
@@ -79,20 +68,9 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                         }
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
-                        val firstBusList = busList.firstOrNull { stop -> stop.id == 216000381 }?.routes?.firstOrNull { route -> route.info.id == 216000068 }
-                        busFirstAdapter.updateData(
-                            firstBusList?.realtime?.map { realtimeItem ->
-                                BusRealtimeItem(firstBusList.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
-                            } ?: listOf(),
-                            firstBusList?.timetable?.map { timetableItem ->
-                                BusTimetableItem(firstBusList.info.name, timetableItem.weekdays, timetableItem.time)
-                            } ?: listOf()
-                        )
-                        if (firstBusList?.realtime.isNullOrEmpty() && firstBusList?.timetable.isNullOrEmpty()) {
-                            binding.noRealtimeDataFirst.visibility = View.VISIBLE
-                        } else {
-                            binding.noRealtimeDataFirst.visibility = View.GONE
-                        }
+                        val firstBusList = busList.first { bus -> bus.stop.seq == 216000381 && bus.route.seq == 216000068 }
+                        busFirstAdapter.updateData(firstBusList.arrival.map { arrival -> BusArrivalItem(firstBusList.route.name, arrival) })
+                        binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
                     }
                 }
                 R.string.bus_stop_dormitory -> {
@@ -110,48 +88,31 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                         }
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
-                        val firstBusList = busList.firstOrNull { stop -> stop.id == 216000383 }?.routes?.firstOrNull { route -> route.info.id == 216000068 }
-                        busFirstAdapter.updateData(
-                            firstBusList?.realtime?.map { realtimeItem ->
-                                BusRealtimeItem(firstBusList.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
-                            } ?: listOf(),
-                            firstBusList?.timetable?.map { timetableItem ->
-                                BusTimetableItem(firstBusList.info.name, timetableItem.weekdays, timetableItem.time)
-                            } ?: listOf()
-                        )
-                        if (firstBusList?.realtime.isNullOrEmpty() && firstBusList?.timetable.isNullOrEmpty()) {
-                            binding.noRealtimeDataFirst.visibility = View.VISIBLE
-                        } else {
-                            binding.noRealtimeDataFirst.visibility = View.GONE
-                        }
+                        val firstBusList = busList.first { bus -> bus.stop.seq == 216000381 && bus.route.seq == 216000068 }
+                        busFirstAdapter.updateData(firstBusList.arrival.map { arrival -> BusArrivalItem(firstBusList.route.name, arrival) })
+                        binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
                     }
                 }
             }
         }
-        parentViewModel.result.observe(viewLifecycleOwner) {
-            if (it == null) return@observe
-            val secondBusList = it.firstOrNull { stop -> stop.id == 216000138 }?.routes?.firstOrNull { route -> route.info.id == 216000068 }
-            val secondBusTimetable = if (secondBusList?.realtime?.isNotEmpty() == true) {
-                val currentTime = LocalTime.now()
-                secondBusList.timetable.filter { timetable ->
-                    LocalTime.parse(timetable.time) > currentTime.plusMinutes(secondBusList.realtime.last().time.toLong())
+        parentViewModel.result.observe(viewLifecycleOwner) { busList ->
+            if (busList == null) return@observe
+            val currentTime = LocalTime.now()
+            val secondBusList = busList.first { bus -> bus.stop.seq == 216000381 && bus.route.seq == 216000068 }
+            val secondBusRealtime = secondBusList.arrival.filter { arrival -> arrival.isRealtime }
+            val secondBusTimetable = if (secondBusRealtime.isNotEmpty()) {
+                secondBusList.arrival.filter { arrival ->
+                    !arrival.isRealtime && arrival.time!! > currentTime.plusMinutes(secondBusRealtime.last().minutes!!.toLong())
                 }
             } else {
-                secondBusList?.timetable
+                secondBusList.arrival.filter { arrival -> !arrival.isRealtime }
             }
             busSecondAdapter.updateData(
-                secondBusList?.realtime?.map { realtimeItem ->
-                    BusRealtimeItem(secondBusList.info.name, realtimeItem.sequence, realtimeItem.stop, realtimeItem.time, realtimeItem.seat, realtimeItem.lowFloor, realtimeItem.updatedAt)
-                } ?: listOf(),
-                secondBusTimetable?.map { timetableItem ->
-                    BusTimetableItem(secondBusList!!.info.name, timetableItem.weekdays, timetableItem.time)
-                } ?: listOf()
+                (secondBusRealtime + secondBusTimetable).map {
+                    arrival -> BusArrivalItem(secondBusList.route.name, arrival)
+                }
             )
-            if (secondBusList?.realtime.isNullOrEmpty() && secondBusList?.timetable.isNullOrEmpty()) {
-                binding.noRealtimeDataSecond.visibility = View.VISIBLE
-            } else {
-                binding.noRealtimeDataSecond.visibility = View.GONE
-            }
+            binding.noRealtimeDataSecond.visibility = if (secondBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
         }
         binding.apply {
             headerFirst.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))

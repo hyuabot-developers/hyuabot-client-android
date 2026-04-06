@@ -9,10 +9,8 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemBusRealtimeBinding
 import app.kobuggi.hyuabot.util.UIUtility
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 class BusTimetableListAdapter(private val context: Context, private var timetableList: List<BusTimetableItem>) : RecyclerView.Adapter<BusTimetableListAdapter.ViewHolder>() {
-    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
     private val currentTime = LocalTime.now()
 
     inner class ViewHolder(private val binding: ItemBusRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -22,12 +20,12 @@ class BusTimetableListAdapter(private val context: Context, private var timetabl
                 text = timetableItem.routeName
                 setTextColor(context.getColor(getRouteColor(timetableItem.routeName)))
             }
-            if (timetableItem.time.startsWith("24:")) {
+            if (timetableItem.time.hour < 4) {
                 binding.apply {
                     busTimeText.text = context.getString(
                         R.string.bus_timetable_time_format,
-                        timetableItem.time.substring(0, 2),
-                        timetableItem.time.substring(3, 5)
+                        timetableItem.time.hour + 24,
+                        timetableItem.time.minute
                     )
                     busTimeText.setTextColor(
                         if (UIUtility.isDarkModeOn(context.resources)) {
@@ -38,7 +36,7 @@ class BusTimetableListAdapter(private val context: Context, private var timetabl
                     )
                 }
             } else {
-                val time = LocalTime.parse(timetableItem.time, dateTimeFormatter)
+                val time = timetableItem.time
                 binding.apply {
                     busTimeText.text = context.getString(
                         R.string.bus_timetable_time_format,

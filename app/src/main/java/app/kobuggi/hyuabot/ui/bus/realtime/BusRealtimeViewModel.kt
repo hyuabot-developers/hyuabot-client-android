@@ -12,8 +12,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -43,10 +41,8 @@ class BusRealtimeViewModel @Inject constructor(
 
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
-        val now = LocalDateTime.now()
-        val currentTime = DateTimeFormatter.ofPattern("HH:mm").format(now)
         viewModelScope.launch {
-            val response = apolloClient.query(BusRealtimePageQuery(currentTime)).execute()
+            val response = apolloClient.query(BusRealtimePageQuery()).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {
