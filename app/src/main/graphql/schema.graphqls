@@ -630,6 +630,8 @@ type PhonebookEntry {
   name: String!
 
   phone: String!
+
+  campus: Int!
 }
 
 """

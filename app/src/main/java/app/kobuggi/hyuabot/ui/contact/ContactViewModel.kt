@@ -38,9 +38,9 @@ class ContactViewModel @Inject constructor(
             val response = apolloClient.query(ContactPageVersionQuery()).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
-            } else if (response.data?.contact != null) {
+            } else if (response.data?.phonebook != null) {
                 contactVersion.observeForever {
-                    if (it != response.data?.contact?.version) {
+                    if (it != response.data?.phonebook?.version) {
                         fetchContacts()
                     }
                 }
@@ -58,12 +58,21 @@ class ContactViewModel @Inject constructor(
             val response = apolloClient.query(ContactPageQuery()).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
-            } else if (response.data?.contact != null) {
+            } else if (response.data?.phonebook != null) {
                 dao.deleteAll()
-                response.data?.contact?.version?.let { userPreferencesRepository.setContactVersion(it) }
-                response.data?.contact?.data?.map {
-                    Contact(contactID = it.id, campusID = it.campusID, name = it.name, phone = it.phone)
-                }?.let { dao.insertAll(*it.toTypedArray()) }
+                response.data?.phonebook?.let { phonebook ->
+                    userPreferencesRepository.setContactVersion(phonebook.version)
+                    phonebook.categories.flatMap { category ->
+                        category.entries.map {
+                            Contact(
+                                contactID = it.seq,
+                                campusID = it.campus,
+                                name = it.name,
+                                phone = it.phone
+                            )
+                        }
+                    }.let { dao.insertAll(*it.toTypedArray()) }
+                }
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
