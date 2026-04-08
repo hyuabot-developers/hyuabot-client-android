@@ -20,9 +20,9 @@ class ReadingRoomListAdapter(
             binding.apply {
                 readingRoomName.text = room.name
                 readingRoomSeatCount.text =
-                    context.getString(R.string.reading_room_seat_format, room.available, room.active)
+                    context.getString(R.string.reading_room_seat_format, room.seats.available, room.seats.active)
                 readingRoomAlarmButton.apply {
-                    isSelected = notifications.contains(room.id)
+                    isSelected = notifications.contains(room.seq)
                     setOnClickListener { onClick(room, !isSelected) }
                 }
             }

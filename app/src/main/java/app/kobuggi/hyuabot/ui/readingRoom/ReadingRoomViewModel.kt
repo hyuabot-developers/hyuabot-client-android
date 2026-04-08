@@ -36,11 +36,11 @@ class ReadingRoomViewModel @Inject constructor(
 
     fun fetchRooms(campusID: Int = 2) {
         viewModelScope.launch {
-            val response = apolloClient.query(ReadingRoomPageQuery(campus = campusID)).execute()
+            val response = apolloClient.query(ReadingRoomPageQuery()).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.readingRoom != null) {
-                _rooms.value = response.data?.readingRoom ?: emptyList()
+                _rooms.value = response.data?.readingRoom?.filter { room -> room.campus == campusID } ?: emptyList()
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
