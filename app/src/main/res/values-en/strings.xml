@@ -139,8 +139,8 @@
     <string name="subway_no_realtime_data">No arrival information available.</string>
     <string name="subway_realtime_destination_format">To %1$s</string>
     <string name="subway_realtime_destination_format_last">To %1$s (Last train)</string>
-    <string name="subway_realtime_format">Arriving in %1$d minutes</string>
-    <string name="subway_realtime_timetable_format">Departs at %1$s:%2$s</string>
+    <string name="subway_realtime_format">Arriving in %1$d minutes (%2$d stations away)</string>
+    <string name="subway_realtime_timetable_format">Arriving in %1$d minutes</string>
     <string name="subway_station_K209">Cheongnyangni</string>
     <string name="subway_station_K210">Wangsimni</string>
     <string name="subway_station_K233">Jukjeon</string>

@@ -6,35 +6,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
-import app.kobuggi.hyuabot.SubwayTimetablePageDownQuery
-import app.kobuggi.hyuabot.SubwayTimetablePageUpQuery
 import app.kobuggi.hyuabot.databinding.ItemSubwayTimetableBinding
 
 class SubwayTimetableListAdapter(
     private val context: Context,
-    private var upTimetableList: List<SubwayTimetablePageUpQuery.Up>?,
-    private var downTimetableList: List<SubwayTimetablePageDownQuery.Down>?
+    private var timetableList: List<SubwayTimetableItem> = emptyList(),
 ) : RecyclerView.Adapter<SubwayTimetableListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemSubwayTimetableBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(upTimetableItem: SubwayTimetablePageUpQuery.Up?, downTimetableItem: SubwayTimetablePageDownQuery.Down?) {
-            if (upTimetableItem != null) {
-                binding.apply {
-                    subwayDestinationText.text = getTerminalString(upTimetableItem.terminal.id)
-                    subwayTimeText.text = context.getString(
-                        R.string.subway_timetable_time_format,
-                        upTimetableItem.time.substring(0, 2),
-                        upTimetableItem.time.substring(3, 5)
-                    )
-                }
-            } else if (downTimetableItem != null) {
-                binding.apply {
-                    subwayDestinationText.text = getTerminalString(downTimetableItem.terminal.id)
-                    subwayTimeText.text = context.getString(
-                        R.string.subway_timetable_time_format,
-                        downTimetableItem.time.substring(0, 2),
-                        downTimetableItem.time.substring(3, 5)
-                    )
-                }
+        fun bind(timetable: SubwayTimetableItem) {
+            binding.apply {
+                subwayDestinationText.text = getTerminalString(timetable.terminal.stationID)
+                subwayTimeText.text = context.getString(
+                    R.string.subway_timetable_time_format,
+                    timetable.time.substring(0, 2),
+                    timetable.time.substring(3, 5)
+                )
             }
         }
     }
@@ -45,28 +31,14 @@ class SubwayTimetableListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (upTimetableList != null) {
-            holder.bind(upTimetableList!![position], null)
-        } else {
-            holder.bind(null, downTimetableList!![position])
-        }
+        holder.bind(timetableList[position])
     }
 
-    override fun getItemCount(): Int {
-        return if (upTimetableList != null) {
-            upTimetableList!!.size
-        } else {
-            downTimetableList!!.size
-        }
-    }
+    override fun getItemCount(): Int = timetableList.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(
-        newUpTimetableList: List<SubwayTimetablePageUpQuery.Up>?,
-        newDownTimetableList: List<SubwayTimetablePageDownQuery.Down>?
-    ) {
-        upTimetableList = newUpTimetableList
-        downTimetableList = newDownTimetableList
+    fun updateData(newTimetableList: List<SubwayTimetableItem>) {
+        timetableList = newTimetableList
         notifyDataSetChanged()
     }
 

@@ -143,7 +143,7 @@
     <string name="subway_realtime_destination_format_last">%1$s행(막차)</string>
     <string name="subway_realtime_format">%1$d분 후 도착(%2$d전)</string>
     <!-- 전철 시간표 -->
-    <string name="subway_realtime_timetable_format">%1$s시 %2$s분 출발</string>
+    <string name="subway_realtime_timetable_format">%1$d분 후 도착</string>
     <!-- 전철 종착역 -->
     <string name="subway_station_K209">청량리</string>
     <string name="subway_station_K210">왕십리</string>
