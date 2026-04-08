@@ -10,6 +10,7 @@ import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -17,6 +18,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -56,7 +58,10 @@ class ShuttleRealtimeViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            val response = apolloClient.query(ShuttleRealtimePageQuery(language)).execute()
+            val response = apolloClient.query(ShuttleRealtimePageQuery(
+                language,
+                Optional.present(LocalTime.now())
+            )).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.shuttle?.stops != null) {

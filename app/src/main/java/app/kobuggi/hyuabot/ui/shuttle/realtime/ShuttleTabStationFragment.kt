@@ -151,11 +151,11 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
         }
         parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
             val now = LocalTime.now()
-            val shuttle = source.result.first { it.name == "station" }
+            val shuttle = source.result.firstOrNull { it.name == "station" } ?: return@observe
             val shuttleByOrder = shuttle.timetable.order.filter { it.time > now }
-            val shuttleForCampus = shuttle.timetable.destination.first { it.destination == "CAMPUS" }.entries.filter { it.time > now }
-            val shuttleForTerminal = shuttle.timetable.destination.first { it.destination == "TERMINAL" }.entries.filter { it.time > now }
-            val shuttleForJungangStation = shuttle.timetable.destination.first { it.destination == "JUNGANG" }.entries.filter { it.time > now }
+            val shuttleForCampus = shuttle.timetable.destination.firstOrNull { it.destination == "CAMPUS" }?.entries?.filter { it.time > now } ?: emptyList()
+            val shuttleForTerminal = shuttle.timetable.destination.firstOrNull { it.destination == "TERMINAL" }?.entries?.filter { it.time > now } ?: emptyList()
+            val shuttleForJungangStation = shuttle.timetable.destination.firstOrNull { it.destination == "JUNGANG" }?.entries?.filter { it.time > now } ?: emptyList()
             // Hide the layout by showing the destination conf
             binding.shuttleDestinationLayout.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
             binding.shuttleTimeLayout.visibility = if (source.showByDestination) View.GONE else View.VISIBLE

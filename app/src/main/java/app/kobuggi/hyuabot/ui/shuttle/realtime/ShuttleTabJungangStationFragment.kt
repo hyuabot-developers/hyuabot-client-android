@@ -91,9 +91,9 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
         }
         parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
             val now = LocalTime.now()
-            val shuttle = source.result.first { it.name == "dormitory_o" }
+            val shuttle = source.result.firstOrNull { it.name == "jungang_stn" } ?: return@observe
             val shuttleByOrder = shuttle.timetable.order.filter { it.time > now }
-            val shuttleForCampus = shuttle.timetable.destination.first { it.destination == "CAMPUS" }.entries.filter { it.time > now }
+            val shuttleForCampus = shuttle.timetable.destination.firstOrNull { it.destination == "CAMPUS" }?.entries?.filter { it.time > now } ?: emptyList()
             // Hide the layout by showing the destination conf
             binding.shuttleDestinationLayout.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
             binding.shuttleTimeLayout.visibility = if (source.showByDestination) View.GONE else View.VISIBLE

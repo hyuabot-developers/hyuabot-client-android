@@ -15,7 +15,6 @@ import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -23,7 +22,6 @@ import kotlin.math.min
 class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: ShuttleRealtimeViewModel by viewModels({ requireParentFragment() })
-    private val shuttleTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,9 +91,9 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
         }
         parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
             val now = LocalTime.now()
-            val shuttle = source.result.first { it.name == "terminal" }
+            val shuttle = source.result.firstOrNull { it.name == "terminal" } ?: return@observe
             val shuttleByOrder = shuttle.timetable.order.filter { it.time > now }
-            val shuttleForCampus = shuttle.timetable.destination.first { it.destination == "CAMPUS" }.entries.filter { it.time > now }
+            val shuttleForCampus = shuttle.timetable.destination.firstOrNull { it.destination == "CAMPUS" }?.entries?.filter { it.time > now } ?: emptyList()
             // Hide the layout by showing the destination conf
             binding.shuttleDestinationLayout.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
             binding.shuttleTimeLayout.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
