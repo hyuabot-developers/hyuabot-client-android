@@ -66,13 +66,13 @@ class ShuttleTimetableListAdapter(
                 }
             } else if (stopID == R.string.shuttle_tab_station) {
                 if (headerID == R.string.shuttle_header_bound_for_dormitory) {
-                    if (item.route.tag.endsWith("S")) {
+                    if (item.route.name.endsWith("S")) {
                         binding.shuttleTypeText.apply {
                             visibility = ViewGroup.VISIBLE
                             text = context.getString(R.string.shuttle_type_shuttlecock)
                             setTextColor(context.getColor(R.color.red_bus))
                         }
-                    } else if (item.route.tag.endsWith("D")) {
+                    } else if (item.route.name.endsWith("D")) {
                         binding.shuttleTypeText.apply {
                             visibility = ViewGroup.VISIBLE
                             text = context.getString(R.string.shuttle_type_dormitory)
@@ -93,13 +93,13 @@ class ShuttleTimetableListAdapter(
                     }
                 }
             } else if (stopID == R.string.shuttle_tab_terminal || stopID == R.string.shuttle_tab_jungang_station) {
-                if (item.route.tag.endsWith("S")) {
+                if (item.route.name.endsWith("S")) {
                     binding.shuttleTypeText.apply {
                         visibility = ViewGroup.VISIBLE
                         text = context.getString(R.string.shuttle_type_shuttlecock)
                         setTextColor(context.getColor(R.color.red_bus))
                     }
-                } else if (item.route.tag.endsWith("D")) {
+                } else if (item.route.name.endsWith("D")) {
                     binding.shuttleTypeText.apply {
                         visibility = ViewGroup.VISIBLE
                         text = context.getString(R.string.shuttle_type_dormitory)
@@ -107,13 +107,13 @@ class ShuttleTimetableListAdapter(
                     }
                 }
             } else if (stopID == R.string.shuttle_tab_shuttlecock_in) {
-                if (item.route.tag.endsWith("S")) {
+                if (item.route.name.endsWith("S")) {
                     binding.shuttleTypeText.apply {
                         visibility = ViewGroup.VISIBLE
                         text = context.getString(R.string.shuttle_type_shuttlecock_finishing)
                         setTextColor(context.getColor(R.color.red_bus))
                     }
-                } else if (item.route.tag.endsWith("D")) {
+                } else if (item.route.name.endsWith("D")) {
                     binding.shuttleTypeText.apply {
                         visibility = ViewGroup.VISIBLE
                         text = context.getString(R.string.shuttle_type_dormitory)
