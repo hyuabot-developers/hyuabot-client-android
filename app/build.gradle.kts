@@ -73,14 +73,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    sourceSets {
-        named("main") {
-            kotlin.directories.addAll(listOf(
-                "src/dev/kotlin",
-            ))
-        }
-    }
-
     flavorDimensions.add("appType")
     productFlavors {
         create("dev") {
@@ -88,6 +80,19 @@ android {
         }
         create("production") {
             dimension = "appType"
+        }
+    }
+
+    sourceSets {
+        named("dev") {
+            kotlin.directories.addAll(listOf(
+                "src/dev/kotlin",
+            ))
+        }
+        named("production") {
+            kotlin.directories.addAll(listOf(
+                "src/production/kotlin",
+            ))
         }
     }
 
