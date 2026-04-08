@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
@@ -16,8 +17,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -30,13 +29,11 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _showDepartureTime = MutableLiveData(false)
     private val _showByDestination = MutableLiveData(false)
     private val _showRemainingTime = MutableLiveData(true)
-    private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Timetable>>()
-    private val _stopInfo = MutableLiveData<List<ShuttleRealtimePageQuery.Stop>>()
+    private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Stop>>()
     private val _disposable = CompositeDisposable()
     private val _queryError = MutableLiveData<QueryError?>(null)
 
     val result get() = _result
-    val stopInfo get() = _stopInfo
     val isLoading get() = _isLoading
     val queryError get() = _queryError
     val showDepartureTime get() = _showDepartureTime
@@ -48,16 +45,22 @@ class ShuttleRealtimeViewModel @Inject constructor(
 
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
-        val now = LocalDateTime.now()
-        val currentTime = DateTimeFormatter.ofPattern("HH:mm").format(now)
-        val currentDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(now)
+        val locale = AppCompatDelegate.getApplicationLocales().get(0)
+        val language = if (locale == null) {
+            "KOREAN"
+        } else {
+            when (locale.language) {
+                "ko" -> "KOREAN"
+                "en" -> "ENGLISH"
+                else -> "KOREAN"
+            }
+        }
         viewModelScope.launch {
-            val response = apolloClient.query(ShuttleRealtimePageQuery(currentTime, currentDateTime)).execute()
+            val response = apolloClient.query(ShuttleRealtimePageQuery(language)).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
-            } else if (response.data?.shuttle?.timetable != null) {
-                _result.value = response.data?.shuttle?.timetable?.filter { it.time > currentTime }
-                _stopInfo.value = response.data?.shuttle?.stop
+            } else if (response.data?.shuttle?.stops != null) {
+                _result.value = response.data?.shuttle?.stops
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR

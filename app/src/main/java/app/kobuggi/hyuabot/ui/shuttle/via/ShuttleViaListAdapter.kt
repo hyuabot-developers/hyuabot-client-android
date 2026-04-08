@@ -8,35 +8,41 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.ShuttleTimetablePageQuery
 import app.kobuggi.hyuabot.databinding.ItemShuttleBinding
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 class ShuttleViaListAdapter(
     private val context: Context,
-    private val realtimeViaStops: List<ShuttleRealtimePageQuery.Vium> = listOf(),
-    private val timetableViaStops: List<ShuttleTimetablePageQuery.Vium> = listOf()
+    private val stopsOfTimetableByOrder: List<ShuttleRealtimePageQuery.Stop1> = emptyList(),
+    private val stopsOfTimetableByDestination: List<ShuttleRealtimePageQuery.Stop2> = emptyList(),
+    private val stopsOfEntireTimetable: List<ShuttleTimetablePageQuery.Stop1> = emptyList(),
 ) : RecyclerView.Adapter<ShuttleViaListAdapter.ViewHolder>() {
-    private val datetimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-
     inner class ViewHolder(private val binding: ItemShuttleBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ShuttleRealtimePageQuery.Vium) {
+        fun bind(item: ShuttleRealtimePageQuery.Stop1) {
             binding.shuttleTypeText.text = setStopText(item.stop)
             // Departure time
-            val departureTime = LocalTime.parse(item.time, datetimeFormatter)
             binding.shuttleTimeText.text = context.getString(
                 R.string.shuttle_time_type_3,
-                departureTime.hour.toString().padStart(2, '0'),
-                departureTime.minute.toString().padStart(2, '0')
+                item.time.hour.toString().padStart(2, '0'),
+                item.time.minute.toString().padStart(2, '0')
             )
         }
-        fun bind(item: ShuttleTimetablePageQuery.Vium) {
+
+        fun bind(item: ShuttleRealtimePageQuery.Stop2) {
             binding.shuttleTypeText.text = setStopText(item.stop)
             // Departure time
-            val departureTime = LocalTime.parse(item.time, datetimeFormatter)
             binding.shuttleTimeText.text = context.getString(
                 R.string.shuttle_time_type_3,
-                departureTime.hour.toString().padStart(2, '0'),
-                departureTime.minute.toString().padStart(2, '0')
+                item.time.hour.toString().padStart(2, '0'),
+                item.time.minute.toString().padStart(2, '0')
+            )
+        }
+
+        fun bind(item: ShuttleTimetablePageQuery.Stop1) {
+            binding.shuttleTypeText.text = setStopText(item.stop)
+            // Departure time
+            binding.shuttleTimeText.text = context.getString(
+                R.string.shuttle_time_type_3,
+                item.time.hour.toString().padStart(2, '0'),
+                item.time.minute.toString().padStart(2, '0')
             )
         }
     }
@@ -47,14 +53,21 @@ class ShuttleViaListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (realtimeViaStops.isNotEmpty()) {
-            holder.bind(realtimeViaStops[position])
-        } else if (timetableViaStops.isNotEmpty()) {
-            holder.bind(timetableViaStops[position])
+        if (stopsOfTimetableByOrder.isNotEmpty()) {
+            holder.bind(stopsOfTimetableByOrder[position])
+        } else if (stopsOfTimetableByDestination.isNotEmpty()) {
+            holder.bind(stopsOfTimetableByDestination[position])
+        } else if (stopsOfEntireTimetable.isNotEmpty()) {
+            holder.bind(stopsOfEntireTimetable[position])
         }
     }
 
-    override fun getItemCount(): Int = if (realtimeViaStops.isNotEmpty()) realtimeViaStops.size else timetableViaStops.size
+    override fun getItemCount(): Int = when {
+        stopsOfTimetableByOrder.isNotEmpty() -> stopsOfTimetableByOrder.size
+        stopsOfTimetableByDestination.isNotEmpty() -> stopsOfTimetableByDestination.size
+        stopsOfEntireTimetable.isNotEmpty() -> stopsOfEntireTimetable.size
+        else -> 0
+    }
 
     private fun setStopText(stopID: String) : String {
         return when(stopID) {

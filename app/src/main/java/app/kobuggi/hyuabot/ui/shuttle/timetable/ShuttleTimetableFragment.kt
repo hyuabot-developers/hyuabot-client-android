@@ -33,86 +33,106 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
         viewModel.stopResID.value = stopID
         viewModel.headerResID.value = destinationID
 
-        if (stopID == R.string.shuttle_tab_dormitory_out) {
-            viewModel.stopID.value = "dormitory_o"
-            when (destinationID) {
-                R.string.shuttle_header_bound_for_station -> {
-                    viewModel.tags.value = listOf("DH", "DJ", "C")
-                }
-                R.string.shuttle_header_bound_for_terminal -> {
-                    viewModel.tags.value = listOf("DY", "C")
-                }
-                R.string.shuttle_header_bound_for_jungang_station -> {
-                    viewModel.tags.value = listOf("DJ")
-                }
-                else -> {
-                    viewModel.tags.value = null
-                }
-            }
-        } else if (stopID == R.string.shuttle_tab_shuttlecock_out) {
-            viewModel.stopID.value = "shuttlecock_o"
-            when (destinationID) {
-                R.string.shuttle_header_bound_for_station -> {
-                    viewModel.tags.value = listOf("DH", "DJ", "C")
-                }
-                R.string.shuttle_header_bound_for_terminal -> {
-                    viewModel.tags.value = listOf("DY", "C")
-                }
-                R.string.shuttle_header_bound_for_jungang_station -> {
-                    viewModel.tags.value = listOf("DJ")
-                }
-                else -> {
-                    viewModel.tags.value = null
+        when (stopID) {
+            R.string.shuttle_tab_dormitory_out -> {
+                viewModel.stopID.value = "dormitory_o"
+                when (destinationID) {
+                    R.string.shuttle_header_bound_for_station -> {
+                        viewModel.destinations.value = listOf("STATION")
+                    }
+
+                    R.string.shuttle_header_bound_for_terminal -> {
+                        viewModel.destinations.value = listOf("TERMINAL")
+                    }
+
+                    R.string.shuttle_header_bound_for_jungang_station -> {
+                        viewModel.destinations.value = listOf("JUNGANG")
+                    }
+
+                    else -> {
+                        viewModel.destinations.value = null
+                    }
                 }
             }
-        } else if (stopID == R.string.shuttle_tab_station) {
-            viewModel.stopID.value = "station"
-            when (destinationID) {
-                R.string.shuttle_header_bound_for_dormitory -> {
-                    viewModel.tags.value = listOf("DH", "DJ", "C")
-                }
-                R.string.shuttle_header_bound_for_terminal -> {
-                    viewModel.tags.value = listOf("C")
-                }
-                R.string.shuttle_header_bound_for_jungang_station -> {
-                    viewModel.tags.value = listOf("DJ")
-                }
-                else -> {
-                    viewModel.tags.value = null
-                }
-            }
-        } else if (stopID == R.string.shuttle_tab_terminal) {
-            viewModel.stopID.value = "terminal"
-            when (destinationID) {
-                R.string.shuttle_header_bound_for_dormitory -> {
-                    viewModel.tags.value = listOf("DY", "C")
-                }
-                else -> {
-                    viewModel.tags.value = null
+            R.string.shuttle_tab_shuttlecock_out -> {
+                viewModel.stopID.value = "shuttlecock_o"
+                when (destinationID) {
+                    R.string.shuttle_header_bound_for_station -> {
+                        viewModel.destinations.value = listOf("STATION")
+                    }
+
+                    R.string.shuttle_header_bound_for_terminal -> {
+                        viewModel.destinations.value = listOf("TERMINAL")
+                    }
+
+                    R.string.shuttle_header_bound_for_jungang_station -> {
+                        viewModel.destinations.value = listOf("JUNGANG")
+                    }
+
+                    else -> {
+                        viewModel.destinations.value = null
+                    }
                 }
             }
-        } else if (stopID == R.string.shuttle_tab_jungang_station) {
-            viewModel.stopID.value = "jungang_stn"
-            when (destinationID) {
-                R.string.shuttle_header_bound_for_dormitory -> {
-                    viewModel.tags.value = listOf("DJ")
-                }
-                else -> {
-                    viewModel.tags.value = null
+            R.string.shuttle_tab_station -> {
+                viewModel.stopID.value = "station"
+                when (destinationID) {
+                    R.string.shuttle_header_bound_for_dormitory -> {
+                        viewModel.destinations.value = listOf("CAMPUS")
+                    }
+
+                    R.string.shuttle_header_bound_for_terminal -> {
+                        viewModel.destinations.value = listOf("TERMINAL")
+                    }
+
+                    R.string.shuttle_header_bound_for_jungang_station -> {
+                        viewModel.destinations.value = listOf("JUNGANG")
+                    }
+
+                    else -> {
+                        viewModel.destinations.value = null
+                    }
                 }
             }
-        } else if (stopID == R.string.shuttle_tab_shuttlecock_in) {
-            viewModel.stopID.value = "shuttlecock_i"
-            when (destinationID) {
-                R.string.shuttle_header_bound_for_dormitory -> {
-                    viewModel.tags.value = listOf("DH", "DY", "DJ", "C")
-                }
-                else -> {
-                    viewModel.tags.value = null
+            R.string.shuttle_tab_terminal -> {
+                viewModel.stopID.value = "terminal"
+                when (destinationID) {
+                    R.string.shuttle_header_bound_for_dormitory -> {
+                        viewModel.destinations.value = listOf("CAMPUS")
+                    }
+
+                    else -> {
+                        viewModel.destinations.value = null
+                    }
                 }
             }
-        } else {
-            viewModel.stopID.value = null
+            R.string.shuttle_tab_jungang_station -> {
+                viewModel.stopID.value = "jungang_stn"
+                when (destinationID) {
+                    R.string.shuttle_header_bound_for_dormitory -> {
+                        viewModel.destinations.value = listOf("CAMPUS")
+                    }
+
+                    else -> {
+                        viewModel.destinations.value = null
+                    }
+                }
+            }
+            R.string.shuttle_tab_shuttlecock_in -> {
+                viewModel.stopID.value = "shuttlecock_i"
+                when (destinationID) {
+                    R.string.shuttle_header_bound_for_dormitory -> {
+                        viewModel.destinations.value = listOf("CAMPUS")
+                    }
+
+                    else -> {
+                        viewModel.destinations.value = null
+                    }
+                }
+            }
+            else -> {
+                viewModel.stopID.value = null
+            }
         }
 
         viewModel.fetchData()

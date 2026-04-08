@@ -85,7 +85,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
         }
-        viewModel.stopInfo.observe(viewLifecycleOwner) {stops ->
+        viewModel.result.observe(viewLifecycleOwner) {stops ->
             if (stops.isNotEmpty()) {
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                     if (location == null) { return@addOnSuccessListener }

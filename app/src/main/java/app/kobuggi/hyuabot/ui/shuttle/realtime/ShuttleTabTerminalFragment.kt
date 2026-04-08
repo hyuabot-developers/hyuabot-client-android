@@ -93,23 +93,28 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
         }
         parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
             val now = LocalTime.now()
-            val shuttle = source.result.filter { it.stop == "terminal" && it.time > now.format(shuttleTimeFormatter) }
+            val shuttle = source.result.first { it.name == "terminal" }
+            val shuttleByOrder = shuttle.timetable.order.filter { it.time > now }
+            val shuttleForCampus = shuttle.timetable.destination.first { it.destination == "CAMPUS" }.entries.filter { it.time > now }
             // Hide the layout by showing the destination conf
             binding.shuttleDestinationLayout.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
             binding.shuttleTimeLayout.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
             // Update the recycler view
-            if (shuttle.isEmpty()) {
-                binding.noRealtimeDataBoundForDormitory.visibility = View.VISIBLE
-                binding.realtimeViewBoundForDormitory.visibility = View.GONE
+            if (shuttleByOrder.isEmpty()) {
                 binding.noRealtimeData.visibility = View.VISIBLE
                 binding.realtimeView.visibility = View.GONE
             } else {
-                binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
-                binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
                 binding.noRealtimeData.visibility = View.GONE
                 binding.realtimeView.visibility = View.VISIBLE
-                shuttleCampusAdapter.updateData(shuttle.subList(0, min(8, shuttle.size)))
-                shuttleAdapter.updateData(shuttle.subList(0, min(8, shuttle.size)))
+                shuttleAdapter.updateData(shuttleByOrder.subList(0, min(8, shuttleByOrder.size)))
+            }
+            if (shuttleForCampus.isEmpty()) {
+                binding.noRealtimeDataBoundForDormitory.visibility = View.VISIBLE
+                binding.realtimeViewBoundForDormitory.visibility = View.GONE
+            } else {
+                binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
+                binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
+                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)))
             }
         }
 

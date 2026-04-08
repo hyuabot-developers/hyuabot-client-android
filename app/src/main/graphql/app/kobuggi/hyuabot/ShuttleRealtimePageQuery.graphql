@@ -17,10 +17,14 @@ query ShuttleRealtimePageQuery($language: String!) {
         ]
     }) {
         stops {
+            latitude
+            longitude
+            name
             timetable {
                 order {
                     route {
                         tag
+                        name
                     }
                     time
                     stops {
@@ -33,6 +37,7 @@ query ShuttleRealtimePageQuery($language: String!) {
                     entries {
                         route {
                             tag
+                            name
                         }
                         time
                         stops {
