@@ -3,6 +3,7 @@ package app.kobuggi.hyuabot.ui.shuttle.realtime
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.kobuggi.hyuabot.ShuttlePeriodQuery
 import app.kobuggi.hyuabot.ShuttleStopDialogQuery
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
@@ -16,14 +17,31 @@ class ShuttleStopDialogViewModel @Inject constructor(private val apolloClient: A
     private val _result = MutableLiveData<ShuttleStopDialogQuery.Stop?>()
     private val _departureList = MutableLiveData<List<ShuttleStopDialogQuery.Destination>>()
     private val _queryError = MutableLiveData<QueryError?>(null)
-
+    private val _period: MutableLiveData<String?> = MutableLiveData(null)
     val result get() = _result
     val departureList get() = _departureList
     val queryError get() = _queryError
+    val period get() = _period
 
     fun fetchData(stopID: String) {
         viewModelScope.launch {
-            val response = apolloClient.query(ShuttleStopDialogQuery(stopID, LocalDate.now())).execute()
+            val periodQuery = if (period.value == null) {
+                val period = apolloClient.query(ShuttlePeriodQuery(
+                    date = LocalDate.now()
+                )).execute()
+                if (period.data == null || period.exception != null) {
+                    _queryError.value = QueryError.SERVER_ERROR
+                    return@launch
+                }
+                if (period.data?.shuttle?.period != null) {
+                    listOf(period.data?.shuttle?.period?.type!!)
+                } else {
+                    listOf()
+                }
+            } else {
+                listOf(period.value!!)
+            }
+            val response = apolloClient.query(ShuttleStopDialogQuery(stopID, periodQuery)).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.shuttle?.stops != null) {
