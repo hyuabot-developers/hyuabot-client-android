@@ -53,12 +53,12 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManager(requireContext())
             }
             departureLogFirst.setOnClickListener {
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000719, 216000026).also { direction ->
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000759, 216000075).also { direction ->
                     findNavController().safeNavigate(direction)
                 }
             }
             entireTimetableFirst.setOnClickListener {
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000719, 216000026).also { direction ->
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000759, 216000075).also { direction ->
                     findNavController().safeNavigate(direction)
                 }
             }
@@ -68,8 +68,13 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
             }
+            departureLogSecond.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(213000487, 216000075).also { direction ->
+                    findNavController().safeNavigate(direction)
+                }
+            }
             entireTimetableSecond.setOnClickListener {
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000719, 213000487).also { direction ->
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(213000487, 216000075).also { direction ->
                     findNavController().safeNavigate(direction)
                 }
             }
