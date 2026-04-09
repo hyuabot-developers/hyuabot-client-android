@@ -89,6 +89,7 @@ class ShuttleRealtimeByTimeListAdapter(
     }
 
     private fun setStopText(context: Context, textView: TextView, warningView: MaterialCardView, stopID: Int, item: ShuttleRealtimePageQuery.Order) {
+        val darkMode = context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
         warningView.visibility = View.GONE
         when (stopID) {
             R.string.shuttle_tab_dormitory_out, R.string.shuttle_tab_shuttlecock_out -> {
@@ -96,7 +97,7 @@ class ShuttleRealtimeByTimeListAdapter(
                     "DH" -> {
                         textView.apply {
                             text = context.getString(R.string.shuttle_type_school_station)
-                            setTextColor(context.getColor(R.color.hanyang_blue))
+                            setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                         }
                     }
                     "DY" -> {
@@ -131,7 +132,7 @@ class ShuttleRealtimeByTimeListAdapter(
                         } else if (item.route.name.endsWith("D")) {
                             textView.apply {
                                 text = context.getString(R.string.shuttle_type_dormitory)
-                                setTextColor(context.getColor(R.color.hanyang_blue))
+                                setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                             }
                         }
                     }
@@ -165,14 +166,14 @@ class ShuttleRealtimeByTimeListAdapter(
                 } else if (item.route.name.endsWith("D")) {
                     textView.apply {
                         text = context.getString(R.string.shuttle_type_dormitory)
-                        setTextColor(context.getColor(R.color.hanyang_blue))
+                        setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                     }
                 }
             }
             R.string.shuttle_tab_jungang_station -> {
                 textView.apply {
                     text = context.getString(R.string.shuttle_type_dormitory)
-                    setTextColor(context.getColor(R.color.hanyang_blue))
+                    setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                 }
             }
             R.string.shuttle_tab_shuttlecock_in -> {
@@ -184,7 +185,7 @@ class ShuttleRealtimeByTimeListAdapter(
                 } else if (item.route.name.endsWith("D")) {
                     textView.apply {
                         text = context.getString(R.string.shuttle_type_dormitory)
-                        setTextColor(context.getColor(R.color.hanyang_blue))
+                        setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                     }
                 }
             }

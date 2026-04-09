@@ -19,6 +19,7 @@ class ShuttleTimetableListAdapter(
     private var shuttleList: List<ShuttleTimetablePageQuery.Order>,
 ) : RecyclerView.Adapter<ShuttleTimetableListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemShuttleTimetableBinding) : RecyclerView.ViewHolder(binding.root) {
+        val darkMode = binding.root.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleTimetablePageQuery.Order) {
             val currentTime = LocalTime.now()
@@ -37,7 +38,7 @@ class ShuttleTimetableListAdapter(
                             binding.shuttleTypeText.apply {
                                 visibility = ViewGroup.VISIBLE
                                 text = context.getString(R.string.shuttle_type_circular)
-                                setTextColor(context.getColor(R.color.hanyang_blue))
+                                setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                             }
                         }
 
@@ -60,7 +61,7 @@ class ShuttleTimetableListAdapter(
                         binding.shuttleTypeText.apply {
                             visibility = ViewGroup.VISIBLE
                             text = context.getString(R.string.shuttle_type_circular)
-                            setTextColor(context.getColor(R.color.hanyang_blue))
+                            setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                         }
                     }
                 }
@@ -76,14 +77,14 @@ class ShuttleTimetableListAdapter(
                         binding.shuttleTypeText.apply {
                             visibility = ViewGroup.VISIBLE
                             text = context.getString(R.string.shuttle_type_dormitory)
-                            setTextColor(context.getColor(R.color.hanyang_blue))
+                            setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                         }
                     }
                 } else if (headerID == R.string.shuttle_header_bound_for_terminal) {
                     binding.shuttleTypeText.apply {
                         visibility = ViewGroup.VISIBLE
                         text = context.getString(R.string.shuttle_type_circular)
-                        setTextColor(context.getColor(R.color.hanyang_blue))
+                        setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                     }
                 } else if (headerID == R.string.shuttle_header_bound_for_jungang_station) {
                     binding.shuttleTypeText.apply {
@@ -103,7 +104,7 @@ class ShuttleTimetableListAdapter(
                     binding.shuttleTypeText.apply {
                         visibility = ViewGroup.VISIBLE
                         text = context.getString(R.string.shuttle_type_dormitory)
-                        setTextColor(context.getColor(R.color.hanyang_blue))
+                        setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                     }
                 }
             } else if (stopID == R.string.shuttle_tab_shuttlecock_in) {
@@ -117,7 +118,7 @@ class ShuttleTimetableListAdapter(
                     binding.shuttleTypeText.apply {
                         visibility = ViewGroup.VISIBLE
                         text = context.getString(R.string.shuttle_type_dormitory)
-                        setTextColor(context.getColor(R.color.hanyang_blue))
+                        setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                     }
                 }
             }
