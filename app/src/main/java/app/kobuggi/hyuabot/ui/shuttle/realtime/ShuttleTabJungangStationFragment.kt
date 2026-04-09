@@ -95,8 +95,8 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
             val shuttleByOrder = shuttle.timetable.order.filter { it.time > now }
             val shuttleForCampus = shuttle.timetable.destination.firstOrNull { it.destination == "CAMPUS" }?.entries?.filter { it.time > now } ?: emptyList()
             // Hide the layout by showing the destination conf
-            binding.shuttleDestinationLayout.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
-            binding.shuttleTimeLayout.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
+            binding.shuttleDestinationScroll.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
+            binding.shuttleTimeScroll.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
             // Update the recycler view
             if (shuttleByOrder.isEmpty()) {
                 binding.noRealtimeData.visibility = View.VISIBLE
