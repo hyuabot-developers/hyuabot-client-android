@@ -3,6 +3,7 @@ package app.kobuggi.hyuabot.ui.shuttle.realtime
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
@@ -13,6 +14,15 @@ class ShuttleNoticeAdapter(private var items: List<ShuttleRealtimePageQuery.Noti
         fun bind(item: ShuttleRealtimePageQuery.Notice1) {
             binding.tvNoticeTitle.apply {
                 text = item.title
+                if (item.url.isEmpty()) {
+                    setOnClickListener(null)
+                } else {
+                    setOnClickListener {
+                        ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToNoticeWebViewFragment(item.url).let { direction ->
+                            it.findNavController().navigate(direction)
+                        }
+                    }
+                }
             }
         }
     }

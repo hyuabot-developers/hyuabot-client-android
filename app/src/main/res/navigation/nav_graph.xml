@@ -144,7 +144,7 @@
             android:id="@+id/action_noticeFragment_to_noticeWebViewFragment"
             app:destination="@id/noticeWebViewFragment" />
     </fragment>
-    <fragment
+    <dialog
         android:id="@+id/noticeWebViewFragment"
         android:name="app.kobuggi.hyuabot.ui.notice.NoticeWebviewFragment"
         android:label="공지사항 웹뷰"
@@ -153,7 +153,7 @@
             android:name="url"
             app:argType="string"
             android:defaultValue="https://www.hanyang.ac.kr/web/www/research" />
-    </fragment>
+    </dialog>
     <fragment
         android:id="@+id/contactFragment"
         android:name="app.kobuggi.hyuabot.ui.contact.ContactFragment"
