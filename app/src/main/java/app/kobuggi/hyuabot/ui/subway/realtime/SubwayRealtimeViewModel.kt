@@ -11,6 +11,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -28,8 +29,11 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     val campusBlue get() = _campusBlue
 
     fun fetchData() {
+        val localDate = LocalDate.now()
         viewModelScope.launch {
-            val response = apolloClient.query(SubwayRealtimePageQuery()).execute()
+            val response = apolloClient.query(SubwayRealtimePageQuery(
+                weekday = if (localDate.dayOfWeek.value in 1..5) "weekdays" else "weekends"
+            )).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.subway != null) {

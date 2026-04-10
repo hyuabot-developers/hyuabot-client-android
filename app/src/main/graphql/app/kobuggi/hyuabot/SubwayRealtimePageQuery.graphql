@@ -1,9 +1,9 @@
-query SubwayRealtimePageQuery {
+query SubwayRealtimePageQuery($weekday: String!) {
     subway (
         input: {
             keys: [
-                { stationID: "K449", direction: ["up", "down"], weekdays: [] },
-                { stationID: "K251", direction: ["up", "down"], weekdays: [] }
+                { stationID: "K449", direction: ["up", "down"], weekdays: [$weekday] },
+                { stationID: "K251", direction: ["up", "down"], weekdays: [$weekday] }
             ],
             limit: 4
         }) {
