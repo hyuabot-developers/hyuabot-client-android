@@ -1,4 +1,11 @@
-query BusRealtimePageQuery {
+query BusRealtimePageQuery($language: String!) {
+    notices(input: {language: $language, category: "버스"}) {
+        notices {
+            title
+            url
+            expiredAt
+        }
+    },
     bus (
         input: [
             { route: 216000068, stop: 216000138, limit: 3 },

@@ -53,6 +53,9 @@
         <action
             android:id="@+id/action_busRealtimeFragment_to_busDepartureLogDialogFragment"
             app:destination="@id/busDepartureLogDialogFragment" />
+        <action
+            android:id="@+id/action_busRealtimeFragment_to_noticeWebViewFragment"
+            app:destination="@id/noticeWebViewFragment" />
     </fragment>
     <fragment
         android:id="@+id/busTimetableFragment"
