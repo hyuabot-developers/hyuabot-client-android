@@ -14,15 +14,12 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentSubwayRealtimeTabBinding
 import app.kobuggi.hyuabot.service.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class SubwayTabYellowFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentSubwayRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: SubwayRealtimeViewModel by viewModels({ requireParentFragment() })
-    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,7 +59,7 @@ class SubwayTabYellowFragment @Inject constructor() : Fragment() {
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
-        parentViewModel.campusBlue.observe(viewLifecycleOwner) {
+        parentViewModel.campusYellow.observe(viewLifecycleOwner) {
             if (it == null) return@observe
             val upEntries = it.arrival.firstOrNull { arrival -> arrival.direction == "up" }?.entries ?: emptyList()
             val downEntries = it.arrival.firstOrNull { arrival -> arrival.direction == "down" }?.entries ?: emptyList()

@@ -32,10 +32,12 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _showByDestination = MutableLiveData(false)
     private val _showRemainingTime = MutableLiveData(true)
     private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Stop>>()
+    private val _notices = MutableLiveData<List<ShuttleRealtimePageQuery.Notice1>>()
     private val _disposable = CompositeDisposable()
     private val _queryError = MutableLiveData<QueryError?>(null)
 
     val result get() = _result
+    val notices get() = _notices
     val isLoading get() = _isLoading
     val queryError get() = _queryError
     val showDepartureTime get() = _showDepartureTime
@@ -70,6 +72,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
             }
+            _notices.value = response.data?.notices?.flatMap { it.notices } ?: emptyList()
             _isLoading.value = false
         }
     }
