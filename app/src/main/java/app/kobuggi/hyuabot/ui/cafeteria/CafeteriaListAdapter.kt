@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.CafeteriaPageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemCafeteriaBinding
+import app.kobuggi.hyuabot.util.DividerItemWithoutLastDecoration
 
 class CafeteriaListAdapter(
     private val context: Context,
@@ -22,7 +23,7 @@ class CafeteriaListAdapter(
                 "breakfast" -> {
                     binding.subheaderCafeteria.text = context.getString(
                         R.string.cafeteria_running_time_format,
-                        cafeteriaItem.runningTime.breakfast
+                        cafeteriaItem.runningTime.breakfast ?: '-'
                     )
                     menuAdapter.updateList(cafeteriaItem.menus.filter { it.type.contains("조식") }
                         .distinctBy { it.food })
@@ -30,7 +31,7 @@ class CafeteriaListAdapter(
                 "lunch" -> {
                     binding.subheaderCafeteria.text = context.getString(
                         R.string.cafeteria_running_time_format,
-                        cafeteriaItem.runningTime.lunch
+                        cafeteriaItem.runningTime.lunch ?: '-'
                     )
                     menuAdapter.updateList(cafeteriaItem.menus.filter { it.type.contains("중식") }
                         .distinctBy { it.food })
@@ -38,13 +39,13 @@ class CafeteriaListAdapter(
                 "dinner" -> {
                     binding.subheaderCafeteria.text = context.getString(
                         R.string.cafeteria_running_time_format,
-                        cafeteriaItem.runningTime.dinner
+                        cafeteriaItem.runningTime.dinner ?: '-'
                     )
                     menuAdapter.updateList(cafeteriaItem.menus.filter { it.type.contains("석식") }
                         .distinctBy { it.food })
                 }
             }
-            val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+            val decoration = DividerItemWithoutLastDecoration(context, DividerItemDecoration.VERTICAL)
             binding.apply {
                 headerCafeteria.text = getCafeteriaString(cafeteriaItem.seq)
                 menuList.apply {
