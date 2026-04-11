@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusTimetableTabBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
@@ -36,12 +37,28 @@ class BusTabWeekdaysFragment @Inject constructor() : Fragment() {
                     BusTimetableItem(
                         routeName = route.route.name,
                         weekdays = timetable.weekday,
-                        time = timetable.time
+                        time = if (timetable.time.hour < 4) {
+                            requireContext().getString(
+                                R.string.bus_timetable_time_format,
+                                (timetable.time.hour + 24).toString().padStart(2, '0'),
+                                timetable.time.minute.toString().padStart(2, '0')
+                            )
+                        } else {
+                            requireContext().getString(
+                                R.string.bus_timetable_time_format,
+                                timetable.time.hour.toString().padStart(2, '0'),
+                                timetable.time.minute.toString().padStart(2, '0')
+                            )
+                        }
                     )
                 })
             }
             timetableItems.sortBy { timetable -> timetable.time }
-            val afterNowItemIndex = timetableItems.indexOfFirst { item ->  item.time > localTime }
+            val afterNowItemIndex = timetableItems.indexOfFirst { item ->  item.time > getString(
+                R.string.bus_timetable_time_format,
+                localTime.hour.toString().padStart(2, '0'),
+                localTime.minute.toString().padStart(2, '0')
+            )}
             if (timetableItems.isEmpty()) {
                 binding.busTimetableRecyclerView.visibility = View.GONE
                 binding.busTimetableEmptyText.visibility = View.VISIBLE
@@ -51,7 +68,7 @@ class BusTabWeekdaysFragment @Inject constructor() : Fragment() {
                 binding.busTimetableEmptyText.visibility = View.GONE
             }
             adapter.apply {
-                updateData(timetableItems.sortedBy { timetable -> timetable.time })
+                updateData(timetableItems)
                 if (afterNowItemIndex != -1) {
                     binding.busTimetableRecyclerView.scrollToPosition(afterNowItemIndex)
                 }

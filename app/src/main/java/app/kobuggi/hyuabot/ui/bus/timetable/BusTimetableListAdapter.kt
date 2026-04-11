@@ -20,42 +20,23 @@ class BusTimetableListAdapter(private val context: Context, private var timetabl
                 text = timetableItem.routeName
                 setTextColor(context.getColor(getRouteColor(timetableItem.routeName)))
             }
-            if (timetableItem.time.hour < 4) {
-                binding.apply {
-                    busTimeText.text = context.getString(
+            binding.busTimeText.text = timetableItem.time
+            binding.busTimeText.setTextColor(
+                if (context.getString(
                         R.string.bus_timetable_time_format,
-                        timetableItem.time.hour + 24,
-                        timetableItem.time.minute
-                    )
-                    busTimeText.setTextColor(
-                        if (UIUtility.isDarkModeOn(context.resources)) {
-                            context.getColor(android.R.color.white)
-                        } else {
-                            context.getColor(android.R.color.black)
-                        }
-                    )
+                        currentTime.hour.toString().padStart(2, '0'),
+                        currentTime.minute.toString().padStart(2, '0')
+                    ) > timetableItem.time
+                ) {
+                    context.getColor(android.R.color.darker_gray)
+                } else {
+                    if (UIUtility.isDarkModeOn(context.resources)) {
+                        context.getColor(android.R.color.white)
+                    } else {
+                        context.getColor(android.R.color.black)
+                    }
                 }
-            } else {
-                val time = timetableItem.time
-                binding.apply {
-                    busTimeText.text = context.getString(
-                        R.string.bus_timetable_time_format,
-                        time.hour.toString().padStart(2, '0'),
-                        time.minute.toString().padStart(2, '0')
-                    )
-                    busTimeText.setTextColor(
-                        if (currentTime.isAfter(time)) {
-                            context.getColor(android.R.color.darker_gray)
-                        } else {
-                            if (UIUtility.isDarkModeOn(context.resources)) {
-                                context.getColor(android.R.color.white)
-                            } else {
-                                context.getColor(android.R.color.black)
-                            }
-                        }
-                    )
-                }
-            }
+            )
         }
     }
 
