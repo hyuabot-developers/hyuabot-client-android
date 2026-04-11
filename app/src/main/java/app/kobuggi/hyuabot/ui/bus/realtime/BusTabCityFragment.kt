@@ -98,7 +98,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
         parentViewModel.result.observe(viewLifecycleOwner) { busList ->
             if (busList == null) return@observe
             val currentTime = LocalTime.now()
-            val secondBusList = busList.first { bus -> bus.stop.seq == 216000381 && bus.route.seq == 216000068 }
+            val secondBusList = busList.first { bus -> bus.stop.seq == 216000138 && bus.route.seq == 216000068 }
             val secondBusRealtime = secondBusList.arrival.filter { arrival -> arrival.isRealtime }
             val secondBusTimetable = if (secondBusRealtime.isNotEmpty()) {
                 secondBusList.arrival.filter { arrival ->
