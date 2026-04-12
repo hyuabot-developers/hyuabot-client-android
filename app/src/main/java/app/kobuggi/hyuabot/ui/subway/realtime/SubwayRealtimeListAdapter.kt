@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.SubwayRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.ItemSubwayRealtimeBinding
-import kotlin.math.min
 
 class SubwayRealtimeListAdapter(
     private val context: Context,
@@ -35,7 +34,7 @@ class SubwayRealtimeListAdapter(
                 binding.subwayTimeText.text = context.getString(
                     R.string.subway_realtime_format,
                     arrival.minutes,
-                    arrival.stops!!
+                    arrival.location ?: '-'
                 )
             } else {
                 binding.apply {
@@ -45,7 +44,8 @@ class SubwayRealtimeListAdapter(
                     )
                     subwayTimeText.text = context.getString(
                         R.string.subway_realtime_timetable_format,
-                        arrival.minutes
+                        arrival.minutes,
+                        arrival.origin?.let { origin -> getTerminalString(origin.stationID) } ?: '-'
                     )
                 }
             }
@@ -61,7 +61,7 @@ class SubwayRealtimeListAdapter(
         holder.bind(arrivals[position])
     }
 
-    override fun getItemCount(): Int = min(arrivals.size, 5)
+    override fun getItemCount(): Int = arrivals.size
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newArrivals: List<SubwayRealtimePageQuery.Entry>) {

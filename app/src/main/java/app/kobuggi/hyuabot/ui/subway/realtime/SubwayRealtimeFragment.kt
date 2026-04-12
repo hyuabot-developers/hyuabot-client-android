@@ -36,6 +36,7 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
         val tabLabelList = listOf(
             R.string.subway_tab_blue,
             R.string.subway_tab_yellow,
+            R.string.subway_tab_transfer
         )
         binding.viewPager.adapter = viewpagerAdapter
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->

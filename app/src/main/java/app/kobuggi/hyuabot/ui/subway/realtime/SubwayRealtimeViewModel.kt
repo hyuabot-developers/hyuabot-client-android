@@ -2,6 +2,8 @@ package app.kobuggi.hyuabot.ui.subway.realtime
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.SubwayRealtimePageQuery
 import app.kobuggi.hyuabot.util.QueryError
@@ -10,6 +12,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
@@ -20,6 +24,8 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     private val _isLoading = MutableLiveData(false)
     private val _campusYellow = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _campusBlue = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
+    private val _oidoYellow = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
+    private val _oidoBlue = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _queryError = MutableLiveData<QueryError?>(null)
     private val _disposable = CompositeDisposable()
 
@@ -27,6 +33,16 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     val queryError get() = _queryError
     val campusYellow get() = _campusYellow
     val campusBlue get() = _campusBlue
+    val oidoYellow get() = _oidoYellow
+    val oidoBlue get() = _oidoBlue
+    val combinedData get() = combine(
+        campusYellow.asFlow(),
+        campusBlue.asFlow(),
+        oidoYellow.asFlow(),
+        oidoBlue.asFlow()
+    ) { campusYellow, campusBlue, oidoYellow, oidoBlue ->
+        SubwayRealtimeCombinedData(campusYellow, campusBlue, oidoYellow, oidoBlue)
+    }.onStart { emit(SubwayRealtimeCombinedData(null, null, null, null)) }.asLiveData()
 
     fun fetchData() {
         val localDate = LocalDate.now()
@@ -39,6 +55,8 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
             } else if (response.data?.subway != null) {
                 _campusYellow.value = response.data?.subway?.first { it.stationID == "K251" }
                 _campusBlue.value = response.data?.subway?.first { it.stationID == "K449" }
+                _oidoYellow.value = response.data?.subway?.first { it.stationID == "K258" }
+                _oidoBlue.value = response.data?.subway?.first { it.stationID == "K456" }
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR

@@ -829,6 +829,8 @@ scalar String
 type SubwayArrival {
   minutes: Int!
 
+  origin: SubwayOriginTerminal
+
   terminal: SubwayOriginTerminal!
 
   isRealtime: Boolean!
@@ -855,8 +857,6 @@ type SubwayArrivalGroup {
 """
 input SubwayInput {
   keys: [SubwayStationInput!]!
-
-  limit: Int
 }
 
 type SubwayOriginTerminal {
@@ -919,6 +919,8 @@ input SubwayStationInput {
   direction: [String!]!
 
   weekdays: [String!]!
+
+  limit: Int
 }
 
 type SubwayTimetable {

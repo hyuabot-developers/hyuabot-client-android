@@ -2,16 +2,18 @@ query SubwayRealtimePageQuery($weekday: String!) {
     subway (
         input: {
             keys: [
-                { stationID: "K449", direction: ["up", "down"], weekdays: [$weekday] },
-                { stationID: "K251", direction: ["up", "down"], weekdays: [$weekday] }
+                { stationID: "K449", direction: ["up", "down"], weekdays: [$weekday], limit: 4 },
+                { stationID: "K456", direction: ["up", "down"], weekdays: [$weekday], limit: null },
+                { stationID: "K251", direction: ["up", "down"], weekdays: [$weekday], limit: 4 },
+                { stationID: "K258", direction: ["up", "down"], weekdays: [$weekday], limit: null },
             ],
-            limit: 4
         }) {
         stationID
         arrival {
             direction
             entries {
                 minutes
+                origin { stationID, name }
                 terminal { stationID, name }
                 isRealtime
                 location
