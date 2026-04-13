@@ -44,8 +44,8 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 28
         targetSdk = 36
-        versionCode = 412000000
-        versionName = "4.1.2"
+        versionCode = 500000000
+        versionName = "5.0.0"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
