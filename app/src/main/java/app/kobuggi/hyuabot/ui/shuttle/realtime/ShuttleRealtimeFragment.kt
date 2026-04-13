@@ -20,7 +20,7 @@ import app.kobuggi.hyuabot.service.safeNavigate
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Runnable
+import java.lang.Runnable
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime

@@ -99,11 +99,11 @@
         <item>@string/bus_stop_convention</item>
     </string-array>
     <!-- 노선버스 도착 정보 시간 -->
-    <string name="bus_realtime_format_seats">%1$d mins left</string>
-    <string name="bus_realtime_format_no_seats">%1$d mins left</string>
+    <string name="bus_realtime_format_seats">%1$d mins left (%2$d stops, %3$d seats)</string>
+    <string name="bus_realtime_format_no_seats">%1$d mins left(%2$d stops)</string>
     <string name="bus_timetable_format">Departs at %1$s:%2$s</string>
-    <string name="bus_realtime_format_seats_last">%1$d mins left (Last)</string>
-    <string name="bus_realtime_format_no_seats_last">%1$d mins left (Last)</string>
+    <string name="bus_realtime_format_seats_last">%1$d mins left (%2$d stops, %3$d seats, Last)</string>
+    <string name="bus_realtime_format_no_seats_last">%1$d mins left (%2$d stops, Last)</string>
     <string name="bus_timetable_format_last">Departs at %1$s:%2$s (Last)</string>
     <!-- 노선버스 도착 정보 없음 -->
     <string name="bus_no_realtime_data">No arrival information.</string>

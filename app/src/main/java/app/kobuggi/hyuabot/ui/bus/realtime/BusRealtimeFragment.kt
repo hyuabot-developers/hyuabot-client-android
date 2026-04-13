@@ -15,7 +15,7 @@ import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeBinding
 import app.kobuggi.hyuabot.service.safeNavigate
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Runnable
+import java.lang.Runnable
 import javax.inject.Inject
 
 @AndroidEntryPoint

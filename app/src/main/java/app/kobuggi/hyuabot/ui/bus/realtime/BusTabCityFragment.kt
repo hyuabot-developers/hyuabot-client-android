@@ -88,7 +88,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                         }
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
-                        val firstBusList = busList.first { bus -> bus.stop.seq == 216000381 && bus.route.seq == 216000068 }
+                        val firstBusList = busList.first { bus -> bus.stop.seq == 216000383 && bus.route.seq == 216000068 }
                         busFirstAdapter.updateData(firstBusList.arrival.map { arrival -> BusArrivalItem(firstBusList.route.name, arrival) })
                         binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
                     }
