@@ -1,6 +1,5 @@
 package app.kobuggi.hyuabot.service
 
-import app.kobuggi.hyuabot.SdBuildConfig
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.network.okHttpClient
 import okhttp3.OkHttpClient
@@ -9,7 +8,7 @@ import java.util.concurrent.TimeUnit
 
 class GraphQLModule {
     companion object {
-        val BASE_URL = "${SdBuildConfig.API_URL}/query"
+        const val BASE_URL = "${SdBuildConfig.API_URL}/graphql"
         var mInstance: ApolloClient? = null
 
         private fun apolloClient(): ApolloClient {

@@ -117,11 +117,11 @@ class MainActivity : ComponentActivity() {
             LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.start() }
             LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) { viewModel.stop() }
             // Observe the result from the ViewModel
-            val result = viewModel.result.observeAsState()
             val firstItem = viewModel.firstItem.observeAsState()
             val secondItem = viewModel.secondItem.observeAsState()
             val thirdItem = viewModel.thirdItem.observeAsState()
             val fourthItem = viewModel.fourthItem.observeAsState()
+            val result = viewModel.result.observeAsState()
             val scrollState = rememberScalingLazyListState()
             // Display the result
             Scaffold (
@@ -135,84 +135,9 @@ class MainActivity : ComponentActivity() {
                         state = scrollState,
                     ) {
                         item { Spacer(modifier = Modifier.height(40.dp)) }
-                        item {
-                            Button(
-                                onClick = { },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    backgroundColor = hanyangBlue,
-                                    disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                ) {
-                                    Text("한대앞")
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    if (firstItem.value == null) {
-                                        Text("운행 종료")
-                                    } else {
-                                        Text(shuttleTime(firstItem.value!!.time))
-                                    }
-                                }
-                            }
-                        }
-                        item {
-                            Button(
-                                onClick = { },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    backgroundColor = hanyangBlue,
-                                    disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                ) {
-                                    Text("예술인")
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    if (secondItem.value == null) {
-                                        Text("운행 종료")
-                                    } else {
-                                        Text(shuttleTime(secondItem.value!!.time))
-                                    }
-                                }
-                            }
-                        }
-                        item {
-                            Button(
-                                onClick = { },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    backgroundColor = hanyangBlue,
-                                    disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                ) {
-                                    Text("중앙역")
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    if (thirdItem.value == null) {
-                                        Text("운행 종료")
-                                    } else {
-                                        Text(shuttleTime(thirdItem.value!!.time))
-                                    }
-                                }
-                            }
-                        }
+                        item { ShuttleButton("한대앞", firstItem.value?.time) }
+                        item { ShuttleButton("예술인", secondItem.value?.time) }
+                        item { ShuttleButton("중앙역", thirdItem.value?.time) }
                         item { Spacer(modifier = Modifier.height(40.dp)) }
                     }
                 } else if (stopID == "셔틀콕"){
@@ -223,110 +148,10 @@ class MainActivity : ComponentActivity() {
                         state = scrollState,
                     ) {
                         item { Spacer(modifier = Modifier.height(40.dp)) }
-                        item {
-                            Button(
-                                onClick = { },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    backgroundColor = hanyangBlue,
-                                    disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                ) {
-                                    Text("한대앞")
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    if (firstItem.value == null) {
-                                        Text("운행 종료")
-                                    } else {
-                                        Text(shuttleTime(firstItem.value!!.time))
-                                    }
-                                }
-                            }
-                        }
-                        item {
-                            Button(
-                                onClick = { },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    backgroundColor = hanyangBlue,
-                                    disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                ) {
-                                    Text("예술인")
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    if (secondItem.value == null) {
-                                        Text("운행 종료")
-                                    } else {
-                                        Text(shuttleTime(secondItem.value!!.time))
-                                    }
-                                }
-                            }
-                        }
-                        item {
-                            Button(
-                                onClick = { },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    backgroundColor = hanyangBlue,
-                                    disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                ) {
-                                    Text("중앙역")
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    if (thirdItem.value == null) {
-                                        Text("운행 종료")
-                                    } else {
-                                        Text(shuttleTime(thirdItem.value!!.time))
-                                    }
-                                }
-                            }
-                        }
-                        item {
-                            Button(
-                                onClick = { },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    backgroundColor = hanyangBlue,
-                                    disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                ) {
-                                    Text("기숙사")
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    if (fourthItem.value == null) {
-                                        Text("운행 종료")
-                                    } else {
-                                        Text(shuttleTime(fourthItem.value!!.time))
-                                    }
-                                }
-                            }
-                        }
+                        item { ShuttleButton("한대앞", firstItem.value?.time) }
+                        item { ShuttleButton("예술인", secondItem.value?.time) }
+                        item { ShuttleButton("중앙역", thirdItem.value?.time) }
+                        item { ShuttleButton("기숙사", fourthItem.value?.time) }
                         item { Spacer(modifier = Modifier.height(40.dp)) }
                     }
                 } else if (stopID == "한대앞"){
@@ -337,88 +162,12 @@ class MainActivity : ComponentActivity() {
                         state = scrollState,
                     ) {
                         item { Spacer(modifier = Modifier.height(40.dp)) }
-                        item {
-                            Button(
-                                onClick = { },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    backgroundColor = hanyangBlue,
-                                    disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                ) {
-                                    if (firstItem.value?.route?.endsWith("S") == true) {
-                                        Text("셔틀콕")
-                                    } else {
-                                        Text("기숙사")
-                                    }
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    if (firstItem.value == null) {
-                                        Text("운행 종료")
-                                    } else {
-                                        Text(shuttleTime(firstItem.value!!.time))
-                                    }
-                                }
-                            }
-                        }
-                        item {
-                            Button(
-                                onClick = { },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    backgroundColor = hanyangBlue,
-                                    disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                ) {
-                                    Text("예술인")
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    if (secondItem.value == null) {
-                                        Text("운행 종료")
-                                    } else {
-                                        Text(shuttleTime(secondItem.value!!.time))
-                                    }
-                                }
-                            }
-                        }
-                        item {
-                            Button(
-                                onClick = { },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.White,
-                                    disabledContentColor = Color.White,
-                                    backgroundColor = hanyangBlue,
-                                    disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                ) {
-                                    Text("중앙역")
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    if (thirdItem.value == null) {
-                                        Text("운행 종료")
-                                    } else {
-                                        Text(shuttleTime(thirdItem.value!!.time))
-                                    }
-                                }
-                            }
-                        }
+                        item { ShuttleButton(
+                            if (firstItem.value?.route?.name?.endsWith("S") == true) "셔틀콕" else "기숙사",
+                            firstItem.value?.time
+                        )}
+                        item { ShuttleButton("예술인", secondItem.value?.time) }
+                        item { ShuttleButton("중앙역", thirdItem.value?.time) }
                         item { Spacer(modifier = Modifier.height(40.dp)) }
                     }
                 } else if (stopID == "예술인"){
@@ -438,32 +187,10 @@ class MainActivity : ComponentActivity() {
                         ) {
                             item { Spacer(modifier = Modifier.height(40.dp)) }
                             result.value?.subList(0, minOf(result.value!!.size, 3))?.forEach { item ->
-                                item {
-                                    Button(
-                                        onClick = { },
-                                        colors = ButtonDefaults.buttonColors(
-                                            contentColor = Color.White,
-                                            disabledContentColor = Color.White,
-                                            backgroundColor = hanyangBlue,
-                                            disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                        ),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(50.dp)
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.padding(horizontal = 16.dp),
-                                        ) {
-                                            if (item.route.endsWith("S")) {
-                                                Text("셔틀콕")
-                                            } else if (item.route.endsWith("D")) {
-                                                Text("기숙사")
-                                            }
-                                            Spacer(modifier = Modifier.weight(1f))
-                                            Text(shuttleTime(item.time))
-                                        }
-                                    }
-                                }
+                                item { ShuttleButton(
+                                    if (item.route.name.endsWith("S")) "셔틀콕" else "기숙사",
+                                    item.time
+                                )}
                             }
                             item { Spacer(modifier = Modifier.height(40.dp)) }
                         }
@@ -485,28 +212,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             item { Spacer(modifier = Modifier.height(40.dp)) }
                             result.value?.subList(0, minOf(result.value!!.size, 3))?.forEach { item ->
-                                item {
-                                    Button(
-                                        onClick = { },
-                                        colors = ButtonDefaults.buttonColors(
-                                            contentColor = Color.White,
-                                            disabledContentColor = Color.White,
-                                            backgroundColor = hanyangBlue,
-                                            disabledBackgroundColor = hanyangBlue.copy(alpha = 0.5f)
-                                        ),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(50.dp)
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.padding(horizontal = 16.dp),
-                                        ) {
-                                            Text("기숙사")
-                                            Spacer(modifier = Modifier.weight(1f))
-                                            Text(shuttleTime(item.time))
-                                        }
-                                    }
-                                }
+                                item { ShuttleButton("기숙사", item.time) }
                             }
                             item { Spacer(modifier = Modifier.height(40.dp)) }
                         }
@@ -516,9 +222,35 @@ class MainActivity : ComponentActivity() {
         }
 
         @SuppressLint("DefaultLocale")
-        private fun shuttleTime(departureTimeString: String): String {
-            val departureTime: LocalTime = LocalTime.parse(departureTimeString)
-            return String.format("%02d:%02d", departureTime.hour, departureTime.minute)
+        private fun shuttleTime(time: LocalTime): String {
+            return String.format("%02d:%02d", time.hour, time.minute)
+        }
+
+        @Composable
+        private fun ShuttleButton(
+            destination: String,
+            time: LocalTime?,
+            modifier: Modifier = Modifier
+        ) {
+            Button(
+                onClick = { },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Color.White,
+                    backgroundColor = hanyangBlue,
+                ),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(destination)
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(if (time == null) "운행 종료" else shuttleTime(time))
+                }
+            }
         }
     }
 }

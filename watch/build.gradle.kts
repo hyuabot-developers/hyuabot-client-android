@@ -16,6 +16,9 @@ apollo {
             endpointUrl.set("https://api.hyuabot.app/query")
             schemaFile.set(file("src/main/graphql/schema.graphqls"))
         }
+        mapScalar("Date", "java.time.LocalDate", "app.kobuggi.hyuabot.service.LocalDateAdapter")
+        mapScalar("LocalTime", "java.time.LocalTime", "app.kobuggi.hyuabot.service.LocalTimeAdapter")
+        mapScalar("DateTime", "java.time.ZonedDateTime", "app.kobuggi.hyuabot.service.ZonedDateTimeAdapter")
     }
 }
 
@@ -39,6 +42,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
