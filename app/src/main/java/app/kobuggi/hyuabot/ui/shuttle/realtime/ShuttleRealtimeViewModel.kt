@@ -72,7 +72,9 @@ class ShuttleRealtimeViewModel @Inject constructor(
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
             }
-            _notices.value = response.data?.notices?.flatMap { it.notices } ?: emptyList()
+            if (_notices.value == null) {
+                _notices.value = response.data?.notices?.flatMap { it.notices } ?: emptyList()
+            }
             _isLoading.value = false
         }
     }
