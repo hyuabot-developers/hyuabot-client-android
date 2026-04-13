@@ -14,7 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.MapPageQuery
-import app.kobuggi.hyuabot.MapPageSearchQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMapBinding
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -30,7 +29,7 @@ import javax.inject.Inject
 class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private val binding by lazy { FragmentMapBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<MapViewModel>()
-    private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
+    private val bundleKey = "MapViewBundleKey"
     private lateinit var clusterManager: ClusterManager<BuildingMarkerItem>
     private lateinit var googleMap: GoogleMap
     override fun onCreateView(
@@ -38,7 +37,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val mapViewBundle = savedInstanceState?.getBundle(MAP_VIEW_BUNDLE_KEY)
+        val mapViewBundle = savedInstanceState?.getBundle(bundleKey)
         val searchResultAdapter = BuildingSearchAdapter(requireContext(), ::onClickSearchResult, emptyList())
         binding.mapView.let {
             it.onCreate(mapViewBundle)
@@ -87,10 +86,10 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        var mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY)
+        var mapViewBundle = outState.getBundle(bundleKey)
         if (mapViewBundle == null) {
             mapViewBundle = Bundle()
-            outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle)
+            outState.putBundle(bundleKey, mapViewBundle)
         }
         binding.mapView.onSaveInstanceState(mapViewBundle)
     }
@@ -159,7 +158,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun onClickSearchResult(room: MapPageSearchQuery.Room) {
+    private fun onClickSearchResult(room: RoomItem) {
         binding.searchView.hide()
         if (this::googleMap.isInitialized) {
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(room.latitude, room.longitude), 18f))
@@ -169,7 +168,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                     room.name,
                     room.latitude,
                     room.longitude,
-                    room.buildingName,
+                    room.building,
                     BitmapDescriptorFactory.fromBitmap(ResourcesCompat.getDrawable(resources, R.drawable.map_marker, null)!!.toBitmap(64, 64))
                 ))
                 cluster()

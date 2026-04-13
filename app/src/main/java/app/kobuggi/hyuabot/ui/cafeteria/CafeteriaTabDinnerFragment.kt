@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import app.kobuggi.hyuabot.databinding.FragmentCafeteriaTabBinding
+import app.kobuggi.hyuabot.util.DividerItemWithoutLastDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,7 +18,7 @@ class CafeteriaTabDinnerFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val cafeteriaAdapter = CafeteriaListAdapter(requireContext(), "dinner", listOf())
-        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        val decoration = DividerItemWithoutLastDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         parentViewModel.apply {
             dinner.observe(viewLifecycleOwner) {
                 cafeteriaAdapter.updateList(it)

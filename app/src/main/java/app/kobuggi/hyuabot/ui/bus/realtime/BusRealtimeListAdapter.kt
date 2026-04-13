@@ -1,86 +1,95 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
-import app.kobuggi.hyuabot.BusRealtimePageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemBusRealtimeBinding
 import app.kobuggi.hyuabot.util.UIUtility
+import java.time.format.DateTimeFormatter
 import kotlin.math.min
 
 class BusRealtimeListAdapter(
-    private val context: Context,
-    private var realtimeList: List<BusRealtimeItem>,
-    private var timetableList: List<BusTimetableItem>,
-    private val timetableNotExist: Boolean = false,
+    private var arrivalList: List<BusArrivalItem> = emptyList()
 ) : RecyclerView.Adapter<BusRealtimeListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemBusRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val hourFormatter = DateTimeFormatter.ofPattern("HH")
+        private val minuteFormatter = DateTimeFormatter.ofPattern("mm")
+
         @SuppressLint("ClickableViewAccessibility")
-        fun bind(realtimeItem: BusRealtimeItem?, timetableItem: BusTimetableItem?, position: Int) {
-            if (realtimeItem != null) {
+        fun bind(item: BusArrivalItem, position: Int) {
+            val routeName = item.route
+            val item = item.item
+            if (item.isRealtime) {
                 binding.busRouteText.apply {
-                    text = realtimeItem.routeName
-                    setTextColor(ResourcesCompat.getColor(resources, getRouteColor(realtimeItem.routeName), null))
+                    text = routeName
+                    setTextColor(ResourcesCompat.getColor(resources, getRouteColor(routeName), null))
                 }
-                if ((timetableList.isEmpty() && !timetableNotExist) && position == realtimeList.size - 1) {
-                    if (realtimeItem.seat >= 0) {
+                if (position == arrivalList.size - 1) {
+                    if (item.seats!! >= 0) {
                         binding.busTimeText.apply {
-                            text = context.getString(R.string.bus_realtime_format_seats_last, realtimeItem.time.toInt(), realtimeItem.stop, realtimeItem.seat)
-                            setTextColor(context.getColor(R.color.red_bus))
+                            text = binding.root.context.getString(R.string.bus_realtime_format_seats_last, item.minutes, item.stops, item.seats)
+                            setTextColor(binding.root.context.getColor(R.color.red_bus))
                             setTypeface(typeface, android.graphics.Typeface.BOLD)
                         }
                     } else {
                         binding.busTimeText.apply {
-                            text = context.getString(R.string.bus_realtime_format_no_seats_last, realtimeItem.time.toInt(), realtimeItem.stop)
-                            setTextColor(context.getColor(R.color.red_bus))
+                            text = binding.root.context.getString(R.string.bus_realtime_format_no_seats_last, item.minutes, item.stops)
+                            setTextColor(binding.root.context.getColor(R.color.red_bus))
                             setTypeface(typeface, android.graphics.Typeface.BOLD)
                         }
                     }
                 } else {
-                    if (realtimeItem.seat >= 0) {
+                    if (item.seats!! >= 0) {
                         binding.busTimeText.apply {
-                            text = context.getString(R.string.bus_realtime_format_seats, realtimeItem.time.toInt(), realtimeItem.stop, realtimeItem.seat)
-                            setTextColor(if (UIUtility.isDarkModeOn(context.resources)) {
-                                context.getColor(android.R.color.white)
+                            text = binding.root.context.getString(R.string.bus_realtime_format_seats, item.minutes, item.stops, item.seats)
+                            setTextColor(if (UIUtility.isDarkModeOn(binding.root.context.resources)) {
+                                binding.root.context.getColor(android.R.color.white)
                             } else {
-                                context.getColor(android.R.color.black)
+                                binding.root.context.getColor(android.R.color.black)
                             })
                             setTypeface(typeface, android.graphics.Typeface.NORMAL)
                         }
                     } else {
                         binding.busTimeText.apply {
-                            text = context.getString(R.string.bus_realtime_format_no_seats, realtimeItem.time.toInt(), realtimeItem.stop)
-                            setTextColor(if (UIUtility.isDarkModeOn(context.resources)) {
-                                context.getColor(android.R.color.white)
+                            text = binding.root.context.getString(R.string.bus_realtime_format_no_seats, item.minutes, item.stops)
+                            setTextColor(if (UIUtility.isDarkModeOn(binding.root.context.resources)) {
+                                binding.root.context.getColor(android.R.color.white)
                             } else {
-                                context.getColor(android.R.color.black)
+                                binding.root.context.getColor(android.R.color.black)
                             })
                             setTypeface(typeface, android.graphics.Typeface.NORMAL)
                         }
                     }
                 }
-            } else if (timetableItem != null) {
+            } else {
                 binding.busRouteText.apply {
-                    text = timetableItem.routeName
-                    setTextColor(ResourcesCompat.getColor(resources, getRouteColor(timetableItem.routeName), null))
+                    text = routeName
+                    setTextColor(ResourcesCompat.getColor(resources, getRouteColor(routeName), null))
                 }
-                if (position == realtimeList.size + timetableList.size - 1 && !timetableNotExist) {
+                if (position == arrivalList.size - 1) {
                     binding.busTimeText.apply {
-                        text = context.getString(R.string.bus_timetable_format_last, timetableItem.time.substring(0, 2), timetableItem.time.substring(3, 5))
-                        setTextColor(context.getColor(R.color.red_bus))
+                        text = binding.root.context.getString(
+                            R.string.bus_timetable_format_last,
+                            hourFormatter.format(item.time),
+                            minuteFormatter.format(item.time)
+                        )
+                        setTextColor(binding.root.context.getColor(R.color.red_bus))
                         setTypeface(typeface, android.graphics.Typeface.BOLD)
                     }
                 } else {
                     binding.busTimeText.apply {
-                        text = context.getString(R.string.bus_timetable_format, timetableItem.time.substring(0, 2), timetableItem.time.substring(3, 5))
-                        setTextColor(if (UIUtility.isDarkModeOn(context.resources)) {
-                            context.getColor(android.R.color.white)
+                        text = binding.root.context.getString(
+                            R.string.bus_timetable_format,
+                            hourFormatter.format(item.time),
+                            minuteFormatter.format(item.time)
+                        )
+                        setTextColor(if (UIUtility.isDarkModeOn(binding.root.context.resources)) {
+                            binding.root.context.getColor(android.R.color.white)
                         } else {
-                            context.getColor(android.R.color.black)
+                            binding.root.context.getColor(android.R.color.black)
                         })
                         setTypeface(typeface, android.graphics.Typeface.NORMAL)
                     }
@@ -95,19 +104,14 @@ class BusRealtimeListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position < realtimeList.size) {
-            holder.bind(realtimeList[position], null, position)
-        } else {
-            holder.bind(null, timetableList[position - realtimeList.size], position)
-        }
+        holder.bind(arrivalList[position], position)
     }
 
-    override fun getItemCount(): Int = min(realtimeList.size + timetableList.size, 5)
+    override fun getItemCount(): Int = min(arrivalList.size, 5)
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(newRealtimeList: List<BusRealtimeItem>, newTimetableList: List<BusTimetableItem>) {
-        realtimeList = newRealtimeList
-        timetableList = newTimetableList
+    fun updateData(newArrivalList: List<BusArrivalItem>) {
+        arrivalList = newArrivalList
         notifyDataSetChanged()
     }
 

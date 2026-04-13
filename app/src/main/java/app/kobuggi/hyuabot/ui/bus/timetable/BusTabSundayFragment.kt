@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusTimetableTabBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
@@ -32,14 +33,32 @@ class BusTabSundayFragment @Inject constructor() : Fragment() {
             val localTime = LocalTime.now()
             val timetableItems = mutableListOf<BusTimetableItem>()
             it.forEach { route ->
-                timetableItems.addAll(route.timetable.filter { it.weekdays == "sunday" }.map {
+                timetableItems.addAll(route.timetable.filter { timetable ->  timetable.weekday == "sunday" }.map { timetable ->
                     BusTimetableItem(
-                        routeName = route.info.name,
-                        weekdays = it.weekdays,
-                        time = it.time
+                        routeName = route.route.name,
+                        weekdays = timetable.weekday,
+                        time = if (timetable.time.hour < 4) {
+                            requireContext().getString(
+                                R.string.bus_timetable_time_format,
+                                (timetable.time.hour + 24).toString().padStart(2, '0'),
+                                timetable.time.minute.toString().padStart(2, '0')
+                            )
+                        } else {
+                            requireContext().getString(
+                                R.string.bus_timetable_time_format,
+                                timetable.time.hour.toString().padStart(2, '0'),
+                                timetable.time.minute.toString().padStart(2, '0')
+                            )
+                        }
                     )
                 })
             }
+            timetableItems.sortBy { timetable -> timetable.time }
+            val afterNowItemIndex = timetableItems.indexOfFirst { item ->  item.time > getString(
+                R.string.bus_timetable_time_format,
+                localTime.hour.toString().padStart(2, '0'),
+                localTime.minute.toString().padStart(2, '0')
+            )}
             if (timetableItems.isEmpty()) {
                 binding.busTimetableRecyclerView.visibility = View.GONE
                 binding.busTimetableEmptyText.visibility = View.VISIBLE
@@ -48,9 +67,8 @@ class BusTabSundayFragment @Inject constructor() : Fragment() {
                 binding.busTimetableRecyclerView.visibility = View.VISIBLE
                 binding.busTimetableEmptyText.visibility = View.GONE
             }
-            val afterNowItemIndex = timetableItems.indexOfFirst { item -> LocalTime.parse(item.time) > localTime }
             adapter.apply {
-                updateData(timetableItems.sortedBy { it.time })
+                updateData(timetableItems)
                 if (afterNowItemIndex != -1) {
                     binding.busTimetableRecyclerView.scrollToPosition(afterNowItemIndex)
                 }

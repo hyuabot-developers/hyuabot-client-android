@@ -58,17 +58,23 @@ class CalendarViewModel @Inject constructor(
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.calendar != null) {
                 dao.deleteAll()
-                response.data?.calendar?.version?.let { userPreferencesRepository.setCalendarVersion(it) }
-                response.data?.calendar?.data?.map {
-                    Event(
-                        eventID = it.id,
-                        title = it.title,
-                        description = it.description,
-                        startDate = it.start.toString(),
-                        endDate = it.end.toString(),
-                        category = it.category.name
-                    )
-                }?.let { dao.insertAll(*it.toTypedArray()) }
+                response.data?.calendar?.let { calendar ->
+                    calendar.version.let { version -> userPreferencesRepository.setCalendarVersion(version) }
+                    calendar.categories.flatMap { category ->
+                        category.events.map {
+                            Event(
+                                eventID = it.seq,
+                                title = it.title,
+                                description = it.description,
+                                startDate = it.start.toString(),
+                                endDate = it.end.toString(),
+                                category = category.name
+                            )
+                        }
+                    }.let {
+                        dao.insertAll(*it.toTypedArray())
+                    }
+                }
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR

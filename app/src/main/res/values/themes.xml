@@ -37,7 +37,6 @@
         <!-- Status Bar -->
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:statusBarColor">@color/hanyang_blue</item>
-        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:ignore="NewApi">true</item>
     </style>
     <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>

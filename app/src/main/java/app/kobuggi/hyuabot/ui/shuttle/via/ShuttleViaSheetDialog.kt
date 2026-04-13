@@ -13,8 +13,9 @@ import app.kobuggi.hyuabot.databinding.DialogShuttleViaBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ShuttleViaSheetDialog(
-    private val realtimeViaStops: List<ShuttleRealtimePageQuery.Vium> = listOf(),
-    private val timetableViaStops: List<ShuttleTimetablePageQuery.Vium> = listOf()
+    private val stopsOfTimetableByOrder: List<ShuttleRealtimePageQuery.Stop1> = emptyList(),
+    private val stopsOfTimetableByDestination: List<ShuttleRealtimePageQuery.Stop2> = emptyList(),
+    private val stopsOfEntireTimetable: List<ShuttleTimetablePageQuery.Stop1> = emptyList(),
 ): BottomSheetDialogFragment() {
     private val binding by lazy { DialogShuttleViaBinding.inflate(layoutInflater) }
 
@@ -26,7 +27,7 @@ class ShuttleViaSheetDialog(
                 true
             }
             viaList.apply {
-                adapter = ShuttleViaListAdapter(requireContext(), realtimeViaStops, timetableViaStops)
+                adapter = ShuttleViaListAdapter(requireContext(), stopsOfTimetableByOrder, stopsOfTimetableByDestination, stopsOfEntireTimetable)
                 layoutManager = LinearLayoutManager(requireContext())
                 addItemDecoration(decoration)
             }

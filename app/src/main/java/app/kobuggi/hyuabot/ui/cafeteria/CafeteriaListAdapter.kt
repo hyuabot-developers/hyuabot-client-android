@@ -9,37 +9,45 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.CafeteriaPageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemCafeteriaBinding
+import app.kobuggi.hyuabot.util.DividerItemWithoutLastDecoration
 
 class CafeteriaListAdapter(
     private val context: Context,
     private val type: String,
-    private var cafeteriaList: List<CafeteriaPageQuery.Menu>,
+    private var cafeteriaList: List<CafeteriaPageQuery.Cafeterium>,
 ) : RecyclerView.Adapter<CafeteriaListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemCafeteriaBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(cafeteriaItem: CafeteriaPageQuery.Menu) {
+        fun bind(cafeteriaItem: CafeteriaPageQuery.Cafeterium) {
             val menuAdapter = MenuListAdapter(context, listOf())
-            if (type == "breakfast") {
-                binding.subheaderCafeteria.text = context.getString(
-                    R.string.cafeteria_running_time_format,
-                    cafeteriaItem.runningTime.breakfast
-                )
-                menuAdapter.updateList(cafeteriaItem.menu.filter { it.type.contains("조식") }.distinctBy { it.menu } )
-            } else if (type == "lunch") {
-                binding.subheaderCafeteria.text = context.getString(
-                    R.string.cafeteria_running_time_format,
-                    cafeteriaItem.runningTime.lunch
-                )
-                menuAdapter.updateList(cafeteriaItem.menu.filter { it.type.contains("중식") }.distinctBy { it.menu } )
-            } else if (type == "dinner") {
-                binding.subheaderCafeteria.text = context.getString(
-                    R.string.cafeteria_running_time_format,
-                    cafeteriaItem.runningTime.dinner
-                )
-                menuAdapter.updateList(cafeteriaItem.menu.filter { it.type.contains("석식") }.distinctBy { it.menu } )
+            when (type) {
+                "breakfast" -> {
+                    binding.subheaderCafeteria.text = context.getString(
+                        R.string.cafeteria_running_time_format,
+                        cafeteriaItem.runningTime.breakfast ?: '-'
+                    )
+                    menuAdapter.updateList(cafeteriaItem.menus.filter { it.type.contains("조식") }
+                        .distinctBy { it.food })
+                }
+                "lunch" -> {
+                    binding.subheaderCafeteria.text = context.getString(
+                        R.string.cafeteria_running_time_format,
+                        cafeteriaItem.runningTime.lunch ?: '-'
+                    )
+                    menuAdapter.updateList(cafeteriaItem.menus.filter { it.type.contains("중식") }
+                        .distinctBy { it.food })
+                }
+                "dinner" -> {
+                    binding.subheaderCafeteria.text = context.getString(
+                        R.string.cafeteria_running_time_format,
+                        cafeteriaItem.runningTime.dinner ?: '-'
+                    )
+                    menuAdapter.updateList(cafeteriaItem.menus.filter { it.type.contains("석식") }
+                        .distinctBy { it.food })
+                }
             }
-            val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+            val decoration = DividerItemWithoutLastDecoration(context, DividerItemDecoration.VERTICAL)
             binding.apply {
-                headerCafeteria.text = getCafeteriaString(cafeteriaItem.id)
+                headerCafeteria.text = getCafeteriaString(cafeteriaItem.seq)
                 menuList.apply {
                     adapter = menuAdapter
                     addItemDecoration(decoration)
@@ -60,7 +68,7 @@ class CafeteriaListAdapter(
     override fun getItemCount() = cafeteriaList.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<CafeteriaPageQuery.Menu>) {
+    fun updateList(newList: List<CafeteriaPageQuery.Cafeterium>) {
         cafeteriaList = newList
         notifyDataSetChanged()
     }

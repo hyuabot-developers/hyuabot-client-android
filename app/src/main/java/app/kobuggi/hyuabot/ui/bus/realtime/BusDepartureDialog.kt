@@ -18,7 +18,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -31,7 +30,6 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
         val firstRouteID: Int = args.firstRouteID
         val secondRouteID: Int = args.secondRouteID
         val today = LocalDate.now()
-        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val firstLogAdapter = BusDepartureLogAdapter(requireContext(), listOf())
         val secondLogAdapter = BusDepartureLogAdapter(requireContext(), listOf())
         val thirdLogAdapter = BusDepartureLogAdapter(requireContext(), listOf())
@@ -46,7 +44,7 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
             else -> listOf(today)
         }
         val routes = listOf(firstRouteID, secondRouteID).filter { it > 0 }
-        viewModel.fetchData(stopID, routes, queryDates.map { it.format(dateFormatter) })
+        viewModel.fetchData(stopID, routes, queryDates)
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_departure_log), Toast.LENGTH_SHORT).show() }
         }
@@ -55,22 +53,22 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
             it.forEach { route ->
                 logItems.addAll(route.log)
             }
-            val timetable1 = logItems.filter { log -> log.departureDate == queryDates[0].format(dateFormatter) }
-            val timetable2 = logItems.filter { log -> log.departureDate == queryDates[1].format(dateFormatter) }
-            val timetable3 = logItems.filter { log -> log.departureDate == queryDates[2].format(dateFormatter) }
-            firstLogAdapter.updateData(timetable1.sortedBy { it.departureTime.toString() })
-            secondLogAdapter.updateData(timetable2.sortedBy { it.departureTime.toString() })
-            thirdLogAdapter.updateData(timetable3.sortedBy { it.departureTime.toString() })
+            val timetable1 = logItems.filter { log -> log.date == queryDates[0] }
+            val timetable2 = logItems.filter { log -> log.date == queryDates[1] }
+            val timetable3 = logItems.filter { log -> log.date == queryDates[2] }
+            firstLogAdapter.updateData(timetable1.sortedBy { log -> log.time.toString() })
+            secondLogAdapter.updateData(timetable2.sortedBy { log -> log.time.toString() })
+            thirdLogAdapter.updateData(timetable3.sortedBy { log -> log.time.toString() })
 
             val currentTime = LocalTime.now()
             binding.busDepartureLogRecyclerView1.scrollToPosition(timetable1.indexOfFirst {
-                    log -> LocalTime.parse(log.departureTime.toString().substring(0, 5)) > currentTime
+                    log -> LocalTime.parse(log.time.toString().substring(0, 5)) > currentTime
                 })
             binding.busDepartureLogRecyclerView2.scrollToPosition(timetable2.indexOfFirst {
-                    log -> LocalTime.parse(log.departureTime.toString().substring(0, 5)) > currentTime
+                    log -> LocalTime.parse(log.time.toString().substring(0, 5)) > currentTime
                 })
             binding.busDepartureLogRecyclerView3.scrollToPosition(timetable3.indexOfFirst {
-                    log -> LocalTime.parse(log.departureTime.toString().substring(0, 5)) > currentTime
+                    log -> LocalTime.parse(log.time.toString().substring(0, 5)) > currentTime
                 })
             if (firstLogAdapter.itemCount == 0) {
                 binding.busDepartureLogNoData1.visibility = View.VISIBLE

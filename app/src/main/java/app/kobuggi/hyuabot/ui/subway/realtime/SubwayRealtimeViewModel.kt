@@ -2,6 +2,8 @@ package app.kobuggi.hyuabot.ui.subway.realtime
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.SubwayRealtimePageQuery
 import app.kobuggi.hyuabot.util.QueryError
@@ -10,35 +12,51 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: ApolloClient): ViewModel() {
     private val _isLoading = MutableLiveData(false)
-    private val _K251 = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
-    private val _K449 = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
+    private val _campusYellow = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
+    private val _campusBlue = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
+    private val _oidoYellow = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
+    private val _oidoBlue = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _queryError = MutableLiveData<QueryError?>(null)
     private val _disposable = CompositeDisposable()
 
     val isLoading get() = _isLoading
     val queryError get() = _queryError
-    val K251 get() = _K251
-    val K449 get() = _K449
+    val campusYellow get() = _campusYellow
+    val campusBlue get() = _campusBlue
+    val oidoYellow get() = _oidoYellow
+    val oidoBlue get() = _oidoBlue
+    val combinedData get() = combine(
+        campusYellow.asFlow(),
+        campusBlue.asFlow(),
+        oidoYellow.asFlow(),
+        oidoBlue.asFlow()
+    ) { campusYellow, campusBlue, oidoYellow, oidoBlue ->
+        SubwayRealtimeCombinedData(campusYellow, campusBlue, oidoYellow, oidoBlue)
+    }.onStart { emit(SubwayRealtimeCombinedData(null, null, null, null)) }.asLiveData()
 
     fun fetchData() {
-        val now = LocalDateTime.now()
-        val currentTime = DateTimeFormatter.ofPattern("HH:mm").format(now)
+        val localDate = LocalDate.now()
         viewModelScope.launch {
-            val response = apolloClient.query(SubwayRealtimePageQuery(currentTime)).execute()
+            val response = apolloClient.query(SubwayRealtimePageQuery(
+                weekday = if (localDate.dayOfWeek.value in 1..5) "weekdays" else "weekends"
+            )).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.subway != null) {
-                _K251.value = response.data?.subway?.first { it.id == "K251" }
-                _K449.value = response.data?.subway?.first { it.id == "K449" }
+                _campusYellow.value = response.data?.subway?.first { it.stationID == "K251" }
+                _campusBlue.value = response.data?.subway?.first { it.stationID == "K449" }
+                _oidoYellow.value = response.data?.subway?.first { it.stationID == "K258" }
+                _oidoBlue.value = response.data?.subway?.first { it.stationID == "K456" }
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR

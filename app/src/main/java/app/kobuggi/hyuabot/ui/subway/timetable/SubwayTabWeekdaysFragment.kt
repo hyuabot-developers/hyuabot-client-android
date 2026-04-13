@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.databinding.FragmentSubwayTimetableTabBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -25,61 +26,40 @@ class SubwayTabWeekdaysFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
-        if (parentViewModel.heading.value == "up") {
-            val timetableAdapter = SubwayTimetableListAdapter(requireContext(), listOf(), null)
-            parentViewModel.up.observe(viewLifecycleOwner) {
-                timetableAdapter.updateData(
-                    it.filter {
-                        item -> item.weekdays
-                    }.map {
-                        item -> item.copy(
-                            time = add24HoursAfterMidnight(item.time)
-                        )
-                    }.sortedBy { item -> item.time },
-                    null
-                )
-            }
-            binding.apply {
-                timetableRecyclerView.apply {
-                    adapter = timetableAdapter
-                    layoutManager = LinearLayoutManager(requireContext())
-                    addItemDecoration(decoration)
-                }
-            }
-        } else {
-            val timetableAdapter = SubwayTimetableListAdapter(requireContext(), null, listOf())
-            parentViewModel.down.observe(viewLifecycleOwner) {
-                timetableAdapter.updateData(
-                    null,
-                    it.filter {
-                        item -> item.weekdays
-                    }.map {
-                        item -> item.copy(
-                            time = add24HoursAfterMidnight(item.time)
-                        )
-                    }.sortedBy {
-                        item -> item.time
-                    }
-                )
-            }
-            binding.apply {
-                timetableRecyclerView.apply {
-                    adapter = timetableAdapter
-                    layoutManager = LinearLayoutManager(requireContext())
-                    addItemDecoration(decoration)
-                }
+        val timetableAdapter = SubwayTimetableListAdapter(requireContext())
+        parentViewModel.timetable.observe(viewLifecycleOwner) {
+            timetableAdapter.updateData(
+                it.filter {
+                    item -> item.weekday == "weekdays"
+                }.map {
+                    item -> SubwayTimetableItem(
+                        weekday = item.weekday,
+                        direction = item.direction,
+                        time = add24HoursAfterMidnight(item.time),
+                        terminal = item.terminal,
+                    )
+                }.sortedBy { item -> item.time },
+            )
+        }
+        binding.apply {
+            timetableRecyclerView.apply {
+                adapter = timetableAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+                addItemDecoration(decoration)
             }
         }
         return binding.root
     }
 
     @SuppressLint("DefaultLocale")
-    private fun add24HoursAfterMidnight(time: String): String {
-        val (hour, minute, second) = time.split(":").map { it.toInt() }
+    private fun add24HoursAfterMidnight(time: LocalTime): String {
+        val hour = time.hour
+        val minute = time.minute
+        val second = time.second
         return if (hour < 5) {
             String.format("%02d:%02d:%02d", hour + 24, minute, second)
         } else {
-            time
+            String.format("%02d:%02d:%02d", hour, minute, second)
         }
     }
 }

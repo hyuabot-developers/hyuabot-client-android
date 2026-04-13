@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,8 +13,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -24,11 +23,14 @@ class BusRealtimeViewModel @Inject constructor(
 ): ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _result = MutableLiveData<List<BusRealtimePageQuery.Bus>>()
+    private val _notices = MutableLiveData<List<BusRealtimePageQuery.Notice1>>()
+
     private val _disposable = CompositeDisposable()
     private val _selectedStopID = MutableLiveData<Int?>(null)
     private val _queryError = MutableLiveData<QueryError?>(null)
 
     val result get() = _result
+    val notices get() = _notices
     val isLoading get() = _isLoading
     val selectedStopID get() = _selectedStopID
     val queryError get() = _queryError
@@ -43,10 +45,18 @@ class BusRealtimeViewModel @Inject constructor(
 
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
-        val now = LocalDateTime.now()
-        val currentTime = DateTimeFormatter.ofPattern("HH:mm").format(now)
+        val locale = AppCompatDelegate.getApplicationLocales().get(0)
+        val language = if (locale == null) {
+            "KOREAN"
+        } else {
+            when (locale.language) {
+                "ko" -> "KOREAN"
+                "en" -> "ENGLISH"
+                else -> "KOREAN"
+            }
+        }
         viewModelScope.launch {
-            val response = apolloClient.query(BusRealtimePageQuery(currentTime)).execute()
+            val response = apolloClient.query(BusRealtimePageQuery(language)).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {
@@ -54,6 +64,9 @@ class BusRealtimeViewModel @Inject constructor(
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
+            }
+            if (_notices.value == null) {
+                _notices.value = response.data?.notices?.flatMap { it.notices } ?: emptyList()
             }
             _isLoading.value = false
         }

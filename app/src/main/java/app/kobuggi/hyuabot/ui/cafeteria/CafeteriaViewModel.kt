@@ -11,6 +11,7 @@ import com.apollographql.apollo.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,9 +21,9 @@ class CafeteriaViewModel @Inject constructor(
 ): ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _date = MutableLiveData(LocalDateTime.now())
-    private val _breakfast = MutableLiveData<List<CafeteriaPageQuery.Menu>>()
-    private val _lunch = MutableLiveData<List<CafeteriaPageQuery.Menu>>()
-    private val _dinner = MutableLiveData<List<CafeteriaPageQuery.Menu>>()
+    private val _breakfast = MutableLiveData<List<CafeteriaPageQuery.Cafeterium>>()
+    private val _lunch = MutableLiveData<List<CafeteriaPageQuery.Cafeterium>>()
+    private val _dinner = MutableLiveData<List<CafeteriaPageQuery.Cafeterium>>()
     private val _queryError = MutableLiveData<QueryError?>(null)
 
     val isLoading get() = _isLoading
@@ -36,18 +37,23 @@ class CafeteriaViewModel @Inject constructor(
     fun fetchData(campusID: Int = 2) {
         viewModelScope.launch {
             _isLoading.value = true
-            val response = apolloClient.query(CafeteriaPageQuery(_date.value?.toLocalDate().toString(), campusID)).execute()
+            val response = apolloClient.query(
+                CafeteriaPageQuery(
+                    (_date.value ?: LocalDateTime.now(ZoneId.of("Asia/Seoul"))).toLocalDate(),
+                    campusID
+                )
+            ).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
-            } else if (response.data?.menu != null) {
-                _breakfast.value = response.data?.menu?.filter {
-                    it.menu.any { menuItem -> menuItem.type.contains("조식") }
+            } else if (response.data?.cafeteria != null) {
+                _breakfast.value = response.data?.cafeteria?.filter {
+                    it.menus.any { menuItem -> menuItem.type.contains("조식") }
                 }
-                _lunch.value = response.data?.menu?.filter {
-                    it.menu.any { menuItem -> menuItem.type.contains("중식") }
+                _lunch.value = response.data?.cafeteria?.filter {
+                    it.menus.any { menuItem -> menuItem.type.contains("중식") }
                 }
-                _dinner.value = response.data?.menu?.filter {
-                    it.menu.any { menuItem -> menuItem.type.contains("석식") }
+                _dinner.value = response.data?.cafeteria?.filter {
+                    it.menus.any { menuItem -> menuItem.type.contains("석식") }
                 }
                 _queryError.value = null
             } else {

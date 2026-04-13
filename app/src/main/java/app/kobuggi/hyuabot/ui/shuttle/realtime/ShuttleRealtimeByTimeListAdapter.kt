@@ -23,23 +23,22 @@ class ShuttleRealtimeByTimeListAdapter(
     private val lifecycleOwner: LifecycleOwner,
     private val stopID: Int,
     private val childFragmentManager: FragmentManager,
-    private var shuttleList: List<ShuttleRealtimePageQuery.Timetable>,
+    private var shuttleList: List<ShuttleRealtimePageQuery.Order>,
 ) : RecyclerView.Adapter<ShuttleRealtimeByTimeListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ClickableViewAccessibility")
-        fun bind(item: ShuttleRealtimePageQuery.Timetable) {
+        fun bind(item: ShuttleRealtimePageQuery.Order) {
             setStopText(context, binding.shuttleTypeText, binding.warningView, stopID, item)
             val now = LocalTime.now()
             shuttleRealtimeViewModel.showDepartureTime.observe(lifecycleOwner) {
-                val time = LocalTime.parse(item.time)
                 if (!it) {
-                    val remainingTime = time.minusHours(now.hour.toLong()).minusMinutes(now.minute.toLong() + 1)
+                    val remainingTime = item.time.minusHours(now.hour.toLong()).minusMinutes(now.minute.toLong() + 1)
                     binding.shuttleTimeText.text = context.getString(R.string.shuttle_time_type_2, (remainingTime.hour * 60 + remainingTime.minute).toString())
                 } else {
                     binding.shuttleTimeText.text = context.getString(
                         R.string.shuttle_time_type_1,
-                        time.hour.toString().padStart(2, '0'),
-                        time.minute.toString().padStart(2, '0')
+                        item.time.hour.toString().padStart(2, '0'),
+                        item.time.minute.toString().padStart(2, '0')
                     )
                 }
             }
@@ -57,7 +56,7 @@ class ShuttleRealtimeByTimeListAdapter(
             }
 
             binding.shuttleItem.setOnClickListener {
-                val viaSheet = ShuttleViaSheetDialog(item.via)
+                val viaSheet = ShuttleViaSheetDialog(stopsOfTimetableByOrder = item.stops)
                 viaSheet.show(childFragmentManager, "ShuttleViaSheetDialog")
             }
         }
@@ -74,7 +73,7 @@ class ShuttleRealtimeByTimeListAdapter(
 
     override fun getItemCount(): Int = shuttleList.size
 
-    fun updateData(newData: List<ShuttleRealtimePageQuery.Timetable>) {
+    fun updateData(newData: List<ShuttleRealtimePageQuery.Order>) {
         if (shuttleList.size > newData.size) {
             shuttleList = newData
             notifyItemRangeChanged(0, shuttleList.size)
@@ -89,15 +88,16 @@ class ShuttleRealtimeByTimeListAdapter(
         }
     }
 
-    private fun setStopText(context: Context, textView: TextView, warningView: MaterialCardView, stopID: Int, item: ShuttleRealtimePageQuery.Timetable) {
+    private fun setStopText(context: Context, textView: TextView, warningView: MaterialCardView, stopID: Int, item: ShuttleRealtimePageQuery.Order) {
+        val darkMode = context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
         warningView.visibility = View.GONE
         when (stopID) {
             R.string.shuttle_tab_dormitory_out, R.string.shuttle_tab_shuttlecock_out -> {
-                when(item.tag) {
+                when(item.route.tag) {
                     "DH" -> {
                         textView.apply {
                             text = context.getString(R.string.shuttle_type_school_station)
-                            setTextColor(context.getColor(R.color.hanyang_blue))
+                            setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                         }
                     }
                     "DY" -> {
@@ -122,17 +122,17 @@ class ShuttleRealtimeByTimeListAdapter(
                 }
             }
             R.string.shuttle_tab_station -> {
-                when (item.tag) {
+                when (item.route.tag) {
                     "DH" -> {
-                        if (item.route.endsWith("S")) {
+                        if (item.route.name.endsWith("S")) {
                             textView.apply {
                                 text = context.getString(R.string.shuttle_type_shuttlecock)
                                 setTextColor(context.getColor(R.color.red_bus))
                             }
-                        } else if (item.route.endsWith("D")) {
+                        } else if (item.route.name.endsWith("D")) {
                             textView.apply {
                                 text = context.getString(R.string.shuttle_type_dormitory)
-                                setTextColor(context.getColor(R.color.hanyang_blue))
+                                setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                             }
                         }
                     }
@@ -143,12 +143,12 @@ class ShuttleRealtimeByTimeListAdapter(
                         }
                     }
                     "C" -> {
-                        if (item.route.endsWith("S")) {
+                        if (item.route.name.endsWith("S")) {
                             textView.apply {
                                 text = context.getString(R.string.shuttle_type_station_circular_shuttlecock)
                                 setTextColor(context.getColor(R.color.primary_text))
                             }
-                        } else if (item.route.endsWith("D")) {
+                        } else if (item.route.name.endsWith("D")) {
                             textView.apply {
                                 text = context.getString(R.string.shuttle_type_station_circular_dormitory)
                                 setTextColor(context.getColor(R.color.primary_text))
@@ -158,34 +158,34 @@ class ShuttleRealtimeByTimeListAdapter(
                 }
             }
             R.string.shuttle_tab_terminal -> {
-                if (item.route.endsWith("S")) {
+                if (item.route.name.endsWith("S")) {
                     textView.apply {
                         text = context.getString(R.string.shuttle_type_shuttlecock)
                         setTextColor(context.getColor(R.color.red_bus))
                     }
-                } else if (item.route.endsWith("D")) {
+                } else if (item.route.name.endsWith("D")) {
                     textView.apply {
                         text = context.getString(R.string.shuttle_type_dormitory)
-                        setTextColor(context.getColor(R.color.hanyang_blue))
+                        setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                     }
                 }
             }
             R.string.shuttle_tab_jungang_station -> {
                 textView.apply {
                     text = context.getString(R.string.shuttle_type_dormitory)
-                    setTextColor(context.getColor(R.color.hanyang_blue))
+                    setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                 }
             }
             R.string.shuttle_tab_shuttlecock_in -> {
-                if (item.route.endsWith("S")) {
+                if (item.route.name.endsWith("S")) {
                     textView.apply {
                         text = context.getString(R.string.shuttle_type_shuttlecock_finishing)
                         setTextColor(context.getColor(R.color.red_bus))
                     }
-                } else if (item.route.endsWith("D")) {
+                } else if (item.route.name.endsWith("D")) {
                     textView.apply {
                         text = context.getString(R.string.shuttle_type_dormitory)
-                        setTextColor(context.getColor(R.color.hanyang_blue))
+                        setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
                     }
                 }
             }

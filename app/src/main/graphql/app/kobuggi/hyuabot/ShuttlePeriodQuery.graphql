@@ -1,5 +1,5 @@
-query ShuttlePeriodQuery {
-    shuttle (periodCurrent: true) {
+query ShuttlePeriodQuery($date: Date!) {
+    shuttle (input: { date: $date }) {
         period {
             type
         }

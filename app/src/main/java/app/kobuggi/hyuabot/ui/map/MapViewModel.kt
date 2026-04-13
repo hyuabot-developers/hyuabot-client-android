@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MapViewModel @Inject constructor(private val apolloClient: ApolloClient) : ViewModel() {
     private val _buildings = MutableLiveData<List<MapPageQuery.Building>>()
-    private val _rooms = MutableLiveData<List<MapPageSearchQuery.Room>>()
+    private val _rooms = MutableLiveData<List<RoomItem>>()
     private val _queryError = MutableLiveData<QueryError?>(null)
 
     val buildings get() = _buildings
@@ -41,8 +41,18 @@ class MapViewModel @Inject constructor(private val apolloClient: ApolloClient) :
             val response = apolloClient.query(MapPageSearchQuery(query)).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
-            } else if (response.data?.room != null) {
-                _rooms.value = response.data?.room ?: emptyList()
+            } else if (response.data?.building != null) {
+                _rooms.value = response.data?.building?.flatMap { building ->
+                    building.rooms.map { room ->
+                        RoomItem(
+                            name = room.name,
+                            number = room.number,
+                            building = building.name,
+                            latitude = building.latitude,
+                            longitude = building.longitude
+                        )
+                    }
+                } ?: emptyList()
                 searchRooms.value = true
                 _queryError.value = null
             } else {

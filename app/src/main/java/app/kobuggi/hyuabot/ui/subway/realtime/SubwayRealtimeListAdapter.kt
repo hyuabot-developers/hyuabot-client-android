@@ -8,92 +8,44 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.SubwayRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.ItemSubwayRealtimeBinding
-import kotlin.math.min
 
 class SubwayRealtimeListAdapter(
     private val context: Context,
-    private var upRealtimeList: List<SubwayRealtimePageQuery.Up>?,
-    private var downRealtimeList: List<SubwayRealtimePageQuery.Down>?,
-    private var upTimetableList: List<SubwayRealtimePageQuery.Up1>?,
-    private var downTimetableList: List<SubwayRealtimePageQuery.Down1>?,
+    private var arrivals: List<SubwayRealtimePageQuery.Entry> = emptyList(),
 ) : RecyclerView.Adapter<SubwayRealtimeListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemSubwayRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ClickableViewAccessibility")
-        fun bind(
-            upRealtimeItem: SubwayRealtimePageQuery.Up?,
-            downRealtimeItem: SubwayRealtimePageQuery.Down?,
-            upTimetableItem: SubwayRealtimePageQuery.Up1?,
-            downTimetableItem: SubwayRealtimePageQuery.Down1?,
-        ) {
-            if (upRealtimeItem != null) {
-                binding.apply {
-                    if (upRealtimeItem.last) {
-                        subwayDestinationText.apply {
-                            text = context.getString(
-                                R.string.subway_realtime_destination_format_last,
-                                getTerminalString(upRealtimeItem.terminal.id),
-                            )
-                            setTextColor(context.getColor(android.R.color.holo_red_light))
-                        }
-                    } else {
-                        subwayDestinationText.text = context.getString(
-                            R.string.subway_realtime_destination_format,
-                            getTerminalString(upRealtimeItem.terminal.id),
+        fun bind(arrival: SubwayRealtimePageQuery.Entry) {
+            if (arrival.isRealtime) {
+                if (arrival.isLast!!) {
+                    binding.subwayDestinationText.apply {
+                        text = context.getString(
+                            R.string.subway_realtime_destination_format_last,
+                            getTerminalString(arrival.terminal.stationID),
                         )
+                        setTextColor(context.getColor(android.R.color.holo_red_light))
                     }
-                    subwayTimeText.text = context.getString(
-                        R.string.subway_realtime_format,
-                        upRealtimeItem.time.toInt(),
-                        upRealtimeItem.stop
+                } else {
+                    binding.subwayDestinationText.text = context.getString(
+                        R.string.subway_realtime_destination_format,
+                        getTerminalString(arrival.terminal.stationID),
                     )
                 }
-            }
-            else if (downRealtimeItem != null) {
-                binding.apply {
-                    if (downRealtimeItem.last) {
-                        subwayDestinationText.apply {
-                            text = context.getString(
-                                R.string.subway_realtime_destination_format_last,
-                                getTerminalString(downRealtimeItem.terminal.id),
-                            )
-                            setTextColor(context.getColor(android.R.color.holo_red_light))
-                            }
-                    } else {
-                        subwayDestinationText.text = context.getString(
-                            R.string.subway_realtime_destination_format,
-                            getTerminalString(downRealtimeItem.terminal.id),
-                        )
-                    }
-                    subwayTimeText.text = context.getString(
-                        R.string.subway_realtime_format,
-                        downRealtimeItem.time.toInt(),
-                        downRealtimeItem.stop
-                    )
-                }
-            }
-            else if (upTimetableItem != null) {
+                binding.subwayTimeText.text = context.getString(
+                    R.string.subway_realtime_format,
+                    arrival.minutes,
+                    arrival.location ?: '-'
+                )
+            } else {
                 binding.apply {
                     subwayDestinationText.text = context.getString(
                         R.string.subway_realtime_destination_format,
-                        getTerminalString(upTimetableItem.terminal.id),
+                        getTerminalString(arrival.terminal.stationID),
                     )
                     subwayTimeText.text = context.getString(
                         R.string.subway_realtime_timetable_format,
-                        upTimetableItem.time.substring(0, 2),
-                        upTimetableItem.time.substring(3, 5),
-                    )
-                }
-            }
-            else if (downTimetableItem != null) {
-                binding.apply {
-                    subwayDestinationText.text = context.getString(
-                        R.string.subway_realtime_destination_format,
-                        getTerminalString(downTimetableItem.terminal.id),
-                    )
-                    subwayTimeText.text = context.getString(
-                        R.string.subway_realtime_timetable_format,
-                        downTimetableItem.time.substring(0, 2),
-                        downTimetableItem.time.substring(3, 5),
+                        arrival.minutes,
+                        arrival.origin?.let { origin -> getTerminalString(origin.stationID) } ?: '-'
                     )
                 }
             }
@@ -106,42 +58,14 @@ class SubwayRealtimeListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (upRealtimeList != null && upTimetableList != null){
-            if (position < upRealtimeList!!.size) {
-                holder.bind(upRealtimeList!![position], null, null, null)
-            } else {
-                holder.bind(null, null, upTimetableList!![position - upRealtimeList!!.size], null)
-            }
-        } else if (downRealtimeList != null && downTimetableList != null) {
-            if (position < downRealtimeList!!.size) {
-                holder.bind(null, downRealtimeList!![position], null, null)
-            } else {
-                holder.bind(null, null, null, downTimetableList!![position - downRealtimeList!!.size])
-            }
-        }
+        holder.bind(arrivals[position])
     }
 
-    override fun getItemCount(): Int {
-        return if (upRealtimeList != null && upTimetableList != null) {
-            min(upRealtimeList!!.size + upTimetableList!!.size, 5)
-        } else if (downRealtimeList != null && downTimetableList != null) {
-            min(downRealtimeList!!.size + downTimetableList!!.size, 5)
-        } else {
-            0
-        }
-    }
+    override fun getItemCount(): Int = arrivals.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(
-        newUpRealtimeList: List<SubwayRealtimePageQuery.Up>?,
-        newDownRealtimeList: List<SubwayRealtimePageQuery.Down>?,
-        newUpTimetableList: List<SubwayRealtimePageQuery.Up1>?,
-        newDownTimetableList: List<SubwayRealtimePageQuery.Down1>?,
-    ) {
-        upRealtimeList = newUpRealtimeList
-        downRealtimeList = newDownRealtimeList
-        upTimetableList = newUpTimetableList
-        downTimetableList = newDownTimetableList
+    fun updateData(newArrivals: List<SubwayRealtimePageQuery.Entry>) {
+        arrivals = newArrivals
         notifyDataSetChanged()
     }
 

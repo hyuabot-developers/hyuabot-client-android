@@ -38,10 +38,10 @@ class ShuttleTabWeekendsFragment @Inject constructor() : Fragment() {
             addItemDecoration(decoration)
         }
         parentViewModel.result.observe(viewLifecycleOwner) {
-            val timetableItems = it.filter { item -> !item.weekdays }
+            val timetableItems = it.filter { item -> !item.weekday }
             if (timetableItems.isNotEmpty()) {
                 adapter.updateData(timetableItems)
-                val afterNowItemIndex = timetableItems.indexOfFirst { item -> LocalTime.parse(item.time) > localTime }
+                val afterNowItemIndex = timetableItems.indexOfFirst { item -> item.time > localTime }
                 binding.apply {
                     if (afterNowItemIndex != -1) {
                         shuttleTimetableRecyclerView.scrollToPosition(afterNowItemIndex)

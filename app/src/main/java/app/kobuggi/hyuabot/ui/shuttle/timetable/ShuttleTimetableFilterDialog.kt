@@ -19,7 +19,7 @@ class ShuttleTimetableFilterDialog : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding.toolbar.setOnMenuItemClickListener { _ -> dismiss(); true }
-        binding.shuttlePeriodGroup.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
+        binding.shuttlePeriodGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if(isChecked) {
                 when (checkedId) {
                     binding.semesterButton.id -> {

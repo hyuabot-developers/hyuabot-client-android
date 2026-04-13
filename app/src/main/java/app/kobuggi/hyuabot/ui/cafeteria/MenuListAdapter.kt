@@ -11,12 +11,12 @@ import app.kobuggi.hyuabot.databinding.ItemMenuBinding
 
 class MenuListAdapter(
     private val context: Context,
-    private var menuList: List<CafeteriaPageQuery.Menu1>,
+    private var menuList: List<CafeteriaPageQuery.Menu> = emptyList(),
 ) : RecyclerView.Adapter<MenuListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemMenuBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(cafeteriaItem: CafeteriaPageQuery.Menu1) {
+        fun bind(cafeteriaItem: CafeteriaPageQuery.Menu) {
             binding.apply {
-                menuTextView.text = cafeteriaItem.menu
+                menuTextView.text = cafeteriaItem.food
                 if (cafeteriaItem.price.endsWith("원")) {
                     menuPriceView.text = context.getString(R.string.cafeteria_price_format, cafeteriaItem.price.replace("원", ""))
                 } else {
@@ -38,7 +38,7 @@ class MenuListAdapter(
     override fun getItemCount() = menuList.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(newList: List<CafeteriaPageQuery.Menu1>) {
+    fun updateList(newList: List<CafeteriaPageQuery.Menu>) {
         menuList = newList
         notifyDataSetChanged()
     }

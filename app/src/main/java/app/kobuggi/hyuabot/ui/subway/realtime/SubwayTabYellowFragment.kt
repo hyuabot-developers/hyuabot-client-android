@@ -14,23 +14,20 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentSubwayRealtimeTabBinding
 import app.kobuggi.hyuabot.service.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class SubwayTabYellowFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentSubwayRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: SubwayRealtimeViewModel by viewModels({ requireParentFragment() })
-    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val upAdapter = SubwayRealtimeListAdapter(requireContext(), listOf(), null, listOf(), null)
-        val downAdapter = SubwayRealtimeListAdapter(requireContext(), null, listOf(), null, listOf())
+        val upAdapter = SubwayRealtimeListAdapter(requireContext())
+        val downAdapter = SubwayRealtimeListAdapter(requireContext())
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
         binding.apply {
             headerUp.text = getString(R.string.subway_yellow_up)
@@ -62,37 +59,18 @@ class SubwayTabYellowFragment @Inject constructor() : Fragment() {
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
-        parentViewModel.K251.observe(viewLifecycleOwner) {
-            upAdapter.updateData(
-                it?.realtime?.up ?: listOf(),
-                null,
-                it?.timetable?.up?.filter { timetableItem ->
-                    if (it.realtime.up.isEmpty()) {
-                        return@filter true
-                    }
-                    val departureTime = LocalTime.parse(timetableItem.time, dateTimeFormatter)
-                    departureTime.isAfter(LocalTime.now().plusMinutes(it.realtime.up.last().time.toLong()))
-                } ?: listOf(),
-                null
-            )
-            downAdapter.updateData(
-                null,
-                it?.realtime?.down ?: listOf(),
-                null,
-                it?.timetable?.down?.filter { timetableItem ->
-                    if (it.realtime.down.isEmpty()) {
-                        return@filter true
-                    }
-                    val departureTime = LocalTime.parse(timetableItem.time, dateTimeFormatter)
-                    departureTime.isAfter(LocalTime.now().plusMinutes(it.realtime.down.last().time.toLong()))
-                } ?: listOf()
-            )
-            if (it?.realtime?.up.isNullOrEmpty() && it?.timetable?.up.isNullOrEmpty()) {
+        parentViewModel.campusYellow.observe(viewLifecycleOwner) {
+            if (it == null) return@observe
+            val upEntries = it.arrival.firstOrNull { arrival -> arrival.direction == "up" }?.entries ?: emptyList()
+            val downEntries = it.arrival.firstOrNull { arrival -> arrival.direction == "down" }?.entries ?: emptyList()
+            upAdapter.updateData(upEntries)
+            downAdapter.updateData(downEntries)
+            if (upEntries.isEmpty()) {
                 binding.noRealtimeDataUp.visibility = View.VISIBLE
             } else {
                 binding.noRealtimeDataUp.visibility = View.GONE
             }
-            if (it?.realtime?.down.isNullOrEmpty() && it?.timetable?.down.isNullOrEmpty()) {
+            if (downEntries.isEmpty()) {
                 binding.noRealtimeDataDown.visibility = View.VISIBLE
             } else {
                 binding.noRealtimeDataDown.visibility = View.GONE

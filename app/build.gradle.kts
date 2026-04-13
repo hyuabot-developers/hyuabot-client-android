@@ -2,7 +2,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlinKsp)
     alias(libs.plugins.hiltPlugin)
     alias(libs.plugins.apollo)
@@ -15,19 +14,22 @@ plugins {
 val props = Properties()
 file("../local.properties").inputStream().use { props.load(it) }
 
+apollo {
+    service("query") {
+        packageName = "app.kobuggi.hyuabot"
+        introspection {
+            endpointUrl.set("https://api.hyuabot.app/query")
+            schemaFile.set(file("src/main/graphql/schema.graphqls"))
+        }
+        mapScalar("Date", "java.time.LocalDate", "app.kobuggi.hyuabot.service.query.LocalDateAdapter")
+        mapScalar("LocalTime", "java.time.LocalTime", "app.kobuggi.hyuabot.service.query.LocalTimeAdapter")
+        mapScalar("DateTime", "java.time.ZonedDateTime", "app.kobuggi.hyuabot.service.query.ZonedDateTimeAdapter")
+    }
+}
+
 android {
     namespace = "app.kobuggi.hyuabot"
-    compileSdk = 35
-
-    apollo {
-        service("query") {
-            packageName = "app.kobuggi.hyuabot"
-            introspection {
-                endpointUrl.set("https://api.hyuabot.app/query")
-                schemaFile.set(file("src/main/graphql/schema.graphqls"))
-            }
-        }
-    }
+    compileSdk = 36
 
     signingConfigs {
         create("config") {
@@ -40,10 +42,10 @@ android {
 
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
-        minSdk = 26
-        targetSdk = 35
-        versionCode = 412000000
-        versionName = "4.1.2"
+        minSdk = 28
+        targetSdk = 36
+        versionCode = 500000000
+        versionName = "5.0.0"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
@@ -71,10 +73,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     flavorDimensions.add("appType")
     productFlavors {
         create("dev") {
@@ -82,6 +80,19 @@ android {
         }
         create("production") {
             dimension = "appType"
+        }
+    }
+
+    sourceSets {
+        named("dev") {
+            kotlin.directories.addAll(listOf(
+                "src/dev/kotlin",
+            ))
+        }
+        named("production") {
+            kotlin.directories.addAll(listOf(
+                "src/production/kotlin",
+            ))
         }
     }
 
