@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -104,7 +105,12 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             if (busList == null) return@observe
             val routes = busList.filter { route -> route.stop.seq == 216000719 && (route.route.seq == 216000096 || route.route.seq == 216000026 || route.route.seq == 216000043) }
             val arrivalList = routes.flatMap { route -> route.arrival.map { BusArrivalItem(route.route.name, it) } }
-            busSecondAdapter.updateData(arrivalList.sortedWith(compareBy({ it.item.minutes ?: Int.MAX_VALUE }, { it.item.time ?: LocalTime.MAX })))
+            busSecondAdapter.updateData(arrivalList.sortedWith(compareBy(
+                { it.item.minutes ?: Int.MAX_VALUE },
+                { it.item.time?.let { time ->
+                    add24HoursAfterMidnight(time)
+                }}
+            )))
             binding.noRealtimeDataSecond.visibility = if (arrivalList.isEmpty()) View.VISIBLE else View.GONE
         }
         binding.apply {
@@ -155,5 +161,17 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
         return binding.root
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun add24HoursAfterMidnight(time: LocalTime): String {
+        val hour = time.hour
+        val minute = time.minute
+        val second = time.second
+        return if (hour < 5) {
+            String.format("%02d:%02d:%02d", hour + 24, minute, second)
+        } else {
+            String.format("%02d:%02d:%02d", hour, minute, second)
+        }
     }
 }
