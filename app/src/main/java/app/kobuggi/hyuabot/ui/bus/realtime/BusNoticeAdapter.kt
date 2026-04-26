@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.BusRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.ItemNoticeBinding
+import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 
 class BusNoticeAdapter(private var items: List<BusRealtimePageQuery.Notice1>): RecyclerView.Adapter<BusNoticeAdapter.ViewHolder>() {
     class ViewHolder(private val binding: ItemNoticeBinding): RecyclerView.ViewHolder(binding.root) {
@@ -19,7 +20,7 @@ class BusNoticeAdapter(private var items: List<BusRealtimePageQuery.Notice1>): R
                 } else {
                     setOnClickListener {
                         BusRealtimeFragmentDirections.actionBusRealtimeFragmentToNoticeWebViewFragment(item.url).let { direction ->
-                            it.findNavController().navigate(direction)
+                            it.findNavController().safeNavigate(direction)
                         }
                     }
                 }

@@ -29,7 +29,7 @@ apollo {
 
 android {
     namespace = "app.kobuggi.hyuabot"
-    compileSdk = 36
+    compileSdk = 37
 
     signingConfigs {
         create("config") {
@@ -43,8 +43,8 @@ android {
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 28
-        targetSdk = 36
-        versionCode = 502000000
+        targetSdk = 37
+        versionCode = 502000001
         versionName = "5.0.2"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

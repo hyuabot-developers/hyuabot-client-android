@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.ItemNoticeBinding
+import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 
 class ShuttleNoticeAdapter(private var items: List<ShuttleRealtimePageQuery.Notice1>): RecyclerView.Adapter<ShuttleNoticeAdapter.ViewHolder>() {
     class ViewHolder(private val binding: ItemNoticeBinding): RecyclerView.ViewHolder(binding.root) {
@@ -19,7 +20,7 @@ class ShuttleNoticeAdapter(private var items: List<ShuttleRealtimePageQuery.Noti
                 } else {
                     setOnClickListener {
                         ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToNoticeWebViewFragment(item.url).let { direction ->
-                            it.findNavController().navigate(direction)
+                            it.findNavController().safeNavigate(direction)
                         }
                     }
                 }
