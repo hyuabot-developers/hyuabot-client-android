@@ -29,7 +29,7 @@ apollo {
 
 android {
     namespace = "app.kobuggi.hyuabot"
-    compileSdk = 36
+    compileSdk = 37
 
     signingConfigs {
         create("config") {
@@ -43,9 +43,9 @@ android {
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 28
-        targetSdk = 36
-        versionCode = 500000000
-        versionName = "5.0.0"
+        targetSdk = 37
+        versionCode = 502000001
+        versionName = "5.0.2"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
