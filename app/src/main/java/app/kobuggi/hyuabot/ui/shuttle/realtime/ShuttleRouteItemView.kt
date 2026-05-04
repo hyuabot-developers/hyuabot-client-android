@@ -89,17 +89,9 @@ class ShuttleRouteItemView @JvmOverloads constructor(
             data.labels?.get(data.stops[i])?.let { label ->
                 if (label <= 0) return@let
                 textPaint.color = if (isPassed) Color.GRAY else Color.WHITE
-                val radius = if (isCurrent) 18f else 12f
-                val pivotX = x + radius + 35
-                val pivotY = centerY + radius + 15
-                canvas.withRotation(45f, pivotX, pivotY) {
-                    drawText(
-                        context.getString(R.string.shuttle_realtime_duration_format, label),
-                        pivotX,
-                        pivotY + textPaint.textSize,
-                        textPaint
-                    )
-                }
+                val pivotX = x
+                val pivotY = centerY + 50
+                canvas.drawText(context.getString(R.string.shuttle_realtime_duration_format, label), pivotX, pivotY, textPaint)
             }
         }
     }
