@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -37,6 +38,33 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
             R.string.shuttle_header_bound_for_dormitory,
             childFragmentManager,
             emptyList()
+        )
+        val shuttleCampusRouteAdapter = ShuttleRouteAdapter(
+            listOf(
+                ShuttleRouteItemView.Route(
+                    color = requireContext().getColor(android.R.color.white),
+                    stops = listOf(
+                        R.string.shuttle_tab_dormitory_out,
+                        R.string.shuttle_tab_shuttlecock_out,
+                        R.string.shuttle_tab_station,
+                        R.string.shuttle_type_jungang,
+                        R.string.shuttle_tab_shuttlecock_in,
+                        R.string.shuttle_type_dormitory
+                    ),
+                    currentStopIndex = 3,
+                    labels = mapOf(
+                        R.string.shuttle_tab_dormitory_out to -18,
+                        R.string.shuttle_tab_shuttlecock_out to -13,
+                        R.string.shuttle_tab_station to -3,
+                        R.string.shuttle_type_jungang to 0,
+                        R.string.shuttle_tab_shuttlecock_in to 10,
+                        R.string.shuttle_type_dormitory to 15,
+                    )
+                ),
+            ),
+            listOf(
+                R.string.shuttle_type_dormitory
+            )
         )
         val shuttleAdapter = ShuttleRealtimeByTimeListAdapter(
             requireContext(),
@@ -87,6 +115,13 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                 ).also {
                     findNavController().safeNavigate(it)
                 }
+            }
+            infoButtonBoundForDormitory.setOnClickListener {
+                helpBoundForDormitory.visibility = if (helpBoundForDormitory.isVisible) View.GONE else View.VISIBLE
+            }
+            helpBoundForDormitoryRecycler.apply {
+                adapter = shuttleCampusRouteAdapter
+                layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
         }
         parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->

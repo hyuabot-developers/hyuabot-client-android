@@ -130,6 +130,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
                         R.string.shuttle_tab_station to 0,
                         R.string.shuttle_type_jungang to 3,
                         R.string.shuttle_tab_shuttlecock_in to 13,
+                        R.string.shuttle_type_dormitory to 18
                     )
                 ),
             ),
@@ -225,6 +226,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
                         R.string.shuttle_tab_station to 0,
                         R.string.shuttle_type_jungang to 3,
                         R.string.shuttle_tab_shuttlecock_in to 13,
+                        R.string.shuttle_type_dormitory to 18
                     )
                 ),
             ),
