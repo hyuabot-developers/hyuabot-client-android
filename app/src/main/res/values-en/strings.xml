@@ -76,6 +76,8 @@
     <string name="confirm">Apply</string>
     <!-- 셔틀버스 등하교 팝업 -->
     <string name="shuttle_realtime_toast">During peak school commute hours, some shuttle may not depart from Shuttlecoke.</string>
+    <!-- 셔틀버스 소요 시간 -->
+    <string name="shuttle_realtime_duration_format">%1$dm</string>
     <!-- 노선버스 도착 정보 탭 -->
     <string name="bus_tab_city">Sangnoksu</string>
     <string name="bus_tab_seoul">Gangnam</string>
@@ -274,4 +276,5 @@
     <string name="shuttle_type_school_terminal">Terminal</string>
     <string name="shuttle_type_school_station">Station</string>
     <string name="shuttle_warning_text">Check Destination</string>
+    <string name="info_button_shuttle">Information button for shuttle</string>
 </resources>
