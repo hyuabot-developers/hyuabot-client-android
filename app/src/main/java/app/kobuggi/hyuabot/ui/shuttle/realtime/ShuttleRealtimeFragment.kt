@@ -32,6 +32,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeBinding.inflate(layoutInflater) }
     private val viewModel: ShuttleRealtimeViewModel by viewModels()
     private var currentPosition = 0
+    private var setClosestStop = false
     private val scrollHandler = Handler(Looper.getMainLooper())
     private lateinit var autoScrollRunnable: Runnable
 
@@ -113,12 +114,16 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
         }
         viewModel.result.observe(viewLifecycleOwner) {stops ->
+            if (setClosestStop) {
+                return@observe
+            }
             if (stops.isNotEmpty()) {
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                     if (location == null) { return@addOnSuccessListener }
                     val nearestStop = stops.mapIndexed { _, stopItem ->
                         Pair(stopItem, calculateDistance(stopItem, location))
                     }.minByOrNull { it.second }?.first
+                    setClosestStop = true
                     when(nearestStop?.name) {
                         "dormitory_o" -> binding.viewPager.setCurrentItem(0, false)
                         "shuttlecock_o" -> binding.viewPager.setCurrentItem(1, false)
@@ -159,6 +164,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.start()
+        setClosestStop = false
         if (::autoScrollRunnable.isInitialized) {
             scrollHandler.postDelayed(autoScrollRunnable, 5000)
         }
