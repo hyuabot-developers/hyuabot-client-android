@@ -70,16 +70,42 @@ class ShuttleRealtimeByDestinationListAdapter(
             } else if (stopID == R.string.shuttle_tab_station) {
                 if (headerID == R.string.shuttle_header_bound_for_dormitory) {
                     if (item.route.name.endsWith("S")) {
-                        binding.shuttleTypeText.apply {
-                            visibility = ViewGroup.VISIBLE
-                            text = context.getString(R.string.shuttle_type_shuttlecock)
-                            setTextColor(context.getColor(R.color.red_bus))
+                        if (item.route.tag == "C") {
+                            binding.shuttleTypeText.apply {
+                                visibility = ViewGroup.VISIBLE
+                                text = context.getString(R.string.shuttle_type_shuttlecock_circular)
+                                setTextColor(context.getColor(R.color.red_bus))
+                            }
+                        } else {
+                            binding.shuttleTypeText.apply {
+                                visibility = ViewGroup.VISIBLE
+                                text = context.getString(R.string.shuttle_type_shuttlecock_direct)
+                                setTextColor(context.getColor(R.color.red_bus))
+                            }
                         }
                     } else if (item.route.name.endsWith("D")) {
-                        binding.shuttleTypeText.apply {
-                            visibility = ViewGroup.VISIBLE
-                            text = context.getString(R.string.shuttle_type_dormitory)
-                            setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
+                        when (item.route.tag) {
+                            "C" -> {
+                                binding.shuttleTypeText.apply {
+                                    visibility = ViewGroup.VISIBLE
+                                    text = context.getString(R.string.shuttle_type_dormitory_circular)
+                                    setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
+                                }
+                            }
+                            "DJ" -> {
+                                binding.shuttleTypeText.apply {
+                                    visibility = ViewGroup.VISIBLE
+                                    text = context.getString(R.string.shuttle_type_jungang)
+                                    setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_green))
+                                }
+                            }
+                            else -> {
+                                binding.shuttleTypeText.apply {
+                                    visibility = ViewGroup.VISIBLE
+                                    text = context.getString(R.string.shuttle_type_dormitory_direct)
+                                    setTextColor(context.getColor(if (darkMode) android.R.color.white else R.color.hanyang_blue))
+                                }
+                            }
                         }
                     }
                 } else if (headerID == R.string.shuttle_header_bound_for_terminal) {

@@ -12,7 +12,7 @@ class ShuttleRouteAdapter(
     class ViewHolder(val binding: ItemShuttleRouteBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(route: ShuttleRouteItemView.Route, nameResId: Int) {
             binding.routeItemView.bind(route)
-            binding.routeNameText.text = binding.root.context.getString(nameResId)
+            binding.routeNameText.text = binding.root.context.getString(nameResId).replace(" ", "\n")
         }
     }
 

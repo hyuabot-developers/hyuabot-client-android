@@ -35,6 +35,11 @@
     <string name="shuttle_type_jungang">중앙역</string>
     <string name="shuttle_type_shuttlecock">셔틀콕</string>
     <string name="shuttle_type_dormitory">기숙사</string>
+    <string name="shuttle_type_shuttlecock_direct">셔틀콕 (직행)</string>
+    <string name="shuttle_type_dormitory_direct">기숙사 (직행)</string>
+    <string name="shuttle_type_shuttlecock_circular">셔틀콕 (순환)</string>
+    <string name="shuttle_type_dormitory_circular">기숙사 (순환)</string>
+    <string name="shuttle_type_jungang_circular">기숙사 (중앙역)</string>
     <string name="shuttle_type_shuttlecock_finishing">셔틀콕 종착</string>
     <!-- 셔틀버스 첫막차 시간 -->
     <string name="map_id">15fbba8d56d94b31</string>

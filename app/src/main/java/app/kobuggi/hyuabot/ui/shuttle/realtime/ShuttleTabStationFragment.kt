@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -38,6 +39,108 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             childFragmentManager,
             emptyList()
         )
+        val shuttleCampusRouteAdapter = ShuttleRouteAdapter(
+            listOf(
+                ShuttleRouteItemView.Route(
+                    color = requireContext().getColor(R.color.red_bus),
+                    stops = listOf(
+                        R.string.shuttle_tab_dormitory_out,
+                        R.string.shuttle_tab_shuttlecock_out,
+                        R.string.shuttle_tab_station,
+                        R.string.shuttle_tab_shuttlecock_in,
+                        R.string.shuttle_type_dormitory
+                    ),
+                    currentStopIndex = 2,
+                    labels = mapOf(
+                        R.string.shuttle_tab_dormitory_out to -15,
+                        R.string.shuttle_tab_shuttlecock_out to -10,
+                        R.string.shuttle_tab_station to 0,
+                        R.string.shuttle_tab_shuttlecock_in to 10,
+                        R.string.shuttle_type_dormitory to 15
+                    )
+                ),
+                ShuttleRouteItemView.Route(
+                    color = requireContext().getColor(R.color.red_bus),
+                    stops = listOf(
+                        R.string.shuttle_tab_dormitory_out,
+                        R.string.shuttle_tab_shuttlecock_out,
+                        R.string.shuttle_tab_station,
+                        R.string.shuttle_tab_shuttlecock_in,
+                    ),
+                    currentStopIndex = 2,
+                    labels = mapOf(
+                        R.string.shuttle_tab_dormitory_out to -15,
+                        R.string.shuttle_tab_shuttlecock_out to -10,
+                        R.string.shuttle_tab_station to 0,
+                        R.string.shuttle_tab_shuttlecock_in to 10,
+                    )
+                ),
+                ShuttleRouteItemView.Route(
+                    color = requireContext().getColor(android.R.color.white),
+                    stops = listOf(
+                        R.string.shuttle_tab_dormitory_out,
+                        R.string.shuttle_tab_shuttlecock_out,
+                        R.string.shuttle_tab_station,
+                        R.string.shuttle_tab_terminal,
+                        R.string.shuttle_tab_shuttlecock_in,
+                        R.string.shuttle_type_dormitory
+                    ),
+                    currentStopIndex = 2,
+                    labels = mapOf(
+                        R.string.shuttle_tab_dormitory_out to -15,
+                        R.string.shuttle_tab_shuttlecock_out to -10,
+                        R.string.shuttle_tab_station to 0,
+                        R.string.shuttle_tab_terminal to 5,
+                        R.string.shuttle_tab_shuttlecock_in to 15,
+                        R.string.shuttle_type_dormitory to 20
+                    )
+                ),
+                ShuttleRouteItemView.Route(
+                    color = requireContext().getColor(android.R.color.white),
+                    stops = listOf(
+                        R.string.shuttle_tab_dormitory_out,
+                        R.string.shuttle_tab_shuttlecock_out,
+                        R.string.shuttle_tab_station,
+                        R.string.shuttle_tab_terminal,
+                        R.string.shuttle_tab_shuttlecock_in,
+                    ),
+                    currentStopIndex = 2,
+                    labels = mapOf(
+                        R.string.shuttle_tab_dormitory_out to -15,
+                        R.string.shuttle_tab_shuttlecock_out to -10,
+                        R.string.shuttle_tab_station to 0,
+                        R.string.shuttle_tab_terminal to 5,
+                        R.string.shuttle_tab_shuttlecock_in to 15,
+                    )
+                ),
+                ShuttleRouteItemView.Route(
+                    color = requireContext().getColor(R.color.hanyang_green),
+                    stops = listOf(
+                        R.string.shuttle_tab_dormitory_out,
+                        R.string.shuttle_tab_shuttlecock_out,
+                        R.string.shuttle_tab_station,
+                        R.string.shuttle_type_jungang,
+                        R.string.shuttle_tab_shuttlecock_in,
+                        R.string.shuttle_type_dormitory
+                    ),
+                    currentStopIndex = 2,
+                    labels = mapOf(
+                        R.string.shuttle_tab_dormitory_out to -15,
+                        R.string.shuttle_tab_shuttlecock_out to -10,
+                        R.string.shuttle_tab_station to 0,
+                        R.string.shuttle_type_jungang to 3,
+                        R.string.shuttle_tab_shuttlecock_in to 13,
+                    )
+                ),
+            ),
+            listOf(
+                R.string.shuttle_type_dormitory_direct,
+                R.string.shuttle_type_dormitory_circular,
+                R.string.shuttle_type_shuttlecock_direct,
+                R.string.shuttle_type_shuttlecock_circular,
+                R.string.shuttle_type_jungang,
+            )
+        )
         val shuttleTerminalAdapter = ShuttleRealtimeByDestinationListAdapter(
             requireContext(),
             parentViewModel,
@@ -47,6 +150,53 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             childFragmentManager,
             emptyList()
         )
+        val shuttleTerminalRouteAdapter = ShuttleRouteAdapter(
+            listOf(
+                ShuttleRouteItemView.Route(
+                    color = requireContext().getColor(android.R.color.white),
+                    stops = listOf(
+                        R.string.shuttle_tab_dormitory_out,
+                        R.string.shuttle_tab_shuttlecock_out,
+                        R.string.shuttle_tab_station,
+                        R.string.shuttle_tab_shuttlecock_in,
+                        R.string.shuttle_tab_terminal,
+                        R.string.shuttle_type_dormitory
+                    ),
+                    currentStopIndex = 2,
+                    labels = mapOf(
+                        R.string.shuttle_tab_dormitory_out to -15,
+                        R.string.shuttle_tab_shuttlecock_out to -10,
+                        R.string.shuttle_tab_station to 0,
+                        R.string.shuttle_tab_terminal to 5,
+                        R.string.shuttle_tab_shuttlecock_in to 15,
+                        R.string.shuttle_type_dormitory to 20
+                    )
+                ),
+                ShuttleRouteItemView.Route(
+                    color = requireContext().getColor(android.R.color.white),
+                    stops = listOf(
+                        R.string.shuttle_tab_dormitory_out,
+                        R.string.shuttle_tab_shuttlecock_out,
+                        R.string.shuttle_tab_station,
+                        R.string.shuttle_tab_terminal,
+                        R.string.shuttle_tab_shuttlecock_in,
+                    ),
+                    currentStopIndex = 2,
+                    labels = mapOf(
+                        R.string.shuttle_tab_dormitory_out to -15,
+                        R.string.shuttle_tab_shuttlecock_out to -10,
+                        R.string.shuttle_tab_station to 0,
+                        R.string.shuttle_tab_terminal to 5,
+                        R.string.shuttle_tab_shuttlecock_in to 15,
+                    )
+                ),
+            ),
+            listOf(
+                R.string.shuttle_type_dormitory_circular,
+                R.string.shuttle_type_shuttlecock_circular,
+                R.string.shuttle_type_jungang,
+            )
+        )
         val shuttleJungangStationAdapter = ShuttleRealtimeByDestinationListAdapter(
             requireContext(),
             parentViewModel,
@@ -55,6 +205,32 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             R.string.shuttle_header_bound_for_jungang_station,
             childFragmentManager,
             emptyList()
+        )
+        val shuttleJungangStationRouteAdapter = ShuttleRouteAdapter(
+            listOf(
+                ShuttleRouteItemView.Route(
+                    color = requireContext().getColor(R.color.hanyang_green),
+                    stops = listOf(
+                        R.string.shuttle_tab_dormitory_out,
+                        R.string.shuttle_tab_shuttlecock_out,
+                        R.string.shuttle_tab_station,
+                        R.string.shuttle_type_jungang,
+                        R.string.shuttle_tab_shuttlecock_in,
+                        R.string.shuttle_type_dormitory
+                    ),
+                    currentStopIndex = 2,
+                    labels = mapOf(
+                        R.string.shuttle_tab_dormitory_out to -15,
+                        R.string.shuttle_tab_shuttlecock_out to -10,
+                        R.string.shuttle_tab_station to 0,
+                        R.string.shuttle_type_jungang to 3,
+                        R.string.shuttle_tab_shuttlecock_in to 13,
+                    )
+                ),
+            ),
+            listOf(
+                R.string.shuttle_type_jungang,
+            )
         )
         val shuttleAdapter = ShuttleRealtimeByTimeListAdapter(
             requireContext(),
@@ -147,6 +323,27 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
                 ).also {
                     findNavController().safeNavigate(it)
                 }
+            }
+            infoButtonBoundForDormitory.setOnClickListener {
+                helpBoundForDormitory.visibility = if (helpBoundForDormitory.isVisible) View.GONE else View.VISIBLE
+            }
+            helpBoundForDormitoryRecycler.apply {
+                adapter = shuttleCampusRouteAdapter
+                layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
+            }
+            infoButtonBoundForTerminal.setOnClickListener {
+                helpBoundForTerminal.visibility = if (helpBoundForTerminal.isVisible) View.GONE else View.VISIBLE
+            }
+            helpBoundForTerminalRecycler.apply {
+                adapter = shuttleTerminalRouteAdapter
+                layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
+            }
+            infoButtonBoundForJungangStation.setOnClickListener {
+                helpBoundForJungangStation.visibility = if (helpBoundForJungangStation.isVisible) View.GONE else View.VISIBLE
+            }
+            helpBoundForJungangStationRecycler.apply {
+                adapter = shuttleJungangStationRouteAdapter
+                layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
         }
         parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->

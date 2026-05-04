@@ -35,6 +35,11 @@
     <string name="shuttle_type_jungang">Jungang Stn.</string>
     <string name="shuttle_type_shuttlecock">Shuttlecoke</string>
     <string name="shuttle_type_dormitory">Dormitory</string>
+    <string name="shuttle_type_shuttlecock_direct">Shuttlecoke (Direct)</string>
+    <string name="shuttle_type_dormitory_direct">Dormitory (Direct)</string>
+    <string name="shuttle_type_shuttlecock_circular">Shuttlecoke (Circular)</string>
+    <string name="shuttle_type_dormitory_circular">Dormitory (Circular)</string>
+    <string name="shuttle_type_jungang_circular">Dormitory (Jungang Stn.)</string>
     <string name="shuttle_type_shuttlecock_finishing">Shuttlecoke</string>
     <!-- 셔틀버스 첫막차 시간 -->
     <string name="map_id">15fbba8d56d94b31</string>
