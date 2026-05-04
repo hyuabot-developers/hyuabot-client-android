@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import app.kobuggi.hyuabot.R
-import androidx.core.graphics.withRotation
 
 class ShuttleRouteItemView @JvmOverloads constructor(
     context: Context,
