@@ -19,24 +19,68 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             android:paddingBottom="75dp">
-            <TextView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_station"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:gravity="center"
-                android:text="@string/shuttle_header_bound_for_station"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textFontWeight="700"
                 android:background="@color/hanyang_blue"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/shuttle_header_bound_for_station"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textFontWeight="700"
+                    android:background="@color/hanyang_blue"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <ImageButton
+                    android:id="@+id/info_button_bound_for_station"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/info_button_shuttle"
+                    android:src="@drawable/ic_question_circle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/help_bound_for_station"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/header_bound_for_station"
+                android:visibility="gone"
+                android:background="@color/hanyang_blue">
+                <app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleRouteHeaderView
+                    android:id="@+id/help_bound_for_station_header"
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="80dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/help_bound_for_station_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/help_bound_for_station_header" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/realtime_view_bound_for_station"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/header_bound_for_station" />
+                app:layout_constraintTop_toBottomOf="@id/help_bound_for_station" />
             <TextView
                 android:id="@+id/no_realtime_data_bound_for_station"
                 android:layout_width="match_parent"
@@ -56,24 +100,69 @@
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_station" />
-            <TextView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_dormitory"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:gravity="center"
-                android:text="@string/shuttle_header_bound_for_dormitory"
-                android:textFontWeight="700"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:background="@color/hanyang_blue"
-                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_station" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_station"
+                android:background="@color/hanyang_blue">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/shuttle_header_bound_for_dormitory"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textFontWeight="700"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <ImageButton
+                    android:id="@+id/info_button_bound_for_dormitory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/info_button_shuttle"
+                    android:src="@drawable/ic_question_circle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/help_bound_for_dormitory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/header_bound_for_dormitory"
+                android:visibility="gone"
+                android:background="@color/hanyang_blue">
+                <app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleRouteHeaderView
+                    android:id="@+id/help_bound_for_dormitory_header"
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="80dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/help_bound_for_dormitory_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/help_bound_for_dormitory_header" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/realtime_view_bound_for_dormitory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/header_bound_for_dormitory" />
+                app:layout_constraintTop_toBottomOf="@id/help_bound_for_dormitory" />
             <TextView
                 android:id="@+id/no_realtime_data_bound_for_dormitory"
                 android:layout_width="match_parent"
@@ -93,24 +182,69 @@
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_dormitory" />
-            <TextView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_terminal"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:gravity="center"
-                android:text="@string/shuttle_header_bound_for_terminal"
-                android:textFontWeight="700"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:background="@color/hanyang_blue"
-                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_dormitory" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_dormitory"
+                android:background="@color/hanyang_blue">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/shuttle_header_bound_for_terminal"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textFontWeight="700"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <ImageButton
+                    android:id="@+id/info_button_bound_for_terminal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/info_button_shuttle"
+                    android:src="@drawable/ic_question_circle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/help_bound_for_terminal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/header_bound_for_terminal"
+                android:visibility="gone"
+                android:background="@color/hanyang_blue">
+                <app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleRouteHeaderView
+                    android:id="@+id/help_bound_for_terminal_header"
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="80dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/help_bound_for_terminal_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/help_bound_for_terminal_header" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/realtime_view_bound_for_terminal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/header_bound_for_terminal" />
+                app:layout_constraintTop_toBottomOf="@id/help_bound_for_terminal" />
             <TextView
                 android:id="@+id/no_realtime_data_bound_for_terminal"
                 android:layout_width="match_parent"
@@ -130,24 +264,69 @@
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_terminal" />
-            <TextView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_jungang_station"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:gravity="center"
-                android:text="@string/shuttle_header_bound_for_jungang_station"
-                android:textFontWeight="700"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:background="@color/hanyang_blue"
-                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_terminal" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_terminal"
+                android:background="@color/hanyang_blue">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/shuttle_header_bound_for_jungang_station"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textFontWeight="700"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <ImageButton
+                    android:id="@+id/info_button_bound_for_jungang_station"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/info_button_shuttle"
+                    android:src="@drawable/ic_question_circle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/help_bound_for_jungang_station"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/header_bound_for_jungang_station"
+                android:visibility="gone"
+                android:background="@color/hanyang_blue">
+                <app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleRouteHeaderView
+                    android:id="@+id/help_bound_for_jungang_station_header"
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="80dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/help_bound_for_jungang_station_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/help_bound_for_jungang_station_header" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/realtime_view_bound_for_jungang_station"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/header_bound_for_jungang_station" />
+                app:layout_constraintTop_toBottomOf="@id/help_bound_for_jungang_station" />
             <TextView
                 android:id="@+id/no_realtime_data_bound_for_jungang_station"
                 android:layout_width="match_parent"
