@@ -16,12 +16,23 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.messaging.messaging
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class NotificationService : FirebaseMessagingService() {
     @Inject lateinit var userPreferencesRepository: UserPreferencesRepository
+    private val serviceJob = SupervisorJob()
+    private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
+
+    override fun onDestroy() {
+        super.onDestroy()
+        serviceScope.cancel()
+    }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -30,7 +41,7 @@ class NotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         val topic = message.from?.substringAfterLast("/").orEmpty().split("reading_room_").last()
-        runBlocking { userPreferencesRepository.turnOffNotification(topic.toInt()) }
+        serviceScope.launch { userPreferencesRepository.turnOffNotification(topic.toInt()) }
         Firebase.messaging.unsubscribeFromTopic(message.from?.substringAfterLast("/").orEmpty()).addOnSuccessListener {
             Log.d("NotificationService", "Unsubscribed from reading room $topic")
         }.addOnFailureListener {

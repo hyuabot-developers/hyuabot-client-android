@@ -25,7 +25,6 @@ class AlarmReceiver: BroadcastReceiver() {
     @Inject lateinit var userPreferencesRepository: UserPreferencesRepository
     private lateinit var manager: NotificationManager
     private lateinit var builder: NotificationCompat.Builder
-    private val scope by lazy { CoroutineScope(Dispatchers.IO) }
 
     companion object {
         const val ALARM_CHANNEL_ID = "ReadingRoomExtendNotification"
@@ -53,6 +52,13 @@ class AlarmReceiver: BroadcastReceiver() {
             return
         }
         NotificationManagerCompat.from(context).notify(999, notification)
-        scope.launch { userPreferencesRepository.setReadingRoomExtendNotification(null) }
+        val pendingResult = goAsync()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                userPreferencesRepository.setReadingRoomExtendNotification(null)
+            } finally {
+                pendingResult.finish()
+            }
+        }
     }
 }
