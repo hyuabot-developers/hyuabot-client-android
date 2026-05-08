@@ -12,6 +12,7 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +22,6 @@ class ContactViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val database: AppDatabase
 ): ViewModel() {
-    private val contactVersion = userPreferencesRepository.contactVersion.asLiveData()
     private val _contacts = database.contactDao().getAll().asLiveData()
     private val _updating = MutableLiveData(false)
     private val _queryError = MutableLiveData<QueryError?>(null)
@@ -39,10 +39,9 @@ class ContactViewModel @Inject constructor(
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.phonebook != null) {
-                contactVersion.observeForever {
-                    if (it != response.data?.phonebook?.version) {
-                        fetchContacts()
-                    }
+                val localVersion = userPreferencesRepository.contactVersion.first()
+                if (localVersion != response.data?.phonebook?.version) {
+                    fetchContacts()
                 }
                 _queryError.value = null
             } else {

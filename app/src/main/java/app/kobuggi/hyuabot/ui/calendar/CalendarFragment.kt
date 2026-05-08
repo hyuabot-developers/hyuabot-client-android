@@ -127,11 +127,7 @@ class CalendarFragment @Inject constructor() : Fragment() {
             val endDate = LocalDate.parse(it.endDate)
             var date = startDate
             while (date <= endDate) {
-                if (map.containsKey(date)) {
-                    map[date] = map[date]!!.plus(it.category)
-                } else {
-                    map[date] = listOf(it.category)
-                }
+                map[date] = (map[date] ?: emptyList()).plus(it.category)
                 date = date.plusDays(1)
             }
         }

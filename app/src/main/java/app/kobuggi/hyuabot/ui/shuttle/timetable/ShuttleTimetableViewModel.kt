@@ -54,8 +54,8 @@ class ShuttleTimetableViewModel @Inject constructor(private val apolloClient: Ap
             )).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
-            } else if (response.data?.shuttle?.stops != null) {
-                _result.value = response.data?.shuttle?.stops!!.first().timetable.order
+            } else if (!response.data?.shuttle?.stops.isNullOrEmpty()) {
+                _result.value = response.data?.shuttle?.stops?.first()?.timetable?.order ?: emptyList()
                 _queryError.value = null
             }
             _isLoading.value = false
