@@ -282,4 +282,6 @@
     <string name="shuttle_type_school_station">Station</string>
     <string name="shuttle_warning_text">Check Destination</string>
     <string name="info_button_shuttle">Information button for shuttle</string>
+    <string name="analytics_settings">App Analytics</string>
+    <string name="analytics_settings_description">We collect anonymous usage data and your Advertising ID (AD ID) to improve the app. You can disable this at any time.</string>
 </resources>

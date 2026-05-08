@@ -88,6 +88,18 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             preferences[CALENDAR_KEY]
         }
 
+    val analyticsConsent: Flow<Boolean> = userDataStorePreferences.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[ANALYTICS_CONSENT_KEY] ?: true
+        }
+
     override suspend fun setBusStop(busStopID: Int) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
@@ -236,6 +248,14 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             }
     }
 
+    override suspend fun setAnalyticsConsent(enabled: Boolean) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[ANALYTICS_CONSENT_KEY] = enabled
+            }
+        }
+    }
+
     private companion object {
         private val BUS_STOP_ID_KEY = intPreferencesKey("bus_stop_id")
         private val READING_ROOM_NOTIFICATIONS_KEY = stringSetPreferencesKey("reading_room_notifications")
@@ -246,5 +266,6 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val CALENDAR_KEY = stringPreferencesKey("calendar_version")
         private val SHUTTLE_SHOW_DEPARTURE_TIME_KEY = booleanPreferencesKey("shuttle_show_departure_time")
         private val SHUTTLE_SHOW_BY_DESTINATION_KEY = booleanPreferencesKey("shuttle_show_by_destination")
+        private val ANALYTICS_CONSENT_KEY = booleanPreferencesKey("analytics_consent")
     }
 }

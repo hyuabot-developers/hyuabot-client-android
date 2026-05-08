@@ -17,4 +17,5 @@ interface UserPreferencesRepositoryImpl {
     suspend fun getShowShuttleDepartureTime(): Flow<Boolean>
     suspend fun setShowShuttleByDestination(show: Boolean)
     suspend fun getShowShuttleByDestination(): Flow<Boolean>
+    suspend fun setAnalyticsConsent(enabled: Boolean)
 }
