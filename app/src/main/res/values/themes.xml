@@ -16,6 +16,10 @@
         <item name="fontFamily">@font/godo</item>
         <!-- Bottom Navigation -->
         <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+        <!-- Prevent Material3 bottom sheet dialogs from calling deprecated
+             Window.setStatusBarColor / setNavigationBarColor on API 35+.
+             Edge-to-edge for these dialogs is already handled by the Activity's enableEdgeToEdge(). -->
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
         <!-- Text Appearances -->
         <item name="textAppearanceDisplayLarge">@style/TextAppearance.App.DisplayLarge</item>
         <item name="textAppearanceDisplayMedium">@style/TextAppearance.App.DisplayMedium</item>
@@ -34,9 +38,8 @@
         <item name="textAppearanceLabelSmall">@style/TextAppearance.App.LabelSmall</item>
         <!-- Popup Menu -->
         <item name="popupMenuBackground">@drawable/custom_popup_background</item>
-        <!-- Status Bar -->
+        <!-- Status Bar: icon color for pre-API-35 devices (API 35+ handled by enableEdgeToEdge) -->
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:statusBarColor">@color/hanyang_blue</item>
     </style>
     <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
@@ -109,5 +112,13 @@
     <style name="ThemeOverlay.App.Switch" parent="">
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorOnPrimary">@color/hanyang_blue</item>
+    </style>
+    <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <!-- Disable Material3's internal edge-to-edge setup for bottom sheet dialogs.
+             The Activity already calls enableEdgeToEdge(); letting the library also call
+             Window.setStatusBarColor / setNavigationBarColor triggers deprecated-API warnings
+             on Android 15 (API 35+). With this flag off, SheetDialog.onCreate skips
+             EdgeToEdgeUtils.applyEdgeToEdge() entirely. -->
+        <item name="enableEdgeToEdge">false</item>
     </style>
 </resources>

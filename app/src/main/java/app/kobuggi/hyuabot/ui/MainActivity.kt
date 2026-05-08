@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -23,6 +24,7 @@ import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import androidx.core.content.edit
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedListener, NavigationBarView.OnItemSelectedListener, DialogInterface.OnDismissListener {
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.bottomNavigation.apply {
@@ -115,7 +118,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
             dialogBuilder.setPositiveButton("확인") { dialogInterface, _ ->
                 if (dialogCheckBox.isChecked){
-                    pref.edit().putInt("birthDayOpened", now.year).apply()
+                    pref.edit { putInt("birthDayOpened", now.year) }
                 }
                 dialogInterface.dismiss()
             }
