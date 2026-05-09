@@ -31,8 +31,9 @@ class SubwayRealtimeListAdapter(
                         getTerminalString(arrival.terminal.stationID),
                     )
                 }
-                binding.subwayTimeText.text = context.getString(
-                    R.string.subway_realtime_format,
+                binding.subwayTimeText.text = context.resources.getQuantityString(
+                    R.plurals.subway_realtime_format,
+                    arrival.minutes,
                     arrival.minutes,
                     arrival.location ?: '-'
                 )
@@ -42,10 +43,10 @@ class SubwayRealtimeListAdapter(
                         R.string.subway_realtime_destination_format,
                         getTerminalString(arrival.terminal.stationID),
                     )
-                    subwayTimeText.text = context.getString(
-                        R.string.subway_realtime_timetable_format,
+                    subwayTimeText.text = context.resources.getQuantityString(
+                        R.plurals.subway_realtime_timetable_format,
                         arrival.minutes,
-                        arrival.origin?.let { origin -> getTerminalString(origin.stationID) } ?: '-'
+                        arrival.minutes,
                     )
                 }
             }

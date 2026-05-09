@@ -28,7 +28,7 @@ class BusRouteDialog @Inject constructor() : DialogFragment() {
             binding.apply {
                 busRouteName.text = getString(R.string.bus_info_route, it.route.name)
                 busRouteStartStop.text = getString(R.string.bus_info_start_stop, it.startStop.name)
-                busRouteTimeFromStartStop.text = getString(R.string.bus_info_time_from_start, it.minutes)
+                busRouteTimeFromStartStop.text = resources.getQuantityString(R.plurals.bus_info_time_from_start, it.minutes, it.minutes)
             }
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {

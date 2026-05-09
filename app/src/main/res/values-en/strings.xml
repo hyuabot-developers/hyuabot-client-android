@@ -106,11 +106,23 @@
         <item>@string/bus_stop_convention</item>
     </string-array>
     <!-- 노선버스 도착 정보 시간 -->
-    <string name="bus_realtime_format_seats">%1$d mins left (%2$d stops, %3$d seats)</string>
-    <string name="bus_realtime_format_no_seats">%1$d mins left(%2$d stops)</string>
+    <plurals name="bus_realtime_format_seats">
+        <item quantity="one">%1$d min left (%2$d stops, %3$d seats)</item>
+        <item quantity="other">%1$d mins left (%2$d stops, %3$d seats)</item>
+    </plurals>
+    <plurals name="bus_realtime_format_no_seats">
+        <item quantity="one">%1$d min left (%2$d stops)</item>
+        <item quantity="other">%1$d mins left (%2$d stops)</item>
+    </plurals>
     <string name="bus_timetable_format">Departs at %1$s:%2$s</string>
-    <string name="bus_realtime_format_seats_last">%1$d mins left (%2$d stops, %3$d seats, Last)</string>
-    <string name="bus_realtime_format_no_seats_last">%1$d mins left (%2$d stops, Last)</string>
+    <plurals name="bus_realtime_format_seats_last">
+        <item quantity="one">%1$d min left (%2$d stops, %3$d seats, Last)</item>
+        <item quantity="other">%1$d mins left (%2$d stops, %3$d seats, Last)</item>
+    </plurals>
+    <plurals name="bus_realtime_format_no_seats_last">
+        <item quantity="one">%1$d min left (%2$d stops, Last)</item>
+        <item quantity="other">%1$d mins left (%2$d stops, Last)</item>
+    </plurals>
     <string name="bus_timetable_format_last">Departs at %1$s:%2$s (Last)</string>
     <!-- 노선버스 도착 정보 없음 -->
     <string name="bus_no_realtime_data">No arrival information.</string>
@@ -135,7 +147,10 @@
     <string name="bus_info_title">Route Info</string>
     <string name="bus_info_route">Name: %1$s</string>
     <string name="bus_info_start_stop">From: %1$s</string>
-    <string name="bus_info_time_from_start">From start stop: %1$d mins</string>
+    <plurals name="bus_info_time_from_start">
+        <item quantity="one">From start stop: %1$d min</item>
+        <item quantity="other">From start stop: %1$d mins</item>
+    </plurals>
     <string name="subway">Subway</string>
     <string name="subway_tab_blue">Line 4</string>
     <string name="subway_tab_yellow">Suin-Bundang Line</string>
@@ -146,15 +161,30 @@
     <string name="subway_yellow_down">Southbound (Incheon·Oido)</string>
     <string name="subway_transfer_up">To Incheon</string>
     <string name="subway_transfer_down">To Campus</string>
-    <string name="subway_transfer_up_item_format">[%1$s] %2$s → [%3$s] %4$d mins left (Oido Transfer)</string>
+    <plurals name="subway_transfer_up_item_format">
+        <item quantity="one">[%1$s] %2$s → [%3$s] %4$d min left (Oido Transfer)</item>
+        <item quantity="other">[%1$s] %2$s → [%3$s] %4$d mins left (Oido Transfer)</item>
+    </plurals>
     <string name="subway_transfer_up_item_format_no_transfer">[%1$s] %2$s</string>
-    <string name="subway_transfer_down_item_format">[%1$s] %2$d mins left (%3$s) → [%4$s] %5$d mins left (Oido Transfer)</string>
-    <string name="subway_transfer_down_item_format_no_transfer">[%1$s] %2$d mins left (%3$s)</string>
+    <plurals name="subway_transfer_down_item_format">
+        <item quantity="one">[%1$s] %2$d min left (%3$s) → [%4$s] %5$d min left (Oido Transfer)</item>
+        <item quantity="other">[%1$s] %2$d mins left (%3$s) → [%4$s] %5$d mins left (Oido Transfer)</item>
+    </plurals>
+    <plurals name="subway_transfer_down_item_format_no_transfer">
+        <item quantity="one">[%1$s] %2$d min left (%3$s)</item>
+        <item quantity="other">[%1$s] %2$d mins left (%3$s)</item>
+    </plurals>
     <string name="subway_no_realtime_data">No arrival information available.</string>
     <string name="subway_realtime_destination_format">To %1$s</string>
     <string name="subway_realtime_destination_format_last">To %1$s (Last train)</string>
-    <string name="subway_realtime_format">Arriving in %1$d minutes (%2$s)</string>
-    <string name="subway_realtime_timetable_format">Arriving in %1$d minutes (%2$s)</string>
+    <plurals name="subway_realtime_format">
+        <item quantity="one">Arriving in %1$d minute (%2$s)</item>
+        <item quantity="other">Arriving in %1$d minutes (%2$s)</item>
+    </plurals>
+    <plurals name="subway_realtime_timetable_format">
+        <item quantity="one">Arriving in %1$d minute</item>
+        <item quantity="other">Arriving in %1$d minutes</item>
+    </plurals>
     <string name="subway_station_K209">Cheongnyangni</string>
     <string name="subway_station_K210">Wangsimni</string>
     <string name="subway_station_K233">Jukjeon</string>
