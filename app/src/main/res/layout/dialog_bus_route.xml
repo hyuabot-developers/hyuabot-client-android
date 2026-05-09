@@ -51,7 +51,6 @@
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bus_route_start_stop"
-        android:text="@string/bus_info_time_from_start"
         android:textSize="18sp" />
     <LinearLayout
         android:id="@+id/loadingLayout"

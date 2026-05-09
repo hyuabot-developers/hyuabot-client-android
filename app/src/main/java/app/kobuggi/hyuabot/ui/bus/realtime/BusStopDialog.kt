@@ -37,7 +37,6 @@ class BusStopDialog @Inject constructor() : DialogFragment() {
                 viewModel.setBusStop(viewModel.selectedStopID.value!!)
                 dismiss()
             }
-            dismiss()
         }
         return binding.root
     }

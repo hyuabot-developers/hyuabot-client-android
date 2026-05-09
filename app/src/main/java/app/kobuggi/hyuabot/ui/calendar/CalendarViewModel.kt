@@ -12,6 +12,7 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +22,6 @@ class CalendarViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val database: AppDatabase
 ): ViewModel() {
-    private val calendarVersion = userPreferencesRepository.calendarVersion.asLiveData()
     private val _events = database.calendarDao().getAll().asLiveData()
     private val _updating = MutableLiveData(false)
     private val _queryError = MutableLiveData<QueryError?>(null)
@@ -37,10 +37,9 @@ class CalendarViewModel @Inject constructor(
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.calendar != null) {
-                calendarVersion.observeForever {
-                    if (it != response.data?.calendar?.version) {
-                        fetchEvents()
-                    }
+                val localVersion = userPreferencesRepository.calendarVersion.first()
+                if (localVersion != response.data?.calendar?.version) {
+                    fetchEvents()
                 }
                 _queryError.value = null
             } else {

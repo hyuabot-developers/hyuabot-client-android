@@ -142,7 +142,12 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         }
     }
 
+    private fun getMarkerDescriptor() = ResourcesCompat.getDrawable(resources, R.drawable.map_marker, null)
+        ?.toBitmap(64, 64)
+        ?.let { BitmapDescriptorFactory.fromBitmap(it) }
+
     private fun addClusterItems(buildings: List<MapPageQuery.Building>) {
+        val markerDescriptor = getMarkerDescriptor() ?: return
         clusterManager.apply {
             clearItems()
             buildings.forEach { building ->
@@ -151,7 +156,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                     building.latitude,
                     building.longitude,
                     "",
-                    BitmapDescriptorFactory.fromBitmap(ResourcesCompat.getDrawable(resources, R.drawable.map_marker, null)!!.toBitmap(64, 64))
+                    markerDescriptor
                 ))
             }
             cluster()
@@ -161,6 +166,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private fun onClickSearchResult(room: RoomItem) {
         binding.searchView.hide()
         if (this::googleMap.isInitialized) {
+            val markerDescriptor = getMarkerDescriptor() ?: return
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(room.latitude, room.longitude), 18f))
             clusterManager.apply {
                 clearItems()
@@ -169,7 +175,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                     room.latitude,
                     room.longitude,
                     room.building,
-                    BitmapDescriptorFactory.fromBitmap(ResourcesCompat.getDrawable(resources, R.drawable.map_marker, null)!!.toBitmap(64, 64))
+                    markerDescriptor
                 ))
                 cluster()
             }

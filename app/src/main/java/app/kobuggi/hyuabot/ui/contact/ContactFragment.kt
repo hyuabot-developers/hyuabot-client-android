@@ -1,12 +1,12 @@
 package app.kobuggi.hyuabot.ui.contact
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -38,10 +38,13 @@ class ContactFragment @Inject constructor() : Fragment() {
             updating.observe(viewLifecycleOwner) {
                 binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
             }
-            contacts.observe(viewLifecycleOwner) {
-                campusID.observe(viewLifecycleOwner) { campusID ->
-                    listAdapter.updateData(it.filter { contact -> contact.campusID == campusID })
-                }
+            contacts.observe(viewLifecycleOwner) { contactList ->
+                val currentCampusID = campusID.value ?: return@observe
+                listAdapter.updateData(contactList.filter { it.campusID == currentCampusID })
+            }
+            campusID.observe(viewLifecycleOwner) { id ->
+                val currentContacts = contacts.value ?: return@observe
+                listAdapter.updateData(currentContacts.filter { it.campusID == id })
             }
             searchResults.observe(viewLifecycleOwner) {
                 searchListAdapter.updateData(it)
@@ -60,9 +63,8 @@ class ContactFragment @Inject constructor() : Fragment() {
                         if (editable.isNullOrBlank()) {
                             searchListAdapter.updateData(emptyList())
                         } else {
-                            viewModel.campusID.observe(viewLifecycleOwner) { campusID ->
-                                viewModel.searchContacts(editable.toString(), campusID)
-                            }
+                            val currentCampusID = viewModel.campusID.value ?: return@addTextChangedListener
+                            viewModel.searchContacts(editable.toString(), currentCampusID)
                         }
                     }
                 }
@@ -77,7 +79,7 @@ class ContactFragment @Inject constructor() : Fragment() {
 
     private fun onClickItem(contact: Contact) {
         val intent = Intent(Intent.ACTION_DIAL)
-        intent.data = Uri.parse("tel:${contact.phone}")
+        intent.data = "tel:${contact.phone}".toUri()
         startActivity(intent)
     }
 }

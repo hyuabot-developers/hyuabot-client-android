@@ -1,9 +1,12 @@
 package app.kobuggi.hyuabot.ui.readingRoom
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.AlarmManager
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +25,6 @@ import app.kobuggi.hyuabot.service.alarm.AlarmFunction
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.lang.Integer.parseInt
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -60,16 +62,10 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManager(context)
             }
             readingRoomAlarm3Hour.setOnClickListener {
-                alarmFunction.cancelAlarm(R.string.reading_room_alarm_4_hour)
-                val alarmTime = LocalDateTime.now().plusHours(3).minusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                alarmFunction.callAlarm(alarmTime, R.string.reading_room_alarm_3_hour, getString(R.string.reading_room_alarm_extend))
-                viewModel.setExtendNotificationTime(alarmTime)
+                callAlarm(R.string.reading_room_alarm_3_hour, 3)
             }
             readingRoomAlarm4Hour.setOnClickListener {
-                alarmFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
-                val alarmTime = LocalDateTime.now().plusHours(4).minusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                alarmFunction.callAlarm(alarmTime, R.string.reading_room_alarm_4_hour, getString(R.string.reading_room_alarm_extend))
-                viewModel.setExtendNotificationTime(alarmTime)
+                callAlarm(R.string.reading_room_alarm_4_hour, 4)
             }
             readingRoomAlarmCancel.setOnClickListener {
                 alarmFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
@@ -104,7 +100,7 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
             }
             notificationList.observe(viewLifecycleOwner) {
                 Log.d("ReadingRoomFragment", "Notification list updated: $it")
-                roomListAdapter.updateNotifications(it.map { item -> parseInt(item.split("_")[2]) }.toSet())
+                roomListAdapter.updateNotifications(it.mapNotNull { item -> item.split("_").getOrNull(2)?.toIntOrNull() }.toSet())
             }
             extendNotificationTime.observe(viewLifecycleOwner) {
                 if (!it.isNullOrEmpty()) {
@@ -144,5 +140,23 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
         viewModel.viewModelScope.launch {
             viewModel.toggleReadingRoomNotification(requireContext(), room.seq, subscribe)
         }
+    }
+
+    private fun callAlarm(alarmResId: Int, hours: Long) {
+        val alarmManager = ContextCompat.getSystemService(requireContext(), AlarmManager::class.java)
+        alarmFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
+        alarmFunction.cancelAlarm(R.string.reading_room_alarm_4_hour)
+        if (alarmManager == null) {
+            return
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+            startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+            return
+        }
+
+        val alarmTime = LocalDateTime.now().plusHours(hours).minusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        alarmFunction.callAlarm(alarmTime, alarmResId, getString(R.string.reading_room_alarm_extend))
+        viewModel.setExtendNotificationTime(alarmTime)
     }
 }

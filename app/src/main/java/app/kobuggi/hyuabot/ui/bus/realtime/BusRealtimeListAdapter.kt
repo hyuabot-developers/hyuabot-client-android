@@ -30,13 +30,13 @@ class BusRealtimeListAdapter(
                 if (position == arrivalList.size - 1) {
                     if (item.seats!! >= 0) {
                         binding.busTimeText.apply {
-                            text = binding.root.context.getString(R.string.bus_realtime_format_seats_last, item.minutes, item.stops, item.seats)
+                            text = binding.root.context.resources.getQuantityString(R.plurals.bus_realtime_format_seats_last, item.minutes!!, item.minutes, item.stops, item.seats)
                             setTextColor(binding.root.context.getColor(R.color.red_bus))
                             setTypeface(typeface, android.graphics.Typeface.BOLD)
                         }
                     } else {
                         binding.busTimeText.apply {
-                            text = binding.root.context.getString(R.string.bus_realtime_format_no_seats_last, item.minutes, item.stops)
+                            text = binding.root.context.resources.getQuantityString(R.plurals.bus_realtime_format_no_seats_last, item.minutes!!, item.minutes, item.stops)
                             setTextColor(binding.root.context.getColor(R.color.red_bus))
                             setTypeface(typeface, android.graphics.Typeface.BOLD)
                         }
@@ -44,7 +44,7 @@ class BusRealtimeListAdapter(
                 } else {
                     if (item.seats!! >= 0) {
                         binding.busTimeText.apply {
-                            text = binding.root.context.getString(R.string.bus_realtime_format_seats, item.minutes, item.stops, item.seats)
+                            text = binding.root.context.resources.getQuantityString(R.plurals.bus_realtime_format_seats, item.minutes!!, item.minutes, item.stops, item.seats)
                             setTextColor(if (UIUtility.isDarkModeOn(binding.root.context.resources)) {
                                 binding.root.context.getColor(android.R.color.white)
                             } else {
@@ -54,7 +54,7 @@ class BusRealtimeListAdapter(
                         }
                     } else {
                         binding.busTimeText.apply {
-                            text = binding.root.context.getString(R.string.bus_realtime_format_no_seats, item.minutes, item.stops)
+                            text = binding.root.context.resources.getQuantityString(R.plurals.bus_realtime_format_no_seats, item.minutes!!, item.minutes, item.stops)
                             setTextColor(if (UIUtility.isDarkModeOn(binding.root.context.resources)) {
                                 binding.root.context.getColor(android.R.color.white)
                             } else {
@@ -69,30 +69,18 @@ class BusRealtimeListAdapter(
                     text = routeName
                     setTextColor(ResourcesCompat.getColor(resources, getRouteColor(routeName), null))
                 }
-                if (position == arrivalList.size - 1) {
-                    binding.busTimeText.apply {
-                        text = binding.root.context.getString(
-                            R.string.bus_timetable_format_last,
-                            hourFormatter.format(item.time),
-                            minuteFormatter.format(item.time)
-                        )
-                        setTextColor(binding.root.context.getColor(R.color.red_bus))
-                        setTypeface(typeface, android.graphics.Typeface.BOLD)
-                    }
-                } else {
-                    binding.busTimeText.apply {
-                        text = binding.root.context.getString(
-                            R.string.bus_timetable_format,
-                            hourFormatter.format(item.time),
-                            minuteFormatter.format(item.time)
-                        )
-                        setTextColor(if (UIUtility.isDarkModeOn(binding.root.context.resources)) {
-                            binding.root.context.getColor(android.R.color.white)
-                        } else {
-                            binding.root.context.getColor(android.R.color.black)
-                        })
-                        setTypeface(typeface, android.graphics.Typeface.NORMAL)
-                    }
+                binding.busTimeText.apply {
+                    text = binding.root.context.getString(
+                        R.string.bus_timetable_format,
+                        hourFormatter.format(item.time),
+                        minuteFormatter.format(item.time)
+                    )
+                    setTextColor(if (UIUtility.isDarkModeOn(binding.root.context.resources)) {
+                        binding.root.context.getColor(android.R.color.white)
+                    } else {
+                        binding.root.context.getColor(android.R.color.black)
+                    })
+                    setTypeface(typeface, android.graphics.Typeface.NORMAL)
                 }
             }
         }

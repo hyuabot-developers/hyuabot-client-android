@@ -5,7 +5,6 @@ import app.kobuggi.hyuabot.databinding.CalendarDayLayoutBinding
 import com.kizitonwose.calendar.view.ViewContainer
 
 class DayViewContainer(view: View): ViewContainer(view) {
-    val dayItem = CalendarDayLayoutBinding.bind(view).calendarDayItem
     val dayTextView = CalendarDayLayoutBinding.bind(view).calendarDayText
     val firstSchedule = CalendarDayLayoutBinding.bind(view).calendarDayScheduleFirst
     val secondSchedule = CalendarDayLayoutBinding.bind(view).calendarDayScheduleSecond

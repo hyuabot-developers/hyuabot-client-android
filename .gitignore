@@ -20,3 +20,4 @@ app/google-services.json
 watch/google-services.json
 
 *.aab
+/gradle/gradle-daemon-jvm.properties

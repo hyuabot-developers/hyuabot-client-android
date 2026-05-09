@@ -24,7 +24,7 @@ apollo {
 
 android {
     namespace = "app.kobuggi.hyuabot"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"

@@ -20,9 +20,6 @@ import com.google.android.horologist.tiles.SuspendingTileService
 @OptIn(ExperimentalHorologistApi::class)
 class ShuttleTileService: SuspendingTileService() {
     private val resourceVersion = "0"
-    override fun onCreate() {
-        super.onCreate()
-    }
 
     override suspend fun tileRequest(requestParams: TileRequest): TileBuilders.Tile {
         return TileBuilders.Tile.Builder()

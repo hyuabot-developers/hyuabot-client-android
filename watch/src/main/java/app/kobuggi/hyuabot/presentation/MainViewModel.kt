@@ -47,42 +47,58 @@ class MainViewModel(private val apolloClient: ApolloClient, private val stopID: 
             )).execute()
             response.data?.shuttle?.stops.let { stops ->
                 if (stops == null) return@let
-                if (stopID == "기숙사") {
-                    val stop = stops.first { it.name == "dormitory_o" }
-                    stop.timetable.destination.let { timetableByDestination ->
-                        _firstItem.value = timetableByDestination.first { it.destination == "STATION" }.entries.firstOrNull()
-                        _secondItem.value = timetableByDestination.first { it.destination == "TERMINAL" }.entries.firstOrNull()
-                        _thirdItem.value = timetableByDestination.first { it.destination == "JUNGANG" }.entries.firstOrNull()
+                when (stopID) {
+                    "기숙사" -> {
+                        val stop = stops.first { it.name == "dormitory_o" }
+                        stop.timetable.destination.let { timetableByDestination ->
+                            _firstItem.value =
+                                timetableByDestination.first { it.destination == "STATION" }.entries.firstOrNull()
+                            _secondItem.value =
+                                timetableByDestination.first { it.destination == "TERMINAL" }.entries.firstOrNull()
+                            _thirdItem.value =
+                                timetableByDestination.first { it.destination == "JUNGANG" }.entries.firstOrNull()
+                        }
+                        _fourthItem.value = null
                     }
-                    _fourthItem.value = null
-                } else if (stopID == "셔틀콕") {
-                    val stop1 = stops.first { it.name == "shuttlecock_o" }
-                    val stop2 = stops.first { it.name == "shuttlecock_i" }
-                    stop1.timetable.destination.let { timetableByDestination ->
-                        _firstItem.value = timetableByDestination.first { it.destination == "STATION" }.entries.firstOrNull()
-                        _secondItem.value = timetableByDestination.first { it.destination == "TERMINAL" }.entries.firstOrNull()
-                        _thirdItem.value = timetableByDestination.first { it.destination == "JUNGANG" }.entries.firstOrNull()
+                    "셔틀콕" -> {
+                        val stop1 = stops.first { it.name == "shuttlecock_o" }
+                        val stop2 = stops.first { it.name == "shuttlecock_i" }
+                        stop1.timetable.destination.let { timetableByDestination ->
+                            _firstItem.value =
+                                timetableByDestination.first { it.destination == "STATION" }.entries.firstOrNull()
+                            _secondItem.value =
+                                timetableByDestination.first { it.destination == "TERMINAL" }.entries.firstOrNull()
+                            _thirdItem.value =
+                                timetableByDestination.first { it.destination == "JUNGANG" }.entries.firstOrNull()
+                        }
+                        stop2.timetable.destination.let { timetableByDestination ->
+                            _fourthItem.value =
+                                timetableByDestination.first { it.destination == "CAMPUS" }.entries.firstOrNull()
+                        }
                     }
-                    stop2.timetable.destination.let { timetableByDestination ->
-                        _fourthItem.value = timetableByDestination.first { it.destination == "CAMPUS" }.entries.firstOrNull()
+                    "한대앞" -> {
+                        val stop = stops.first { it.name == "station" }
+                        stop.timetable.destination.let { timetableByDestination ->
+                            _firstItem.value =
+                                timetableByDestination.first { it.destination == "CAMPUS" }.entries.firstOrNull()
+                            _secondItem.value =
+                                timetableByDestination.first { it.destination == "TERMINAL" }.entries.firstOrNull()
+                            _thirdItem.value =
+                                timetableByDestination.first { it.destination == "JUNGANG" }.entries.firstOrNull()
+                        }
+                        _fourthItem.value = null
                     }
-                } else if (stopID == "한대앞") {
-                    val stop = stops.first { it.name == "station" }
-                    stop.timetable.destination.let { timetableByDestination ->
-                        _firstItem.value = timetableByDestination.first { it.destination == "CAMPUS" }.entries.firstOrNull()
-                        _secondItem.value = timetableByDestination.first { it.destination == "TERMINAL" }.entries.firstOrNull()
-                        _thirdItem.value = timetableByDestination.first { it.destination == "JUNGANG" }.entries.firstOrNull()
+                    "예술인" -> {
+                        val stop = stops.first { it.name == "terminal" }
+                        stop.timetable.destination.let { timetableByDestination ->
+                            _result.value = timetableByDestination.first { it.destination == "CAMPUS" }.entries
+                        }
                     }
-                    _fourthItem.value = null
-                } else if (stopID == "예술인") {
-                    val stop = stops.first { it.name == "terminal" }
-                    stop.timetable.destination.let { timetableByDestination ->
-                        _result.value = timetableByDestination.first { it.destination == "CAMPUS" }.entries
-                    }
-                } else if (stopID == "중앙역") {
-                    val stop = stops.first { it.name == "jungang_stn" }
-                    stop.timetable.destination.let { timetableByDestination ->
-                        _result.value = timetableByDestination.first { it.destination == "CAMPUS" }.entries
+                    "중앙역" -> {
+                        val stop = stops.first { it.name == "jungang_stn" }
+                        stop.timetable.destination.let { timetableByDestination ->
+                            _result.value = timetableByDestination.first { it.destination == "CAMPUS" }.entries
+                        }
                     }
                 }
             }

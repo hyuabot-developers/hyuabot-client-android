@@ -25,8 +25,9 @@ class SubwayTransferListAdapter(
                         transfer.take.location ?: '-'
                     )
                 } else {
-                    binding.transferTargetText.text = context.getString(
-                        R.string.subway_transfer_down_item_format_no_transfer,
+                    binding.transferTargetText.text = context.resources.getQuantityString(
+                        R.plurals.subway_transfer_down_item_format_no_transfer,
+                        transfer.take.minutes,
                         getTerminalString(transfer.take.terminal.stationID),
                         transfer.take.minutes,
                         transfer.take.location ?: '-'
@@ -34,16 +35,18 @@ class SubwayTransferListAdapter(
                 }
             } else {
                 if (heading == "up") {
-                    binding.transferTargetText.text = context.getString(
-                        R.string.subway_transfer_up_item_format,
+                    binding.transferTargetText.text = context.resources.getQuantityString(
+                        R.plurals.subway_transfer_up_item_format,
+                        transfer.transfer.minutes,
                         getTerminalString(transfer.take.terminal.stationID),
                         transfer.take.location ?: '-',
                         getTerminalString(transfer.transfer.terminal.stationID),
                         transfer.transfer.minutes
                     )
                 } else {
-                    binding.transferTargetText.text = context.getString(
-                        R.string.subway_transfer_down_item_format,
+                    binding.transferTargetText.text = context.resources.getQuantityString(
+                        R.plurals.subway_transfer_down_item_format,
+                        transfer.take.minutes,
                         getTerminalString(transfer.take.terminal.stationID),
                         transfer.take.minutes,
                         transfer.take.location ?: '-',
