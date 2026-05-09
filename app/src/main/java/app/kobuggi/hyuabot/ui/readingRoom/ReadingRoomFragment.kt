@@ -146,18 +146,17 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
         val alarmManager = ContextCompat.getSystemService(requireContext(), AlarmManager::class.java)
         alarmFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
         alarmFunction.cancelAlarm(R.string.reading_room_alarm_4_hour)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
-            startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
-            return
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && alarmManager != null) {
-            val alarmTime = LocalDateTime.now().plusHours(hours).minusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-            alarmFunction.callAlarm(alarmTime, alarmResId, getString(R.string.reading_room_alarm_extend))
-            viewModel.setExtendNotificationTime(alarmTime)
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
-            return
-        } else if (alarmManager == null) {
+        if (alarmManager == null) {
             return
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+            startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+            return
+        }
+
+        val alarmTime = LocalDateTime.now().plusHours(hours).minusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        alarmFunction.callAlarm(alarmTime, alarmResId, getString(R.string.reading_room_alarm_extend))
+        viewModel.setExtendNotificationTime(alarmTime)
     }
 }
