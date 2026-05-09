@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object GraphQLModule {
-    private val BASE_URL = "${SdBuildConfig.API_URL}/graphql"
+    private const val BASE_URL = "${SdBuildConfig.API_URL}/graphql"
 
     private val apolloClient = {
         val logging = HttpLoggingInterceptor().apply {

@@ -19,7 +19,6 @@ class SubwayTimetableViewModel @Inject constructor(private val apolloClient: Apo
 
     val isLoading get() = _isLoading
     val timetable get() = _timetable
-    val heading get() = _heading
     val queryError get() = _queryError
 
     fun fetchData(stationID: String, heading: String) {

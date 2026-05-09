@@ -199,11 +199,11 @@ The app ships with **Korean** (default) and **English** string resources. Langua
 
 ## Developer
 
-| | |
-|---|---|
-| **Developer** | 이정인 (Lee Jeongin) |
+|                 |                                                                |
+|-----------------|----------------------------------------------------------------|
+| **Developer**   | 이정인 (Lee Jeongin)                                              |
 | **Affiliation** | Hanyang University ERICA · Software Engineering, Class of 2017 |
-| **Package** | `app.kobuggi.hyuabot` |
+| **Package**     | `app.kobuggi.hyuabot`                                          |
 
 ---
 

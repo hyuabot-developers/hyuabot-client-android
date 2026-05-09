@@ -1,12 +1,12 @@
 package app.kobuggi.hyuabot.ui.contact
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -79,7 +79,7 @@ class ContactFragment @Inject constructor() : Fragment() {
 
     private fun onClickItem(contact: Contact) {
         val intent = Intent(Intent.ACTION_DIAL)
-        intent.data = Uri.parse("tel:${contact.phone}")
+        intent.data = "tel:${contact.phone}".toUri()
         startActivity(intent)
     }
 }

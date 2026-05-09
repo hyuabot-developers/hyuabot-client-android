@@ -49,7 +49,7 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
                 viewLifecycleOwner.lifecycleScope.launch {
                     userPreferencesRepository.setAnalyticsConsent(isChecked)
                     FirebaseAnalytics.getInstance(requireContext()).setAnalyticsCollectionEnabled(isChecked)
-                    FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(isChecked)
+                    FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = isChecked
                 }
             }
         }
