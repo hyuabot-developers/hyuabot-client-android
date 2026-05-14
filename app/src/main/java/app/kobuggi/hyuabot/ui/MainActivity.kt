@@ -25,6 +25,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import androidx.core.content.edit
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedListener, NavigationBarView.OnItemSelectedListener, DialogInterface.OnDismissListener {
@@ -34,11 +37,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragment.id)!! as NavHostFragment
         navHostFragment.navController
     }
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        firebaseAnalytics = Firebase.analytics
         binding.bottomNavigation.apply {
             setupWithNavController(navController)
             setOnItemSelectedListener(this@MainActivity)
