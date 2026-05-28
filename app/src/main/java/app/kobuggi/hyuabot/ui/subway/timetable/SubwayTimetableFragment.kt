@@ -48,6 +48,9 @@ class SubwayTimetableFragment @Inject constructor() : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        childFragmentManager.fragments.toList().forEach {
+            childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
+        }
         binding.viewPager.adapter = null
     }
 }
