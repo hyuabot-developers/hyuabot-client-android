@@ -7,6 +7,8 @@ import app.kobuggi.hyuabot.MapPageQuery
 import app.kobuggi.hyuabot.MapPageSearchQuery
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,7 +26,7 @@ class MapViewModel @Inject constructor(private val apolloClient: ApolloClient) :
 
     fun fetchBuildings(north: Double?, south: Double?, west: Double?, east: Double?) {
         viewModelScope.launch {
-            val response = apolloClient.query(MapPageQuery(north ?: 0.0, south ?: 0.0, west ?: 0.0, east ?: 0.0)).execute()
+            val response = apolloClient.query(MapPageQuery(north ?: 0.0, south ?: 0.0, west ?: 0.0, east ?: 0.0)).fetchPolicy(FetchPolicy.CacheFirst).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.building != null) {
@@ -38,7 +40,7 @@ class MapViewModel @Inject constructor(private val apolloClient: ApolloClient) :
 
     fun searchRooms(query: String) {
         viewModelScope.launch {
-            val response = apolloClient.query(MapPageSearchQuery(query)).execute()
+            val response = apolloClient.query(MapPageSearchQuery(query)).fetchPolicy(FetchPolicy.CacheFirst).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.building != null) {

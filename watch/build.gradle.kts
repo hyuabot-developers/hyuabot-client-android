@@ -16,6 +16,8 @@ apollo {
             endpointUrl.set("https://api.hyuabot.app/query")
             schemaFile.set(file("src/main/graphql/schema.graphqls"))
         }
+        plugin("com.apollographql.cache:normalized-cache-apollo-compiler-plugin:1.0.3")
+        pluginArgument("com.apollographql.cache.packageName", packageName.get())
         mapScalar("Date", "java.time.LocalDate", "app.kobuggi.hyuabot.service.LocalDateAdapter")
         mapScalar("LocalTime", "java.time.LocalTime", "app.kobuggi.hyuabot.service.LocalTimeAdapter")
         mapScalar("DateTime", "java.time.ZonedDateTime", "app.kobuggi.hyuabot.service.ZonedDateTimeAdapter")
@@ -105,6 +107,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
     implementation(libs.apollo)
+    implementation(libs.apolloNormalizedCache)
     // RXJava
     implementation(libs.rxJava)
     implementation(libs.rxAndroid)

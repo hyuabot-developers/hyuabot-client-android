@@ -8,6 +8,8 @@ import app.kobuggi.hyuabot.CafeteriaPageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -42,7 +44,7 @@ class CafeteriaViewModel @Inject constructor(
                     (_date.value ?: LocalDateTime.now(ZoneId.of("Asia/Seoul"))).toLocalDate(),
                     campusID
                 )
-            ).execute()
+            ).fetchPolicy(FetchPolicy.CacheFirst).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.cafeteria != null) {

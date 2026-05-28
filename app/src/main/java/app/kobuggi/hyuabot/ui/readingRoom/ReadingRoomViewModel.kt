@@ -11,6 +11,8 @@ import app.kobuggi.hyuabot.ReadingRoomPageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +38,7 @@ class ReadingRoomViewModel @Inject constructor(
 
     fun fetchRooms(campusID: Int = 2) {
         viewModelScope.launch {
-            val response = apolloClient.query(ReadingRoomPageQuery()).execute()
+            val response = apolloClient.query(ReadingRoomPageQuery()).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.readingRoom != null) {

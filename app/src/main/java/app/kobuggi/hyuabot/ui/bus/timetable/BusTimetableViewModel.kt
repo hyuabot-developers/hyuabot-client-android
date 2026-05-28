@@ -7,6 +7,8 @@ import app.kobuggi.hyuabot.BusTimetablePageQuery
 import app.kobuggi.hyuabot.type.BusRouteStopInput
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +28,7 @@ class BusTimetableViewModel @Inject constructor(private val apolloClient: Apollo
         viewModelScope.launch {
             val response = apolloClient.query(BusTimetablePageQuery(routes.map {
                 BusRouteStopInput(route = it, stop = stopID)
-            })).execute()
+            })).fetchPolicy(FetchPolicy.CacheFirst).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {

@@ -11,6 +11,8 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -63,7 +65,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
             val response = apolloClient.query(ShuttleRealtimePageQuery(
                 language,
                 Optional.present(LocalTime.now())
-            )).execute()
+            )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.shuttle?.stops != null) {

@@ -11,6 +11,8 @@ import app.kobuggi.hyuabot.service.database.entity.Contact
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -35,7 +37,7 @@ class ContactViewModel @Inject constructor(
     fun fetchContactVersion() {
         _updating.postValue(true)
         viewModelScope.launch {
-            val response = apolloClient.query(ContactPageVersionQuery()).execute()
+            val response = apolloClient.query(ContactPageVersionQuery()).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.phonebook != null) {
@@ -54,7 +56,7 @@ class ContactViewModel @Inject constructor(
     private fun fetchContacts() {
         val dao = database.contactDao()
         viewModelScope.launch {
-            val response = apolloClient.query(ContactPageQuery()).execute()
+            val response = apolloClient.query(ContactPageQuery()).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.phonebook != null) {
