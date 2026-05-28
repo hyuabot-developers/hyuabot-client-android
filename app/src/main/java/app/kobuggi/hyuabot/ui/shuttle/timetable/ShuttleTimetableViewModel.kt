@@ -7,6 +7,8 @@ import app.kobuggi.hyuabot.ShuttlePeriodQuery
 import app.kobuggi.hyuabot.ShuttleTimetablePageQuery
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -34,7 +36,7 @@ class ShuttleTimetableViewModel @Inject constructor(private val apolloClient: Ap
             val periodQuery = if (period.value == null) {
                 val period = apolloClient.query(ShuttlePeriodQuery(
                     date = LocalDate.now()
-                )).execute()
+                )).fetchPolicy(FetchPolicy.CacheFirst).execute()
                 if (period.data == null || period.exception != null) {
                     _queryError.value = QueryError.SERVER_ERROR
                     return@launch
@@ -51,7 +53,7 @@ class ShuttleTimetableViewModel @Inject constructor(private val apolloClient: Ap
                 periodQuery,
                 stopID.value ?: "",
                 destinations.value ?: listOf()
-            )).execute()
+            )).fetchPolicy(FetchPolicy.CacheFirst).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (!response.data?.shuttle?.stops.isNullOrEmpty()) {

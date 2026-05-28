@@ -11,6 +11,8 @@ import app.kobuggi.hyuabot.service.database.entity.Event
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -33,7 +35,7 @@ class CalendarViewModel @Inject constructor(
     fun fetchCalendarVersion() {
         _updating.postValue(true)
         viewModelScope.launch {
-            val response = apolloClient.query(CalendarPageVersionQuery()).execute()
+            val response = apolloClient.query(CalendarPageVersionQuery()).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.calendar != null) {
@@ -52,7 +54,7 @@ class CalendarViewModel @Inject constructor(
     private fun fetchEvents() {
         val dao = database.calendarDao()
         viewModelScope.launch {
-            val response = apolloClient.query(CalendarPageQuery()).execute()
+            val response = apolloClient.query(CalendarPageQuery()).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.calendar != null) {

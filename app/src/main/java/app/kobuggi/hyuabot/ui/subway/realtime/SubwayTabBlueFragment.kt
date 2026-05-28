@@ -78,4 +78,7 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
         }
         return binding.root
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+    }
 }

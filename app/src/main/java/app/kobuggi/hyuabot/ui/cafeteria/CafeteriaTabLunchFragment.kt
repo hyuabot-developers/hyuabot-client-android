@@ -33,4 +33,7 @@ class CafeteriaTabLunchFragment : Fragment() {
         }
         return binding.root
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+    }
 }

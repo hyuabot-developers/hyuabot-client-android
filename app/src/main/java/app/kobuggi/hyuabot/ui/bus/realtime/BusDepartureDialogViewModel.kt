@@ -8,6 +8,8 @@ import app.kobuggi.hyuabot.type.BusRouteStopInput
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -25,7 +27,7 @@ class BusDepartureDialogViewModel @Inject constructor(private val apolloClient: 
         viewModelScope.launch {
             val response = apolloClient.query(BusDepartureLogDialogQuery(routes.map {
                 BusRouteStopInput(route = it, stop = stopID, dates = Optional.present(dates))
-            })).execute()
+            })).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {

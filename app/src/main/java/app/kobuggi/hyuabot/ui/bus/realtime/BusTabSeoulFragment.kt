@@ -174,4 +174,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             String.format("%02d:%02d:%02d", hour, minute, second)
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+    }
 }

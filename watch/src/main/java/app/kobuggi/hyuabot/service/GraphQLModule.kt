@@ -1,6 +1,8 @@
 package app.kobuggi.hyuabot.service
 
+import app.kobuggi.hyuabot.cache.Cache.cache
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.cache.normalized.memory.MemoryCacheFactory
 import com.apollographql.apollo.network.okHttpClient
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,6 +28,7 @@ class GraphQLModule {
             return ApolloClient.Builder()
                 .serverUrl(BASE_URL)
                 .okHttpClient(okHttpClient)
+                .cache(MemoryCacheFactory(maxSizeBytes = 10 * 1024 * 1024))
                 .build()
         }
 

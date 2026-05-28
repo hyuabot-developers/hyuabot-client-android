@@ -9,6 +9,8 @@ import app.kobuggi.hyuabot.type.ShuttleLimitInput
 import app.kobuggi.hyuabot.type.ShuttleStopInput
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -44,7 +46,7 @@ class MainViewModel(private val apolloClient: ApolloClient, private val stopID: 
                     )
                 },
                 after = Optional.present(now.toLocalTime())
-            )).execute()
+            )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             response.data?.shuttle?.stops.let { stops ->
                 if (stops == null) return@let
                 when (stopID) {

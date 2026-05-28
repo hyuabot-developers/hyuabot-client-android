@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.BusRouteInfoDialogQuery
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +24,7 @@ class BusRouteDialogViewModel @Inject constructor(private val apolloClient: Apol
 
     fun fetchData(stopID: Int, routeID: Int) {
         viewModelScope.launch {
-            val response = apolloClient.query(BusRouteInfoDialogQuery(routeID, stopID)).execute()
+            val response = apolloClient.query(BusRouteInfoDialogQuery(routeID, stopID)).fetchPolicy(FetchPolicy.CacheFirst).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {

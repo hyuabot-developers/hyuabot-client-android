@@ -21,6 +21,8 @@ apollo {
             endpointUrl.set("https://api.hyuabot.app/query")
             schemaFile.set(file("src/main/graphql/schema.graphqls"))
         }
+        plugin("com.apollographql.cache:normalized-cache-apollo-compiler-plugin:1.0.3")
+        pluginArgument("com.apollographql.cache.packageName", packageName.get())
         mapScalar("Date", "java.time.LocalDate", "app.kobuggi.hyuabot.service.query.LocalDateAdapter")
         mapScalar("LocalTime", "java.time.LocalTime", "app.kobuggi.hyuabot.service.query.LocalTimeAdapter")
         mapScalar("DateTime", "java.time.ZonedDateTime", "app.kobuggi.hyuabot.service.query.ZonedDateTimeAdapter")
@@ -44,8 +46,8 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 28
         targetSdk = 37
-        versionCode = 505000000
-        versionName = "5.0.5"
+        versionCode = 506000000
+        versionName = "5.0.6"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
@@ -129,6 +131,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
     implementation(libs.apollo)
+    implementation(libs.apolloNormalizedCache)
     // DataStore
     implementation(libs.dataStore)
     implementation(libs.dataStoreRx)

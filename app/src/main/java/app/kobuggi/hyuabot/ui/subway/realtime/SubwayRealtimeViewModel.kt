@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.SubwayRealtimePageQuery
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -49,7 +51,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
         viewModelScope.launch {
             val response = apolloClient.query(SubwayRealtimePageQuery(
                 weekday = if (localDate.dayOfWeek.value in 1..5) "weekdays" else "weekends"
-            )).execute()
+            )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.subway != null) {
