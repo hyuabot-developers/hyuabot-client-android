@@ -228,6 +228,7 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_chat">Inquiries</string>
     <string name="menu_donate">Donate</string>
+    <string name="menu_review">Rate this App</string>
     <string name="menu_map">Campus Map</string>
     <string name="map_search_guide">Enter a room to search</string>
     <string name="room_description_format">Room %1$s/%2$s</string>

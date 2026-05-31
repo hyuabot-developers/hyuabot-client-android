@@ -11,14 +11,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
+import androidx.lifecycle.lifecycleScope
 import app.kobuggi.hyuabot.databinding.FragmentMenuBinding
 import app.kobuggi.hyuabot.service.safeNavigate
+import app.kobuggi.hyuabot.util.InAppReviewManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MenuFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentMenuBinding.inflate(layoutInflater) }
+
+    @Inject
+    lateinit var inAppReviewManager: InAppReviewManager
+
     private val menuList = listOf(
         MenuItem(R.drawable.ic_book, R.string.menu_book),
         MenuItem(R.drawable.ic_map, R.string.menu_map),
@@ -28,6 +35,7 @@ class MenuFragment @Inject constructor() : Fragment() {
         MenuItem(R.drawable.ic_settings, R.string.menu_settings),
         MenuItem(R.drawable.ic_chat, R.string.menu_chat),
         MenuItem(R.drawable.ic_donate, R.string.menu_donate),
+        MenuItem(R.drawable.ic_star, R.string.menu_review),
     )
 
     override fun onCreateView(
@@ -88,6 +96,11 @@ class MenuFragment @Inject constructor() : Fragment() {
                 val url = "https://qr.kakaopay.com/FWxVPo8iO"
                 val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                 startActivity(intent)
+            }
+            R.string.menu_review -> {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    inAppReviewManager.launchReview(requireActivity())
+                }
             }
             else -> {}
         }

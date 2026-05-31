@@ -15,15 +15,19 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
+import app.kobuggi.hyuabot.util.InAppReviewManager
 import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import javax.inject.Inject
 import androidx.core.content.edit
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -38,6 +42,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         navHostFragment.navController
     }
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+
+    @Inject
+    lateinit var inAppReviewManager: InAppReviewManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -58,6 +65,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         }
         checkLocationPermission()
         openBirthDayDialog()
+        requestInAppReview()
+    }
+
+    private fun requestInAppReview() {
+        lifecycleScope.launch {
+            inAppReviewManager.maybeRequestReview(this@MainActivity)
+        }
     }
 
     private fun checkLocationPermission() {

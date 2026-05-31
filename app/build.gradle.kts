@@ -161,6 +161,10 @@ dependencies {
     implementation(libs.playServicesLocation)
     // Android LiveData
     implementation(libs.lifeCycleLiveData)
+    implementation(libs.lifeCycleRuntime)
+    // In-App Review
+    implementation(libs.playReview)
+    implementation(libs.playReviewKtx)
 }
 
 hilt {
