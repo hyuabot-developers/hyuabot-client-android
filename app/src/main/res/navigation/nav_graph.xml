@@ -109,7 +109,13 @@
         android:id="@+id/cafeteriaFragment"
         android:name="app.kobuggi.hyuabot.ui.cafeteria.CafeteriaFragment"
         android:label="식당 정보"
-        tools:layout="@layout/fragment_cafeteria_tab" />
+        tools:layout="@layout/fragment_cafeteria_tab">
+        <argument
+            android:name="tab"
+            app:argType="string"
+            android:defaultValue="" />
+        <deepLink app:uri="hyuabot://cafeteria?tab={tab}" />
+    </fragment>
     <fragment
         android:id="@+id/readingRoomFragment"
         android:name="app.kobuggi.hyuabot.ui.readingRoom.ReadingRoomFragment"

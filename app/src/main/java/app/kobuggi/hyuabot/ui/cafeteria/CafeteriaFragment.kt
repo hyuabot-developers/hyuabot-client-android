@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentCafeteriaBinding
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class CafeteriaFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentCafeteriaBinding.inflate(layoutInflater) }
     private val viewModel: CafeteriaViewModel by viewModels()
+    private val args: CafeteriaFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -76,6 +78,13 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
+        val initialTab = when (args.tab) {
+            "breakfast" -> 0
+            "lunch" -> 1
+            "dinner" -> 2
+            else -> null
+        }
+        initialTab?.let { binding.viewPager.setCurrentItem(it, false) }
         return binding.root
     }
 

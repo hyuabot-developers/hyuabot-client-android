@@ -165,6 +165,8 @@ dependencies {
     // In-App Review
     implementation(libs.playReview)
     implementation(libs.playReviewKtx)
+    // App Widget
+    implementation(libs.coreRemoteViews)
 }
 
 hilt {

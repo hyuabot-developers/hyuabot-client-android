@@ -219,6 +219,11 @@
     <string name="cafeteria_15">Business Incubator</string>
     <string name="cafeteria_running_time_format">Operating Hours: %1$s</string>
     <string name="cafeteria_price_format">₩ %1$s</string>
+    <string name="widget_cafeteria_name">Cafeteria Menu</string>
+    <string name="widget_cafeteria_description">Shows the cafeteria menu for the current time.</string>
+    <string name="widget_cafeteria_no_data">No menu information available.</string>
+    <string name="widget_cafeteria_refresh">Refresh</string>
+    <string name="widget_meal_closed">Closed</string>
     <string name="cafeteria_date_title">Select Date</string>
     <string name="menu">Menu</string>
     <string name="menu_book">Reading Room Seat Lookup</string>
