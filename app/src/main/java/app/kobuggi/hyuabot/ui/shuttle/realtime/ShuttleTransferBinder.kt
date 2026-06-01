@@ -6,9 +6,22 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleTransferQuery
+import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.util.buildTransitRows
+
+fun Fragment.bindShuttleHelpButtons(vararg buttons: View) {
+    buttons.forEach { button ->
+        button.setOnClickListener {
+            ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleHelpDialogFragment().also {
+                findNavController().safeNavigate(it)
+            }
+        }
+    }
+}
 
 object ShuttleTransferBinder {
     fun bind(

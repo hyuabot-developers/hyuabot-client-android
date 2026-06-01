@@ -14,12 +14,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
-import app.kobuggi.hyuabot.service.safeNavigate
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -69,11 +67,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
         }
         binding.viewPager.adapter = viewpagerAdapter
-        binding.helpFab.setOnClickListener {
-            ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleHelpDialogFragment().also {
-                findNavController().safeNavigate(it)
-            }
-        }
         binding.showByDestination.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setShowByDestination(isChecked)
         }

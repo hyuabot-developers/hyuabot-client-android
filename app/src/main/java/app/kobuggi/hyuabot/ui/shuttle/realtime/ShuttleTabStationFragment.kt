@@ -403,6 +403,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             entireTimetableBoundForStation.visibility = View.GONE
             entireTimetableStation.visibility = View.GONE
         }
+        bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
         return binding.root
     }
 

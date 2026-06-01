@@ -168,6 +168,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
             entireTimetableBoundForJungangStation.visibility = View.GONE
             entireTimetableJungangStation.visibility = View.GONE
         }
+        bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
         return binding.root
     }
 

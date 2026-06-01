@@ -337,6 +337,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
         parentViewModel.transfer.observe(viewLifecycleOwner) { data ->
             ShuttleTransferBinder.bind(binding.transferSection, binding.transferContainer, "dormitory_o", data)
         }
+        bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
         return binding.root
     }
 
