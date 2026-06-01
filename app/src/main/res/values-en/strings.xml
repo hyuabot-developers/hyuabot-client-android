@@ -224,6 +224,16 @@
     <string name="widget_cafeteria_no_data">No menu information available.</string>
     <string name="widget_cafeteria_refresh">Refresh</string>
     <string name="widget_meal_closed">Closed</string>
+    <string name="widget_shuttle_description_small">Shuttle departures from the nearest stop (small)</string>
+    <string name="widget_shuttle_description_medium">Shuttle departures from the nearest stop (medium)</string>
+    <string name="widget_shuttle_description_large">Shuttle departures from the nearest stop (large)</string>
+    <string name="widget_shuttle_no_data">No shuttle service.</string>
+    <string name="widget_shuttle_no_location">Unable to get location.</string>
+    <string name="widget_shuttle_permission_required">Location permission required.</string>
+    <string name="widget_shuttle_background_location_title">Background location access</string>
+    <string name="widget_shuttle_background_location_message">The shuttle widget uses your location in the background, even when the app is closed, to show the nearest stop. Please set location permission to \'Allow all the time\' on the next screen.</string>
+    <string name="widget_shuttle_background_location_allow">Allow</string>
+    <string name="widget_shuttle_background_location_later">Later</string>
     <string name="cafeteria_date_title">Select Date</string>
     <string name="menu">Menu</string>
     <string name="menu_book">Reading Room Seat Lookup</string>

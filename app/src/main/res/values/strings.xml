@@ -232,6 +232,16 @@
     <string name="widget_cafeteria_no_data">메뉴 정보가 없습니다.</string>
     <string name="widget_cafeteria_refresh">새로고침</string>
     <string name="widget_meal_closed">학식 종료</string>
+    <string name="widget_shuttle_description_small">가장 가까운 정류장의 셔틀 출발 시간 (작게)</string>
+    <string name="widget_shuttle_description_medium">가장 가까운 정류장의 셔틀 출발 시간 (중간)</string>
+    <string name="widget_shuttle_description_large">가장 가까운 정류장의 셔틀 출발 시간 (크게)</string>
+    <string name="widget_shuttle_no_data">운행 정보가 없습니다.</string>
+    <string name="widget_shuttle_no_location">위치를 가져올 수 없습니다.</string>
+    <string name="widget_shuttle_permission_required">위치 권한이 필요합니다.</string>
+    <string name="widget_shuttle_background_location_title">백그라운드 위치 권한 안내</string>
+    <string name="widget_shuttle_background_location_message">셔틀 위젯이 앱을 사용하지 않을 때에도 현재 위치에서 가장 가까운 정류장을 표시하기 위해 백그라운드에서 위치 정보를 사용합니다. 다음 화면에서 위치 권한을 \'항상 허용\'으로 설정해 주세요.</string>
+    <string name="widget_shuttle_background_location_allow">허용</string>
+    <string name="widget_shuttle_background_location_later">나중에</string>
     <string name="cafeteria_date_title">학식 날짜 선택</string>
     <string name="menu">메뉴</string>
     <string name="menu_book">열람실 좌석 조회</string>

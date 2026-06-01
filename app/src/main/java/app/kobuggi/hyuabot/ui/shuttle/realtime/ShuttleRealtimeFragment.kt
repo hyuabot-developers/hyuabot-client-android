@@ -5,6 +5,8 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +15,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
 import app.kobuggi.hyuabot.service.safeNavigate
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Runnable
@@ -31,8 +37,10 @@ import kotlin.math.sqrt
 class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeBinding.inflate(layoutInflater) }
     private val viewModel: ShuttleRealtimeViewModel by viewModels()
+    private val args: ShuttleRealtimeFragmentArgs by navArgs()
     private var currentPosition = 0
     private var setClosestStop = false
+    private var honorDeepLinkStop = false
     private val scrollHandler = Handler(Looper.getMainLooper())
     private lateinit var autoScrollRunnable: Runnable
 
@@ -77,6 +85,11 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
+        stopNameToTabIndex(args.stop)?.let { index ->
+            binding.viewPager.setCurrentItem(index, false)
+            setClosestStop = true
+            honorDeepLinkStop = true
+        }
         // If weekdays is from monday to friday and time is before 10:00, it is true and else false
         if (now.dayOfWeek.value in 1..5 && now.hour < 10) {
             Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_toast), Toast.LENGTH_SHORT).show()
@@ -113,27 +126,12 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 }
             }
         }
-        viewModel.result.observe(viewLifecycleOwner) {stops ->
+        viewModel.result.observe(viewLifecycleOwner) { stops ->
             if (setClosestStop) {
                 return@observe
             }
             if (stops.isNotEmpty()) {
-                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-                    if (location == null) { return@addOnSuccessListener }
-                    val nearestStop = stops.mapIndexed { _, stopItem ->
-                        Pair(stopItem, calculateDistance(stopItem, location))
-                    }.minByOrNull { it.second }?.first
-                    setClosestStop = true
-                    when(nearestStop?.name) {
-                        "dormitory_o" -> binding.viewPager.setCurrentItem(0, false)
-                        "shuttlecock_o" -> binding.viewPager.setCurrentItem(1, false)
-                        "station" -> binding.viewPager.setCurrentItem(2, false)
-                        "terminal" -> binding.viewPager.setCurrentItem(3, false)
-                        "jungang_stn" -> binding.viewPager.setCurrentItem(4, false)
-                        "shuttlecock_i" -> binding.viewPager.setCurrentItem(5, false)
-                        else -> binding.viewPager.setCurrentItem(0, false)
-                    }
-                }
+                moveToNearestStop(fusedLocationProviderClient, stops)
             }
         }
         viewModel.queryError.observe(viewLifecycleOwner) {
@@ -164,7 +162,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.start()
-        setClosestStop = false
+        if (!honorDeepLinkStop) {
+            setClosestStop = false
+        }
         if (::autoScrollRunnable.isInitialized) {
             scrollHandler.postDelayed(autoScrollRunnable, 5000)
         }
@@ -178,11 +178,75 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         binding.viewPager.adapter = null
     }
 
+    @SuppressLint("MissingPermission")
+    private fun moveToNearestStop(
+        client: FusedLocationProviderClient,
+        stops: List<ShuttleRealtimePageQuery.Stop>,
+    ) {
+        client.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null && isFresh(location)) {
+                    selectNearestStop(stops, location)
+                } else {
+                    requestCurrentLocation(client, stops)
+                }
+            }
+            .addOnFailureListener {
+                requestCurrentLocation(client, stops)
+            }
+    }
+
+    private fun isFresh(location: Location): Boolean {
+        val ageMillis = (SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos) / 1_000_000
+        return ageMillis in 0..LOCATION_MAX_AGE_MILLIS
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestCurrentLocation(
+        client: FusedLocationProviderClient,
+        stops: List<ShuttleRealtimePageQuery.Stop>,
+    ) {
+        val tokenSource = CancellationTokenSource()
+        client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token)
+            .addOnSuccessListener { location ->
+                location?.let { selectNearestStop(stops, it) }
+            }
+            .addOnFailureListener {
+                Log.e("ShuttleRealtimeFragment", "Failed to get user location", it)
+            }
+    }
+
+    private fun selectNearestStop(stops: List<ShuttleRealtimePageQuery.Stop>, location: Location) {
+        if (setClosestStop) {
+            return
+        }
+        val nearestStop = stops.map { stopItem ->
+            Pair(stopItem, calculateDistance(stopItem, location))
+        }.minByOrNull { it.second }?.first
+        setClosestStop = true
+        Log.d("ShuttleRealtimeFragment", "Nearest stop: ${nearestStop?.name}, distance: ${nearestStop?.let { calculateDistance(it, location) }}")
+        binding.viewPager.setCurrentItem(stopNameToTabIndex(nearestStop?.name) ?: 0, false)
+    }
+
+    private fun stopNameToTabIndex(name: String?): Int? = when (name) {
+        "dormitory_o" -> 0
+        "shuttlecock_o" -> 1
+        "station" -> 2
+        "terminal" -> 3
+        "jungang_stn" -> 4
+        "shuttlecock_i" -> 5
+        else -> null
+    }
+
     private fun calculateDistance(stopItem: ShuttleRealtimePageQuery.Stop, location: Location): Double {
         val distance = sqrt(
         (stopItem.latitude - location.latitude) * (stopItem.latitude - location.latitude) +
             (stopItem.longitude - location.longitude) * (stopItem.longitude - location.longitude)
         )
         return distance
+    }
+
+    companion object {
+        private const val LOCATION_MAX_AGE_MILLIS = 60_000L
     }
 }

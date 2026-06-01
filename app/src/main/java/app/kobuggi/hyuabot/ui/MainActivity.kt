@@ -1,11 +1,15 @@
 package app.kobuggi.hyuabot.ui
 
+import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.AlertDialog
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -23,6 +27,7 @@ import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
 import app.kobuggi.hyuabot.util.InAppReviewManager
+import app.kobuggi.hyuabot.widget.ShuttleWidgetProvider
 import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -89,7 +94,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
-                    1
+                    LOCATION_PERMISSION_REQUEST_CODE
                 )
             } else {
                 ActivityCompat.requestPermissions(
@@ -98,9 +103,57 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                         ACCESS_FINE_LOCATION,
                         ACCESS_COARSE_LOCATION
                     ),
-                    1
+                    LOCATION_PERMISSION_REQUEST_CODE
                 )
             }
+        } else {
+            maybeRequestBackgroundLocation()
+        }
+    }
+
+    private fun maybeRequestBackgroundLocation() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return
+        }
+        if (ActivityCompat.checkSelfPermission(this, ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val hasShuttleWidget = ShuttleWidgetProvider.providerClasses.any { provider ->
+            appWidgetManager.getAppWidgetIds(ComponentName(this, provider)).isNotEmpty()
+        }
+        if (!hasShuttleWidget) {
+            return
+        }
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.widget_shuttle_background_location_title))
+            .setMessage(getString(R.string.widget_shuttle_background_location_message))
+            .setPositiveButton(getString(R.string.widget_shuttle_background_location_allow)) { dialog, _ ->
+                dialog.dismiss()
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(ACCESS_BACKGROUND_LOCATION),
+                    BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE
+                )
+            }
+            .setNegativeButton(getString(R.string.widget_shuttle_background_location_later)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (
+            requestCode == LOCATION_PERMISSION_REQUEST_CODE &&
+            grantResults.isNotEmpty() &&
+            grantResults.any { it == PackageManager.PERMISSION_GRANTED }
+        ) {
+            maybeRequestBackgroundLocation()
         }
     }
 
@@ -150,5 +203,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             }
             dialogBuilder.create().show()
         }
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+        private const val BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 2
     }
 }
