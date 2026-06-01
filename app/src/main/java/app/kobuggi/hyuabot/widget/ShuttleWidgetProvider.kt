@@ -1,22 +1,13 @@
 package app.kobuggi.hyuabot.widget
 
-import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
-import android.os.Build
-import android.os.SystemClock
 import android.view.View
 import android.widget.RemoteViews
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.widget.RemoteViewsCompat
 import androidx.core.widget.RemoteViewsCompat.RemoteCollectionItems
@@ -24,22 +15,14 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleWidgetQuery
 import app.kobuggi.hyuabot.ui.MainActivity
 import com.apollographql.apollo.api.Optional
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.CancellationTokenSource
-import com.google.android.gms.tasks.Task
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.coroutines.resume
 
 abstract class ShuttleWidgetProvider : AppWidgetProvider() {
     protected abstract val size: ShuttleWidgetSize
@@ -99,7 +82,7 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
         data: ShuttleWidgetData,
     ): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_shuttle)
-        views.setTextViewText(R.id.widget_shuttle_date, now.format(TIME_FORMAT))
+        views.setTextViewText(R.id.widget_shuttle_date, now.format(ShuttleWidgetSupport.TIME_FORMAT))
         applyHeader(context, views, data)
 
         val collection = RemoteCollectionItems.Builder()
@@ -228,10 +211,10 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
     }
 
     private suspend fun loadData(context: Context): ShuttleWidgetData {
-        if (!hasLocationPermission(context)) {
+        if (!ShuttleWidgetSupport.hasLocationPermission(context)) {
             return ShuttleWidgetData(ShuttleError.NO_PERMISSION, null, null, emptyList())
         }
-        val location = getLocation(context)
+        val location = ShuttleWidgetSupport.getLocation(context)
             ?: return ShuttleWidgetData(ShuttleError.NO_LOCATION, null, null, emptyList())
 
         val entryPoint = EntryPointAccessors.fromApplication(
@@ -247,15 +230,15 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
             if (stops.isNullOrEmpty()) {
                 return ShuttleWidgetData(ShuttleError.NO_DATA, null, null, emptyList())
             }
-            val nearest = stops.minByOrNull { distanceTo(it, location) }
+            val nearest = stops.minByOrNull { ShuttleWidgetSupport.distanceTo(it, location) }
                 ?: return ShuttleWidgetData(ShuttleError.NO_DATA, null, null, emptyList())
 
-            var groups = makeGroups(context, nearest.timetable)
-            var stopName = stopDisplayName(context, nearest.name)
+            var groups = ShuttleWidgetSupport.makeGroups(context, nearest.timetable)
+            var stopName = ShuttleWidgetSupport.stopDisplayName(context, nearest.name)
             if (nearest.name == "shuttlecock_o" || nearest.name == "shuttlecock_i") {
                 val companion = if (nearest.name == "shuttlecock_o") "shuttlecock_i" else "shuttlecock_o"
                 stops.firstOrNull { it.name == companion }?.let {
-                    groups = groups + makeGroups(context, it.timetable)
+                    groups = groups + ShuttleWidgetSupport.makeGroups(context, it.timetable)
                 }
                 stopName = context.getString(R.string.shuttle_tab_shuttlecock_out)
             }
@@ -270,90 +253,16 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    private fun makeGroups(
-        context: Context,
-        timetable: ShuttleWidgetQuery.Timetable,
-    ): List<ShuttleGroup> = timetable.destination.mapNotNull { group ->
-        val times = group.entries.take(5).map { it.time.format(TIME_FORMAT) }
-        if (times.isEmpty()) {
-            null
-        } else {
-            ShuttleGroup(destinationDisplayName(context, group.destination), times)
-        }
-    }
-
-    private fun distanceTo(stop: ShuttleWidgetQuery.Stop, location: Location): Double {
-        val dLat = stop.latitude - location.latitude
-        val dLng = stop.longitude - location.longitude
-        return dLat * dLat + dLng * dLng
-    }
-
-    private fun hasLocationPermission(context: Context): Boolean {
-        val foreground =
-            ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(context, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        if (!foreground) {
-            return false
-        }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return true
-        }
-        return ContextCompat.checkSelfPermission(context, ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
-    }
-
-    @SuppressLint("MissingPermission")
-    private suspend fun getLocation(context: Context): Location? {
-        val client = LocationServices.getFusedLocationProviderClient(context)
-        val last = withTimeoutOrNull(2000) { awaitTask(client.lastLocation) }
-        if (last != null && isFresh(last)) return last
-        val tokenSource = CancellationTokenSource()
-        val current = withTimeoutOrNull(6000) {
-            awaitTask(client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token))
-        }
-        return current ?: last
-    }
-
-    private fun isFresh(location: Location): Boolean {
-        val ageMillis = (SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos) / 1_000_000
-        return ageMillis in 0..LOCATION_MAX_AGE_MILLIS
-    }
-
-    private suspend fun <T> awaitTask(task: Task<T>): T? =
-        suspendCancellableCoroutine { cont ->
-            task.addOnSuccessListener { cont.resume(it) }
-            task.addOnFailureListener { cont.resume(null) }
-            task.addOnCanceledListener { cont.resume(null) }
-        }
-
-    private fun stopDisplayName(context: Context, name: String): String = when (name) {
-        "dormitory_o" -> context.getString(R.string.shuttle_tab_dormitory_out)
-        "shuttlecock_o" -> context.getString(R.string.shuttle_tab_shuttlecock_out)
-        "station" -> context.getString(R.string.shuttle_tab_station)
-        "terminal" -> context.getString(R.string.shuttle_tab_terminal)
-        "jungang_stn" -> context.getString(R.string.shuttle_tab_jungang_station)
-        "shuttlecock_i" -> context.getString(R.string.shuttle_tab_shuttlecock_in)
-        else -> name
-    }
-
-    private fun destinationDisplayName(context: Context, code: String): String = when (code) {
-        "STATION" -> context.getString(R.string.shuttle_bound_for_station)
-        "TERMINAL" -> context.getString(R.string.shuttle_bound_for_terminal)
-        "JUNGANG" -> context.getString(R.string.shuttle_bound_for_jungang_station)
-        "CAMPUS" -> context.getString(R.string.shuttle_bound_for_dormitory)
-        else -> code
-    }
-
     companion object {
         const val ACTION_REFRESH = "app.kobuggi.hyuabot.widget.ACTION_REFRESH_SHUTTLE"
         private const val MAX_COMPACT_GROUPS = 2
         private const val MAX_COMPACT_TIMES = 2
-        private const val LOCATION_MAX_AGE_MILLIS = 60_000L
-        private val TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm")
 
-        val providerClasses: List<Class<out ShuttleWidgetProvider>> = listOf(
+        val providerClasses: List<Class<out AppWidgetProvider>> = listOf(
             ShuttleWidgetSmallProvider::class.java,
             ShuttleWidgetMediumProvider::class.java,
             ShuttleWidgetLargeProvider::class.java,
+            ShuttleTransferWidgetProvider::class.java,
         )
     }
 }
@@ -372,11 +281,7 @@ class ShuttleWidgetLargeProvider : ShuttleWidgetProvider() {
     override val size = ShuttleWidgetSize.LARGE
 }
 
-private enum class ShuttleError { NONE, NO_PERMISSION, NO_LOCATION, NO_DATA }
-
-private data class ShuttleGroup(val destination: String, val times: List<String>)
-
-private data class ShuttleWidgetData(
+internal data class ShuttleWidgetData(
     val error: ShuttleError,
     val stopName: String?,
     val stopCode: String?,

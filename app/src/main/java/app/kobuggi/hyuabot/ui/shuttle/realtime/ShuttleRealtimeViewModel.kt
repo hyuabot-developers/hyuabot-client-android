@@ -7,8 +7,10 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
+import app.kobuggi.hyuabot.ShuttleTransferQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
+import app.kobuggi.hyuabot.util.currentShuttleWeekday
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.apollographql.cache.normalized.FetchPolicy
@@ -35,11 +37,13 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _showRemainingTime = MutableLiveData(true)
     private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Stop>>()
     private val _notices = MutableLiveData<List<ShuttleRealtimePageQuery.Notice1>>()
+    private val _transfer = MutableLiveData<ShuttleTransferQuery.Data?>(null)
     private val _disposable = CompositeDisposable()
     private val _queryError = MutableLiveData<QueryError?>(null)
 
     val result get() = _result
     val notices get() = _notices
+    val transfer get() = _transfer
     val isLoading get() = _isLoading
     val queryError get() = _queryError
     val showDepartureTime get() = _showDepartureTime
@@ -78,6 +82,13 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 _notices.value = response.data?.notices?.flatMap { it.notices } ?: emptyList()
             }
             _isLoading.value = false
+        }
+        viewModelScope.launch {
+            runCatching {
+                apolloClient.query(ShuttleTransferQuery(currentShuttleWeekday()))
+                    .fetchPolicy(FetchPolicy.NetworkOnly)
+                    .execute()
+            }.getOrNull()?.data?.let { _transfer.value = it }
         }
     }
 

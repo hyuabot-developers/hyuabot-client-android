@@ -346,6 +346,29 @@
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_jungang_station" />
+            <LinearLayout
+                android:id="@+id/transfer_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_jungang_station">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:text="@string/shuttle_transfer_section_title"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textFontWeight="700"
+                    android:background="@color/hanyang_blue" />
+                <LinearLayout
+                    android:id="@+id/transfer_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="4dp" />
+            </LinearLayout>
             <Button
                 android:id="@+id/stop_info"
                 android:layout_width="match_parent"
@@ -354,7 +377,7 @@
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
-                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_jungang_station" />
+                app:layout_constraintTop_toBottomOf="@id/transfer_section" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
     <ScrollView

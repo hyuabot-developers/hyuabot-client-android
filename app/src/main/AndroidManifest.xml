@@ -75,6 +75,17 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/shuttle_widget_large_info" />
         </receiver>
+        <receiver
+            android:name=".widget.ShuttleTransferWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="app.kobuggi.hyuabot.widget.ACTION_REFRESH_SHUTTLE_TRANSFER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/shuttle_transfer_widget_info" />
+        </receiver>
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />

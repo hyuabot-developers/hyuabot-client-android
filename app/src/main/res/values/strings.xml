@@ -242,6 +242,16 @@
     <string name="widget_shuttle_background_location_message">셔틀 위젯이 앱을 사용하지 않을 때에도 현재 위치에서 가장 가까운 정류장을 표시하기 위해 백그라운드에서 위치 정보를 사용합니다. 다음 화면에서 위치 권한을 \'항상 허용\'으로 설정해 주세요.</string>
     <string name="widget_shuttle_background_location_allow">허용</string>
     <string name="widget_shuttle_background_location_later">나중에</string>
+    <string name="widget_shuttle_transfer_name">셔틀 + 환승</string>
+    <string name="widget_shuttle_transfer_description">가장 가까운 정류장의 셔틀버스와 연결 교통수단을 함께 보여줍니다.</string>
+    <string name="shuttle_transfer_section_title">환승 연결 정보</string>
+    <string name="subway_line4">4호선</string>
+    <string name="subway_suin">수인선</string>
+    <string name="transfer_bus_kwangmyeong">50번(KTX광명)</string>
+    <string name="transfer_bus_ansan">50번 안산행</string>
+    <string name="transfer_subway_format">%1$d분(%2$s행)</string>
+    <string name="transfer_bus_minutes_format">%1$d분</string>
+    <string name="transfer_bus_stops_suffix"> (%1$d 정류장 전)</string>
     <string name="cafeteria_date_title">학식 날짜 선택</string>
     <string name="menu">메뉴</string>
     <string name="menu_book">열람실 좌석 조회</string>

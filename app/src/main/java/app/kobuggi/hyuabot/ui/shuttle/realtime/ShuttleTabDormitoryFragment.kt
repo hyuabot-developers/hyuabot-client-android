@@ -334,6 +334,9 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             entireTimetableBoundForDormitory.visibility = View.GONE
             entireTimetableDormitory.visibility = View.GONE
         }
+        parentViewModel.transfer.observe(viewLifecycleOwner) { data ->
+            ShuttleTransferBinder.bind(binding.transferSection, binding.transferContainer, "dormitory_o", data)
+        }
         return binding.root
     }
 
