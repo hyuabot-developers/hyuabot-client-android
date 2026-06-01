@@ -82,23 +82,29 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
             now.format(DateTimeFormatter.ofPattern("M/d HH:mm"))
         )
 
-        val collection = RemoteCollectionItems.Builder()
-            .setViewTypeCount(1)
-            .setHasStableIds(true)
-            .apply {
-                items.forEachIndexed { index, item ->
-                    addItem(index.toLong(), buildItemView(context, item))
+        if (items.isEmpty()) {
+            views.setViewVisibility(R.id.widget_cafeteria_list, View.GONE)
+            views.setViewVisibility(R.id.widget_empty, View.VISIBLE)
+        } else {
+            views.setViewVisibility(R.id.widget_empty, View.GONE)
+            views.setViewVisibility(R.id.widget_cafeteria_list, View.VISIBLE)
+            val collection = RemoteCollectionItems.Builder()
+                .setViewTypeCount(1)
+                .setHasStableIds(true)
+                .apply {
+                    items.forEachIndexed { index, item ->
+                        addItem(index.toLong(), buildItemView(context, item))
+                    }
                 }
-            }
-            .build()
-        RemoteViewsCompat.setRemoteAdapter(
-            context,
-            views,
-            appWidgetId,
-            R.id.widget_cafeteria_list,
-            collection
-        )
-        views.setEmptyView(R.id.widget_cafeteria_list, R.id.widget_empty)
+                .build()
+            RemoteViewsCompat.setRemoteAdapter(
+                context,
+                views,
+                appWidgetId,
+                R.id.widget_cafeteria_list,
+                collection
+            )
+        }
 
         val launchIntent = Intent(
             Intent.ACTION_VIEW,

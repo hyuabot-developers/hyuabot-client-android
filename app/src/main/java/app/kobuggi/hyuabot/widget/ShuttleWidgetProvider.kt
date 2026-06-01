@@ -85,23 +85,29 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
         views.setTextViewText(R.id.widget_shuttle_date, now.format(ShuttleWidgetSupport.TIME_FORMAT))
         applyHeader(context, views, data)
 
-        val collection = RemoteCollectionItems.Builder()
-            .setViewTypeCount(1)
-            .setHasStableIds(true)
-            .apply {
-                data.groups.forEachIndexed { index, group ->
-                    addItem(index.toLong(), buildItemView(context, group, inCollection = true))
+        if (data.groups.isEmpty()) {
+            views.setViewVisibility(R.id.widget_shuttle_list, View.GONE)
+            views.setViewVisibility(R.id.widget_shuttle_empty, View.VISIBLE)
+        } else {
+            views.setViewVisibility(R.id.widget_shuttle_empty, View.GONE)
+            views.setViewVisibility(R.id.widget_shuttle_list, View.VISIBLE)
+            val collection = RemoteCollectionItems.Builder()
+                .setViewTypeCount(1)
+                .setHasStableIds(true)
+                .apply {
+                    data.groups.forEachIndexed { index, group ->
+                        addItem(index.toLong(), buildItemView(context, group, inCollection = true))
+                    }
                 }
-            }
-            .build()
-        RemoteViewsCompat.setRemoteAdapter(
-            context,
-            views,
-            appWidgetId,
-            R.id.widget_shuttle_list,
-            collection
-        )
-        views.setEmptyView(R.id.widget_shuttle_list, R.id.widget_shuttle_empty)
+                .build()
+            RemoteViewsCompat.setRemoteAdapter(
+                context,
+                views,
+                appWidgetId,
+                R.id.widget_shuttle_list,
+                collection
+            )
+        }
 
         val launchIntent = launchIntent(context, data.stopCode)
         views.setOnClickPendingIntent(R.id.widget_shuttle_root, openAppIntent(context, launchIntent))

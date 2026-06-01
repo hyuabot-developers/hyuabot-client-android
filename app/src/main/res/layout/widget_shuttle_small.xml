@@ -43,8 +43,10 @@
 
         <ImageView
             android:id="@+id/widget_shuttle_refresh"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginEnd="-8dp"
+            android:padding="8dp"
             android:src="@drawable/ic_widget_refresh"
             android:contentDescription="@string/widget_cafeteria_refresh" />
     </LinearLayout>
