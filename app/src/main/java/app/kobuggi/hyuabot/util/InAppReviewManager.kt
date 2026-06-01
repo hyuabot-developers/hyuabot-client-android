@@ -6,6 +6,7 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import com.google.android.play.core.ktx.launchReview
 import com.google.android.play.core.ktx.requestReview
 import com.google.android.play.core.review.ReviewManagerFactory
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,7 +17,11 @@ class InAppReviewManager @Inject constructor(
     suspend fun maybeRequestReview(activity: Activity) {
         val launchCount = userPreferencesRepository.incrementLaunchCount()
         if (launchCount < LAUNCH_THRESHOLD) return
+        val lastRequestedAt = userPreferencesRepository.reviewRequestedAt.first()
+        val now = System.currentTimeMillis()
+        if (now - lastRequestedAt < REVIEW_COOLDOWN_MILLIS) return
         if (launchReview(activity)) {
+            userPreferencesRepository.setReviewRequestedAt(now)
             userPreferencesRepository.resetLaunchCount()
         }
     }
@@ -35,6 +40,7 @@ class InAppReviewManager @Inject constructor(
 
     companion object {
         private const val TAG = "InAppReviewManager"
-        private const val LAUNCH_THRESHOLD = 5
+        private const val LAUNCH_THRESHOLD = 10
+        private const val REVIEW_COOLDOWN_MILLIS = 60L * 24 * 60 * 60 * 1000
     }
 }

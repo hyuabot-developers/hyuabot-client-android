@@ -20,4 +20,5 @@ interface UserPreferencesRepositoryImpl {
     suspend fun setAnalyticsConsent(enabled: Boolean)
     suspend fun incrementLaunchCount(): Int
     suspend fun resetLaunchCount()
+    suspend fun setReviewRequestedAt(timestamp: Long)
 }
