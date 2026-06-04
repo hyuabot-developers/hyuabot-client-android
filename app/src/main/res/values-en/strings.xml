@@ -23,6 +23,7 @@
     <string name="shuttle_footer_entire_timetable_terminal">Entire Timetable(Terminal)</string>
     <string name="shuttle_footer_entire_timetable_jungang_station">Entire Timetable(Jungang Stn.)</string>
     <string name="shuttle_footer_stop_info">Stop Detail</string>
+    <string name="shuttle_footer_help">Shuttle Help</string>
     <!-- 셔틀버스 도착 정보 없음 -->
     <string name="shuttle_no_realtime_data">No arrival information.</string>
     <!-- 셔틀버스 도착 정보 시간 -->
@@ -219,6 +220,31 @@
     <string name="cafeteria_15">Business Incubator</string>
     <string name="cafeteria_running_time_format">Operating Hours: %1$s</string>
     <string name="cafeteria_price_format">₩ %1$s</string>
+    <string name="widget_cafeteria_name">Cafeteria Menu</string>
+    <string name="widget_cafeteria_description">Shows the cafeteria menu for the current time.</string>
+    <string name="widget_cafeteria_no_data">No menu information available.</string>
+    <string name="widget_cafeteria_refresh">Refresh</string>
+    <string name="widget_meal_closed">Closed</string>
+    <string name="widget_shuttle_description_small">Shuttle departures from the nearest stop (small)</string>
+    <string name="widget_shuttle_description_medium">Shuttle departures from the nearest stop (medium)</string>
+    <string name="widget_shuttle_description_large">Shuttle departures from the nearest stop (large)</string>
+    <string name="widget_shuttle_no_data">No shuttle service.</string>
+    <string name="widget_shuttle_no_location">Unable to get location.</string>
+    <string name="widget_shuttle_permission_required">Location permission required.</string>
+    <string name="widget_shuttle_background_location_title">Background location access</string>
+    <string name="widget_shuttle_background_location_message">The shuttle widget uses your location in the background, even when the app is closed, to show the nearest stop. Please set location permission to \'Allow all the time\' on the next screen.</string>
+    <string name="widget_shuttle_background_location_allow">Allow</string>
+    <string name="widget_shuttle_background_location_later">Later</string>
+    <string name="widget_shuttle_transfer_name">Shuttle &amp; Transfer</string>
+    <string name="widget_shuttle_transfer_description">Shows shuttle bus and connecting transit at the nearest stop.</string>
+    <string name="shuttle_transfer_section_title">Transfer Connections</string>
+    <string name="subway_line4">Line 4</string>
+    <string name="subway_suin">Suin Line</string>
+    <string name="transfer_bus_kwangmyeong">Bus 50 (Gwangmyeong)</string>
+    <string name="transfer_bus_ansan">Bus 50 (Ansan)</string>
+    <string name="transfer_subway_format">%1$dmin (%2$s)</string>
+    <string name="transfer_bus_minutes_format">%1$dmin</string>
+    <string name="transfer_bus_stops_suffix"> (%1$d stops)</string>
     <string name="cafeteria_date_title">Select Date</string>
     <string name="menu">Menu</string>
     <string name="menu_book">Reading Room Seat Lookup</string>
@@ -228,6 +254,7 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_chat">Inquiries</string>
     <string name="menu_donate">Donate</string>
+    <string name="menu_review">Rate this App</string>
     <string name="menu_map">Campus Map</string>
     <string name="map_search_guide">Enter a room to search</string>
     <string name="room_description_format">Room %1$s/%2$s</string>

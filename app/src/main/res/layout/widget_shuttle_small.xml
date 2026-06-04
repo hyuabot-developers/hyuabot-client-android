@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_shuttle_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:id="@+id/widget_shuttle_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_widget_shuttle"
+            android:contentDescription="@string/shuttle_bus" />
+
+        <TextView
+            android:id="@+id/widget_shuttle_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/hanyang_blue"
+            android:text="@string/shuttle_bus" />
+
+        <TextView
+            android:id="@+id/widget_shuttle_stop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:textColor="@color/secondary_text" />
+
+        <ImageView
+            android:id="@+id/widget_shuttle_refresh"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginEnd="-8dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_widget_refresh"
+            android:contentDescription="@string/widget_cafeteria_refresh" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp"
+        android:importantForAccessibility="no"
+        android:background="@color/hanyang_blue_variant" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/widget_shuttle_small_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/widget_shuttle_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:textColor="@color/secondary_text"
+            android:text="@string/widget_shuttle_no_data" />
+    </FrameLayout>
+</LinearLayout>

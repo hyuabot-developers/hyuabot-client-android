@@ -18,4 +18,7 @@ interface UserPreferencesRepositoryImpl {
     suspend fun setShowShuttleByDestination(show: Boolean)
     suspend fun getShowShuttleByDestination(): Flow<Boolean>
     suspend fun setAnalyticsConsent(enabled: Boolean)
+    suspend fun incrementLaunchCount(): Int
+    suspend fun resetLaunchCount()
+    suspend fun setReviewRequestedAt(timestamp: Long)
 }

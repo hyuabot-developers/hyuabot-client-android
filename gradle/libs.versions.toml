@@ -22,12 +22,15 @@ liveData = "2.10.0"
 viewPager2 = "1.1.0"
 room = "2.8.4"
 calendar = "2.10.1"
-firebase = "34.13.0"
+firebase = "34.14.0"
 splashScreen = "1.2.0"
 swipeRefreshLayout = "1.2.0"
 playServices = "21.3.0"
 playMaps = "20.0.0"
-playMapUtils = "4.3.0"
+playMapUtils = "4.4.0"
+playReview = "2.0.2"
+lifeCycleRuntime = "2.10.0"
+coreRemoteViews = "1.1.0"
 secretsGradlePlugin = "2.0.1"
 googleServices = "4.4.4"
 crashlytics = "3.0.7"
@@ -87,6 +90,10 @@ playServicesLocation = { group = "com.google.android.gms", name = "play-services
 playServicesMaps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playMaps" }
 mapsUtils = { group = "com.google.maps.android", name = "android-maps-utils", version.ref = "playMapUtils" }
 lifeCycleLiveData = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "liveData" }
+lifeCycleRuntime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifeCycleRuntime" }
+coreRemoteViews = { group = "androidx.core", name = "core-remoteviews", version.ref = "coreRemoteViews" }
+playReview = { group = "com.google.android.play", name = "review", version.ref = "playReview" }
+playReviewKtx = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReview" }
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }

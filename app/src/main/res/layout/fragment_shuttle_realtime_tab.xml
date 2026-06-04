@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:paddingBottom="75dp">
+            android:paddingBottom="24dp">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_station"
                 android:layout_width="match_parent"
@@ -346,15 +346,59 @@
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_jungang_station" />
-            <Button
-                android:id="@+id/stop_info"
+            <LinearLayout
+                android:id="@+id/transfer_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/shuttle_footer_stop_info"
-                android:textSize="18sp"
-                android:textFontWeight="700"
-                style="@style/Widget.Material3.Button.TextButton"
-                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_jungang_station" />
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_jungang_station">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:text="@string/shuttle_transfer_section_title"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textFontWeight="700"
+                    android:background="@color/hanyang_blue" />
+                <LinearLayout
+                    android:id="@+id/transfer_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="4dp" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/footer_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/transfer_section">
+                <Button
+                    android:id="@+id/stop_info"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/shuttle_footer_stop_info"
+                    android:textSize="18sp"
+                    android:textFontWeight="700"
+                    style="@style/Widget.Material3.Button.TextButton" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginVertical="10dp"
+                    android:background="@color/hanyang_blue_variant" />
+                <Button
+                    android:id="@+id/help_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/shuttle_footer_help"
+                    android:textSize="18sp"
+                    android:textFontWeight="700"
+                    style="@style/Widget.Material3.Button.TextButton" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
     <ScrollView
@@ -367,7 +411,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:paddingBottom="75dp">
+            android:paddingBottom="24dp">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/realtime_view"
                 android:layout_width="match_parent"
@@ -421,15 +465,36 @@
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
                 app:layout_constraintTop_toBottomOf="@id/entire_timetable_terminal" />
-            <Button
-                android:id="@+id/stop_info_2"
+            <LinearLayout
+                android:id="@+id/footer_actions_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/shuttle_footer_stop_info"
-                android:textSize="18sp"
-                android:textFontWeight="700"
-                style="@style/Widget.Material3.Button.TextButton"
-                app:layout_constraintTop_toBottomOf="@id/entire_timetable_jungang_station" />
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/entire_timetable_jungang_station">
+                <Button
+                    android:id="@+id/stop_info_2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/shuttle_footer_stop_info"
+                    android:textSize="18sp"
+                    android:textFontWeight="700"
+                    style="@style/Widget.Material3.Button.TextButton" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginVertical="10dp"
+                    android:background="@color/hanyang_blue_variant" />
+                <Button
+                    android:id="@+id/help_button_2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/shuttle_footer_help"
+                    android:textSize="18sp"
+                    android:textFontWeight="700"
+                    style="@style/Widget.Material3.Button.TextButton" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </FrameLayout>

@@ -179,6 +179,10 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
             entireTimetableBoundForJungangStation.visibility = View.GONE
             entireTimetableJungangStation.visibility = View.GONE
         }
+        parentViewModel.transfer.observe(viewLifecycleOwner) { data ->
+            ShuttleTransferBinder.bind(binding.transferSection, binding.transferContainer, "terminal", data)
+        }
+        bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
         return binding.root
     }
 

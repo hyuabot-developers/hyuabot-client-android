@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import app.kobuggi.hyuabot.R
@@ -98,6 +99,18 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
         .map { preferences ->
             preferences[ANALYTICS_CONSENT_KEY] ?: true
+        }
+
+    val reviewRequestedAt: Flow<Long> = userDataStorePreferences.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[REVIEW_REQUESTED_AT_KEY] ?: 0L
         }
 
     override suspend fun setBusStop(busStopID: Int) {
@@ -256,6 +269,31 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    override suspend fun incrementLaunchCount(): Int {
+        var newCount = 0
+        userDataStorePreferences.edit { preferences ->
+            newCount = (preferences[LAUNCH_COUNT_KEY] ?: 0) + 1
+            preferences[LAUNCH_COUNT_KEY] = newCount
+        }
+        return newCount
+    }
+
+    override suspend fun resetLaunchCount() {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[LAUNCH_COUNT_KEY] = 0
+            }
+        }
+    }
+
+    override suspend fun setReviewRequestedAt(timestamp: Long) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[REVIEW_REQUESTED_AT_KEY] = timestamp
+            }
+        }
+    }
+
     private companion object {
         private val BUS_STOP_ID_KEY = intPreferencesKey("bus_stop_id")
         private val READING_ROOM_NOTIFICATIONS_KEY = stringSetPreferencesKey("reading_room_notifications")
@@ -267,5 +305,7 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val SHUTTLE_SHOW_DEPARTURE_TIME_KEY = booleanPreferencesKey("shuttle_show_departure_time")
         private val SHUTTLE_SHOW_BY_DESTINATION_KEY = booleanPreferencesKey("shuttle_show_by_destination")
         private val ANALYTICS_CONSENT_KEY = booleanPreferencesKey("analytics_consent")
+        private val LAUNCH_COUNT_KEY = intPreferencesKey("launch_count")
+        private val REVIEW_REQUESTED_AT_KEY = longPreferencesKey("review_requested_at")
     }
 }
