@@ -1,4 +1,6 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
+import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.AnalyticsItem
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -184,6 +186,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
             }
             entireTimetableBoundForStation.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_ENTIRE_TIMETABLE)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
                     R.string.shuttle_tab_shuttlecock_out,
                     R.string.shuttle_header_bound_for_station
@@ -192,6 +195,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 }
             }
             entireTimetableStation.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_ENTIRE_TIMETABLE)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
                     R.string.shuttle_tab_shuttlecock_out,
                     R.string.shuttle_header_bound_for_station
@@ -205,6 +209,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
             }
             entireTimetableBoundForTerminal.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_ENTIRE_TIMETABLE)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
                     R.string.shuttle_tab_shuttlecock_out,
                     R.string.shuttle_header_bound_for_terminal
@@ -213,6 +218,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 }
             }
             entireTimetableTerminal.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_ENTIRE_TIMETABLE)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
                     R.string.shuttle_tab_shuttlecock_out,
                     R.string.shuttle_header_bound_for_terminal
@@ -226,6 +232,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
             }
             entireTimetableBoundForJungangStation.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_ENTIRE_TIMETABLE)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
                     R.string.shuttle_tab_shuttlecock_out,
                     R.string.shuttle_header_bound_for_jungang_station
@@ -234,6 +241,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 }
             }
             entireTimetableJungangStation.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_ENTIRE_TIMETABLE)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
                     R.string.shuttle_tab_shuttlecock_out,
                     R.string.shuttle_header_bound_for_jungang_station
@@ -247,6 +255,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
             }
             stopInfo.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_STOP_MODAL)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
                     R.string.shuttle_tab_shuttlecock_out
                 ).also {
@@ -254,6 +263,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 }
             }
             stopInfo2.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_STOP_MODAL)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
                     R.string.shuttle_tab_shuttlecock_in
                 ).also {
@@ -261,6 +271,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 }
             }
             infoButtonBoundForStation.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_TRANSFER_INFO)
                 helpBoundForStation.visibility = if (helpBoundForStation.isVisible) View.GONE else View.VISIBLE
             }
             helpBoundForStationRecycler.apply {
@@ -268,6 +279,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
             infoButtonBoundForTerminal.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_TRANSFER_INFO)
                 helpBoundForTerminal.visibility = if (helpBoundForTerminal.isVisible) View.GONE else View.VISIBLE
             }
             helpBoundForTerminalRecycler.apply {
@@ -275,6 +287,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManagerWrapper(requireContext(), LinearLayoutManager.VERTICAL, false)
             }
             infoButtonBoundForJungangStation.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_TRANSFER_INFO)
                 helpBoundForJungangStation.visibility = if (helpBoundForJungangStation.isVisible) View.GONE else View.VISIBLE
             }
             helpBoundForJungangStationRecycler.apply {

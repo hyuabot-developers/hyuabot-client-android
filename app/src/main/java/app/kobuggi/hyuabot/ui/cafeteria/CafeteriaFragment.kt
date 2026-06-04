@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.cafeteria
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -44,6 +47,7 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
             .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
             .build()
         datePicker.addOnPositiveButtonClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.CAFETERIA_DATE_CHANGED, type = AnalyticsContentType.DATE_CONTROL)
             viewModel.apply {
                 date.value = LocalDateTime.ofEpochSecond(it / 1000, 0, ZoneOffset.ofHours(9))
                 campusID.observe(viewLifecycleOwner) { campusID ->
@@ -73,8 +77,8 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
                 datePicker.show(childFragmentManager, "CafeteriaDatePicker")
             }
         }
-        binding.prevButton.setOnClickListener { viewModel.date.value = viewModel.date.value?.minusDays(1) }
-        binding.nextButton.setOnClickListener { viewModel.date.value = viewModel.date.value?.plusDays(1) }
+        binding.prevButton.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.CAFETERIA_PREVIOUS_DATE, type = AnalyticsContentType.DATE_CONTROL); viewModel.date.value = viewModel.date.value?.minusDays(1) }
+        binding.nextButton.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.CAFETERIA_NEXT_DATE, type = AnalyticsContentType.DATE_CONTROL); viewModel.date.value = viewModel.date.value?.plusDays(1) }
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()

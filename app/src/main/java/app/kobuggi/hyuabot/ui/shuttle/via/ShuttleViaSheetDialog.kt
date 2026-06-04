@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.ShuttleTimetablePageQuery
 import app.kobuggi.hyuabot.databinding.DialogShuttleViaBinding
+import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.AnalyticsScreen
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ShuttleViaSheetDialog(
@@ -20,6 +22,7 @@ class ShuttleViaSheetDialog(
     private val binding by lazy { DialogShuttleViaBinding.inflate(layoutInflater) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        AnalyticsManager.logScreen(AnalyticsScreen.SHUTTLE_VIA)
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
         binding.apply {
             toolbar.setOnMenuItemClickListener {

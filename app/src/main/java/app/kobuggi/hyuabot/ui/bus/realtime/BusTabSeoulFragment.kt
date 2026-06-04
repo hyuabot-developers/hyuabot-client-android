@@ -1,4 +1,6 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
+import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.AnalyticsItem
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -37,11 +39,13 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                     binding.apply {
                         headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_convention))
                         departureLogFirst.setOnClickListener {
+                            AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000379, 216000061).also { direction ->
                                 findNavController().safeNavigate(direction)
                             }
                         }
                         entireTimetableFirst.setOnClickListener {
+                            AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_ENTIRE_TIMETABLE)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000379, 216000061).also { direction ->
                                 findNavController().safeNavigate(direction)
                             }
@@ -57,11 +61,13 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                     binding.apply {
                         headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_cluster))
                         departureLogFirst.setOnClickListener {
+                            AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000381, 216000061).also { direction ->
                                 findNavController().safeNavigate(direction)
                             }
                         }
                         entireTimetableFirst.setOnClickListener {
+                            AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_ENTIRE_TIMETABLE)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(
                                 216000381,
                                 216000061
@@ -80,11 +86,13 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                     binding.apply {
                         headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_dormitory))
                         departureLogFirst.setOnClickListener {
+                            AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000383, 216000061).also { direction ->
                                 findNavController().safeNavigate(direction)
                             }
                         }
                         entireTimetableFirst.setOnClickListener {
+                            AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_ENTIRE_TIMETABLE)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(
                                 216000383,
                                 216000061
@@ -127,6 +135,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManager(requireContext())
             }
             departureLogSecond.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(
                     216000719,
                     216000096,
@@ -137,6 +146,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 }
             }
             entireTimetableSecond.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_ENTIRE_TIMETABLE)
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(
                     216000719, 216000096, 216000026, 216000043
                 ).also { direction ->

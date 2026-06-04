@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.menu
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -15,7 +18,7 @@ class MenuListAdapter(
     inner class ViewHolder(private val binding: ItemMainMenuBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(menuItem: MenuItem) {
             binding.apply {
-                menuItemView.setOnClickListener { onClickListener(menuItem) }
+                menuItemView.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.MENU_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM); onClickListener(menuItem) }
                 menuIconView.setImageResource(menuItem.iconResource)
                 menuTextView.text = context.getString(menuItem.titleResource)
             }

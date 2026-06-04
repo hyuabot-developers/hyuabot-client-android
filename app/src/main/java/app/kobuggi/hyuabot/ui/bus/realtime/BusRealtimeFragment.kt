@@ -1,5 +1,8 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
 
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
+
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -69,6 +72,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         )
         binding.viewPager.adapter = viewpagerAdapter
         binding.stopFab.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.BUS_STOP_BUTTON)
             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopDialogFragment().also {
                 findNavController().safeNavigate(it)
             }

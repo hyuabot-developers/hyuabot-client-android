@@ -1,5 +1,8 @@
 package app.kobuggi.hyuabot.ui.shuttle.timetable
 
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -153,6 +156,7 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
         )
 
         binding.filterFab.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_OPEN_FILTER)
             findNavController()
                 .currentBackStackEntry?.savedStateHandle?.apply {
                     remove<String>("period")

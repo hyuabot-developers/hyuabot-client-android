@@ -1,4 +1,6 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -19,6 +21,7 @@ class BusNoticeAdapter(private var items: List<BusRealtimePageQuery.Notice1>): R
                     setOnClickListener(null)
                 } else {
                     setOnClickListener {
+                        AnalyticsManager.logSelect(AnalyticsItem.NOTICE_OPEN)
                         BusRealtimeFragmentDirections.actionBusRealtimeFragmentToNoticeWebViewFragment(item.url).let { direction ->
                             it.findNavController().safeNavigate(direction)
                         }

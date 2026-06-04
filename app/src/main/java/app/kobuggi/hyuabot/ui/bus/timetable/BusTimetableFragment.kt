@@ -1,5 +1,8 @@
 package app.kobuggi.hyuabot.ui.bus.timetable
 
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -54,6 +57,7 @@ class BusTimetableFragment @Inject constructor() : Fragment() {
             else -> 0
         }, false)
         binding.infoFab.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.BUS_ROUTE_INFO)
             BusTimetableFragmentDirections.actionBusTimetableFragmentToBusRouteInfoDialogFragment(
                 routeID = args.firstRouteID,
                 stopID = args.stopID

@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.readingRoom
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -23,7 +26,7 @@ class ReadingRoomListAdapter(
                     context.getString(R.string.reading_room_seat_format, room.seats.available, room.seats.active)
                 readingRoomAlarmButton.apply {
                     isSelected = notifications.contains(room.seq)
-                    setOnClickListener { onClick(room, !isSelected) }
+                    setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM); onClick(room, !isSelected) }
                 }
             }
         }
