@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.setting
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -26,9 +29,11 @@ class LanguageSettingDialog @Inject constructor() : DialogFragment() {
     ): View {
         binding.apply {
             languageKorean.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_LANGUAGE, type = AnalyticsContentType.MENU, name = "korean")
                 vm.setLocaleCode("ko")
             }
             languageEnglish.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_LANGUAGE, type = AnalyticsContentType.MENU, name = "english")
                 vm.setLocaleCode("en")
             }
         }

@@ -1,5 +1,8 @@
 package app.kobuggi.hyuabot.ui.shuttle.timetable
 
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -121,6 +124,7 @@ class ShuttleTimetableFilterDialog : DialogFragment() {
             }
         }
         binding.confirmButton.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_FILTER_CONFIRM)
             if (checkedPeriod != null) {
                 findNavController().previousBackStackEntry?.savedStateHandle?.set("period", checkedPeriod)
             }

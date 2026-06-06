@@ -1,4 +1,6 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
+import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.AnalyticsItem
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -82,6 +84,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
             }
             entireTimetableBoundForDormitory.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_ENTIRE_TIMETABLE)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
                     R.string.shuttle_tab_jungang_station,
                     R.string.shuttle_header_bound_for_dormitory
@@ -90,6 +93,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                 }
             }
             entireTimetableDormitory.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_ENTIRE_TIMETABLE)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleTimetableFragment(
                     R.string.shuttle_tab_jungang_station,
                     R.string.shuttle_header_bound_for_dormitory
@@ -103,6 +107,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
             }
             stopInfo.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_STOP_MODAL)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
                     R.string.shuttle_tab_jungang_station
                 ).also {
@@ -110,6 +115,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                 }
             }
             stopInfo2.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SHOW_STOP_MODAL)
                 ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleStopDialogFragment(
                     R.string.shuttle_tab_jungang_station
                 ).also {
@@ -117,6 +123,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
                 }
             }
             infoButtonBoundForDormitory.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_TRANSFER_INFO)
                 helpBoundForDormitory.visibility = if (helpBoundForDormitory.isVisible) View.GONE else View.VISIBLE
             }
             helpBoundForDormitoryRecycler.apply {

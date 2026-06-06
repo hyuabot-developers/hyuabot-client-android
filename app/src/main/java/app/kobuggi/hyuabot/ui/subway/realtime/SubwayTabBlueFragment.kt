@@ -1,4 +1,6 @@
 package app.kobuggi.hyuabot.ui.subway.realtime
+import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.AnalyticsItem
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -37,6 +39,7 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
             }
             entireTimetableUp.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SUBWAY_SHOW_ENTIRE_TIMETABLE)
                 SubwayRealtimeFragmentDirections.actionSubwayRealtimeFragmentToSubwayTimetableFragment("K449", "up").also {
                     findNavController().safeNavigate(it)
                 }
@@ -48,6 +51,7 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
                 addItemDecoration(decoration)
             }
             entireTimetableDown.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SUBWAY_SHOW_ENTIRE_TIMETABLE)
                 SubwayRealtimeFragmentDirections.actionSubwayRealtimeFragmentToSubwayTimetableFragment("K449", "down").also {
                     findNavController().safeNavigate(it)
                 }

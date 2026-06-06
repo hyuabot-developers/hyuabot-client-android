@@ -9,7 +9,6 @@ import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -26,6 +25,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.AnalyticsScreen
 import app.kobuggi.hyuabot.util.InAppReviewManager
 import app.kobuggi.hyuabot.widget.ShuttleWidgetProvider
 import com.google.android.material.navigation.NavigationBarView
@@ -61,6 +64,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             setupWithNavController(navController)
             setOnItemSelectedListener(this@MainActivity)
             setOnItemReselectedListener(this@MainActivity)
+        }
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            screenForDestination(destination.id)?.let {
+                AnalyticsManager.logScreen(it, destination.label?.toString())
+            }
         }
         viewModel.theme.observe(this) {
             when (it) {
@@ -112,9 +120,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     private fun maybeRequestBackgroundLocation() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return
-        }
         if (ActivityCompat.checkSelfPermission(this, ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return
         }
@@ -164,12 +169,56 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        tabItemForDestination(item.itemId)?.let {
+            AnalyticsManager.logSelect(it, AnalyticsContentType.TAB)
+        }
         if (item.itemId == navController.currentDestination?.id) {
             navController.popBackStack(navController.graph.startDestinationId, false)
         } else {
             navController.navigate(item.itemId)
         }
         return true
+    }
+
+    /** Maps a nav-graph destination id to its analytics screen (null = not tracked as a screen). */
+    private fun screenForDestination(destinationId: Int): AnalyticsScreen? = when (destinationId) {
+        R.id.shuttleRealtimeFragment -> AnalyticsScreen.SHUTTLE_REALTIME
+        R.id.shuttleTimetableFragment -> AnalyticsScreen.SHUTTLE_TIMETABLE
+        R.id.shuttleStopDialogFragment -> AnalyticsScreen.SHUTTLE_STOP_INFO
+        R.id.shuttleHelpDialogFragment -> AnalyticsScreen.SHUTTLE_HELP
+        R.id.shuttleTimetableDialogFragment -> AnalyticsScreen.SHUTTLE_STOP_TIMETABLE
+        R.id.shuttleTimetableFilterDialogFragment -> AnalyticsScreen.SHUTTLE_TIMETABLE_FILTER
+        R.id.busRealtimeFragment -> AnalyticsScreen.BUS_REALTIME
+        R.id.busTimetableFragment -> AnalyticsScreen.BUS_TIMETABLE
+        R.id.busStopDialogFragment -> AnalyticsScreen.BUS_STOP_INFO
+        R.id.busDepartureLogDialogFragment -> AnalyticsScreen.BUS_DEPARTURE_LOG
+        R.id.busRouteInfoDialogFragment -> AnalyticsScreen.BUS_ROUTE_INFO
+        R.id.subwayRealtimeFragment -> AnalyticsScreen.SUBWAY_REALTIME
+        R.id.subwayTimetableFragment -> AnalyticsScreen.SUBWAY_TIMETABLE
+        R.id.cafeteriaFragment -> AnalyticsScreen.CAFETERIA
+        R.id.readingRoomFragment -> AnalyticsScreen.READING_ROOM
+        R.id.mapFragment -> AnalyticsScreen.MAP
+        R.id.settingFragment -> AnalyticsScreen.SETTING
+        R.id.noticeFragment -> AnalyticsScreen.NOTICE
+        R.id.noticeWebViewFragment -> AnalyticsScreen.WEB_VIEW
+        R.id.contactFragment -> AnalyticsScreen.CONTACT
+        R.id.calendarFragment -> AnalyticsScreen.CALENDAR
+        R.id.menuFragment -> AnalyticsScreen.MENU
+        R.id.languageSettingDialogFragment -> AnalyticsScreen.SETTING_LANGUAGE
+        R.id.campusSettingDialogFragment -> AnalyticsScreen.SETTING_CAMPUS
+        R.id.themeSettingDialogFragment -> AnalyticsScreen.SETTING_THEME
+        R.id.settingDeveloperDialogFragment -> AnalyticsScreen.SETTING_DEVELOPER
+        else -> null
+    }
+
+    /** Maps a bottom-navigation item id to its analytics tab item. */
+    private fun tabItemForDestination(destinationId: Int): AnalyticsItem? = when (destinationId) {
+        R.id.shuttleRealtimeFragment -> AnalyticsItem.TAB_SHUTTLE
+        R.id.busRealtimeFragment -> AnalyticsItem.TAB_BUS
+        R.id.subwayRealtimeFragment -> AnalyticsItem.TAB_SUBWAY
+        R.id.cafeteriaFragment -> AnalyticsItem.TAB_CAFETERIA
+        R.id.menuFragment -> AnalyticsItem.TAB_MENU
+        else -> null
     }
 
     override fun onNavigationItemReselected(item: MenuItem) {
@@ -197,10 +246,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
             dialogBuilder.setPositiveButton("확인") { dialogInterface, _ ->
                 if (dialogCheckBox.isChecked){
+                    AnalyticsManager.logSelect(AnalyticsItem.BIRTHDAY_DO_NOT_SHOW)
                     pref.edit { putInt("birthDayOpened", now.year) }
                 }
+                AnalyticsManager.logSelect(AnalyticsItem.BIRTHDAY_DISMISS)
                 dialogInterface.dismiss()
             }
+            AnalyticsManager.logScreen(AnalyticsScreen.BIRTHDAY)
             dialogBuilder.create().show()
         }
     }

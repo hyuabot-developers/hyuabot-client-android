@@ -1,4 +1,6 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
@@ -16,6 +18,7 @@ import app.kobuggi.hyuabot.util.buildTransitRows
 fun Fragment.bindShuttleHelpButtons(vararg buttons: View) {
     buttons.forEach { button ->
         button.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_OPEN_HELP)
             ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToShuttleHelpDialogFragment().also {
                 findNavController().safeNavigate(it)
             }

@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.map
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -61,6 +64,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                 }
             }
         binding.backToMoveButton.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.MAP_RECENTER)
             viewModel.searchRooms.value = false
             if (this::googleMap.isInitialized) {
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(37.29753535479288, 126.83544659517665), 16f))
@@ -164,6 +168,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     }
 
     private fun onClickSearchResult(room: RoomItem) {
+        AnalyticsManager.logSelect(AnalyticsItem.MAP_SELECT_SEARCH_RESULT, type = AnalyticsContentType.LIST_ITEM, name = room.name)
         binding.searchView.hide()
         if (this::googleMap.isInitialized) {
             val markerDescriptor = getMarkerDescriptor() ?: return

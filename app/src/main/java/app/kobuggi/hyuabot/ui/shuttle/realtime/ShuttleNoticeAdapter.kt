@@ -1,4 +1,6 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -19,6 +21,7 @@ class ShuttleNoticeAdapter(private var items: List<ShuttleRealtimePageQuery.Noti
                     setOnClickListener(null)
                 } else {
                     setOnClickListener {
+                        AnalyticsManager.logSelect(AnalyticsItem.NOTICE_OPEN)
                         ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToNoticeWebViewFragment(item.url).let { direction ->
                             it.findNavController().safeNavigate(direction)
                         }

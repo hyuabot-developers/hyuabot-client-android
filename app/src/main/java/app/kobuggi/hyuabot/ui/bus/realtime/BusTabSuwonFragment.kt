@@ -1,4 +1,6 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
+import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.AnalyticsItem
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,6 +45,7 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManager(context)
             }
             departureLogFirst.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(
                     216000070,
                     216000104,

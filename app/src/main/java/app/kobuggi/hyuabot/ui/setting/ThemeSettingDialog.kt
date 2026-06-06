@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.setting
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,14 +28,17 @@ class ThemeSettingDialog : DialogFragment(){
         binding = DialogSettingThemeBinding.inflate(inflater, container, false)
         binding.apply {
             themeSystem.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_THEME, type = AnalyticsContentType.MENU, name = "system")
                 vm.setDarkModeSystem()
                 dismiss()
             }
             themeLight.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_THEME, type = AnalyticsContentType.MENU, name = "light")
                 vm.setDarkMode(false)
                 dismiss()
             }
             themeDark.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_THEME, type = AnalyticsContentType.MENU, name = "dark")
                 vm.setDarkMode(true)
                 dismiss()
             }

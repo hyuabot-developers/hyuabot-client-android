@@ -1,4 +1,6 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
+import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.AnalyticsItem
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -53,11 +55,13 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManager(requireContext())
             }
             departureLogFirst.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000759, 216000075).also { direction ->
                     findNavController().safeNavigate(direction)
                 }
             }
             entireTimetableFirst.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_ENTIRE_TIMETABLE)
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(216000759, 216000075).also { direction ->
                     findNavController().safeNavigate(direction)
                 }
@@ -69,11 +73,13 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManager(requireContext())
             }
             departureLogSecond.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(213000487, 216000075).also { direction ->
                     findNavController().safeNavigate(direction)
                 }
             }
             entireTimetableSecond.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_ENTIRE_TIMETABLE)
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusTimetableFragment(213000487, 216000075).also { direction ->
                     findNavController().safeNavigate(direction)
                 }

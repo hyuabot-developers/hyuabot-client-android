@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.setting
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,10 +25,12 @@ class CampusSettingDialog @Inject constructor() : DialogFragment() {
     ): View {
         binding.apply {
             campusSeoul.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_CAMPUS, type = AnalyticsContentType.MENU, name = "seoul")
                 vm.setCampusID(1)
                 dismiss()
             }
             campusErica.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_CAMPUS, type = AnalyticsContentType.MENU, name = "erica")
                 vm.setCampusID(2)
                 dismiss()
             }

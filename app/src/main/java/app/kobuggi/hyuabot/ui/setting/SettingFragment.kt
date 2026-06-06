@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.setting
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -33,10 +36,10 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
         savedInstanceState: Bundle?
     ): View {
         binding.apply {
-            settingCampus.setOnClickListener { openCampusDialog() }
-            settingLanguage.setOnClickListener { openLanguageDialog() }
-            settingTheme.setOnClickListener { openThemeDialog() }
-            appInfo.setOnClickListener { openInfoDialog() }
+            settingCampus.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "campus"); openCampusDialog() }
+            settingLanguage.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "language"); openLanguageDialog() }
+            settingTheme.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "theme"); openThemeDialog() }
+            appInfo.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "info"); openInfoDialog() }
         }
         return binding.root
     }

@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.readingRoom
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.AlarmManager
@@ -62,12 +65,15 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
                 layoutManager = LinearLayoutManager(context)
             }
             readingRoomAlarm3Hour.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_ALARM_TOGGLE, type = AnalyticsContentType.TOGGLE, name = "3hour")
                 callAlarm(R.string.reading_room_alarm_3_hour, 3)
             }
             readingRoomAlarm4Hour.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_ALARM_TOGGLE, type = AnalyticsContentType.TOGGLE, name = "4hour")
                 callAlarm(R.string.reading_room_alarm_4_hour, 4)
             }
             readingRoomAlarmCancel.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_ALARM_TOGGLE, type = AnalyticsContentType.TOGGLE, name = "cancel")
                 alarmFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
                 alarmFunction.cancelAlarm(R.string.reading_room_alarm_4_hour)
                 viewModel.setExtendNotificationTime(null)

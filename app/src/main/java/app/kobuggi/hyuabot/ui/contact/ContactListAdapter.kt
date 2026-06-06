@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.contact
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -15,7 +18,7 @@ class ContactListAdapter(
         fun bind(contact: Contact) {
             binding.contactName.text = contact.name
             binding.contactPhone.text = contact.phone
-            binding.root.setOnClickListener { onClickItem(contact) }
+            binding.root.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.CONTACT_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = contact.name); onClickItem(contact) }
         }
     }
 

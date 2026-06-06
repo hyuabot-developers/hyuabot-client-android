@@ -1,4 +1,7 @@
 package app.kobuggi.hyuabot.ui.shuttle.timetable
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -141,6 +144,7 @@ class ShuttleTimetableListAdapter(
                 )
             }
             binding.shuttleItem.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SELECT_VIA_ROW, type = AnalyticsContentType.LIST_ITEM)
                 val viaSheet = ShuttleViaSheetDialog(stopsOfEntireTimetable = item.stops)
                 viaSheet.show(childFragmentManager, "ShuttleViaSheetDialog")
             }
