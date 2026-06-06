@@ -3,7 +3,6 @@ import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import app.kobuggi.hyuabot.databinding.DialogSettingLanguageBinding
-import app.kobuggi.hyuabot.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -46,12 +44,5 @@ class LanguageSettingDialog @Inject constructor() : DialogFragment() {
             dismiss()
         }
         return binding.root
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        if (requireActivity() is MainActivity){
-            (requireActivity() as MainActivity).onDismiss(dialog)
-        }
     }
 }
