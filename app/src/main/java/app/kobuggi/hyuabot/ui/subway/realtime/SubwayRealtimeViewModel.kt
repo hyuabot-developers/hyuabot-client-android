@@ -55,10 +55,10 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.subway != null) {
-                _campusYellow.value = response.data?.subway?.first { it.stationID == "K251" }
-                _campusBlue.value = response.data?.subway?.first { it.stationID == "K449" }
-                _oidoYellow.value = response.data?.subway?.first { it.stationID == "K258" }
-                _oidoBlue.value = response.data?.subway?.first { it.stationID == "K456" }
+                _campusYellow.value = response.data?.subway?.firstOrNull { it.stationID == "K251" }
+                _campusBlue.value = response.data?.subway?.firstOrNull { it.stationID == "K449" }
+                _oidoYellow.value = response.data?.subway?.firstOrNull { it.stationID == "K258" }
+                _oidoBlue.value = response.data?.subway?.firstOrNull { it.stationID == "K456" }
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
