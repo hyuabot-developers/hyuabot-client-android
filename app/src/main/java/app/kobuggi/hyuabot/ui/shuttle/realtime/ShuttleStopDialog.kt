@@ -87,9 +87,9 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment(), OnM
         viewModel.departureList.observe(viewLifecycleOwner) {
             when (stopID) {
                 R.string.shuttle_tab_dormitory_out, R.string.shuttle_tab_shuttlecock_out -> {
-                    val departureForStation = it.first { item -> item.destination == "STATION" }.entries.sortedBy { item -> item.time }
-                    val departureForTerminal = it.first { item -> item.destination == "TERMINAL" }.entries.sortedBy { item -> item.time }
-                    val departureForJungangStation = it.first { item -> item.destination == "JUNGANG" }.entries.sortedBy { item -> item.time }
+                    val departureForStation = it.firstOrNull { item -> item.destination == "STATION" }?.entries?.sortedBy { item -> item.time } ?: emptyList()
+                    val departureForTerminal = it.firstOrNull { item -> item.destination == "TERMINAL" }?.entries?.sortedBy { item -> item.time } ?: emptyList()
+                    val departureForJungangStation = it.firstOrNull { item -> item.destination == "JUNGANG" }?.entries?.sortedBy { item -> item.time } ?: emptyList()
                     val weekdaysStationDepartureList = departureForStation.filter { item -> item.weekday }
                     val weekendsStationDepartureList = departureForStation.filter { item -> !item.weekday }
                     val weekdaysTerminalDepartureList = departureForTerminal.filter { item -> item.weekday }
@@ -124,9 +124,9 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment(), OnM
                     }
                 }
                 R.string.shuttle_tab_station -> {
-                    val departureForCampus = it.first { item -> item.destination == "CAMPUS" }.entries.sortedBy { item -> item.time }
-                    val departureForTerminal = it.first { item -> item.destination == "TERMINAL" }.entries.sortedBy { item -> item.time }
-                    val departureForJungangStation = it.first { item -> item.destination == "JUNGANG" }.entries.sortedBy { item -> item.time }
+                    val departureForCampus = it.firstOrNull { item -> item.destination == "CAMPUS" }?.entries?.sortedBy { item -> item.time } ?: emptyList()
+                    val departureForTerminal = it.firstOrNull { item -> item.destination == "TERMINAL" }?.entries?.sortedBy { item -> item.time } ?: emptyList()
+                    val departureForJungangStation = it.firstOrNull { item -> item.destination == "JUNGANG" }?.entries?.sortedBy { item -> item.time } ?: emptyList()
                     val weekdaysDormitoryDepartureList = departureForCampus.filter { item -> item.weekday }
                     val weekendsDormitoryDepartureList = departureForCampus.filter { item -> !item.weekday }
                     val weekdaysTerminalDepartureList = departureForTerminal.filter { item -> item.weekday }
@@ -161,7 +161,7 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment(), OnM
                     }
                 }
                 else -> {
-                    val departureList = it.first().entries.sortedBy { item -> item.time }
+                    val departureList = it.firstOrNull()?.entries?.sortedBy { item -> item.time } ?: emptyList()
                     val weekdaysDepartureList = departureList.filter { item -> item.weekday }
                     val weekendsDepartureList = departureList.filter { item -> !item.weekday }
                     binding.apply {
