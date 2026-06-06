@@ -32,20 +32,30 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
         val busSecondAdapter = BusRealtimeListAdapter()
         parentViewModel.result.observe(viewLifecycleOwner) { busList ->
             if (busList == null) return@observe
-            val firstBusList = busList.first { bus -> bus.stop.seq == 216000759 && bus.route.seq == 216000075 }
-            val secondBusList = busList.first { bus -> bus.stop.seq == 213000487 && bus.route.seq == 216000075 }
-            busFirstAdapter.updateData(firstBusList.arrival.map { arrival ->
-                BusArrivalItem(firstBusList.route.name, arrival)
-            })
-            busSecondAdapter.updateData(secondBusList.arrival.filter {
-                !it.isRealtime
-            }.map { arrival ->
-                BusArrivalItem(secondBusList.route.name, arrival)
-            })
-            binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
-            binding.noRealtimeDataSecond.visibility = if (
-                secondBusList.arrival.none { arrival -> arrival.isRealtime }
-            ) View.VISIBLE else View.GONE
+            val firstBusList = busList.firstOrNull { bus -> bus.stop.seq == 216000759 && bus.route.seq == 216000075 }
+            val secondBusList = busList.firstOrNull { bus -> bus.stop.seq == 213000487 && bus.route.seq == 216000075 }
+            if (firstBusList == null) {
+                busFirstAdapter.updateData(emptyList())
+                binding.noRealtimeDataFirst.visibility = View.VISIBLE
+            } else {
+                busFirstAdapter.updateData(firstBusList.arrival.map { arrival ->
+                    BusArrivalItem(firstBusList.route.name, arrival)
+                })
+                binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
+            }
+            if (secondBusList == null) {
+                busSecondAdapter.updateData(emptyList())
+                binding.noRealtimeDataSecond.visibility = View.VISIBLE
+            } else {
+                busSecondAdapter.updateData(secondBusList.arrival.filter {
+                    !it.isRealtime
+                }.map { arrival ->
+                    BusArrivalItem(secondBusList.route.name, arrival)
+                })
+                binding.noRealtimeDataSecond.visibility = if (
+                    secondBusList.arrival.none { arrival -> arrival.isRealtime }
+                ) View.VISIBLE else View.GONE
+            }
         }
         binding.apply {
             headerFirst.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
