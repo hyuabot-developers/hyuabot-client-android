@@ -19,7 +19,9 @@ import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -53,12 +55,15 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
         val pendingResult = goAsync()
         scope.launch {
             try {
-                val appContext = context.applicationContext
-                val data = loadData(appContext)
-                val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-                appWidgetIds.forEach {
-                    appWidgetManager.updateAppWidget(it, buildWidget(appContext, it, now, data))
+                withTimeout(WIDGET_TIMEOUT_MS) {
+                    val appContext = context.applicationContext
+                    val data = loadData(appContext)
+                    val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                    appWidgetIds.forEach {
+                        appWidgetManager.updateAppWidget(it, buildWidget(appContext, it, now, data))
+                    }
                 }
+            } catch (_: TimeoutCancellationException) {
             } finally {
                 pendingResult.finish()
             }
@@ -261,6 +266,7 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
 
     companion object {
         const val ACTION_REFRESH = "app.kobuggi.hyuabot.widget.ACTION_REFRESH_SHUTTLE"
+        private const val WIDGET_TIMEOUT_MS = 8_000L
         private const val MAX_COMPACT_GROUPS = 2
         private const val MAX_COMPACT_TIMES = 2
 
