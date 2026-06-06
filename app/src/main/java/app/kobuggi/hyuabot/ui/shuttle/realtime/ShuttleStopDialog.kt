@@ -189,6 +189,10 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment(), OnM
         return dialog
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        binding.stopMapView.onSaveInstanceState(outState)
+    }
     override fun onStart() {
         super.onStart()
         binding.stopMapView.onStart()
