@@ -397,4 +397,9 @@
     <string name="coachmark_shuttle_widget_desc">Add the \'Shuttle\' and \'Shuttle + Transfer\' widgets to your home screen to see nearby arrivals and transfers without opening the app.</string>
     <string name="coachmark_cafeteria_widget_title">Cafeteria widget</string>
     <string name="coachmark_cafeteria_widget_desc">Add the \'Cafeteria\' widget to your home screen to check today\'s menu at a glance.</string>
+    <string name="language_japanese">Japanese</string>
+    <string name="language_chinese">Chinese (Simplified)</string>
+    <string name="language_suggestion_title">Language Suggestion</string>
+    <string name="language_suggestion_message">Your system language is %1$s. Would you like to switch the app language?</string>
+    <string name="language_suggestion_keep_english">Keep English</string>
 </resources>

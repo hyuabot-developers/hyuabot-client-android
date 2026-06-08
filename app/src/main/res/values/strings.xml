@@ -299,6 +299,11 @@
     <string name="empty_cafeteria">메뉴 정보가 없습니다.</string>
     <string name="language_korean">한국어</string>
     <string name="language_english">English</string>
+    <string name="language_japanese">일본어</string>
+    <string name="language_chinese">중국어 (간체)</string>
+    <string name="language_suggestion_title">언어 변경 제안</string>
+    <string name="language_suggestion_message">시스템 언어가 %1$s(으)로 설정되어 있어요. 앱 언어를 변경하시겠어요?</string>
+    <string name="language_suggestion_keep_english">영어 유지</string>
     <string name="about">앱 정보</string>
     <string name="developer_name">개발자: 이정인</string>
     <string name="developer_belong">소속: 소프트웨어학부 17학번</string>
