@@ -341,4 +341,26 @@
     <string name="info_button_shuttle">Information button for shuttle</string>
     <string name="analytics_settings">App Analytics</string>
     <string name="analytics_settings_description">We collect anonymous usage data and your Advertising ID (AD ID) to improve the app. You can disable this at any time.</string>
+    <string name="coachmark_skip">Skip</string>
+    <string name="coachmark_next">Next</string>
+    <string name="coachmark_done">Got it</string>
+    <string name="coachmark_step_indicator">%1$d / %2$d</string>
+    <string name="coachmark_shuttle_nav_title">Campus info at a glance</string>
+    <string name="coachmark_shuttle_nav_desc">Switch between Shuttle, Bus, Subway, and Cafeteria with the tabs. The Menu tab has even more features.</string>
+    <string name="coachmark_shuttle_tab_title">Pick a stop</string>
+    <string name="coachmark_shuttle_tab_desc">Swipe or tap a stop to see its real-time arrivals.</string>
+    <string name="coachmark_shuttle_destination_title">View by destination</string>
+    <string name="coachmark_shuttle_destination_desc">Turn this switch on to group arrivals by destination. We\'ll turn it on for now.</string>
+    <string name="coachmark_shuttle_departure_title">Show departure times</string>
+    <string name="coachmark_shuttle_departure_desc">Turn this switch on to also see each bus\'s departure time.</string>
+    <string name="coachmark_shuttle_route_title">Stops on each route</string>
+    <string name="coachmark_shuttle_route_desc">Tap the button next to a destination header to expand which stops each route passes through.</string>
+    <string name="coachmark_shuttle_via_title">Route and travel time</string>
+    <string name="coachmark_shuttle_via_desc">Tap an arrival to see when that bus departs from each stop.</string>
+    <string name="coachmark_shuttle_transfer_title">Transfer info</string>
+    <string name="coachmark_shuttle_transfer_desc">At the Dormitory and Shuttlecock stops, you can check transfer routes below the arrivals.</string>
+    <string name="coachmark_shuttle_stop_title">Stop information</string>
+    <string name="coachmark_shuttle_stop_desc">Check the stop location and first/last departure times on the map.</string>
+    <string name="coachmark_shuttle_help_title">Shuttle help</string>
+    <string name="coachmark_shuttle_help_desc">Find extra guidance like lost &amp; found and schedule complaints.</string>
 </resources>

@@ -13,11 +13,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkController
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkBaseline
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -39,6 +45,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private var currentPosition = 0
     private var setClosestStop = false
     private var honorDeepLinkStop = false
+    private var coachmarkShown = false
     private val scrollHandler = Handler(Looper.getMainLooper())
     private lateinit var autoScrollRunnable: Runnable
 
@@ -129,6 +136,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         }
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_error), Toast.LENGTH_SHORT).show() }
+        }
+        viewModel.result.observe(viewLifecycleOwner) { stops ->
+            if (stops.isNotEmpty()) maybeShowCoachmark()
         }
         viewModel.viewModelScope.apply {
             launch {
@@ -221,6 +231,110 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         binding.viewPager.setCurrentItem(stopNameToTabIndex(nearestStop?.name) ?: 0, false)
     }
 
+    private fun maybeShowCoachmark() {
+        if (coachmarkShown) return
+        coachmarkShown = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            requireContext().ensureCoachmarkBaseline(viewModel.userPreferencesRepository)
+            if (viewModel.userPreferencesRepository.coachmarkSeen(COACHMARK_KEY).first()) return@launch
+            val originalByDestination = viewModel.userPreferencesRepository.getShowShuttleByDestination().first()
+            val originalDepartureTime = viewModel.userPreferencesRepository.getShowShuttleDepartureTime().first()
+            setClosestStop = true
+            binding.viewPager.setCurrentItem(0, false)
+            view?.post {
+                if (!isAdded) return@post
+                CoachmarkController.show(requireActivity(), buildShuttleCoachmarkSteps()) {
+                    if (isAdded) {
+                        binding.showByDestination.isChecked = originalByDestination
+                        binding.showDepartureTime.isChecked = originalDepartureTime
+                    }
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.userPreferencesRepository.markCoachmarkSeen(COACHMARK_KEY)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun buildShuttleCoachmarkSteps(): List<CoachmarkStep> = listOf(
+        CoachmarkStep(
+            { requireActivity().findViewById(R.id.bottom_navigation) },
+            R.string.coachmark_shuttle_nav_title, R.string.coachmark_shuttle_nav_desc
+        ),
+        CoachmarkStep(
+            { binding.tabLayout },
+            R.string.coachmark_shuttle_tab_title, R.string.coachmark_shuttle_tab_desc
+        ),
+        CoachmarkStep(
+            { binding.showByDestination },
+            R.string.coachmark_shuttle_destination_title, R.string.coachmark_shuttle_destination_desc,
+            onShow = { binding.showByDestination.isChecked = true }
+        ),
+        CoachmarkStep(
+            { binding.showDepartureTime },
+            R.string.coachmark_shuttle_departure_title, R.string.coachmark_shuttle_departure_desc,
+            onShow = { binding.showDepartureTime.isChecked = true }
+        ),
+        CoachmarkStep(
+            {
+                firstVisibleChildView(
+                    R.id.info_button_bound_for_dormitory,
+                    R.id.info_button_bound_for_terminal,
+                    R.id.info_button_bound_for_jungang_station,
+                    R.id.info_button_bound_for_station
+                )
+            },
+            R.string.coachmark_shuttle_route_title, R.string.coachmark_shuttle_route_desc,
+            onShow = { it.performClick() }
+        ),
+        CoachmarkStep(
+            { firstVisibleRealtimeRow() },
+            R.string.coachmark_shuttle_via_title, R.string.coachmark_shuttle_via_desc
+        ),
+        CoachmarkStep(
+            { firstVisibleChildView(R.id.transfer_section) },
+            R.string.coachmark_shuttle_transfer_title, R.string.coachmark_shuttle_transfer_desc
+        ),
+        CoachmarkStep(
+            { firstVisibleChildView(R.id.stop_info, R.id.stop_info_2) },
+            R.string.coachmark_shuttle_stop_title, R.string.coachmark_shuttle_stop_desc
+        ),
+        CoachmarkStep(
+            { firstVisibleChildView(R.id.help_button, R.id.help_button_2) },
+            R.string.coachmark_shuttle_help_title, R.string.coachmark_shuttle_help_desc
+        ),
+    )
+
+    private fun currentTabView(): View? =
+        childFragmentManager.findFragmentByTag("f${binding.viewPager.currentItem}")?.view
+
+    private fun firstVisibleChildView(vararg ids: Int): View? {
+        val root = currentTabView() ?: return null
+        for (id in ids) {
+            val target = root.findViewById<View>(id)
+            if (target != null && target.isShown) return target
+        }
+        return null
+    }
+
+    private fun firstVisibleRealtimeRow(): View? {
+        val root = currentTabView() ?: return null
+        val recyclerIds = intArrayOf(
+            R.id.realtime_view,
+            R.id.realtime_view_bound_for_dormitory,
+            R.id.realtime_view_bound_for_terminal,
+            R.id.realtime_view_bound_for_jungang_station,
+            R.id.realtime_view_bound_for_station,
+        )
+        for (id in recyclerIds) {
+            val recycler = root.findViewById<RecyclerView>(id)
+            if (recycler != null && recycler.isShown && recycler.childCount > 0) {
+                return recycler.getChildAt(0)
+            }
+        }
+        return null
+    }
+
     private fun stopNameToTabIndex(name: String?): Int? = when (name) {
         "dormitory_o" -> 0
         "shuttlecock_o" -> 1
@@ -241,5 +355,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
 
     companion object {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
+        private val COACHMARK_KEY = Coachmarks.SHUTTLE
     }
 }
