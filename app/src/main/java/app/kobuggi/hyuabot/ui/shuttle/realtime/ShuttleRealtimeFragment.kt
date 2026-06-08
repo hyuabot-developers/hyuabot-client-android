@@ -303,6 +303,11 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             { firstVisibleChildView(R.id.help_button, R.id.help_button_2) },
             R.string.coachmark_shuttle_help_title, R.string.coachmark_shuttle_help_desc
         ),
+        CoachmarkStep(
+            { null },
+            R.string.coachmark_shuttle_widget_title, R.string.coachmark_shuttle_widget_desc,
+            centered = true
+        ),
     )
 
     private fun currentTabView(): View? =
