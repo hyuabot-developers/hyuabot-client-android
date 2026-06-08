@@ -18,8 +18,10 @@ import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -54,13 +56,16 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
         val pendingResult = goAsync()
         scope.launch {
             try {
-                val appContext = context.applicationContext
-                val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-                val meal = WidgetMeal.current(now.toLocalTime())
-                val items = loadItems(appContext, meal, now.toLocalDate())
-                appWidgetIds.forEach {
-                    appWidgetManager.updateAppWidget(it, buildWidget(appContext, it, meal, now, items))
+                withTimeout(WIDGET_TIMEOUT_MS) {
+                    val appContext = context.applicationContext
+                    val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                    val meal = WidgetMeal.current(now.toLocalTime())
+                    val items = loadItems(appContext, meal, now.toLocalDate())
+                    appWidgetIds.forEach {
+                        appWidgetManager.updateAppWidget(it, buildWidget(appContext, it, meal, now, items))
+                    }
                 }
+            } catch (_: TimeoutCancellationException) {
             } finally {
                 pendingResult.finish()
             }
@@ -241,6 +246,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
 
     companion object {
         const val ACTION_REFRESH = "app.kobuggi.hyuabot.widget.ACTION_REFRESH_CAFETERIA"
+        private const val WIDGET_TIMEOUT_MS = 8_000L
     }
 }
 

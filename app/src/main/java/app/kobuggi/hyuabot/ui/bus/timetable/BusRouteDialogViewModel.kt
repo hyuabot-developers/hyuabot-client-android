@@ -28,7 +28,7 @@ class BusRouteDialogViewModel @Inject constructor(private val apolloClient: Apol
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {
-                val route = response.data?.bus?.first()
+                val route = response.data?.bus?.firstOrNull()
                 if (route != null) { _result.value = route }
                 _queryError.value = null
             } else {

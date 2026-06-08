@@ -54,7 +54,7 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
             if (it.oidoBlue == null || it.oidoYellow == null || it.campusBlue == null || it.campusYellow == null) {
                 return@observe
             }
-            val upRealtimeWithoutTransfer = it.oidoYellow.arrival.first { arrival -> arrival.direction == "up" }.entries.filter {
+            val upRealtimeWithoutTransfer = (it.oidoYellow.arrival.firstOrNull { arrival -> arrival.direction == "up" }?.entries ?: emptyList()).filter {
                 entry -> entry.terminal.stationID < "K251" && entry.isRealtime
             }.map {
                 entry -> SubwayTransferItem(
@@ -62,8 +62,8 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
                     transfer = null
                 )
             }
-            val upTimetableToTransfer = it.oidoBlue.arrival.first { arrival -> arrival.direction == "up" }.entries
-            val upRealtimeWithTransfer = it.oidoYellow.arrival.first { arrival -> arrival.direction == "up" }.entries.filter {
+            val upTimetableToTransfer = it.oidoBlue.arrival.firstOrNull { arrival -> arrival.direction == "up" }?.entries ?: emptyList()
+            val upRealtimeWithTransfer = (it.oidoYellow.arrival.firstOrNull { arrival -> arrival.direction == "up" }?.entries ?: emptyList()).filter {
                     entry -> entry.terminal.stationID >= "K251" && entry.isRealtime
             }.map {
                 entry -> SubwayTransferItem(
@@ -71,7 +71,7 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
                     transfer = upTimetableToTransfer.firstOrNull { transfer -> transfer.minutes > entry.minutes }
                 )
             }
-            val downRealtimeWithoutTransfer = it.campusYellow.arrival.first { arrival -> arrival.direction == "down" }.entries.filter {
+            val downRealtimeWithoutTransfer = (it.campusYellow.arrival.firstOrNull { arrival -> arrival.direction == "down" }?.entries ?: emptyList()).filter {
                 entry -> entry.terminal.stationID > "K258" && entry.isRealtime && entry.terminal.stationID.startsWith("K2")
             }.map {
                 entry -> SubwayTransferItem(
@@ -79,10 +79,10 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
                     transfer = null
                 )
             }
-            val downTimetableToTransfer = it.oidoYellow.arrival.first { arrival -> arrival.direction == "down" }.entries.filter {
+            val downTimetableToTransfer = (it.oidoYellow.arrival.firstOrNull { arrival -> arrival.direction == "down" }?.entries ?: emptyList()).filter {
                     entry -> entry.origin?.stationID == "K258"
             }
-            val downRealtimeWithTransfer = it.campusBlue.arrival.first { arrival -> arrival.direction == "down" }.entries.filter {
+            val downRealtimeWithTransfer = (it.campusBlue.arrival.firstOrNull { arrival -> arrival.direction == "down" }?.entries ?: emptyList()).filter {
                 entry -> entry.terminal.stationID == "K456"
             }.map {
                 entry ->
