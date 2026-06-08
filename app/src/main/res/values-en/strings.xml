@@ -363,4 +363,8 @@
     <string name="coachmark_shuttle_stop_desc">Check the stop location and first/last departure times on the map.</string>
     <string name="coachmark_shuttle_help_title">Shuttle help</string>
     <string name="coachmark_shuttle_help_desc">Find extra guidance like lost &amp; found and schedule complaints.</string>
+    <string name="coachmark_shuttle_timetable_tab_title">Weekday &amp; weekend schedule</string>
+    <string name="coachmark_shuttle_timetable_tab_desc">Tap the tabs to switch between weekday and weekend schedules.</string>
+    <string name="coachmark_shuttle_timetable_filter_title">Pick an operating period</string>
+    <string name="coachmark_shuttle_timetable_filter_desc">Tap this button to choose an operating period such as semester or vacation.</string>
 </resources>

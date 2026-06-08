@@ -372,4 +372,8 @@
     <string name="coachmark_shuttle_stop_desc">정류장 위치와 첫차·막차 시간을 지도와 함께 확인하세요.</string>
     <string name="coachmark_shuttle_help_title">셔틀버스 도움말</string>
     <string name="coachmark_shuttle_help_desc">분실물 문의, 시간표 미준수 신고 등 추가 안내를 확인할 수 있어요.</string>
+    <string name="coachmark_shuttle_timetable_tab_title">평일·주말 시간표</string>
+    <string name="coachmark_shuttle_timetable_tab_desc">탭을 눌러 평일과 주말 운행 시간표를 전환할 수 있어요.</string>
+    <string name="coachmark_shuttle_timetable_filter_title">운행 기간 선택</string>
+    <string name="coachmark_shuttle_timetable_filter_desc">이 버튼을 누르면 학기·방학 등 운행 기간을 골라 시간표를 바꿔 볼 수 있어요.</string>
 </resources>

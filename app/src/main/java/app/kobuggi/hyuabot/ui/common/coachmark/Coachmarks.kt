@@ -5,9 +5,11 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 
 object Coachmarks {
     const val SHUTTLE = "shuttle"
+    const val SHUTTLE_TIMETABLE = "shuttle_timetable"
 
     val EXISTING_FEATURE_KEYS = setOf(
         SHUTTLE,
+        SHUTTLE_TIMETABLE,
     )
 }
 
