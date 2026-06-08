@@ -11,6 +11,9 @@ interface CalendarDao {
     @Query("SELECT * FROM event ORDER BY startDate ASC")
     fun getAll(): Flow<List<Event>>
 
+    @Query("SELECT COUNT(*) FROM event")
+    suspend fun count(): Int
+
     @Insert
     suspend fun insertAll(vararg events: Event)
 
