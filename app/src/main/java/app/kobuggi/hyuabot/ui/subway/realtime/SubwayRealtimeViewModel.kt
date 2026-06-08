@@ -69,7 +69,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
 
     fun start() {
         _disposable.add(
-            Observable.interval(0, 1, TimeUnit.MINUTES)
+            Observable.interval(0, 15, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe{
                     try {
