@@ -13,7 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import androidx.lifecycle.lifecycleScope
 import app.kobuggi.hyuabot.databinding.FragmentMenuBinding
+import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.safeNavigate
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import app.kobuggi.hyuabot.util.InAppReviewManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,6 +29,9 @@ class MenuFragment @Inject constructor() : Fragment() {
 
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager
+
+    @Inject
+    lateinit var userPreferencesRepository: UserPreferencesRepository
 
     private val menuList = listOf(
         MenuItem(R.drawable.ic_book, R.string.menu_book),
@@ -51,6 +58,14 @@ class MenuFragment @Inject constructor() : Fragment() {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(decoration)
+        }
+        showCoachmarkOnce(userPreferencesRepository, Coachmarks.MENU) {
+            listOf(
+                CoachmarkStep(
+                    { binding.menuRecyclerView },
+                    R.string.coachmark_menu_title, R.string.coachmark_menu_desc
+                ),
+            )
         }
         return binding.root
     }
