@@ -11,4 +11,5 @@ data class CoachmarkStep(
     val shape: CoachmarkShape = CoachmarkShape.ROUNDED_RECT,
     val allowTapThrough: Boolean = false,
     val onShow: ((View) -> Unit)? = null,
+    val centered: Boolean = false,
 )

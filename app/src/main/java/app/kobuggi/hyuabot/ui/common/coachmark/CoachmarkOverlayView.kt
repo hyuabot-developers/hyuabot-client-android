@@ -92,12 +92,31 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
         val step = steps[index]
         val target = step.targetProvider()
         if (target == null || !target.isShown) {
-            index++
-            showStep()
+            if (step.centered) {
+                showCenteredStep(step)
+            } else {
+                index++
+                showStep()
+            }
             return
         }
         currentShape = step.shape
         allowTapThrough = step.allowTapThrough
+        bindBubble(step)
+        step.onShow?.invoke(target)
+        target.requestRectangleOnScreen(Rect(0, 0, target.width, target.height), true)
+        post { updateSpotlight(target) }
+    }
+
+    private fun showCenteredStep(step: CoachmarkStep) {
+        hasSpotlight = false
+        allowTapThrough = false
+        bindBubble(step)
+        positionBubble()
+        invalidate()
+    }
+
+    private fun bindBubble(step: CoachmarkStep) {
         bubbleBinding.coachmarkTitle.setText(step.titleRes)
         bubbleBinding.coachmarkDesc.setText(step.descRes)
         bubbleBinding.coachmarkStep.text =
@@ -105,9 +124,6 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
         bubbleBinding.coachmarkNext.setText(
             if (index == steps.size - 1) R.string.coachmark_done else R.string.coachmark_next
         )
-        step.onShow?.invoke(target)
-        target.requestRectangleOnScreen(Rect(0, 0, target.width, target.height), true)
-        post { updateSpotlight(target) }
     }
 
     private fun resolveCurrentSpotlight() {
@@ -132,6 +148,13 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
     private fun positionBubble() {
         val bubble = bubbleBinding.root
         bubble.doOnLayout {
+            if (!hasSpotlight) {
+                bubble.updateLayoutParams<LayoutParams> {
+                    gravity = Gravity.CENTER
+                    topMargin = 0
+                }
+                return@doOnLayout
+            }
             val below = spotlight.bottom + gap
             val topMargin = if (below + bubble.height <= height - paddingBottom) {
                 below
