@@ -53,7 +53,7 @@ class BusRealtimeViewModel @Inject constructor(
         } else {
             when (locale.language) {
                 "ko" -> "KOREAN"
-                "en" -> "ENGLISH"
+                "en", "ja", "zh" -> "ENGLISH"
                 else -> "KOREAN"
             }
         }
