@@ -34,12 +34,21 @@ class LanguageSettingDialog @Inject constructor() : DialogFragment() {
                 AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_LANGUAGE, type = AnalyticsContentType.MENU, name = "english")
                 vm.setLocaleCode("en")
             }
+            languageJapanese.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_LANGUAGE, type = AnalyticsContentType.MENU, name = "japanese")
+                vm.setLocaleCode("ja")
+            }
+            languageChinese.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_LANGUAGE, type = AnalyticsContentType.MENU, name = "chinese")
+                vm.setLocaleCode("zh")
+            }
         }
         vm.localeCode.observe(viewLifecycleOwner) {
-            if (it == "ko") {
-                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ko-KR"))
-            } else if (it == "en") {
-                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en-US"))
+            when (it) {
+                "ko" -> AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ko-KR"))
+                "en" -> AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en-US"))
+                "ja" -> AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ja-JP"))
+                "zh" -> AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("zh-CN"))
             }
             dismiss()
         }
