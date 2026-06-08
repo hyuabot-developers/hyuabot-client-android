@@ -25,6 +25,10 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ReadingRoomPageQuery
 import app.kobuggi.hyuabot.databinding.FragmentReadingRoomBinding
 import app.kobuggi.hyuabot.service.alarm.AlarmFunction
+import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -36,6 +40,10 @@ import javax.inject.Inject
 class ReadingRoomFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentReadingRoomBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<ReadingRoomViewModel>()
+
+    @Inject
+    lateinit var userPreferencesRepository: UserPreferencesRepository
+
     private lateinit var roomListAdapter: ReadingRoomListAdapter
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
@@ -123,6 +131,18 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
             queryError.observe(viewLifecycleOwner) {
                 it?.let { Toast.makeText(requireContext(), getString(R.string.reading_room_error), Toast.LENGTH_SHORT).show() }
             }
+        }
+        showCoachmarkOnce(userPreferencesRepository, Coachmarks.READING_ROOM) {
+            listOf(
+                CoachmarkStep(
+                    { binding.readingRoomRecyclerView },
+                    R.string.coachmark_reading_room_seats_title, R.string.coachmark_reading_room_seats_desc
+                ),
+                CoachmarkStep(
+                    { binding.readingRoomAlarmDescription },
+                    R.string.coachmark_reading_room_alarm_title, R.string.coachmark_reading_room_alarm_desc
+                ),
+            )
         }
     }
 
