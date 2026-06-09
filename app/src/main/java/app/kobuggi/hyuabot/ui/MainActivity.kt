@@ -19,6 +19,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -77,9 +78,37 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 else -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) }
             }
         }
+        suggestLanguageIfNeeded()
         checkLocationPermission()
         openBirthDayDialog()
         requestInAppReview()
+    }
+
+    private fun suggestLanguageIfNeeded() {
+        val prefs = getSharedPreferences("pref", MODE_PRIVATE)
+        if (prefs.getBoolean("languageSuggestionShown", false)) return
+        prefs.edit { putBoolean("languageSuggestionShown", true) }
+
+        val systemLang = resources.configuration.locales[0].language
+        if (systemLang != "ja" && systemLang != "zh") return
+
+        val appLocales = AppCompatDelegate.getApplicationLocales()
+        val appLang = appLocales.get(0)?.language
+
+        if (appLang == "en") {
+            val targetTag = if (systemLang == "ja") "ja-JP" else "zh-CN"
+            val targetLangName = getString(if (systemLang == "ja") R.string.language_japanese else R.string.language_chinese)
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.language_suggestion_title))
+                .setMessage(getString(R.string.language_suggestion_message, targetLangName))
+                .setPositiveButton(targetLangName) { _, _ ->
+                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(targetTag))
+                }
+                .setNegativeButton(getString(R.string.language_suggestion_keep_english), null)
+                .show()
+        } else if (appLang != "ja" && appLang != "zh") {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
+        }
     }
 
     private fun requestInAppReview() {

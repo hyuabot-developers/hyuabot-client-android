@@ -15,7 +15,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeBinding
+import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.safeNavigate
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Runnable
@@ -25,6 +30,10 @@ import javax.inject.Inject
 class BusRealtimeFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentBusRealtimeBinding.inflate(layoutInflater) }
     private val viewModel: BusRealtimeViewModel by viewModels()
+
+    @Inject
+    lateinit var userPreferencesRepository: UserPreferencesRepository
+
     private var currentPosition = 0
     private val scrollHandler = Handler(Looper.getMainLooper())
     private lateinit var autoScrollRunnable: Runnable
@@ -81,7 +90,40 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
+        showCoachmarkOnce(userPreferencesRepository, Coachmarks.BUS) {
+            listOf(
+                CoachmarkStep(
+                    { binding.tabLayout },
+                    R.string.coachmark_bus_tab_title, R.string.coachmark_bus_tab_desc
+                ),
+                CoachmarkStep(
+                    { binding.stopFab },
+                    R.string.coachmark_bus_stop_title, R.string.coachmark_bus_stop_desc,
+                    shape = CoachmarkShape.CIRCLE
+                ),
+                CoachmarkStep(
+                    {
+                        firstVisibleBusChildView(
+                            R.id.departure_log_first,
+                            R.id.departure_log_second,
+                            R.id.departure_log_third
+                        )
+                    },
+                    R.string.coachmark_bus_log_title, R.string.coachmark_bus_log_desc,
+                    centered = true
+                ),
+            )
+        }
         return binding.root
+    }
+
+    private fun firstVisibleBusChildView(vararg ids: Int): View? {
+        val root = childFragmentManager.findFragmentByTag("f${binding.viewPager.currentItem}")?.view ?: return null
+        for (id in ids) {
+            val target = root.findViewById<View>(id)
+            if (target != null && target.isShown) return target
+        }
+        return null
     }
 
     override fun onPause() {

@@ -9,6 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentSubwayRealtimeBinding
+import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -17,6 +21,9 @@ import javax.inject.Inject
 class SubwayRealtimeFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentSubwayRealtimeBinding.inflate(layoutInflater) }
     private val viewModel: SubwayRealtimeViewModel by viewModels()
+
+    @Inject
+    lateinit var userPreferencesRepository: UserPreferencesRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +49,19 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
+        showCoachmarkOnce(userPreferencesRepository, Coachmarks.SUBWAY) {
+            listOf(
+                CoachmarkStep(
+                    { binding.tabLayout },
+                    R.string.coachmark_subway_tab_title, R.string.coachmark_subway_tab_desc
+                ),
+                CoachmarkStep(
+                    { null },
+                    R.string.coachmark_subway_transfer_tip_title, R.string.coachmark_subway_transfer_tip_desc,
+                    centered = true
+                ),
+            )
+        }
         return binding.root
     }
 

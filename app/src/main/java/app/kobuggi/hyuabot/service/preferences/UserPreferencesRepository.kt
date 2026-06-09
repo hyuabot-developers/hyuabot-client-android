@@ -294,6 +294,49 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    override fun coachmarkSeen(screen: String): Flow<Boolean> = userDataStorePreferences.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            (preferences[COACHMARKS_SEEN_KEY] ?: emptySet()).contains(screen)
+        }
+
+    override suspend fun markCoachmarkSeen(screen: String) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                val current = preferences[COACHMARKS_SEEN_KEY] ?: emptySet()
+                preferences[COACHMARKS_SEEN_KEY] = current + screen
+            }
+        }
+    }
+
+    override suspend fun resetCoachmarks() {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences.remove(COACHMARKS_SEEN_KEY)
+                preferences.remove(COACHMARK_INITIALIZED_KEY)
+            }
+        }
+    }
+
+    override suspend fun initCoachmarkBaselineIfNeeded(isFreshInstall: Boolean, existingFeatureKeys: Set<String>) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                if (preferences[COACHMARK_INITIALIZED_KEY] == true) return@edit
+                preferences[COACHMARK_INITIALIZED_KEY] = true
+                if (!isFreshInstall) {
+                    val current = preferences[COACHMARKS_SEEN_KEY] ?: emptySet()
+                    preferences[COACHMARKS_SEEN_KEY] = current + existingFeatureKeys
+                }
+            }
+        }
+    }
+
     private companion object {
         private val BUS_STOP_ID_KEY = intPreferencesKey("bus_stop_id")
         private val READING_ROOM_NOTIFICATIONS_KEY = stringSetPreferencesKey("reading_room_notifications")
@@ -307,5 +350,7 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val ANALYTICS_CONSENT_KEY = booleanPreferencesKey("analytics_consent")
         private val LAUNCH_COUNT_KEY = intPreferencesKey("launch_count")
         private val REVIEW_REQUESTED_AT_KEY = longPreferencesKey("review_requested_at")
+        private val COACHMARKS_SEEN_KEY = stringSetPreferencesKey("coachmarks_seen")
+        private val COACHMARK_INITIALIZED_KEY = booleanPreferencesKey("coachmark_initialized")
     }
 }

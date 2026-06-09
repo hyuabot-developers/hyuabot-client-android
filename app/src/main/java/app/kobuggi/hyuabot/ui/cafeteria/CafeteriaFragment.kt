@@ -13,6 +13,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentCafeteriaBinding
+import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +30,10 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentCafeteriaBinding.inflate(layoutInflater) }
     private val viewModel: CafeteriaViewModel by viewModels()
     private val args: CafeteriaFragmentArgs by navArgs()
+
+    @Inject
+    lateinit var userPreferencesRepository: UserPreferencesRepository
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -89,6 +97,23 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
             else -> null
         }
         initialTab?.let { binding.viewPager.setCurrentItem(it, false) }
+        showCoachmarkOnce(userPreferencesRepository, Coachmarks.CAFETERIA) {
+            listOf(
+                CoachmarkStep(
+                    { binding.tabLayout },
+                    R.string.coachmark_cafeteria_tab_title, R.string.coachmark_cafeteria_tab_desc
+                ),
+                CoachmarkStep(
+                    { binding.datePickerLayout },
+                    R.string.coachmark_cafeteria_date_title, R.string.coachmark_cafeteria_date_desc
+                ),
+                CoachmarkStep(
+                    { null },
+                    R.string.coachmark_cafeteria_widget_title, R.string.coachmark_cafeteria_widget_desc,
+                    centered = true
+                ),
+            )
+        }
         return binding.root
     }
 

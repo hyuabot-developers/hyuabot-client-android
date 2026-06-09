@@ -40,7 +40,7 @@ class CalendarViewModel @Inject constructor(
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.calendar != null) {
                 val localVersion = userPreferencesRepository.calendarVersion.first()
-                if (localVersion != response.data?.calendar?.version) {
+                if (localVersion != response.data?.calendar?.version || database.calendarDao().count() == 0) {
                     fetchEvents()
                 }
                 _queryError.value = null

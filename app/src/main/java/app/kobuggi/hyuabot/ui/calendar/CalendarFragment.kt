@@ -57,7 +57,7 @@ class CalendarFragment @Inject constructor() : Fragment() {
                 val eventMap = countOfEvent(eventList)
                 binding.calendarView.apply {
                     setup(firstMonth, lastMonth, WeekFields.of(Locale.getDefault()).firstDayOfWeek)
-                    scrollToMonth(currentMonth)
+                    scrollToMonth(currentMonth.coerceIn(firstMonth, lastMonth))
                     dayBinder = object : MonthDayBinder<DayViewContainer> {
                         override fun create(view: View) = DayViewContainer(view)
                         @SuppressLint("SetTextI18n")

@@ -19,6 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.MapPageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMapBinding
+import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -32,6 +36,10 @@ import javax.inject.Inject
 class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private val binding by lazy { FragmentMapBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<MapViewModel>()
+
+    @Inject
+    lateinit var userPreferencesRepository: UserPreferencesRepository
+
     private val bundleKey = "MapViewBundleKey"
     private lateinit var clusterManager: ClusterManager<BuildingMarkerItem>
     private lateinit var googleMap: GoogleMap
@@ -84,6 +92,14 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         }
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.map_building_error), Toast.LENGTH_SHORT).show() }
+        }
+        showCoachmarkOnce(userPreferencesRepository, Coachmarks.MAP) {
+            listOf(
+                CoachmarkStep(
+                    { binding.searchBar },
+                    R.string.coachmark_map_search_title, R.string.coachmark_map_search_desc
+                ),
+            )
         }
         return binding.root
     }

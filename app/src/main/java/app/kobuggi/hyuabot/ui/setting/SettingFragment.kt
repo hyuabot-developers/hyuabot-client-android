@@ -14,9 +14,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.databinding.FragmentSettingBinding
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.ui.MainActivity
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,6 +68,18 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
                     updatingSwitch = false
                 }
             }
+        }
+        showCoachmarkOnce(userPreferencesRepository, Coachmarks.SETTING) {
+            listOf(
+                CoachmarkStep(
+                    { binding.settingCampus },
+                    R.string.coachmark_setting_campus_title, R.string.coachmark_setting_campus_desc
+                ),
+                CoachmarkStep(
+                    { binding.settingTheme },
+                    R.string.coachmark_setting_theme_title, R.string.coachmark_setting_theme_desc
+                ),
+            )
         }
     }
 
