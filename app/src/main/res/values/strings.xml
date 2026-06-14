@@ -115,6 +115,7 @@
         <item quantity="one">%1$d분 후 도착 (%2$d전)</item>
         <item quantity="other">%1$d분 후 도착 (%2$d전)</item>
     </plurals>
+    <string name="bus_arrival_estimated_format">%1$d분 (예정)</string>
     <string name="bus_timetable_format">%1$s시 %2$s분 출발</string>
     <plurals name="bus_realtime_format_seats_last">
         <item quantity="one">%1$d분 후 도착 (%2$d전, %3$d석, 막차)</item>

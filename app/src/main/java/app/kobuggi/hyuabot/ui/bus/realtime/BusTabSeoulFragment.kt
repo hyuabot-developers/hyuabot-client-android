@@ -130,7 +130,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             val arrivalList = routes.flatMap { route -> route.arrival.map { BusArrivalItem(route.route.name, it) } }
             busSecondAdapter.updateData(arrivalList.sortedWith(compareBy(
                 { it.item.minutes ?: Int.MAX_VALUE },
-                { it.item.time?.let { time ->
+                { it.item.arrivalTime?.let { time ->
                     add24HoursAfterMidnight(time)
                 }}
             )))

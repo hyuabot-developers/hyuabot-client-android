@@ -130,7 +130,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
             val secondBusRealtime = secondBusList.arrival.filter { arrival -> arrival.isRealtime }
             val secondBusTimetable = if (secondBusRealtime.isNotEmpty()) {
                 secondBusList.arrival.filter { arrival ->
-                    !arrival.isRealtime && arrival.time!! > currentTime.plusMinutes(secondBusRealtime.last().minutes!!.toLong())
+                    !arrival.isRealtime && arrival.arrivalTime!! > currentTime.plusMinutes(secondBusRealtime.last().minutes!!.toLong())
                 }
             } else {
                 secondBusList.arrival.filter { arrival -> !arrival.isRealtime }

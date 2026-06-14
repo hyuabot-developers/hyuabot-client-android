@@ -29,12 +29,12 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        val busSecondAdapter = BusRealtimeListAdapter()
+        val busSecondAdapter = BusRealtimeListAdapter(maxCount = 10)
         parentViewModel.result.observe(viewLifecycleOwner) { busList ->
             if (busList == null) return@observe
             val routes = busList.filter { route -> route.stop.seq == 216000070 && (route.route.seq == 216000104 || route.route.seq == 200000015) }
             val arrivalList = routes.flatMap { route -> route.arrival.map { BusArrivalItem(route.route.name, it) } }
-            busSecondAdapter.updateData(arrivalList.sortedWith(compareBy({ it.item.minutes ?: Int.MAX_VALUE }, { it.item.time ?: LocalTime.MAX })))
+            busSecondAdapter.updateData(arrivalList.sortedWith(compareBy({ it.item.minutes ?: Int.MAX_VALUE }, { it.item.arrivalTime ?: LocalTime.MAX })))
             binding.noRealtimeDataFirst.visibility = if (arrivalList.isEmpty()) View.VISIBLE else View.GONE
         }
         binding.apply {

@@ -47,14 +47,10 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                 busSecondAdapter.updateData(emptyList())
                 binding.noRealtimeDataSecond.visibility = View.VISIBLE
             } else {
-                busSecondAdapter.updateData(secondBusList.arrival.filter {
-                    !it.isRealtime
-                }.map { arrival ->
+                busSecondAdapter.updateData(secondBusList.arrival.map { arrival ->
                     BusArrivalItem(secondBusList.route.name, arrival)
                 })
-                binding.noRealtimeDataSecond.visibility = if (
-                    secondBusList.arrival.none { arrival -> arrival.isRealtime }
-                ) View.VISIBLE else View.GONE
+                binding.noRealtimeDataSecond.visibility = if (secondBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
             }
         }
         binding.apply {
