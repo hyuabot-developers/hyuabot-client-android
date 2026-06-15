@@ -28,6 +28,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Runnable
@@ -43,6 +44,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private val viewModel: ShuttleRealtimeViewModel by viewModels()
     private val args: ShuttleRealtimeFragmentArgs by navArgs()
     private var currentPosition = 0
+    private var manuallyScrolled = false
     private var setClosestStop = false
     private var honorDeepLinkStop = false
     private var coachmarkShown = false
@@ -112,13 +114,13 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 binding.noticeLayout.visibility = View.VISIBLE
                 (binding.noticeViewPager.adapter as ShuttleNoticeAdapter).updateList(notices)
                 autoScrollRunnable = Runnable {
-                    if (binding.noticeViewPager.adapter != null && binding.noticeViewPager.adapter!!.itemCount > 0) {
+                    if (binding.noticeViewPager.adapter != null && binding.noticeViewPager.adapter!!.itemCount > 0 && !manuallyScrolled) {
                         currentPosition = (currentPosition + 1) % binding.noticeViewPager.adapter!!.itemCount
                         binding.noticeViewPager.setCurrentItem(currentPosition, true)
                         scrollHandler.postDelayed(autoScrollRunnable, 5000)
                     }
                 }
-                scrollHandler.postDelayed(autoScrollRunnable, 5000)
+                if (!manuallyScrolled) scrollHandler.postDelayed(autoScrollRunnable, 5000)
             } else {
                 binding.noticeLayout.visibility = View.GONE
                 if (::autoScrollRunnable.isInitialized) {
@@ -126,6 +128,17 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 }
             }
         }
+        binding.noticeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                    manuallyScrolled = true
+                    scrollHandler.removeCallbacks(autoScrollRunnable)
+                }
+                if (state == ViewPager2.SCROLL_STATE_IDLE && manuallyScrolled) {
+                    currentPosition = binding.noticeViewPager.currentItem
+                }
+            }
+        })
         viewModel.result.observe(viewLifecycleOwner) { stops ->
             if (setClosestStop) {
                 return@observe
@@ -168,6 +181,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         if (!honorDeepLinkStop) {
             setClosestStop = false
         }
+        manuallyScrolled = false
         if (::autoScrollRunnable.isInitialized) {
             scrollHandler.postDelayed(autoScrollRunnable, 5000)
         }
