@@ -340,7 +340,10 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             }
         }
         parentViewModel.busAlternativeShuttlecock.observe(viewLifecycleOwner) { busMinutes ->
-            updateBusAlternativeStation(busMinutes)
+            updateBusAlternativeStation(busMinutes, parentViewModel.forceShowBusAlternative.value ?: false)
+        }
+        parentViewModel.forceShowBusAlternative.observe(viewLifecycleOwner) { forceShow ->
+            updateBusAlternativeStation(parentViewModel.busAlternativeShuttlecock.value, forceShow)
         }
 
         binding.apply {
@@ -357,10 +360,13 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
         return binding.root
     }
 
-    private fun updateBusAlternativeStation(busMinutes: Int?) {
-        binding.busAlternativeStation.visibility = if (busMinutes != null) View.VISIBLE else View.GONE
-        if (busMinutes != null) {
-            binding.busAlternativeStationTime.text = getString(R.string.shuttle_bus_alternative_time, busMinutes)
+    private fun updateBusAlternativeStation(busMinutes: Int?, forceShow: Boolean = false) {
+        val shouldShow = busMinutes != null || forceShow
+        binding.busAlternativeStation.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        if (shouldShow) {
+            binding.busAlternativeStationTime.text = if (busMinutes != null)
+                getString(R.string.shuttle_bus_alternative_time, busMinutes)
+            else getString(R.string.shuttle_bus_alternative_no_data)
         }
     }
 

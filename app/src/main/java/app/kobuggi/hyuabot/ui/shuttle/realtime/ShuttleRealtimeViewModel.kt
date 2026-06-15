@@ -44,6 +44,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _busAlternativeShuttlecock = MutableLiveData<Int?>(null)
     private val _busAlternativeDormitory = MutableLiveData<Int?>(null)
     private val _busAlternativeStation = MutableLiveData<Int?>(null)
+    private val _forceShowBusAlternative = MutableLiveData<Boolean>(false)
 
     val result get() = _result
     val notices get() = _notices
@@ -55,6 +56,11 @@ class ShuttleRealtimeViewModel @Inject constructor(
     val busAlternativeShuttlecock get() = _busAlternativeShuttlecock
     val busAlternativeDormitory get() = _busAlternativeDormitory
     val busAlternativeStation get() = _busAlternativeStation
+    val forceShowBusAlternative get() = _forceShowBusAlternative
+
+    fun setForceShowBusAlternative(show: Boolean) {
+        _forceShowBusAlternative.value = show
+    }
     val latestShuttleResult = combine(result.asFlow(), showByDestination.asFlow()) { result, showByDestination ->
         ShuttleTabData(result, showByDestination)
     }.onStart { emit(ShuttleTabData(listOf(), false)) }.asLiveData()

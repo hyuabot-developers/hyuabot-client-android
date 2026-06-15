@@ -236,7 +236,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         coachmarkShown = true
         viewLifecycleOwner.lifecycleScope.launch {
             requireContext().ensureCoachmarkBaseline(viewModel.userPreferencesRepository)
-            if (viewModel.userPreferencesRepository.coachmarkSeen(COACHMARK_KEY).first()) return@launch
+            if (viewModel.userPreferencesRepository.coachmarkSeen(COACHMARK_KEY).first()) {
+                return@launch
+            }
             val originalByDestination = viewModel.userPreferencesRepository.getShowShuttleByDestination().first()
             val originalDepartureTime = viewModel.userPreferencesRepository.getShowShuttleDepartureTime().first()
             setClosestStop = true
@@ -248,6 +250,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                         binding.showByDestination.isChecked = originalByDestination
                         binding.showDepartureTime.isChecked = originalDepartureTime
                     }
+                    viewModel.setForceShowBusAlternative(false)
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.userPreferencesRepository.markCoachmarkSeen(COACHMARK_KEY)
                     }
@@ -290,6 +293,14 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         CoachmarkStep(
             { firstVisibleRealtimeRow() },
             R.string.coachmark_shuttle_via_title, R.string.coachmark_shuttle_via_desc
+        ),
+        CoachmarkStep(
+            {
+                viewModel.setForceShowBusAlternative(true)
+                currentTabView()?.findViewById(R.id.bus_alternative_station)
+            },
+            R.string.coachmark_shuttle_bus_alternative_title,
+            R.string.coachmark_shuttle_bus_alternative_desc
         ),
         CoachmarkStep(
             { firstVisibleChildView(R.id.transfer_section) },

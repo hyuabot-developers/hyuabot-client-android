@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 object Coachmarks {
     const val SHUTTLE = "shuttle"
     const val SHUTTLE_TIMETABLE = "shuttle_timetable"
+    const val SHUTTLE_BUS_ALTERNATIVE = "shuttle_bus_alternative"
     const val BUS = "bus"
     const val SUBWAY = "subway"
     const val CAFETERIA = "cafeteria"
@@ -21,6 +22,7 @@ object Coachmarks {
     val EXISTING_FEATURE_KEYS = setOf(
         SHUTTLE,
         SHUTTLE_TIMETABLE,
+        SHUTTLE_BUS_ALTERNATIVE,
         BUS,
         SUBWAY,
         CAFETERIA,
