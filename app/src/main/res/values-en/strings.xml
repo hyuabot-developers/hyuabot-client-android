@@ -357,6 +357,8 @@
     <string name="coachmark_shuttle_route_desc">Tap the button next to a destination header to expand which stops each route passes through.</string>
     <string name="coachmark_shuttle_via_title">Route and travel time</string>
     <string name="coachmark_shuttle_via_desc">Tap an arrival to see when that bus departs from each stop.</string>
+    <string name="coachmark_shuttle_bus_alternative_title">Shuttle Bus Alternative Info</string>
+    <string name="coachmark_shuttle_bus_alternative_desc">When shuttle bus departures are infrequent, such as during breaks or on weekends, alternative route arrival information is provided for your convenience.</string>
     <string name="coachmark_shuttle_transfer_title">Transfer info</string>
     <string name="coachmark_shuttle_transfer_desc">At the Dormitory and Shuttlecock stops, you can check transfer routes below the arrivals.</string>
     <string name="coachmark_shuttle_stop_title">Stop information</string>

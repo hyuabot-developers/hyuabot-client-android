@@ -337,6 +337,8 @@
     <string name="coachmark_shuttle_route_desc">行き先ヘッダーの横のボタンを押すと、路線別にどのバス停を経由するか展開して見ることができます。</string>
     <string name="coachmark_shuttle_via_title">経由地と所要時間</string>
     <string name="coachmark_shuttle_via_desc">到着項目をタップすると、そのバスが各停留所を何時に出発するか確認できます。</string>
+    <string name="coachmark_shuttle_bus_alternative_title">シャトルバス代替路線情報</string>
+    <string name="coachmark_shuttle_bus_alternative_desc">休暇や週末などシャトルバスの配車間隔が長い時に活用できるよう、代替路線の到着情報が提供されます。</string>
     <string name="coachmark_shuttle_transfer_title">乗換情報</string>
     <string name="coachmark_shuttle_transfer_desc">寮・シャトルコック停留所では、到着情報の下に乗換路線を確認できます。</string>
     <string name="coachmark_shuttle_stop_title">バス停情報</string>

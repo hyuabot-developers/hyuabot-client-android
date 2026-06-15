@@ -337,6 +337,8 @@
     <string name="coachmark_shuttle_route_desc">点击目的地标题旁的按钮，可展开查看各路线途经的站点。</string>
     <string name="coachmark_shuttle_via_title">途经站点与所需时间</string>
     <string name="coachmark_shuttle_via_desc">点击到达条目，可查看该班车在各站点的出发时间。</string>
+    <string name="coachmark_shuttle_bus_alternative_title">班车替代路线信息</string>
+    <string name="coachmark_shuttle_bus_alternative_desc">假期或周末等校车发车间隔较长时，为方便出行将提供替代路线的到站信息。</string>
     <string name="coachmark_shuttle_transfer_title">换乘信息</string>
     <string name="coachmark_shuttle_transfer_desc">在宿舍、羽毛球场站，可在到达信息下方查看换乘路线。</string>
     <string name="coachmark_shuttle_stop_title">站点信息</string>
