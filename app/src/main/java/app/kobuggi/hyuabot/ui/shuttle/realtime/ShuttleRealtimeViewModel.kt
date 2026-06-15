@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import app.kobuggi.hyuabot.ShuttleBusAlternativeQuery
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.ShuttleTransferQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
@@ -40,6 +41,9 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _transfer = MutableLiveData<ShuttleTransferQuery.Data?>(null)
     private val _disposable = CompositeDisposable()
     private val _queryError = MutableLiveData<QueryError?>(null)
+    private val _busAlternativeShuttlecock = MutableLiveData<Int?>(null)
+    private val _busAlternativeDormitory = MutableLiveData<Int?>(null)
+    private val _busAlternativeStation = MutableLiveData<Int?>(null)
 
     val result get() = _result
     val notices get() = _notices
@@ -48,6 +52,9 @@ class ShuttleRealtimeViewModel @Inject constructor(
     val queryError get() = _queryError
     val showDepartureTime get() = _showDepartureTime
     val showByDestination get() = _showByDestination
+    val busAlternativeShuttlecock get() = _busAlternativeShuttlecock
+    val busAlternativeDormitory get() = _busAlternativeDormitory
+    val busAlternativeStation get() = _busAlternativeStation
     val latestShuttleResult = combine(result.asFlow(), showByDestination.asFlow()) { result, showByDestination ->
         ShuttleTabData(result, showByDestination)
     }.onStart { emit(ShuttleTabData(listOf(), false)) }.asLiveData()
@@ -89,6 +96,17 @@ class ShuttleRealtimeViewModel @Inject constructor(
                     .fetchPolicy(FetchPolicy.NetworkOnly)
                     .execute()
             }.getOrNull()?.data?.let { _transfer.value = it }
+        }
+        viewModelScope.launch {
+            runCatching {
+                apolloClient.query(ShuttleBusAlternativeQuery())
+                    .fetchPolicy(FetchPolicy.NetworkOnly)
+                    .execute()
+            }.getOrNull()?.data?.bus?.let { busList ->
+                _busAlternativeShuttlecock.value = busList.firstOrNull { it.stop.seq == 216000379 }?.arrival?.firstOrNull()?.minutes
+                _busAlternativeDormitory.value = busList.firstOrNull { it.stop.seq == 216000383 }?.arrival?.firstOrNull()?.minutes
+                _busAlternativeStation.value = busList.firstOrNull { it.stop.seq == 216000138 }?.arrival?.firstOrNull()?.minutes
+            }
         }
     }
 

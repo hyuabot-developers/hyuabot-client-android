@@ -408,6 +408,9 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
                 shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)))
             }
         }
+        parentViewModel.busAlternativeStation.observe(viewLifecycleOwner) { busMinutes ->
+            updateBusAlternativeDormitory(busMinutes)
+        }
 
         binding.apply {
             headerBoundForStation.visibility = View.GONE
@@ -418,6 +421,13 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
         }
         bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
         return binding.root
+    }
+
+    private fun updateBusAlternativeDormitory(busMinutes: Int?) {
+        binding.busAlternativeDormitory.visibility = if (busMinutes != null) View.VISIBLE else View.GONE
+        if (busMinutes != null) {
+            binding.busAlternativeDormitoryTime.text = getString(R.string.shuttle_bus_alternative_time, busMinutes)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
