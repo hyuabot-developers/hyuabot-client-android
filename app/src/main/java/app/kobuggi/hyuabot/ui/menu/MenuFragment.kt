@@ -38,7 +38,6 @@ class MenuFragment @Inject constructor() : Fragment() {
         MenuItem(R.drawable.ic_map, R.string.menu_map),
         MenuItem(R.drawable.ic_contact, R.string.menu_contact),
         MenuItem(R.drawable.ic_calendar, R.string.menu_calendar),
-        // MenuItem(R.drawable.ic_notice, R.string.menu_notice),
         MenuItem(R.drawable.ic_settings, R.string.menu_settings),
         MenuItem(R.drawable.ic_chat, R.string.menu_chat),
         MenuItem(R.drawable.ic_donate, R.string.menu_donate),
@@ -89,11 +88,6 @@ class MenuFragment @Inject constructor() : Fragment() {
             }
             R.string.menu_calendar -> {
                 MenuFragmentDirections.actionMenuFragmentToCalendarFragment().also {
-                    findNavController().safeNavigate(it)
-                }
-            }
-            R.string.menu_notice -> {
-                MenuFragmentDirections.actionMenuFragmentToNoticeFragment().also {
                     findNavController().safeNavigate(it)
                 }
             }
