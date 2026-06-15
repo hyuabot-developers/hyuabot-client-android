@@ -45,6 +45,10 @@ class BusRealtimeViewModel @Inject constructor(
         }
     }
 
+    fun setSelectedStopID(stopID: Int) {
+        viewModelScope.launch { userPreferencesRepository.setBusStop(stopID) }
+    }
+
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
         val locale = AppCompatDelegate.getApplicationLocales().get(0)

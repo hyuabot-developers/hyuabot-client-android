@@ -50,8 +50,8 @@
         android:label="버스 도착 정보"
         tools:layout="@layout/fragment_bus_realtime">
         <action
-            android:id="@+id/action_busRealtimeFragment_to_busStopDialogFragment"
-            app:destination="@id/busStopDialogFragment" />
+            android:id="@+id/action_busRealtimeFragment_to_busHelpDialogFragment"
+            app:destination="@id/busHelpDialogFragment" />
         <action
             android:id="@+id/action_busRealtimeFragment_to_busTimetableFragment"
             app:destination="@id/busTimetableFragment" />
@@ -61,6 +61,9 @@
         <action
             android:id="@+id/action_busRealtimeFragment_to_noticeWebViewFragment"
             app:destination="@id/noticeWebViewFragment" />
+        <action
+            android:id="@+id/action_busRealtimeFragment_to_busStopInfoFragment"
+            app:destination="@id/busStopInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/busTimetableFragment"
@@ -149,15 +152,6 @@
             android:id="@+id/action_settingFragment_to_settingDeveloperDialogFragment"
             app:destination="@id/settingDeveloperDialogFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/noticeFragment"
-        android:name="app.kobuggi.hyuabot.ui.notice.NoticeFragment"
-        android:label="공지사항"
-        tools:layout="@layout/fragment_notice">
-        <action
-            android:id="@+id/action_noticeFragment_to_noticeWebViewFragment"
-            app:destination="@id/noticeWebViewFragment" />
-    </fragment>
     <dialog
         android:id="@+id/noticeWebViewFragment"
         android:name="app.kobuggi.hyuabot.ui.notice.NoticeWebviewFragment"
@@ -186,9 +180,6 @@
         <action
             android:id="@+id/action_menuFragment_to_readingRoomFragment"
             app:destination="@id/readingRoomFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_noticeFragment"
-            app:destination="@id/noticeFragment" />
         <action
             android:id="@+id/action_menuFragment_to_contactFragment"
             app:destination="@id/contactFragment" />
@@ -233,12 +224,28 @@
         android:label="셔틀 시간표 필터"
         tools:layout="@layout/dialog_shuttle_timetable_filter" />
     <dialog
-        android:id="@+id/busStopDialogFragment"
-        android:name="app.kobuggi.hyuabot.ui.bus.realtime.BusStopDialog"
-        android:label="버스 정류장 정보"
-        tools:layout="@layout/dialog_bus_stop">
+        android:id="@+id/busHelpDialogFragment"
+        android:name="app.kobuggi.hyuabot.ui.bus.realtime.BusHelpDialog"
+        android:label="노선버스 도움말"
+        tools:layout="@layout/dialog_bus_help" />
+    <dialog
+        android:id="@+id/busStopInfoFragment"
+        android:name="app.kobuggi.hyuabot.ui.bus.realtime.BusStopInfoFragment"
+        android:label="버스 정류장 정보">
         <argument
             android:name="stopID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="routeID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="secondRouteID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="thirdRouteID"
             app:argType="integer"
             android:defaultValue="0" />
     </dialog>

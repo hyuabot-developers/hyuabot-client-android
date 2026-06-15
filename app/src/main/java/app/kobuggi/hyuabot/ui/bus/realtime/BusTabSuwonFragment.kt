@@ -38,11 +38,16 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
             binding.noRealtimeDataFirst.visibility = if (arrivalList.isEmpty()) View.VISIBLE else View.GONE
         }
         binding.apply {
-            headerFirst.text = getString(R.string.bus_header_format, "7070/9090", getString(R.string.bus_stop_entrance))
+            headerFirstTitle.text = getString(R.string.bus_header_format, "7070/9090", getString(R.string.bus_stop_entrance))
             realtimeViewFirst.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(context)
+            }
+            headerFirstStopBtn.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000070, 216000104, 200000015).also { direction ->
+                    findNavController().safeNavigate(direction)
+                }
             }
             departureLogFirst.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)

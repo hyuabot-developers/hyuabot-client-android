@@ -37,7 +37,12 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             when (it) {
                 R.string.bus_stop_convention -> {
                     binding.apply {
-                        headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_convention))
+                        headerFirstTitle.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_convention))
+                        headerFirstStopBtn.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000379, 216000061).also { direction ->
+                                findNavController().safeNavigate(direction)
+                            }
+                        }
                         departureLogFirst.setOnClickListener {
                             AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000379, 216000061).also { direction ->
@@ -64,7 +69,12 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 }
                 R.string.bus_stop_cluster -> {
                     binding.apply {
-                        headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_cluster))
+                        headerFirstTitle.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_cluster))
+                        headerFirstStopBtn.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000381, 216000061).also { direction ->
+                                findNavController().safeNavigate(direction)
+                            }
+                        }
                         departureLogFirst.setOnClickListener {
                             AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000381, 216000061).also { direction ->
@@ -94,7 +104,12 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 }
                 R.string.bus_stop_dormitory -> {
                     binding.apply {
-                        headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_dormitory))
+                        headerFirstTitle.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_dormitory))
+                        headerFirstStopBtn.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000383, 216000061).also { direction ->
+                                findNavController().safeNavigate(direction)
+                            }
+                        }
                         departureLogFirst.setOnClickListener {
                             AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000383, 216000061).also { direction ->
@@ -137,17 +152,24 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             binding.noRealtimeDataSecond.visibility = if (arrivalList.isEmpty()) View.VISIBLE else View.GONE
         }
         binding.apply {
-            headerFirst.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_convention))
+            headerFirstTitle.text = getString(R.string.bus_header_format, "3102", getString(R.string.bus_stop_convention))
             realtimeViewFirst.apply {
                 adapter = busFirstAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
             }
-            headerSecond.text = getString(R.string.bus_header_format, "3100/3101/3101N", getString(R.string.bus_stop_main_gate))
+            headerSecondTitle.text = getString(R.string.bus_header_format, "3100/3101/3101N", getString(R.string.bus_stop_main_gate))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
+            }
+            headerSecondStopBtn.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(
+                    216000719, 216000096, 216000026, 216000043
+                ).also { direction ->
+                    findNavController().safeNavigate(direction)
+                }
             }
             departureLogSecond.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)

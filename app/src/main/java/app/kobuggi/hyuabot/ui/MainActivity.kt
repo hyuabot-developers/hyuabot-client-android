@@ -219,7 +219,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.shuttleTimetableFilterDialogFragment -> AnalyticsScreen.SHUTTLE_TIMETABLE_FILTER
         R.id.busRealtimeFragment -> AnalyticsScreen.BUS_REALTIME
         R.id.busTimetableFragment -> AnalyticsScreen.BUS_TIMETABLE
-        R.id.busStopDialogFragment -> AnalyticsScreen.BUS_STOP_INFO
+        R.id.busHelpDialogFragment -> AnalyticsScreen.BUS_HELP
+        R.id.busStopInfoFragment -> AnalyticsScreen.BUS_STOP_INFO
         R.id.busDepartureLogDialogFragment -> AnalyticsScreen.BUS_DEPARTURE_LOG
         R.id.busRouteInfoDialogFragment -> AnalyticsScreen.BUS_ROUTE_INFO
         R.id.subwayRealtimeFragment -> AnalyticsScreen.SUBWAY_REALTIME
@@ -228,7 +229,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.readingRoomFragment -> AnalyticsScreen.READING_ROOM
         R.id.mapFragment -> AnalyticsScreen.MAP
         R.id.settingFragment -> AnalyticsScreen.SETTING
-        R.id.noticeFragment -> AnalyticsScreen.NOTICE
         R.id.noticeWebViewFragment -> AnalyticsScreen.WEB_VIEW
         R.id.contactFragment -> AnalyticsScreen.CONTACT
         R.id.calendarFragment -> AnalyticsScreen.CALENDAR

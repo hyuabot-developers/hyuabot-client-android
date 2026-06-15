@@ -38,6 +38,7 @@ enum class AnalyticsScreen(val id: String) {
     BUS_REALTIME("bus_realtime"),
     BUS_TIMETABLE("bus_timetable"),
     BUS_STOP_INFO("bus_stop_info"),
+    BUS_HELP("bus_help"),
     BUS_DEPARTURE_LOG("bus_departure_log"),
     BUS_ROUTE_INFO("bus_route_info"), // Android: bus route info dialog
 

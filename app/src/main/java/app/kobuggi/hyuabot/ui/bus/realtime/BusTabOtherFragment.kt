@@ -54,11 +54,16 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
             }
         }
         binding.apply {
-            headerFirst.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
+            headerFirstTitle.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
             realtimeViewFirst.apply {
                 adapter = busFirstAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
+            }
+            headerFirstStopBtn.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000759, 216000075).also { direction ->
+                    findNavController().safeNavigate(direction)
+                }
             }
             departureLogFirst.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
@@ -72,11 +77,16 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(direction)
                 }
             }
-            headerSecond.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_gwangmyeong_station))
+            headerSecondTitle.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_gwangmyeong_station))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
+            }
+            headerSecondStopBtn.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(213000487, 216000075).also { direction ->
+                    findNavController().safeNavigate(direction)
+                }
             }
             departureLogSecond.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)

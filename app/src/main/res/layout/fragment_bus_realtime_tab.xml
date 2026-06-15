@@ -27,16 +27,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="75dp">
-                <TextView
+
+                <!-- Section 1 header with stop info button -->
+                <LinearLayout
                     android:id="@+id/header_first"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
+                    <TextView
+                        android:id="@+id/header_first_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        android:paddingStart="40dp" />
+                    <ImageButton
+                        android:id="@+id/header_first_stop_btn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_location"
+                        android:tint="@android:color/white"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@null" />
+                </LinearLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_first"
                     android:layout_width="match_parent"
@@ -79,16 +100,37 @@
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                 </LinearLayout>
-                <TextView
+
+                <!-- Section 2 header with stop info button -->
+                <LinearLayout
                     android:id="@+id/header_second"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:gravity="center"
-                    android:textFontWeight="700"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/button_layout_first" />
+                    app:layout_constraintTop_toBottomOf="@id/button_layout_first">
+                    <TextView
+                        android:id="@+id/header_second_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        android:paddingStart="40dp" />
+                    <ImageButton
+                        android:id="@+id/header_second_stop_btn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_location"
+                        android:tint="@android:color/white"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@null" />
+                </LinearLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_second"
                     android:layout_width="match_parent"
@@ -131,16 +173,37 @@
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                 </LinearLayout>
-                <TextView
+
+                <!-- Section 3 header -->
+                <LinearLayout
                     android:id="@+id/header_third"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:gravity="center"
-                    android:textFontWeight="700"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/button_layout_second" />
+                    app:layout_constraintTop_toBottomOf="@id/button_layout_second">
+                    <TextView
+                        android:id="@+id/header_third_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        android:paddingStart="40dp" />
+                    <ImageButton
+                        android:id="@+id/header_third_stop_btn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_location"
+                        android:tint="@android:color/white"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@null" />
+                </LinearLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_third"
                     android:layout_width="match_parent"
@@ -183,16 +246,37 @@
                         android:textFontWeight="700"
                         style="@style/Widget.Material3.Button.TextButton" />
                 </LinearLayout>
-                <TextView
+
+                <!-- Section 4 header -->
+                <LinearLayout
                     android:id="@+id/header_fourth"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:gravity="center"
-                    android:textFontWeight="700"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:background="@color/hanyang_blue"
-                    app:layout_constraintTop_toBottomOf="@id/button_layout_third" />
+                    app:layout_constraintTop_toBottomOf="@id/button_layout_third">
+                    <TextView
+                        android:id="@+id/header_fourth_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textFontWeight="700"
+                        android:paddingStart="40dp" />
+                    <ImageButton
+                        android:id="@+id/header_fourth_stop_btn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_location"
+                        android:tint="@android:color/white"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@null" />
+                </LinearLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_fourth"
                     android:layout_width="match_parent"
