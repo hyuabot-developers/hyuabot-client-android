@@ -155,11 +155,21 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
 
     @SuppressLint("MissingPermission")
     private fun moveToNearestStop(client: FusedLocationProviderClient) {
-        val stops = listOf(
-            Triple(R.string.bus_stop_convention, 37.2935, 126.8368),
-            Triple(R.string.bus_stop_cluster, 37.2953, 126.8382),
-            Triple(R.string.bus_stop_dormitory, 37.2966, 126.8394)
-        )
+        val stops = viewModel.result.value
+            ?.distinctBy { it.stop.seq }
+            ?.filter { it.stop.seq in listOf(216000379, 216000381, 216000383) }
+            ?.map { item ->
+                val resId = when (item.stop.seq) {
+                    216000379 -> R.string.bus_stop_convention
+                    216000381 -> R.string.bus_stop_cluster
+                    216000383 -> R.string.bus_stop_dormitory
+                    else -> -1
+                }
+                Triple(resId, item.stop.latitude, item.stop.longitude)
+            } ?: emptyList()
+
+        if (stops.isEmpty()) return
+
         fun selectNearest(location: Location) {
             if (setClosestStop) return
             val nearest = stops.minByOrNull { (_, lat, lng) ->
@@ -171,6 +181,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                 viewModel.setSelectedStopID(stopRes)
             }
         }
+
         client.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null && isFresh(location)) {
