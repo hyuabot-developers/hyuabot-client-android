@@ -380,14 +380,14 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
         if (data != null) {
             binding.busAccentBarTerminal.setBackgroundColor(color)
             binding.busAlternativeTerminalRoute.setTextColor(color)
-            binding.busAlternativeTerminalRoute.text = data.routeDisplayName
+            binding.busAlternativeTerminalRoute.text = getString(data.routeDisplayName)
             binding.busAlternativeTerminalTime.text = if (data.minutes != null)
                 getString(R.string.shuttle_bus_alternative_time, data.minutes)
             else getString(R.string.shuttle_bus_alternative_no_data)
 
             binding.busAccentBarJungangStation.setBackgroundColor(color)
             binding.busAlternativeJungangStationRoute.setTextColor(color)
-            binding.busAlternativeJungangStationRoute.text = data.routeDisplayName
+            binding.busAlternativeJungangStationRoute.text = getString(data.routeDisplayName)
             binding.busAlternativeJungangStationTime.text = binding.busAlternativeTerminalTime.text
         }
     }

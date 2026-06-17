@@ -193,7 +193,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
         if (data80 != null) {
             binding.busAccentBarDormitory.setBackgroundColor(blueColor)
             binding.busAlternativeDormitoryRoute.setTextColor(blueColor)
-            binding.busAlternativeDormitoryRoute.text = data80.routeDisplayName
+            binding.busAlternativeDormitoryRoute.text = getString(data80.routeDisplayName)
             binding.busAlternativeDormitoryTime.text = if (data80.minutes != null)
                 getString(R.string.shuttle_bus_alternative_time, data80.minutes)
             else getString(R.string.shuttle_bus_alternative_no_data)

@@ -23,8 +23,18 @@
     <string name="shuttle_footer_help">ヘルプ</string>
     <string name="shuttle_no_realtime_data">到着情報がありません。</string>
     <string name="shuttle_time_type_1">%1$s時%2$s分発</string>
-    <string name="shuttle_time_type_2">%1$s分後出発</string>
+    <string name="shuttle_time_type_2">%1$s分</string>
     <string name="shuttle_time_type_3">%1$s:%2$s</string>
+    <string name="shuttle_bus_alternative_route">10-1（常緑樹駅発）</string>
+    <string name="shuttle_bus_alternative_route_campus">10-1（常緑樹駅方面）</string>
+    <string name="shuttle_bus_alternative_route_62_terminal">62（城安街入口）</string>
+    <string name="shuttle_bus_alternative_route_62_dormitory">62（シャトルコック方面）</string>
+    <string name="shuttle_bus_alternative_route_80a">80A（京畿テクノパーク）</string>
+    <string name="shuttle_bus_alternative_route_n80a">N80A（京畿テクノパーク）</string>
+    <string name="shuttle_bus_alternative_route_80b">80B（寮方面）</string>
+    <string name="shuttle_bus_alternative_route_n80b">N80B（寮方面）</string>
+    <string name="shuttle_bus_alternative_time">%1$d分</string>
+    <string name="shuttle_bus_alternative_no_data">到着情報なし</string>
     <string name="shuttle_type_direct">直行</string>
     <string name="shuttle_type_circular">循環</string>
     <string name="shuttle_type_jungang">中央駅</string>
@@ -90,23 +100,24 @@
         <item>@string/bus_stop_convention</item>
     </string-array>
     <plurals name="bus_realtime_format_seats">
-        <item quantity="one">%1$d分後到着（%2$d前、%3$d席）</item>
-        <item quantity="other">%1$d分後到着（%2$d前、%3$d席）</item>
+        <item quantity="one">%1$d分（%2$d前、%3$d席）</item>
+        <item quantity="other">%1$d分（%2$d前、%3$d席）</item>
     </plurals>
     <plurals name="bus_realtime_format_no_seats">
-        <item quantity="one">%1$d分後到着（%2$d前）</item>
-        <item quantity="other">%1$d分後到着（%2$d前）</item>
+        <item quantity="one">%1$d分（%2$d前）</item>
+        <item quantity="other">%1$d分（%2$d前）</item>
     </plurals>
     <string name="bus_timetable_format">%1$s時%2$s分発</string>
     <plurals name="bus_realtime_format_seats_last">
-        <item quantity="one">%1$d分後到着（%2$d前、%3$d席、終バス）</item>
-        <item quantity="other">%1$d分後到着（%2$d前、%3$d席、終バス）</item>
+        <item quantity="one">%1$d分（%2$d前、%3$d席、終バス）</item>
+        <item quantity="other">%1$d分（%2$d前、%3$d席、終バス）</item>
     </plurals>
     <plurals name="bus_realtime_format_no_seats_last">
-        <item quantity="one">%1$d分後到着（%2$d前、終バス）</item>
-        <item quantity="other">%1$d分後到着（%2$d前、終バス）</item>
+        <item quantity="one">%1$d分（%2$d前、終バス）</item>
+        <item quantity="other">%1$d分（%2$d前、終バス）</item>
     </plurals>
     <string name="bus_timetable_format_last">%1$s時%2$s分発（終バス）</string>
+    <string name="bus_arrival_estimated_format">%1$d分（予定）</string>
     <string name="bus_no_realtime_data">到着情報がありません。</string>
     <string name="bus_departure_log">出発記録</string>
     <string name="bus_departure_log_date_format">%1$d/%2$d（%3$s）</string>
@@ -134,7 +145,7 @@
     <string name="subway_tab_blue">4号線</string>
     <string name="subway_tab_yellow">水仁盆唐線</string>
     <string name="subway_tab_transfer">仁川↔韓大前</string>
-    <string name="subway_blue_up">上り（堂高介・사당）</string>
+    <string name="subway_blue_up">上り（堂高介・舎堂）</string>
     <string name="subway_blue_down">下り（五耳島・安山）</string>
     <string name="subway_yellow_up">上り（往十里・水原）</string>
     <string name="subway_yellow_down">下り（仁川・五耳島）</string>
@@ -157,12 +168,12 @@
     <string name="subway_realtime_destination_format">%1$s行</string>
     <string name="subway_realtime_destination_format_last">%1$s行（終電）</string>
     <plurals name="subway_realtime_format">
-        <item quantity="one">%1$d分後到着（%2$s）</item>
-        <item quantity="other">%1$d分後到着（%2$s）</item>
+        <item quantity="one">%1$d分 · %3$d駅前</item>
+        <item quantity="other">%1$d分 · %3$d駅前</item>
     </plurals>
     <plurals name="subway_realtime_timetable_format">
-        <item quantity="one">%1$d分後到着</item>
-        <item quantity="other">%1$d分後到着</item>
+        <item quantity="one">%1$d分</item>
+        <item quantity="other">%1$d分</item>
     </plurals>
     <string name="subway_station_K209">清涼里</string>
     <string name="subway_station_K210">往十里</string>
@@ -266,7 +277,8 @@
     <string name="theme_system">システム</string>
     <string name="campus_erica">ERICA</string>
     <string name="campus_seoul">ソウル</string>
-    <string name="empty_cafeteria">メニュー情報がありません。</string>
+    <string name="bus_low_floor">低床</string>
+    <string name="empty_cafeteria">本日のメニューは登録されていません。</string>
     <string name="language_korean">한국어</string>
     <string name="language_english">English</string>
     <string name="language_japanese">日本語</string>
@@ -379,4 +391,22 @@
     <string name="coachmark_shuttle_widget_desc">ホーム画面に「シャトル」ウィジェットと「シャトル+乗換」ウィジェットを追加すると、アプリを開かなくても最寄りのバス停の到着・乗換情報をすぐに確認できます。</string>
     <string name="coachmark_cafeteria_widget_title">学食ウィジェット</string>
     <string name="coachmark_cafeteria_widget_desc">ホーム画面に「学食」ウィジェットを追加すると、今日のメニューをすぐに確認できます。</string>
+    <string name="language_suggestion_title">言語切替の提案</string>
+    <string name="language_suggestion_message">システム言語が%1$sに設定されています。アプリの言語を変更しますか？</string>
+    <string name="language_suggestion_keep_english">英語を維持</string>
+    <string name="bus_help_title">バスのヘルプ</string>
+    <string name="bus_help_realtime_title">1. リアルタイム到着情報</string>
+    <string name="bus_help_realtime_content">バス到着までの残り時間をリアルタイムで確認できます。</string>
+    <string name="bus_help_timetable_title">2. 時刻表の表示</string>
+    <string name="bus_help_timetable_content">全時刻表ボタンを押すと、路線別の時刻表を確認できます。</string>
+    <string name="bus_help_departure_title">3. 出発記録</string>
+    <string name="bus_help_departure_content">出発記録ボタンを押すと、最近のバス出発履歴を確認できます。</string>
+    <string name="bus_help_stop_title">4. 停留所情報</string>
+    <string name="bus_help_stop_content">路線ヘッダーの位置アイコンを押すと、停留所の位置と始発・終バスの情報を確認できます。</string>
+    <string name="bus_stop_info_title">停留所情報</string>
+    <string name="bus_stop_info_empty">停留所情報を読み込めません。</string>
+    <string name="bus_stop_info_error">情報の読み込みに失敗しました。</string>
+    <string name="bus_first_last_up">上り: 始発 %1$s / 終バス %2$s</string>
+    <string name="bus_first_last_down">下り: 始発 %1$s / 終バス %2$s</string>
+    <string name="bus_stop_first_last_title">始発・終バス情報</string>
 </resources>

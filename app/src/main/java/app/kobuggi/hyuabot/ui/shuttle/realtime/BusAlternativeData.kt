@@ -1,3 +1,5 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 
-data class BusAlternativeData(val routeDisplayName: String, val minutes: Int?)
+import androidx.annotation.StringRes
+
+data class BusAlternativeData(@StringRes val routeDisplayName: Int, val minutes: Int?)

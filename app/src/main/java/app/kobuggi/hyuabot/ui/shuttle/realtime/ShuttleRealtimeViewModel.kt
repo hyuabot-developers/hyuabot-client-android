@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleBusAlternativeQuery
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.ShuttleTransferQuery
@@ -128,8 +129,8 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 val m80A = busList.firstOrNull { it.route.seq == 216000081 && it.stop.seq == 216000028 }?.arrival?.firstOrNull()?.minutes
                 val mN80A = busList.firstOrNull { it.route.seq == 216000101 && it.stop.seq == 216000028 }?.arrival?.firstOrNull()?.minutes
                 _busAlternativeDormitory80.value = selectBestRoute(
-                    m80A to "80A (경기테크노파크)",
-                    mN80A to "N80A (경기테크노파크)"
+                    m80A to R.string.shuttle_bus_alternative_route_80a,
+                    mN80A to R.string.shuttle_bus_alternative_route_n80a
                 )
 
                 _busAlternativeShuttlecock62.value = busList.firstOrNull { it.route.seq == 216000016 && it.stop.seq == 216000152 }?.arrival?.firstOrNull()?.minutes
@@ -137,8 +138,8 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 val m80B_t = busList.firstOrNull { it.route.seq == 216000082 && it.stop.seq == 216000077 }?.arrival?.firstOrNull()?.minutes
                 val mN80B_t = busList.firstOrNull { it.route.seq == 216000102 && it.stop.seq == 216000077 }?.arrival?.firstOrNull()?.minutes
                 _busAlternativeTerminal80.value = selectBestRoute(
-                    m80B_t to "80B (기숙사 방면)",
-                    mN80B_t to "N80B (기숙사 방면)"
+                    m80B_t to R.string.shuttle_bus_alternative_route_80b,
+                    mN80B_t to R.string.shuttle_bus_alternative_route_n80b
                 )
 
                 _busAlternativeTerminal62.value = busList.firstOrNull { it.route.seq == 216000016 && it.stop.seq == 216000074 }?.arrival?.firstOrNull()?.minutes
@@ -146,8 +147,8 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 val m80B_j = busList.firstOrNull { it.route.seq == 216000082 && it.stop.seq == 217000140 }?.arrival?.firstOrNull()?.minutes
                 val mN80B_j = busList.firstOrNull { it.route.seq == 216000102 && it.stop.seq == 217000140 }?.arrival?.firstOrNull()?.minutes
                 _busAlternativeJungang80.value = selectBestRoute(
-                    m80B_j to "80B (기숙사 방면)",
-                    mN80B_j to "N80B (기숙사 방면)"
+                    m80B_j to R.string.shuttle_bus_alternative_route_80b,
+                    mN80B_j to R.string.shuttle_bus_alternative_route_n80b
                 )
 
                 _busAlternativeJungang62.value = busList.firstOrNull { it.route.seq == 216000016 && it.stop.seq == 217000264 }?.arrival?.firstOrNull()?.minutes
@@ -155,7 +156,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
         }
     }
 
-    private fun selectBestRoute(vararg options: Pair<Int?, String>): BusAlternativeData? {
+    private fun selectBestRoute(vararg options: Pair<Int?, Int>): BusAlternativeData? {
         val best = options.filter { it.first != null }.minByOrNull { it.first!! }
         return best?.let { BusAlternativeData(it.second, it.first) }
     }

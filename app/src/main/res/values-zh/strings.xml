@@ -23,8 +23,18 @@
     <string name="shuttle_footer_help">帮助</string>
     <string name="shuttle_no_realtime_data">暂无到达信息。</string>
     <string name="shuttle_time_type_1">%1$s时%2$s分出发</string>
-    <string name="shuttle_time_type_2">%1$s分钟后出发</string>
+    <string name="shuttle_time_type_2">%1$s分</string>
     <string name="shuttle_time_type_3">%1$s:%2$s</string>
+    <string name="shuttle_bus_alternative_route">10-1（常绿树站出发）</string>
+    <string name="shuttle_bus_alternative_route_campus">10-1（常绿树站方向）</string>
+    <string name="shuttle_bus_alternative_route_62_terminal">62（城安街入口）</string>
+    <string name="shuttle_bus_alternative_route_62_dormitory">62（羽毛球场方向）</string>
+    <string name="shuttle_bus_alternative_route_80a">80A（京畿技术园区）</string>
+    <string name="shuttle_bus_alternative_route_n80a">N80A（京畿技术园区）</string>
+    <string name="shuttle_bus_alternative_route_80b">80B（宿舍方向）</string>
+    <string name="shuttle_bus_alternative_route_n80b">N80B（宿舍方向）</string>
+    <string name="shuttle_bus_alternative_time">%1$d分</string>
+    <string name="shuttle_bus_alternative_no_data">暂无到站信息</string>
     <string name="shuttle_type_direct">直达</string>
     <string name="shuttle_type_circular">循环</string>
     <string name="shuttle_type_jungang">中央站</string>
@@ -90,23 +100,24 @@
         <item>@string/bus_stop_convention</item>
     </string-array>
     <plurals name="bus_realtime_format_seats">
-        <item quantity="one">%1$d分钟后到达（%2$d前，%3$d席）</item>
-        <item quantity="other">%1$d分钟后到达（%2$d前，%3$d席）</item>
+        <item quantity="one">%1$d分（%2$d前，%3$d席）</item>
+        <item quantity="other">%1$d分（%2$d前，%3$d席）</item>
     </plurals>
     <plurals name="bus_realtime_format_no_seats">
-        <item quantity="one">%1$d分钟后到达（%2$d前）</item>
-        <item quantity="other">%1$d分钟后到达（%2$d前）</item>
+        <item quantity="one">%1$d分（%2$d前）</item>
+        <item quantity="other">%1$d分（%2$d前）</item>
     </plurals>
     <string name="bus_timetable_format">%1$s时%2$s分出发</string>
     <plurals name="bus_realtime_format_seats_last">
-        <item quantity="one">%1$d分钟后到达（%2$d前，%3$d席，末班）</item>
-        <item quantity="other">%1$d分钟后到达（%2$d前，%3$d席，末班）</item>
+        <item quantity="one">%1$d分（%2$d前，%3$d席，末班）</item>
+        <item quantity="other">%1$d分（%2$d前，%3$d席，末班）</item>
     </plurals>
     <plurals name="bus_realtime_format_no_seats_last">
-        <item quantity="one">%1$d分钟后到达（%2$d前，末班）</item>
-        <item quantity="other">%1$d分钟后到达（%2$d前，末班）</item>
+        <item quantity="one">%1$d分（%2$d前，末班）</item>
+        <item quantity="other">%1$d分（%2$d前，末班）</item>
     </plurals>
     <string name="bus_timetable_format_last">%1$s时%2$s分出发（末班）</string>
+    <string name="bus_arrival_estimated_format">%1$d分（预计）</string>
     <string name="bus_no_realtime_data">暂无到达信息。</string>
     <string name="bus_departure_log">出发记录</string>
     <string name="bus_departure_log_date_format">%1$d/%2$d（%3$s）</string>
@@ -157,12 +168,12 @@
     <string name="subway_realtime_destination_format">%1$s方向</string>
     <string name="subway_realtime_destination_format_last">%1$s方向（末班）</string>
     <plurals name="subway_realtime_format">
-        <item quantity="one">%1$d分钟后到达（%2$s）</item>
-        <item quantity="other">%1$d分钟后到达（%2$s）</item>
+        <item quantity="one">%1$d分 · %3$d站前</item>
+        <item quantity="other">%1$d分 · %3$d站前</item>
     </plurals>
     <plurals name="subway_realtime_timetable_format">
-        <item quantity="one">%1$d分钟后到达</item>
-        <item quantity="other">%1$d分钟后到达</item>
+        <item quantity="one">%1$d分</item>
+        <item quantity="other">%1$d分</item>
     </plurals>
     <string name="subway_station_K209">清凉里</string>
     <string name="subway_station_K210">往十里</string>
@@ -266,7 +277,8 @@
     <string name="theme_system">系统</string>
     <string name="campus_erica">ERICA</string>
     <string name="campus_seoul">首尔</string>
-    <string name="empty_cafeteria">暂无菜单信息。</string>
+    <string name="bus_low_floor">低地板</string>
+    <string name="empty_cafeteria">今天的菜单尚未登记。</string>
     <string name="language_korean">한국어</string>
     <string name="language_english">English</string>
     <string name="language_japanese">日本語</string>
@@ -379,4 +391,22 @@
     <string name="coachmark_shuttle_widget_desc">在主屏幕添加「校车」小组件和「校车+换乘」小组件，无需打开应用即可直接查看最近站点的到达及换乘信息。</string>
     <string name="coachmark_cafeteria_widget_title">学食小组件</string>
     <string name="coachmark_cafeteria_widget_desc">在主屏幕添加「学食」小组件，可随时查看今日菜单。</string>
+    <string name="language_suggestion_title">语言切换建议</string>
+    <string name="language_suggestion_message">您的系统语言设置为%1$s。是否切换应用语言？</string>
+    <string name="language_suggestion_keep_english">保持英语</string>
+    <string name="bus_help_title">公交帮助</string>
+    <string name="bus_help_realtime_title">1. 实时到达信息</string>
+    <string name="bus_help_realtime_content">可以实时确认公交到达前的剩余时间。</string>
+    <string name="bus_help_timetable_title">2. 查看时刻表</string>
+    <string name="bus_help_timetable_content">点击全部时刻表按钮，可查看各路线的时刻表。</string>
+    <string name="bus_help_departure_title">3. 出发记录</string>
+    <string name="bus_help_departure_content">点击出发记录按钮，可查看最近的公交出发记录。</string>
+    <string name="bus_help_stop_title">4. 站点信息</string>
+    <string name="bus_help_stop_content">点击路线标题中的位置图标，可查看站点位置及首末班信息。</string>
+    <string name="bus_stop_info_title">站点信息</string>
+    <string name="bus_stop_info_empty">无法加载站点信息。</string>
+    <string name="bus_stop_info_error">信息加载失败。</string>
+    <string name="bus_first_last_up">上行: 首班 %1$s / 末班 %2$s</string>
+    <string name="bus_first_last_down">下行: 首班 %1$s / 末班 %2$s</string>
+    <string name="bus_stop_first_last_title">首末班信息</string>
 </resources>
