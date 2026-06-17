@@ -31,12 +31,21 @@ class SubwayRealtimeListAdapter(
                         getTerminalString(arrival.terminal.stationID),
                     )
                 }
-                binding.subwayTimeText.text = context.resources.getQuantityString(
-                    R.plurals.subway_realtime_format,
-                    arrival.minutes,
-                    arrival.minutes,
-                    arrival.location ?: '-'
-                )
+                binding.subwayTimeText.text = if (arrival.stops != null && arrival.stops > 0) {
+                    context.resources.getQuantityString(
+                        R.plurals.subway_realtime_format,
+                        arrival.minutes,
+                        arrival.minutes,
+                        arrival.location ?: '-',
+                        arrival.stops
+                    )
+                } else {
+                    context.resources.getQuantityString(
+                        R.plurals.subway_realtime_timetable_format,
+                        arrival.minutes,
+                        arrival.minutes,
+                    )
+                }
             } else {
                 binding.apply {
                     subwayDestinationText.text = context.getString(
