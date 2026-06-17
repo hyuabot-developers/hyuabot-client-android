@@ -23,7 +23,9 @@ class BusRealtimeListAdapter(
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: BusArrivalItem, position: Int) {
             val routeName = item.route
-            val item = item.item
+            val arrival = item.item
+            binding.busLowFloorBadge.visibility = if (arrival.lowFloor == true) android.view.View.VISIBLE else android.view.View.GONE
+            val item = arrival
             if (item.isRealtime) {
                 binding.busRouteText.apply {
                     text = routeName
