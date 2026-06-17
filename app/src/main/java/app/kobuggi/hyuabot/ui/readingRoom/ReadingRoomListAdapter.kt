@@ -28,6 +28,14 @@ class ReadingRoomListAdapter(
                     isSelected = notifications.contains(room.seq)
                     setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM); onClick(room, !isSelected) }
                 }
+                val progress = if (room.seats.active > 0) (room.seats.occupied * 100) / room.seats.active else 0
+                readingRoomProgress.progress = progress
+                val indicatorColor = when {
+                    progress >= 90 -> context.getColor(R.color.red_bus)
+                    progress >= 70 -> context.getColor(android.R.color.holo_orange_light)
+                    else -> context.getColor(R.color.green_bus)
+                }
+                readingRoomProgress.setIndicatorColor(indicatorColor)
             }
         }
     }
