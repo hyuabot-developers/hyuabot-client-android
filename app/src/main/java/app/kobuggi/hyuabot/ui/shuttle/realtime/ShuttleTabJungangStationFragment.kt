@@ -175,8 +175,37 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
             entireTimetableBoundForJungangStation.visibility = View.GONE
             entireTimetableJungangStation.visibility = View.GONE
         }
+        parentViewModel.busAlternativeJungang80.observe(viewLifecycleOwner) { data ->
+            updateBusAlternativeDormitory(data, parentViewModel.busAlternativeJungang62.value)
+        }
+        parentViewModel.busAlternativeJungang62.observe(viewLifecycleOwner) { busMinutes ->
+            updateBusAlternativeDormitory(parentViewModel.busAlternativeJungang80.value, busMinutes)
+        }
         bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
         return binding.root
+    }
+
+    private fun updateBusAlternativeDormitory(data80: BusAlternativeData?, minutes62: Int?) {
+        val blueColor = requireContext().getColor(R.color.blue_bus)
+        val greenColor = requireContext().getColor(R.color.green_bus)
+
+        binding.busAlternativeDormitory.visibility = if (data80 != null) View.VISIBLE else View.GONE
+        if (data80 != null) {
+            binding.busAccentBarDormitory.setBackgroundColor(blueColor)
+            binding.busAlternativeDormitoryRoute.setTextColor(blueColor)
+            binding.busAlternativeDormitoryRoute.text = data80.routeDisplayName
+            binding.busAlternativeDormitoryTime.text = if (data80.minutes != null)
+                getString(R.string.shuttle_bus_alternative_time, data80.minutes)
+            else getString(R.string.shuttle_bus_alternative_no_data)
+        }
+
+        binding.busAlternativeDormitory2.visibility = if (minutes62 != null) View.VISIBLE else View.GONE
+        if (minutes62 != null) {
+            binding.busAccentBarDormitory2.setBackgroundColor(greenColor)
+            binding.busAlternativeDormitory2Route.setTextColor(greenColor)
+            binding.busAlternativeDormitory2Route.text = getString(R.string.shuttle_bus_alternative_route_62_dormitory)
+            binding.busAlternativeDormitory2Time.text = getString(R.string.shuttle_bus_alternative_time, minutes62)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

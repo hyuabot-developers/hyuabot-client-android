@@ -44,6 +44,12 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _busAlternativeShuttlecock = MutableLiveData<Int?>(null)
     private val _busAlternativeDormitory = MutableLiveData<Int?>(null)
     private val _busAlternativeStation = MutableLiveData<Int?>(null)
+    private val _busAlternativeDormitory80 = MutableLiveData<BusAlternativeData?>(null)
+    private val _busAlternativeShuttlecock62 = MutableLiveData<Int?>(null)
+    private val _busAlternativeTerminal80 = MutableLiveData<BusAlternativeData?>(null)
+    private val _busAlternativeTerminal62 = MutableLiveData<Int?>(null)
+    private val _busAlternativeJungang80 = MutableLiveData<BusAlternativeData?>(null)
+    private val _busAlternativeJungang62 = MutableLiveData<Int?>(null)
     private val _forceShowBusAlternative = MutableLiveData<Boolean>(false)
 
     val result get() = _result
@@ -56,6 +62,12 @@ class ShuttleRealtimeViewModel @Inject constructor(
     val busAlternativeShuttlecock get() = _busAlternativeShuttlecock
     val busAlternativeDormitory get() = _busAlternativeDormitory
     val busAlternativeStation get() = _busAlternativeStation
+    val busAlternativeDormitory80 get() = _busAlternativeDormitory80
+    val busAlternativeShuttlecock62 get() = _busAlternativeShuttlecock62
+    val busAlternativeTerminal80 get() = _busAlternativeTerminal80
+    val busAlternativeTerminal62 get() = _busAlternativeTerminal62
+    val busAlternativeJungang80 get() = _busAlternativeJungang80
+    val busAlternativeJungang62 get() = _busAlternativeJungang62
     val forceShowBusAlternative get() = _forceShowBusAlternative
 
     fun setForceShowBusAlternative(show: Boolean) {
@@ -109,11 +121,43 @@ class ShuttleRealtimeViewModel @Inject constructor(
                     .fetchPolicy(FetchPolicy.NetworkOnly)
                     .execute()
             }.getOrNull()?.data?.bus?.let { busList ->
-                _busAlternativeShuttlecock.value = busList.firstOrNull { it.stop.seq == 216000379 }?.arrival?.firstOrNull()?.minutes
-                _busAlternativeDormitory.value = busList.firstOrNull { it.stop.seq == 216000383 }?.arrival?.firstOrNull()?.minutes
-                _busAlternativeStation.value = busList.firstOrNull { it.stop.seq == 216000138 }?.arrival?.firstOrNull()?.minutes
+                _busAlternativeShuttlecock.value = busList.firstOrNull { it.route.seq == 216000068 && it.stop.seq == 216000379 }?.arrival?.firstOrNull()?.minutes
+                _busAlternativeDormitory.value = busList.firstOrNull { it.route.seq == 216000068 && it.stop.seq == 216000383 }?.arrival?.firstOrNull()?.minutes
+                _busAlternativeStation.value = busList.firstOrNull { it.route.seq == 216000068 && it.stop.seq == 216000138 }?.arrival?.firstOrNull()?.minutes
+
+                val m80A = busList.firstOrNull { it.route.seq == 216000081 && it.stop.seq == 216000028 }?.arrival?.firstOrNull()?.minutes
+                val mN80A = busList.firstOrNull { it.route.seq == 216000101 && it.stop.seq == 216000028 }?.arrival?.firstOrNull()?.minutes
+                _busAlternativeDormitory80.value = selectBestRoute(
+                    m80A to "80A (경기테크노파크)",
+                    mN80A to "N80A (경기테크노파크)"
+                )
+
+                _busAlternativeShuttlecock62.value = busList.firstOrNull { it.route.seq == 216000016 && it.stop.seq == 216000152 }?.arrival?.firstOrNull()?.minutes
+
+                val m80B_t = busList.firstOrNull { it.route.seq == 216000082 && it.stop.seq == 216000077 }?.arrival?.firstOrNull()?.minutes
+                val mN80B_t = busList.firstOrNull { it.route.seq == 216000102 && it.stop.seq == 216000077 }?.arrival?.firstOrNull()?.minutes
+                _busAlternativeTerminal80.value = selectBestRoute(
+                    m80B_t to "80B (기숙사 방면)",
+                    mN80B_t to "N80B (기숙사 방면)"
+                )
+
+                _busAlternativeTerminal62.value = busList.firstOrNull { it.route.seq == 216000016 && it.stop.seq == 216000074 }?.arrival?.firstOrNull()?.minutes
+
+                val m80B_j = busList.firstOrNull { it.route.seq == 216000082 && it.stop.seq == 217000140 }?.arrival?.firstOrNull()?.minutes
+                val mN80B_j = busList.firstOrNull { it.route.seq == 216000102 && it.stop.seq == 217000140 }?.arrival?.firstOrNull()?.minutes
+                _busAlternativeJungang80.value = selectBestRoute(
+                    m80B_j to "80B (기숙사 방면)",
+                    mN80B_j to "N80B (기숙사 방면)"
+                )
+
+                _busAlternativeJungang62.value = busList.firstOrNull { it.route.seq == 216000016 && it.stop.seq == 217000264 }?.arrival?.firstOrNull()?.minutes
             }
         }
+    }
+
+    private fun selectBestRoute(vararg options: Pair<Int?, String>): BusAlternativeData? {
+        val best = options.filter { it.first != null }.minByOrNull { it.first!! }
+        return best?.let { BusAlternativeData(it.second, it.first) }
     }
 
     fun setRemainingTimeVisibility(isVisible: Boolean) {

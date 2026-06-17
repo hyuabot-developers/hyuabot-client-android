@@ -345,6 +345,9 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
         parentViewModel.forceShowBusAlternative.observe(viewLifecycleOwner) { forceShow ->
             updateBusAlternativeStation(parentViewModel.busAlternativeShuttlecock.value, forceShow)
         }
+        parentViewModel.busAlternativeShuttlecock62.observe(viewLifecycleOwner) { busMinutes ->
+            updateBusAlternative62(busMinutes)
+        }
 
         binding.apply {
             headerBoundForDormitory.visibility = View.GONE
@@ -367,6 +370,24 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             binding.busAlternativeStationTime.text = if (busMinutes != null)
                 getString(R.string.shuttle_bus_alternative_time, busMinutes)
             else getString(R.string.shuttle_bus_alternative_no_data)
+        }
+    }
+
+    private fun updateBusAlternative62(busMinutes: Int?) {
+        val color = requireContext().getColor(R.color.green_bus)
+        binding.busAlternativeTerminal.visibility = if (busMinutes != null) View.VISIBLE else View.GONE
+        binding.busAlternativeJungangStation.visibility = if (busMinutes != null) View.VISIBLE else View.GONE
+        if (busMinutes != null) {
+            val timeText = getString(R.string.shuttle_bus_alternative_time, busMinutes)
+            val routeText = getString(R.string.shuttle_bus_alternative_route_62_terminal)
+            binding.busAccentBarTerminal.setBackgroundColor(color)
+            binding.busAlternativeTerminalRoute.setTextColor(color)
+            binding.busAlternativeTerminalRoute.text = routeText
+            binding.busAlternativeTerminalTime.text = timeText
+            binding.busAccentBarJungangStation.setBackgroundColor(color)
+            binding.busAlternativeJungangStationRoute.setTextColor(color)
+            binding.busAlternativeJungangStationRoute.text = routeText
+            binding.busAlternativeJungangStationTime.text = timeText
         }
     }
 

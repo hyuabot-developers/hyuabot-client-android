@@ -25,8 +25,10 @@
     <string name="shuttle_footer_stop_info">정류장 정보</string>
     <string name="shuttle_footer_help">셔틀버스 도움말</string>
     <!-- 셔틀버스 도착 정보 없음 -->
-    <string name="shuttle_bus_alternative_route">10-1 (상록수역 방면)</string>
-    <string name="shuttle_bus_alternative_route_campus">10-1 (상록수역 출발)</string>
+    <string name="shuttle_bus_alternative_route">10-1 (상록수역 출발)</string>
+    <string name="shuttle_bus_alternative_route_campus">10-1 (상록수역 방면)</string>
+    <string name="shuttle_bus_alternative_route_62_terminal">62 (성안길입구)</string>
+    <string name="shuttle_bus_alternative_route_62_dormitory">62 (셔틀콕 방면)</string>
     <string name="shuttle_bus_alternative_time">%1$d분 후 도착</string>
     <string name="shuttle_bus_alternative_no_data">도착 정보 없음</string>
     <string name="shuttle_no_realtime_data">도착 정보가 없습니다.</string>

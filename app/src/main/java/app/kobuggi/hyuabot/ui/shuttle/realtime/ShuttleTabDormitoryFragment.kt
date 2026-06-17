@@ -346,6 +346,9 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
         parentViewModel.forceShowBusAlternative.observe(viewLifecycleOwner) { forceShow ->
             updateBusAlternativeStation(parentViewModel.busAlternativeDormitory.value, forceShow)
         }
+        parentViewModel.busAlternativeDormitory80.observe(viewLifecycleOwner) { data ->
+            updateBusAlternative80(data)
+        }
         binding.apply {
             headerBoundForDormitory.visibility = View.GONE
             realtimeViewBoundForDormitory.visibility = View.GONE
@@ -367,6 +370,25 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             binding.busAlternativeStationTime.text = if (busMinutes != null)
                 getString(R.string.shuttle_bus_alternative_time, busMinutes)
             else getString(R.string.shuttle_bus_alternative_no_data)
+        }
+    }
+
+    private fun updateBusAlternative80(data: BusAlternativeData?) {
+        val color = requireContext().getColor(R.color.blue_bus)
+        binding.busAlternativeTerminal.visibility = if (data != null) View.VISIBLE else View.GONE
+        binding.busAlternativeJungangStation.visibility = if (data != null) View.VISIBLE else View.GONE
+        if (data != null) {
+            binding.busAccentBarTerminal.setBackgroundColor(color)
+            binding.busAlternativeTerminalRoute.setTextColor(color)
+            binding.busAlternativeTerminalRoute.text = data.routeDisplayName
+            binding.busAlternativeTerminalTime.text = if (data.minutes != null)
+                getString(R.string.shuttle_bus_alternative_time, data.minutes)
+            else getString(R.string.shuttle_bus_alternative_no_data)
+
+            binding.busAccentBarJungangStation.setBackgroundColor(color)
+            binding.busAlternativeJungangStationRoute.setTextColor(color)
+            binding.busAlternativeJungangStationRoute.text = data.routeDisplayName
+            binding.busAlternativeJungangStationTime.text = binding.busAlternativeTerminalTime.text
         }
     }
 

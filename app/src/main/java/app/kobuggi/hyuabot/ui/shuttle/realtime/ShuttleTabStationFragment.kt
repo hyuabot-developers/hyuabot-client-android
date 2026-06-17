@@ -428,6 +428,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
         if (busMinutes != null) {
             binding.busAlternativeDormitoryTime.text = getString(R.string.shuttle_bus_alternative_time, busMinutes)
         }
+        binding.busAlternativeDormitory2.visibility = View.GONE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
