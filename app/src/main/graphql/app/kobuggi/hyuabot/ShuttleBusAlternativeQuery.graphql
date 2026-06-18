@@ -14,7 +14,7 @@ query ShuttleBusAlternativeQuery {
         { route: 216000016, stop: 217000264, limit: 1 },
     ]) {
         route { seq }
-        stop { seq }
+        stop { seq name latitude longitude }
         arrival { stops seats minutes lowFloor isRealtime time }
     }
 }

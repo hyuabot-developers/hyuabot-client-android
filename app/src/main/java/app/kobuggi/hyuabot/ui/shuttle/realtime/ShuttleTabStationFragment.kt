@@ -423,10 +423,11 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
         return binding.root
     }
 
-    private fun updateBusAlternativeDormitory(busMinutes: Int?) {
-        binding.busAlternativeDormitory.visibility = if (busMinutes != null) View.VISIBLE else View.GONE
-        if (busMinutes != null) {
-            binding.busAlternativeDormitoryTime.text = getString(R.string.shuttle_bus_alternative_time, busMinutes)
+    private fun updateBusAlternativeDormitory(data: BusAlternativeData?) {
+        val shouldShow = data?.minutes != null
+        binding.busAlternativeDormitory.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        if (shouldShow) {
+            binding.busAlternativeDormitoryTime.text = getString(R.string.shuttle_bus_alternative_time, data.minutes)
         }
         binding.busAlternativeDormitory2.visibility = View.GONE
     }

@@ -363,27 +363,26 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
         return binding.root
     }
 
-    private fun updateBusAlternativeStation(busMinutes: Int?, forceShow: Boolean = false) {
-        val shouldShow = busMinutes != null || forceShow
+    private fun updateBusAlternativeStation(data: BusAlternativeData?, forceShow: Boolean = false) {
+        val shouldShow = data?.minutes != null || forceShow
         binding.busAlternativeStation.visibility = if (shouldShow) View.VISIBLE else View.GONE
         if (shouldShow) {
-            binding.busAlternativeStationTime.text = if (busMinutes != null)
-                getString(R.string.shuttle_bus_alternative_time, busMinutes)
+            binding.busAlternativeStationTime.text = if (data?.minutes != null)
+                getString(R.string.shuttle_bus_alternative_time, data.minutes)
             else getString(R.string.shuttle_bus_alternative_no_data)
         }
     }
 
     private fun updateBusAlternative80(data: BusAlternativeData?) {
         val color = requireContext().getColor(R.color.blue_bus)
-        binding.busAlternativeTerminal.visibility = if (data != null) View.VISIBLE else View.GONE
-        binding.busAlternativeJungangStation.visibility = if (data != null) View.VISIBLE else View.GONE
-        if (data != null) {
+        val shouldShow = data?.minutes != null
+        binding.busAlternativeTerminal.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        binding.busAlternativeJungangStation.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        if (shouldShow) {
             binding.busAccentBarTerminal.setBackgroundColor(color)
             binding.busAlternativeTerminalRoute.setTextColor(color)
             binding.busAlternativeTerminalRoute.text = getString(data.routeDisplayName)
-            binding.busAlternativeTerminalTime.text = if (data.minutes != null)
-                getString(R.string.shuttle_bus_alternative_time, data.minutes)
-            else getString(R.string.shuttle_bus_alternative_no_data)
+            binding.busAlternativeTerminalTime.text = getString(R.string.shuttle_bus_alternative_time, data.minutes)
 
             binding.busAccentBarJungangStation.setBackgroundColor(color)
             binding.busAlternativeJungangStationRoute.setTextColor(color)

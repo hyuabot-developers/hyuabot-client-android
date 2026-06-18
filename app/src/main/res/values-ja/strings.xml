@@ -409,4 +409,5 @@
     <string name="bus_first_last_up">上り: 始発 %1$s / 終バス %2$s</string>
     <string name="bus_first_last_down">下り: 始発 %1$s / 終バス %2$s</string>
     <string name="bus_stop_first_last_title">始発・終バス情報</string>
+    <string name="bus_alternative_stop_info">停留所の位置</string>
 </resources>

@@ -409,4 +409,5 @@
     <string name="bus_first_last_up">上行: 首班 %1$s / 末班 %2$s</string>
     <string name="bus_first_last_down">下行: 首班 %1$s / 末班 %2$s</string>
     <string name="bus_stop_first_last_title">首末班信息</string>
+    <string name="bus_alternative_stop_info">站点位置</string>
 </resources>

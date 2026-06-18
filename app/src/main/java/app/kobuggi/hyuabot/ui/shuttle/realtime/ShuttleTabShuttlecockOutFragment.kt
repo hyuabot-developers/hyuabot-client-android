@@ -363,23 +363,24 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
         return binding.root
     }
 
-    private fun updateBusAlternativeStation(busMinutes: Int?, forceShow: Boolean = false) {
-        val shouldShow = busMinutes != null || forceShow
+    private fun updateBusAlternativeStation(data: BusAlternativeData?, forceShow: Boolean = false) {
+        val shouldShow = data?.minutes != null || forceShow
         binding.busAlternativeStation.visibility = if (shouldShow) View.VISIBLE else View.GONE
         if (shouldShow) {
-            binding.busAlternativeStationTime.text = if (busMinutes != null)
-                getString(R.string.shuttle_bus_alternative_time, busMinutes)
+            binding.busAlternativeStationTime.text = if (data?.minutes != null)
+                getString(R.string.shuttle_bus_alternative_time, data.minutes)
             else getString(R.string.shuttle_bus_alternative_no_data)
         }
     }
 
-    private fun updateBusAlternative62(busMinutes: Int?) {
+    private fun updateBusAlternative62(data: BusAlternativeData?) {
         val color = requireContext().getColor(R.color.green_bus)
-        binding.busAlternativeTerminal.visibility = if (busMinutes != null) View.VISIBLE else View.GONE
-        binding.busAlternativeJungangStation.visibility = if (busMinutes != null) View.VISIBLE else View.GONE
-        if (busMinutes != null) {
-            val timeText = getString(R.string.shuttle_bus_alternative_time, busMinutes)
-            val routeText = getString(R.string.shuttle_bus_alternative_route_62_terminal)
+        val shouldShow = data?.minutes != null
+        binding.busAlternativeTerminal.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        binding.busAlternativeJungangStation.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        if (shouldShow) {
+            val timeText = getString(R.string.shuttle_bus_alternative_time, data.minutes)
+            val routeText = getString(data.routeDisplayName)
             binding.busAccentBarTerminal.setBackgroundColor(color)
             binding.busAlternativeTerminalRoute.setTextColor(color)
             binding.busAlternativeTerminalRoute.text = routeText

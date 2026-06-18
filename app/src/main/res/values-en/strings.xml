@@ -431,4 +431,5 @@
     <string name="bus_first_last_up">Northbound: First %1$s / Last %2$s</string>
     <string name="bus_first_last_down">Southbound: First %1$s / Last %2$s</string>
     <string name="bus_stop_first_last_title">First/Last Bus</string>
+    <string name="bus_alternative_stop_info">Stop Location</string>
 </resources>
