@@ -10,6 +10,7 @@ import app.kobuggi.hyuabot.CafeteriaPageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemCafeteriaBinding
 import app.kobuggi.hyuabot.util.DividerItemWithoutLastDecoration
+import java.time.LocalTime
 
 class CafeteriaListAdapter(
     private val context: Context,
@@ -19,35 +20,29 @@ class CafeteriaListAdapter(
     inner class ViewHolder(private val binding: ItemCafeteriaBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cafeteriaItem: CafeteriaPageQuery.Cafeterium) {
             val menuAdapter = MenuListAdapter(context, listOf())
-            when (type) {
+            val runningTime = when (type) {
                 "breakfast" -> {
-                    binding.subheaderCafeteria.text = context.getString(
-                        R.string.cafeteria_running_time_format,
-                        cafeteriaItem.runningTime.breakfast ?: '-'
-                    )
-                    menuAdapter.updateList(cafeteriaItem.menus.filter { it.type.contains("조식") }
-                        .distinctBy { it.food })
+                    cafeteriaItem.runningTime.breakfast ?: "-"
                 }
                 "lunch" -> {
-                    binding.subheaderCafeteria.text = context.getString(
-                        R.string.cafeteria_running_time_format,
-                        cafeteriaItem.runningTime.lunch ?: '-'
-                    )
-                    menuAdapter.updateList(cafeteriaItem.menus.filter { it.type.contains("중식") }
-                        .distinctBy { it.food })
+                    cafeteriaItem.runningTime.lunch ?: "-"
                 }
                 "dinner" -> {
-                    binding.subheaderCafeteria.text = context.getString(
-                        R.string.cafeteria_running_time_format,
-                        cafeteriaItem.runningTime.dinner ?: '-'
-                    )
-                    menuAdapter.updateList(cafeteriaItem.menus.filter { it.type.contains("석식") }
-                        .distinctBy { it.food })
+                    cafeteriaItem.runningTime.dinner ?: "-"
                 }
+                else -> "-"
             }
+            val menus = cafeteriaItem.menus.filter { it.type.contains(mealTypeLabel()) }
+                .distinctBy { it.food }
+            menuAdapter.updateList(menus)
             val decoration = DividerItemWithoutLastDecoration(context, DividerItemDecoration.VERTICAL)
             binding.apply {
                 headerCafeteria.text = getCafeteriaString(cafeteriaItem.seq)
+                subheaderCafeteria.text = context.getString(
+                    R.string.cafeteria_running_time_status_format,
+                    runningTime,
+                    statusText(runningTime, menus.isNotEmpty())
+                )
                 menuList.apply {
                     adapter = menuAdapter
                     addItemDecoration(decoration)
@@ -87,6 +82,32 @@ class CafeteriaListAdapter(
             14 -> context.getString(R.string.cafeteria_14)
             15 -> context.getString(R.string.cafeteria_15)
             else -> context.getString(R.string.cafeteria_1)
+        }
+    }
+
+    private fun mealTypeLabel(): String = when (type) {
+        "breakfast" -> "조식"
+        "lunch" -> "중식"
+        "dinner" -> "석식"
+        else -> ""
+    }
+
+    private fun statusText(runningTime: String, hasMenu: Boolean): String {
+        if (!hasMenu) return context.getString(R.string.cafeteria_status_no_menu)
+        val times = Regex("""(\d{1,2}):(\d{2})""").findAll(runningTime)
+            .mapNotNull {
+                val hour = it.groupValues[1].toIntOrNull() ?: return@mapNotNull null
+                val minute = it.groupValues[2].toIntOrNull() ?: return@mapNotNull null
+                runCatching { LocalTime.of(hour, minute) }.getOrNull()
+            }
+            .take(2)
+            .toList()
+        if (times.size < 2) return context.getString(R.string.cafeteria_status_has_menu)
+        val now = LocalTime.now()
+        return when {
+            now.isBefore(times[0]) -> context.getString(R.string.cafeteria_status_soon)
+            now.isAfter(times[1]) -> context.getString(R.string.cafeteria_status_closed)
+            else -> context.getString(R.string.cafeteria_status_open)
         }
     }
 }

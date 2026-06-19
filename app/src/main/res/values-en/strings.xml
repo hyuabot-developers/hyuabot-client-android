@@ -230,6 +230,12 @@
     <string name="cafeteria_14">Food Court</string>
     <string name="cafeteria_15">Business Incubator</string>
     <string name="cafeteria_running_time_format">Operating Hours: %1$s</string>
+    <string name="cafeteria_running_time_status_format">Hours: %1$s · %2$s</string>
+    <string name="cafeteria_status_open">Open now</string>
+    <string name="cafeteria_status_soon">Not open yet</string>
+    <string name="cafeteria_status_closed">Closed</string>
+    <string name="cafeteria_status_has_menu">Menu available</string>
+    <string name="cafeteria_status_no_menu">No menu</string>
     <string name="cafeteria_price_format">₩ %1$s</string>
     <string name="widget_cafeteria_name">Cafeteria Menu</string>
     <string name="widget_cafeteria_description">Shows the cafeteria menu for the current time.</string>

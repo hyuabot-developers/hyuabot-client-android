@@ -208,6 +208,12 @@
     <string name="cafeteria_14">フードコート</string>
     <string name="cafeteria_15">創業保育センター</string>
     <string name="cafeteria_running_time_format">営業時間: %1$s</string>
+    <string name="cafeteria_running_time_status_format">営業時間: %1$s · %2$s</string>
+    <string name="cafeteria_status_open">営業中</string>
+    <string name="cafeteria_status_soon">営業前</string>
+    <string name="cafeteria_status_closed">営業終了</string>
+    <string name="cafeteria_status_has_menu">メニューあり</string>
+    <string name="cafeteria_status_no_menu">メニューなし</string>
     <string name="cafeteria_price_format">%1$s ウォン</string>
     <string name="widget_cafeteria_name">学食メニュー</string>
     <string name="widget_cafeteria_description">現在の時間帯に合った学食メニューを表示します。</string>

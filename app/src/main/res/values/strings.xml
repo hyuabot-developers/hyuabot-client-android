@@ -282,6 +282,12 @@
     <string name="cafeteria_15">창업보육센터</string>
     <!-- 학식 가격 -->
     <string name="cafeteria_running_time_format">운영 시간: %1$s</string>
+    <string name="cafeteria_running_time_status_format">운영 시간: %1$s · %2$s</string>
+    <string name="cafeteria_status_open">운영 중</string>
+    <string name="cafeteria_status_soon">운영 전</string>
+    <string name="cafeteria_status_closed">운영 종료</string>
+    <string name="cafeteria_status_has_menu">메뉴 있음</string>
+    <string name="cafeteria_status_no_menu">메뉴 없음</string>
     <string name="cafeteria_price_format">%1$s 원</string>
     <string name="widget_cafeteria_name">학식 메뉴</string>
     <string name="widget_cafeteria_description">현재 시간에 맞는 학식 메뉴를 보여줍니다.</string>
