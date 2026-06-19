@@ -449,10 +449,13 @@
     <string name="shuttle_alarm_alighting_title">%1$s Alighting Prep</string>
     <string name="shuttle_alarm_alighting_preparing">Monitoring alighting stop</string>
     <string name="shuttle_alarm_alighting_content">About %1$s to stop</string>
+    <string name="shuttle_alarm_alighting_checkpoint_distance">%1$s, %3$s to %2$s</string>
+    <string name="shuttle_alarm_alighting_checkpoint_tracking">%1$s, checking distance to %2$s</string>
     <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">Tracking</string>
     <string name="shuttle_alarm_alighting_alert_title">Get ready to alight!</string>
     <string name="shuttle_alarm_alighting_alert_content">%1$s stop is %2$s ahead</string>
+    <string name="shuttle_alarm_alighting_alert_time_content">Scheduled arrival time for %1$s stop</string>
     <string name="shuttle_alarm_channel_id">shuttle_alarm_channel</string>
     <string name="shuttle_alarm_channel_name">Shuttle Bus Alerts</string>
     <string name="shuttle_alarm_channel_desc">Shuttle bus boarding and alighting alerts</string>

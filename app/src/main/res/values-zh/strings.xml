@@ -427,10 +427,13 @@
     <string name="shuttle_alarm_alighting_title">%1$s 下车准备</string>
     <string name="shuttle_alarm_alighting_preparing">正在监控下车站</string>
     <string name="shuttle_alarm_alighting_content">距站约%1$s</string>
+    <string name="shuttle_alarm_alighting_checkpoint_distance">%1$s，距%2$s %3$s</string>
+    <string name="shuttle_alarm_alighting_checkpoint_tracking">%1$s，正在确认到%2$s的距离</string>
     <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">追踪中</string>
     <string name="shuttle_alarm_alighting_alert_title">请准备下车！</string>
     <string name="shuttle_alarm_alighting_alert_content">%1$s站在%2$s前方</string>
+    <string name="shuttle_alarm_alighting_alert_time_content">已到%1$s站的预计到达时间</string>
     <string name="shuttle_alarm_channel_id">shuttle_alarm_channel</string>
     <string name="shuttle_alarm_channel_name">校车通知</string>
     <string name="shuttle_alarm_channel_desc">校车上车及下车通知</string>

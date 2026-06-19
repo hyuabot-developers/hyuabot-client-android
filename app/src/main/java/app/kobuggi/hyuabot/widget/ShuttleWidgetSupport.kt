@@ -90,7 +90,7 @@ internal object ShuttleWidgetSupport {
     }
 
     fun stopDisplayName(context: Context, name: String): String = when (name) {
-        "dormitory_o" -> context.getString(R.string.shuttle_tab_dormitory_out)
+        "dormitory_o", "dormitory_i" -> context.getString(R.string.shuttle_tab_dormitory_out)
         "shuttlecock_o" -> context.getString(R.string.shuttle_tab_shuttlecock_out)
         "station" -> context.getString(R.string.shuttle_tab_station)
         "terminal" -> context.getString(R.string.shuttle_tab_terminal)

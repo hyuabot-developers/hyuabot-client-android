@@ -394,17 +394,18 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
         val departureTimeMillis = departureTime.toInstant().toEpochMilli()
         val minutes = kotlin.math.ceil((departureTimeMillis - System.currentTimeMillis()) / 60_000.0).toInt().coerceAtLeast(0)
         val allStops = parentViewModel.result.value ?: return
-        val destStops = routeStops.mapNotNull { (name, _) ->
-            allStops.firstOrNull { it.name == name }?.let {
+        val destStops = buildShuttleAlarmDestinationStopIds(routeStops, boardingStopId).mapNotNull { name ->
+            allStops.firstOrNull { it.name == shuttleAlarmLocationStopId(name) }?.let {
                 Triple(ShuttleWidgetSupport.stopDisplayName(requireContext(), it.name), it.latitude, it.longitude)
             }
         }
         val alarmKey = app.kobuggi.hyuabot.service.alarm.ShuttleAlarmService.buildAlarmKey(boardingStopId, timetableSeq)
         val checkpointTimes = buildShuttleAlarmCheckpointTimes(routeStops, boardingStopId, departureTimeMillis)
         val checkpointNames = buildShuttleAlarmCheckpointStopIds(routeStops, boardingStopId).map { ShuttleWidgetSupport.stopDisplayName(requireContext(), it) }.toTypedArray()
+        val destTimes = buildShuttleAlarmDestinationTimes(routeStops, boardingStopId, departureTimeMillis)
         ShuttleAlarmDialogFragment.newInstance(
             getString(boardingLabelRes), boardingStop.latitude, boardingStop.longitude,
-            minutes, departureTimeMillis, alarmKey, checkpointNames, checkpointTimes, destStops
+            minutes, departureTimeMillis, alarmKey, checkpointNames, checkpointTimes, destTimes, destStops
         ).show(childFragmentManager, "shuttle_alarm")
     }
 

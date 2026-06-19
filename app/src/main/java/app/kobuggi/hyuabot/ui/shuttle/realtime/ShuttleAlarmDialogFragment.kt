@@ -28,6 +28,7 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_DEST_NAMES = "dest_names"
         private const val ARG_DEST_LATS = "dest_lats"
         private const val ARG_DEST_LNGS = "dest_lngs"
+        private const val ARG_DEST_TIMES = "dest_times"
 
         fun newInstance(
             boardingStopName: String,
@@ -38,6 +39,7 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
             alarmKey: String,
             checkpointNames: Array<String>,
             checkpointTimes: LongArray,
+            destTimes: LongArray,
             destStops: List<Triple<String, Double, Double>>
         ): ShuttleAlarmDialogFragment {
             return ShuttleAlarmDialogFragment().apply {
@@ -53,6 +55,7 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
                     putStringArray(ARG_DEST_NAMES, destStops.map { it.first }.toTypedArray())
                     putDoubleArray(ARG_DEST_LATS, destStops.map { it.second }.toDoubleArray())
                     putDoubleArray(ARG_DEST_LNGS, destStops.map { it.third }.toDoubleArray())
+                    putLongArray(ARG_DEST_TIMES, destTimes)
                 }
             }
         }
@@ -71,6 +74,7 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
         val destNames = args.getStringArray(ARG_DEST_NAMES) ?: emptyArray()
         val destLats = args.getDoubleArray(ARG_DEST_LATS) ?: DoubleArray(0)
         val destLngs = args.getDoubleArray(ARG_DEST_LNGS) ?: DoubleArray(0)
+        val destTimes = args.getLongArray(ARG_DEST_TIMES) ?: LongArray(0)
 
         binding.boardingStopName.text = getString(R.string.shuttle_alarm_boarding_initial, minutes)
             .let { "$boardingName · $it" }
@@ -112,8 +116,19 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
                     val selectedIndex = (0 until binding.destinationRadioGroup.childCount).firstOrNull {
                         binding.destinationRadioGroup.getChildAt(it).id == selectedId
                     } ?: return@setOnClickListener
-                    if (selectedIndex < destLats.size) {
-                        startAlightingAlarm(alarmKey, destNames[selectedIndex], destLats[selectedIndex], destLngs[selectedIndex], minutes)
+                    if (selectedIndex < destLats.size && selectedIndex < destTimes.size) {
+                        val alightingCheckpointNames = arrayOf(boardingName) + destNames.take(selectedIndex + 1)
+                        val alightingCheckpointTimes = longArrayOf(departureTimeMillis) + destTimes.take(selectedIndex + 1)
+                        startAlightingAlarm(
+                            alarmKey,
+                            destNames[selectedIndex],
+                            destLats[selectedIndex],
+                            destLngs[selectedIndex],
+                            destTimes[selectedIndex],
+                            minutes,
+                            alightingCheckpointNames,
+                            alightingCheckpointTimes
+                        )
                         dismiss()
                     }
                 }
@@ -147,14 +162,26 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
         ContextCompat.startForegroundService(requireContext(), intent)
     }
 
-    private fun startAlightingAlarm(alarmKey: String, destName: String, destLat: Double, destLng: Double, minutes: Int) {
+    private fun startAlightingAlarm(
+        alarmKey: String,
+        destName: String,
+        destLat: Double,
+        destLng: Double,
+        arrivalTimeMillis: Long,
+        minutes: Int,
+        checkpointNames: Array<String>,
+        checkpointTimes: LongArray
+    ) {
         val intent = Intent(requireContext(), ShuttleAlarmService::class.java).apply {
             action = ShuttleAlarmService.ACTION_START_ALIGHTING
             putExtra(ShuttleAlarmService.EXTRA_DEST_STOP_NAME, destName)
             putExtra(ShuttleAlarmService.EXTRA_DEST_STOP_LAT, destLat)
             putExtra(ShuttleAlarmService.EXTRA_DEST_STOP_LNG, destLng)
+            putExtra(ShuttleAlarmService.EXTRA_DEST_ARRIVAL_TIME_MILLIS, arrivalTimeMillis)
             putExtra(ShuttleAlarmService.EXTRA_MINUTES, minutes)
             putExtra(ShuttleAlarmService.EXTRA_ALARM_KEY, alarmKey)
+            putExtra(ShuttleAlarmService.EXTRA_CHECKPOINT_NAMES, checkpointNames)
+            putExtra(ShuttleAlarmService.EXTRA_CHECKPOINT_TIMES_MILLIS, checkpointTimes)
         }
         ContextCompat.startForegroundService(requireContext(), intent)
     }
