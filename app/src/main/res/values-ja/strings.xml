@@ -389,6 +389,11 @@
     <string name="coachmark_subway_transfer_tip_desc">韓大前〜仁川を直通する列車は約30分間隔です。韓大前〜五耳島、五耳島〜仁川を往来する列車は7〜15分間隔なので、五耳島で乗り換える方が早い場合があります。</string>
     <string name="coachmark_shuttle_widget_title">シャトルウィジェット</string>
     <string name="coachmark_shuttle_widget_desc">ホーム画面に「シャトル」ウィジェットと「シャトル+乗換」ウィジェットを追加すると、アプリを開かなくても最寄りのバス停の到着・乗換情報をすぐに確認できます。</string>
+    <string name="coachmark_shuttle_alarm_title">シャトルバス通知</string>
+    <string name="coachmark_shuttle_alarm_desc">到着項目の横にある通知ボタンを押すと、乗車通知と降車通知を設定できます。設定済みの通知は同じ画面で解除できます。</string>
+    <string name="coachmark_shuttle_bus_alternative_stop_title">代替路線の停留所位置</string>
+    <string name="coachmark_shuttle_bus_alternative_stop_desc">停留所位置ボタンを押すと、シャトルバス停留所と路線バス停留所の位置、移動方向、現在地を地図で確認できます。</string>
+    <string name="coachmark_shuttle_realtime_updates_reset">シャトルリアルタイムのコーチマークをもう一度表示できます。</string>
     <string name="coachmark_cafeteria_widget_title">学食ウィジェット</string>
     <string name="coachmark_cafeteria_widget_desc">ホーム画面に「学食」ウィジェットを追加すると、今日のメニューをすぐに確認できます。</string>
     <string name="language_suggestion_title">言語切替の提案</string>

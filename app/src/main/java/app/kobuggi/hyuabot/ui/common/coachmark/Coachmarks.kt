@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 
 object Coachmarks {
     const val SHUTTLE = "shuttle"
+    const val SHUTTLE_REALTIME_UPDATES = "shuttle_realtime_updates"
     const val SHUTTLE_TIMETABLE = "shuttle_timetable"
     const val SHUTTLE_BUS_ALTERNATIVE = "shuttle_bus_alternative"
     const val BUS = "bus"

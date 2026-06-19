@@ -23,6 +23,7 @@ interface UserPreferencesRepositoryImpl {
     suspend fun setReviewRequestedAt(timestamp: Long)
     fun coachmarkSeen(screen: String): Flow<Boolean>
     suspend fun markCoachmarkSeen(screen: String)
+    suspend fun resetCoachmark(screen: String)
     suspend fun resetCoachmarks()
     suspend fun initCoachmarkBaselineIfNeeded(isFreshInstall: Boolean, existingFeatureKeys: Set<String>)
 }

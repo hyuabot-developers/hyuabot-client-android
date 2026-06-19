@@ -22,6 +22,7 @@ import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkController
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkBaseline
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -250,9 +251,11 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         coachmarkShown = true
         viewLifecycleOwner.lifecycleScope.launch {
             requireContext().ensureCoachmarkBaseline(viewModel.userPreferencesRepository)
-            if (viewModel.userPreferencesRepository.coachmarkSeen(COACHMARK_KEY).first()) {
-                return@launch
-            }
+            val showMainCoachmark = !viewModel.userPreferencesRepository.coachmarkSeen(COACHMARK_KEY).first()
+            val showRealtimeUpdatesCoachmark =
+                !viewModel.userPreferencesRepository.coachmarkSeen(REALTIME_UPDATES_COACHMARK_KEY).first()
+            if (!showMainCoachmark && !showRealtimeUpdatesCoachmark) return@launch
+
             val originalByDestination = viewModel.userPreferencesRepository.getShowShuttleByDestination().first()
             val originalDepartureTime = viewModel.userPreferencesRepository.getShowShuttleDepartureTime().first()
             setClosestStop = true
@@ -267,6 +270,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                     viewModel.setForceShowBusAlternative(false)
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.userPreferencesRepository.markCoachmarkSeen(COACHMARK_KEY)
+                        viewModel.userPreferencesRepository.markCoachmarkSeen(REALTIME_UPDATES_COACHMARK_KEY)
                     }
                 }
             }
@@ -309,12 +313,33 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             R.string.coachmark_shuttle_via_title, R.string.coachmark_shuttle_via_desc
         ),
         CoachmarkStep(
+            { firstVisibleRealtimeRowChild(R.id.shuttle_alarm_button) },
+            R.string.coachmark_shuttle_alarm_title,
+            R.string.coachmark_shuttle_alarm_desc,
+            shape = CoachmarkShape.CIRCLE
+        ),
+        CoachmarkStep(
             {
                 viewModel.setForceShowBusAlternative(true)
                 currentTabView()?.findViewById(R.id.bus_alternative_station)
             },
             R.string.coachmark_shuttle_bus_alternative_title,
             R.string.coachmark_shuttle_bus_alternative_desc
+        ),
+        CoachmarkStep(
+            {
+                viewModel.setForceShowBusAlternative(true)
+                firstVisibleChildView(
+                    R.id.bus_alternative_station_info,
+                    R.id.bus_alternative_dormitory_info,
+                    R.id.bus_alternative_dormitory_2_info,
+                    R.id.bus_alternative_terminal_info,
+                    R.id.bus_alternative_jungang_station_info
+                )
+            },
+            R.string.coachmark_shuttle_bus_alternative_stop_title,
+            R.string.coachmark_shuttle_bus_alternative_stop_desc,
+            shape = CoachmarkShape.CIRCLE
         ),
         CoachmarkStep(
             { firstVisibleChildView(R.id.transfer_section) },
@@ -343,6 +368,25 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         for (id in ids) {
             val target = root.findViewById<View>(id)
             if (target != null && target.isShown) return target
+        }
+        return null
+    }
+
+    private fun firstVisibleRealtimeRowChild(childId: Int): View? {
+        val root = currentTabView() ?: return null
+        val recyclerIds = intArrayOf(
+            R.id.realtime_view,
+            R.id.realtime_view_bound_for_dormitory,
+            R.id.realtime_view_bound_for_terminal,
+            R.id.realtime_view_bound_for_jungang_station,
+            R.id.realtime_view_bound_for_station,
+        )
+        for (id in recyclerIds) {
+            val recycler = root.findViewById<RecyclerView>(id)
+            if (recycler != null && recycler.isShown && recycler.childCount > 0) {
+                val target = recycler.getChildAt(0).findViewById<View>(childId)
+                if (target != null && target.isShown) return target
+            }
         }
         return null
     }
@@ -386,5 +430,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     companion object {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
         private val COACHMARK_KEY = Coachmarks.SHUTTLE
+        private val REALTIME_UPDATES_COACHMARK_KEY = Coachmarks.SHUTTLE_REALTIME_UPDATES
     }
 }

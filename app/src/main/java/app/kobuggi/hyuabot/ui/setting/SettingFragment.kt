@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -44,6 +45,13 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
             settingLanguage.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "language"); openLanguageDialog() }
             settingTheme.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "theme"); openThemeDialog() }
             appInfo.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "info"); openInfoDialog() }
+            appInfo.setOnLongClickListener {
+                lifecycleScope.launch {
+                    userPreferencesRepository.resetCoachmark(Coachmarks.SHUTTLE_REALTIME_UPDATES)
+                    Toast.makeText(requireContext(), R.string.coachmark_shuttle_realtime_updates_reset, Toast.LENGTH_SHORT).show()
+                }
+                true
+            }
         }
         return binding.root
     }

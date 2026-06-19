@@ -389,6 +389,11 @@
     <string name="coachmark_subway_transfer_tip_desc">汉大前至仁川的直通列车约30分钟一班。汉大前至五耳岛、五耳岛至仁川的列车每7至15分钟一班，在五耳岛换乘可能更快。</string>
     <string name="coachmark_shuttle_widget_title">校车小组件</string>
     <string name="coachmark_shuttle_widget_desc">在主屏幕添加「校车」小组件和「校车+换乘」小组件，无需打开应用即可直接查看最近站点的到达及换乘信息。</string>
+    <string name="coachmark_shuttle_alarm_title">校车提醒</string>
+    <string name="coachmark_shuttle_alarm_desc">点击到达项目旁的提醒按钮，即可设置上车或下车提醒。已设置的提醒可在同一画面取消。</string>
+    <string name="coachmark_shuttle_bus_alternative_stop_title">替代路线站点位置</string>
+    <string name="coachmark_shuttle_bus_alternative_stop_desc">点击站点位置按钮，可在地图中查看校车站、公交上车站、移动方向和当前位置。</string>
+    <string name="coachmark_shuttle_realtime_updates_reset">可再次查看校车实时引导。</string>
     <string name="coachmark_cafeteria_widget_title">学食小组件</string>
     <string name="coachmark_cafeteria_widget_desc">在主屏幕添加「学食」小组件，可随时查看今日菜单。</string>
     <string name="language_suggestion_title">语言切换建议</string>

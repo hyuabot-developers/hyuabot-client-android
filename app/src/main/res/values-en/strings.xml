@@ -409,6 +409,11 @@
     <string name="coachmark_subway_transfer_tip_desc">Trains running 한대앞–인천 directly come about every 30 min, while trains shuttling 한대앞–오이도 and 오이도–인천 come every 7–15 min, so transferring at 오이도 can be faster.</string>
     <string name="coachmark_shuttle_widget_title">Shuttle widgets</string>
     <string name="coachmark_shuttle_widget_desc">Add the \'Shuttle\' and \'Shuttle + Transfer\' widgets to your home screen to see nearby arrivals and transfers without opening the app.</string>
+    <string name="coachmark_shuttle_alarm_title">Shuttle alerts</string>
+    <string name="coachmark_shuttle_alarm_desc">Tap the alert button next to an arrival to set boarding or alighting alerts. Active alerts can be canceled from the same screen.</string>
+    <string name="coachmark_shuttle_bus_alternative_stop_title">Alternative stop locations</string>
+    <string name="coachmark_shuttle_bus_alternative_stop_desc">Tap the stop location button to see the shuttle stop, bus stop, walking direction, and your current location on the map.</string>
+    <string name="coachmark_shuttle_realtime_updates_reset">Shuttle realtime coachmarks will be shown again.</string>
     <string name="coachmark_cafeteria_widget_title">Cafeteria widget</string>
     <string name="coachmark_cafeteria_widget_desc">Add the \'Cafeteria\' widget to your home screen to check today\'s menu at a glance.</string>
     <string name="language_japanese">Japanese</string>
