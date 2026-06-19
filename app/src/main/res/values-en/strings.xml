@@ -283,6 +283,11 @@
     <string name="menu_map">Campus Map</string>
     <string name="map_search_guide">Enter a room to search</string>
     <string name="map_external_error">No app is available to open the map.</string>
+    <string name="map_current_location">Current location</string>
+    <string name="map_campus_center">Campus center</string>
+    <string name="map_search_reset">Clear search result</string>
+    <string name="map_location_permission_required">Location permission is required to show your current location.</string>
+    <string name="map_current_location_error">Could not get your current location.</string>
     <string name="room_description_format">Room %1$s/%2$s</string>
     <string name="reading_room_alarm_description">Reading Room Extension Reminder</string>
     <string name="reading_room_alarm_3_hour">3 Hours\n(Exam Period)</string>

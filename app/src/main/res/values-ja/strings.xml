@@ -261,6 +261,11 @@
     <string name="menu_map">キャンパスマップ</string>
     <string name="map_search_guide">検索する講義室を入力してください</string>
     <string name="map_external_error">地図を開けるアプリがありません。</string>
+    <string name="map_current_location">現在地</string>
+    <string name="map_campus_center">キャンパス中心</string>
+    <string name="map_search_reset">検索結果をクリア</string>
+    <string name="map_location_permission_required">現在地を表示するには位置情報の権限が必要です。</string>
+    <string name="map_current_location_error">現在地を取得できませんでした。</string>
     <string name="room_description_format">%1$s/%2$s号</string>
     <string name="reading_room_alarm_description">閲覧室延長通知</string>
     <string name="reading_room_alarm_3_hour">3時間（試験期間）</string>

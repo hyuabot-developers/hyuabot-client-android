@@ -4,8 +4,10 @@ import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.UIUtility
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -16,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.toColorInt
@@ -32,6 +35,9 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.NaverMap
@@ -94,6 +100,16 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                 naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(CAMPUS_CENTER, 16.0))
             }
         }
+        binding.campusCenterButton.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.MAP_RECENTER)
+            viewModel.searchRooms.value = false
+            if (this::naverMap.isInitialized) {
+                naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(CAMPUS_CENTER, 16.0))
+            }
+        }
+        binding.currentLocationButton.setOnClickListener {
+            moveToCurrentLocation()
+        }
         viewModel.searchRooms.observe(viewLifecycleOwner) {
             binding.backToMoveButton.visibility = if (it) View.VISIBLE else View.GONE
             if (this::naverMap.isInitialized) {
@@ -118,6 +134,31 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             )
         }
         return binding.root
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun moveToCurrentLocation() {
+        if (!this::naverMap.isInitialized) return
+        val hasLocationPermission =
+            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        if (!hasLocationPermission) {
+            Toast.makeText(requireContext(), R.string.map_location_permission_required, Toast.LENGTH_SHORT).show()
+            return
+        }
+        LocationServices.getFusedLocationProviderClient(requireActivity())
+            .getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, CancellationTokenSource().token)
+            .addOnSuccessListener { location ->
+                if (location == null) {
+                    Toast.makeText(requireContext(), R.string.map_current_location_error, Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
+                viewModel.searchRooms.value = false
+                naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(LatLng(location.latitude, location.longitude), 17.0))
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), R.string.map_current_location_error, Toast.LENGTH_SHORT).show()
+            }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
