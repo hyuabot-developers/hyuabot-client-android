@@ -59,7 +59,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="@color/primary_text"
-        android:text="학생식당" />
+        android:text="@string/widget_preview_cafeteria_student" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -75,7 +75,7 @@
             android:ellipsize="end"
             android:textSize="12sp"
             android:textColor="@color/secondary_text"
-            android:text="제육볶음" />
+            android:text="@string/widget_preview_menu_spicy_pork" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
             android:ellipsize="end"
             android:textSize="12sp"
             android:textColor="@color/secondary_text"
-            android:text="김치찌개" />
+            android:text="@string/widget_preview_menu_kimchi_stew" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="@color/primary_text"
-        android:text="교직원식당" />
+        android:text="@string/widget_preview_cafeteria_staff" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -137,7 +137,7 @@
             android:ellipsize="end"
             android:textSize="12sp"
             android:textColor="@color/secondary_text"
-            android:text="돈까스" />
+            android:text="@string/widget_preview_menu_pork_cutlet" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

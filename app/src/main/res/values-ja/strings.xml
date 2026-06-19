@@ -78,6 +78,7 @@
     <string name="shuttle_period_vacation">休暇中</string>
     <string name="shuttle_period_vacation_session">集中講義期間中</string>
     <string name="confirm">確認</string>
+    <string name="location_permission_nearest_stop">最寄りのバス停を探すには位置情報の権限が必要です。</string>
     <string name="shuttle_realtime_toast">通学ラッシュ時は、シャトルコックから一部シャトルが運行しない場合があります。</string>
     <string name="shuttle_realtime_duration_format">%1$d分</string>
     <string name="bus_tab_city">市内バス</string>
@@ -218,6 +219,11 @@
     <string name="widget_cafeteria_description">現在の時間帯に合った学食メニューを表示します。</string>
     <string name="widget_cafeteria_no_data">メニュー情報がありません。</string>
     <string name="widget_cafeteria_refresh">更新</string>
+    <string name="widget_preview_cafeteria_student">学生食堂</string>
+    <string name="widget_preview_cafeteria_staff">教職員食堂</string>
+    <string name="widget_preview_menu_spicy_pork">豚肉炒め</string>
+    <string name="widget_preview_menu_kimchi_stew">キムチチゲ</string>
+    <string name="widget_preview_menu_pork_cutlet">とんかつ</string>
     <string name="widget_meal_closed">学食終了</string>
     <string name="widget_shuttle_description_small">最寄りバス停のシャトル出発時刻（小）</string>
     <string name="widget_shuttle_description_medium">最寄りバス停のシャトル出発時刻（中）</string>
@@ -229,6 +235,9 @@
     <string name="widget_shuttle_background_location_message">シャトルウィジェットがアプリを使用していない時も、現在地から最寄りのバス停を表示するため、バックグラウンドで位置情報を使用します。次の画面で位置情報の権限を「常に許可」に設定してください。</string>
     <string name="widget_shuttle_background_location_allow">許可</string>
     <string name="widget_shuttle_background_location_later">後で</string>
+    <string name="widget_preview_shuttle_stop_station">· 韓大前駅</string>
+    <string name="widget_preview_subway_danggogae">3分（堂高介行）</string>
+    <string name="widget_preview_bus_remaining_stops">8分（2停留所前）</string>
     <string name="widget_shuttle_transfer_name">シャトル + 乗換</string>
     <string name="widget_shuttle_transfer_description">最寄りバス停のシャトルバスと接続交通機関を合わせて表示します。</string>
     <string name="shuttle_transfer_section_title">乗換案内</string>

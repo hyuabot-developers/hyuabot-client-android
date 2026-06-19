@@ -78,6 +78,7 @@
     <string name="shuttle_period_vacation">假期中</string>
     <string name="shuttle_period_vacation_session">暑期课程期间</string>
     <string name="confirm">确认</string>
+    <string name="location_permission_nearest_stop">需要位置权限才能查找最近的站点。</string>
     <string name="shuttle_realtime_toast">上下学高峰时段，部分校车可能不从羽毛球场出发。</string>
     <string name="shuttle_realtime_duration_format">%1$d分钟</string>
     <string name="bus_tab_city">市内公交</string>
@@ -218,6 +219,11 @@
     <string name="widget_cafeteria_description">显示当前时间段的学食菜单。</string>
     <string name="widget_cafeteria_no_data">暂无菜单信息。</string>
     <string name="widget_cafeteria_refresh">刷新</string>
+    <string name="widget_preview_cafeteria_student">学生食堂</string>
+    <string name="widget_preview_cafeteria_staff">教职员食堂</string>
+    <string name="widget_preview_menu_spicy_pork">辣炒猪肉</string>
+    <string name="widget_preview_menu_kimchi_stew">泡菜汤</string>
+    <string name="widget_preview_menu_pork_cutlet">炸猪排</string>
     <string name="widget_meal_closed">学食已结束</string>
     <string name="widget_shuttle_description_small">最近站点的校车出发时间（小）</string>
     <string name="widget_shuttle_description_medium">最近站点的校车出发时间（中）</string>
@@ -229,6 +235,9 @@
     <string name="widget_shuttle_background_location_message">校车小组件即使在不使用应用时，也会在后台使用位置信息来显示离您最近的站点。请在下一页面将位置权限设置为「始终允许」。</string>
     <string name="widget_shuttle_background_location_allow">允许</string>
     <string name="widget_shuttle_background_location_later">稍后</string>
+    <string name="widget_preview_shuttle_stop_station">· 汉大前站</string>
+    <string name="widget_preview_subway_danggogae">3分钟（堂岭方向）</string>
+    <string name="widget_preview_bus_remaining_stops">8分钟（前2站）</string>
     <string name="widget_shuttle_transfer_name">校车 + 换乘</string>
     <string name="widget_shuttle_transfer_description">同时显示最近站点的校车及接驳交通工具信息。</string>
     <string name="shuttle_transfer_section_title">换乘信息</string>

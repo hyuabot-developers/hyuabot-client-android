@@ -133,6 +133,7 @@
     <string name="shuttle_period_vacation">방학 중</string>
     <string name="shuttle_period_vacation_session">계절학기 중</string>
     <string name="confirm">확인</string>
+    <string name="location_permission_nearest_stop">가까운 정류장을 찾기 위해 위치 권한이 필요합니다.</string>
     <!-- 셔틀버스 등하교 팝업 -->
     <string name="shuttle_realtime_toast">등하교 집중 시간대에는 셔틀콕에서 일부 셔틀버스가 운행하지 않을 수 있습니다.</string>
     <!-- 셔틀버스 소요 시간 -->
@@ -292,6 +293,11 @@
     <string name="widget_cafeteria_description">현재 시간에 맞는 학식 메뉴를 보여줍니다.</string>
     <string name="widget_cafeteria_no_data">메뉴 정보가 없습니다.</string>
     <string name="widget_cafeteria_refresh">새로고침</string>
+    <string name="widget_preview_cafeteria_student">학생식당</string>
+    <string name="widget_preview_cafeteria_staff">교직원식당</string>
+    <string name="widget_preview_menu_spicy_pork">제육볶음</string>
+    <string name="widget_preview_menu_kimchi_stew">김치찌개</string>
+    <string name="widget_preview_menu_pork_cutlet">돈까스</string>
     <string name="widget_meal_closed">학식 종료</string>
     <string name="widget_shuttle_description_small">가장 가까운 정류장의 셔틀 출발 시간 (작게)</string>
     <string name="widget_shuttle_description_medium">가장 가까운 정류장의 셔틀 출발 시간 (중간)</string>
@@ -303,6 +309,9 @@
     <string name="widget_shuttle_background_location_message">셔틀 위젯이 앱을 사용하지 않을 때에도 현재 위치에서 가장 가까운 정류장을 표시하기 위해 백그라운드에서 위치 정보를 사용합니다. 다음 화면에서 위치 권한을 \'항상 허용\'으로 설정해 주세요.</string>
     <string name="widget_shuttle_background_location_allow">허용</string>
     <string name="widget_shuttle_background_location_later">나중에</string>
+    <string name="widget_preview_shuttle_stop_station">· 한대앞</string>
+    <string name="widget_preview_subway_danggogae">3분(당고개행)</string>
+    <string name="widget_preview_bus_remaining_stops">8분 (2 정류장 전)</string>
     <string name="widget_shuttle_transfer_name">셔틀 + 환승</string>
     <string name="widget_shuttle_transfer_description">가장 가까운 정류장의 셔틀버스와 연결 교통수단을 함께 보여줍니다.</string>
     <string name="shuttle_transfer_section_title">환승 연결 정보</string>

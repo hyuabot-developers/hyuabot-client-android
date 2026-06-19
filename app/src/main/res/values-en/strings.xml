@@ -89,6 +89,7 @@
     <string name="shuttle_period_vacation">Vacation</string>
     <string name="shuttle_period_vacation_session">Seasonal</string>
     <string name="confirm">Apply</string>
+    <string name="location_permission_nearest_stop">Location permission is required to find the nearest stop.</string>
     <!-- 셔틀버스 등하교 팝업 -->
     <string name="shuttle_realtime_toast">During peak school commute hours, some shuttle may not depart from Shuttlecoke.</string>
     <!-- 셔틀버스 소요 시간 -->
@@ -240,6 +241,11 @@
     <string name="widget_cafeteria_description">Shows the cafeteria menu for the current time.</string>
     <string name="widget_cafeteria_no_data">No menu information available.</string>
     <string name="widget_cafeteria_refresh">Refresh</string>
+    <string name="widget_preview_cafeteria_student">Student Cafeteria</string>
+    <string name="widget_preview_cafeteria_staff">Staff Cafeteria</string>
+    <string name="widget_preview_menu_spicy_pork">Spicy pork</string>
+    <string name="widget_preview_menu_kimchi_stew">Kimchi stew</string>
+    <string name="widget_preview_menu_pork_cutlet">Pork cutlet</string>
     <string name="widget_meal_closed">Closed</string>
     <string name="widget_shuttle_description_small">Shuttle departures from the nearest stop (small)</string>
     <string name="widget_shuttle_description_medium">Shuttle departures from the nearest stop (medium)</string>
@@ -251,6 +257,9 @@
     <string name="widget_shuttle_background_location_message">The shuttle widget uses your location in the background, even when the app is closed, to show the nearest stop. Please set location permission to \'Allow all the time\' on the next screen.</string>
     <string name="widget_shuttle_background_location_allow">Allow</string>
     <string name="widget_shuttle_background_location_later">Later</string>
+    <string name="widget_preview_shuttle_stop_station">· Hanyang Univ. at Ansan</string>
+    <string name="widget_preview_subway_danggogae">3 min (to Danggogae)</string>
+    <string name="widget_preview_bus_remaining_stops">8 min (2 stops away)</string>
     <string name="widget_shuttle_transfer_name">Shuttle &amp; Transfer</string>
     <string name="widget_shuttle_transfer_description">Shows shuttle bus and connecting transit at the nearest stop.</string>
     <string name="shuttle_transfer_section_title">Transfer Connections</string>

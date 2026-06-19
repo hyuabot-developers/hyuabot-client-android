@@ -50,7 +50,7 @@ class MainViewModel(private val apolloClient: ApolloClient, private val stopID: 
             response.data?.shuttle?.stops.let { stops ->
                 if (stops == null) return@let
                 when (stopID) {
-                    "기숙사" -> {
+                    "dormitory" -> {
                         val stop = stops.first { it.name == "dormitory_o" }
                         stop.timetable.destination.let { timetableByDestination ->
                             _firstItem.value =
@@ -62,7 +62,7 @@ class MainViewModel(private val apolloClient: ApolloClient, private val stopID: 
                         }
                         _fourthItem.value = null
                     }
-                    "셔틀콕" -> {
+                    "shuttlecock" -> {
                         val stop1 = stops.first { it.name == "shuttlecock_o" }
                         val stop2 = stops.first { it.name == "shuttlecock_i" }
                         stop1.timetable.destination.let { timetableByDestination ->
@@ -78,7 +78,7 @@ class MainViewModel(private val apolloClient: ApolloClient, private val stopID: 
                                 timetableByDestination.first { it.destination == "CAMPUS" }.entries.firstOrNull()
                         }
                     }
-                    "한대앞" -> {
+                    "station" -> {
                         val stop = stops.first { it.name == "station" }
                         stop.timetable.destination.let { timetableByDestination ->
                             _firstItem.value =
@@ -90,13 +90,13 @@ class MainViewModel(private val apolloClient: ApolloClient, private val stopID: 
                         }
                         _fourthItem.value = null
                     }
-                    "예술인" -> {
+                    "terminal" -> {
                         val stop = stops.first { it.name == "terminal" }
                         stop.timetable.destination.let { timetableByDestination ->
                             _result.value = timetableByDestination.first { it.destination == "CAMPUS" }.entries
                         }
                     }
-                    "중앙역" -> {
+                    "jungang" -> {
                         val stop = stops.first { it.name == "jungang_stn" }
                         stop.timetable.destination.let { timetableByDestination ->
                             _result.value = timetableByDestination.first { it.destination == "CAMPUS" }.entries
@@ -125,11 +125,11 @@ class MainViewModel(private val apolloClient: ApolloClient, private val stopID: 
 
     private fun getStop(): List<String> {
         return when(stopID) {
-            "기숙사" -> listOf("dormitory_o")
-            "셔틀콕" -> listOf("shuttlecock_o", "shuttlecock_i")
-            "한대앞" -> listOf("station")
-            "예술인" -> listOf("terminal")
-            "중앙역" -> listOf("jungang_stn")
+            "dormitory" -> listOf("dormitory_o")
+            "shuttlecock" -> listOf("shuttlecock_o", "shuttlecock_i")
+            "station" -> listOf("station")
+            "terminal" -> listOf("terminal")
+            "jungang" -> listOf("jungang_stn")
             else -> listOf()
         }
     }

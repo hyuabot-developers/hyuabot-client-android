@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">HYUabot</string>
+    <string name="shuttle">Shuttle</string>
+    <string name="stop_dormitory">Dormitory</string>
+    <string name="stop_shuttlecock">Shuttlecoke</string>
+    <string name="stop_station">Station</string>
+    <string name="stop_terminal">Terminal</string>
+    <string name="stop_jungang">Jungang Stn.</string>
+    <string name="no_scheduled_shuttle">No scheduled\nshuttle.</string>
+    <string name="shuttle_service_ended">Ended</string>
+</resources>

@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">휴아봇</string>
     <string name="shuttle">셔틀버스</string>
+    <string name="stop_dormitory">기숙사</string>
+    <string name="stop_shuttlecock">셔틀콕</string>
+    <string name="stop_station">한대앞</string>
+    <string name="stop_terminal">예술인</string>
+    <string name="stop_jungang">중앙역</string>
+    <string name="no_scheduled_shuttle">도착 예정인\n셔틀이 없습니다.</string>
+    <string name="shuttle_service_ended">운행 종료</string>
 </resources>

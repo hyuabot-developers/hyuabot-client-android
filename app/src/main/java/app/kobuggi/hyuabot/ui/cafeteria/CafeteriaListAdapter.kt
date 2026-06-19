@@ -86,9 +86,9 @@ class CafeteriaListAdapter(
     }
 
     private fun mealTypeLabel(): String = when (type) {
-        "breakfast" -> "조식"
-        "lunch" -> "중식"
-        "dinner" -> "석식"
+        "breakfast" -> context.getString(R.string.cafeteria_tab_breakfast)
+        "lunch" -> context.getString(R.string.cafeteria_tab_lunch)
+        "dinner" -> context.getString(R.string.cafeteria_tab_dinner)
         else -> ""
     }
 

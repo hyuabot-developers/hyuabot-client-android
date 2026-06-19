@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
                 Toast.makeText(
                     this,
-                    "가까운 정류장을 찾기 위해 위치 권한이 필요합니다.",
+                    getString(R.string.location_permission_nearest_stop),
                     Toast.LENGTH_SHORT
                 ).show()
                 ActivityCompat.requestPermissions(
@@ -274,7 +274,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             dialogBuilder.setMessage(getString(R.string.dialog_message))
             dialogBuilder.setView(dialogView)
 
-            dialogBuilder.setPositiveButton("확인") { dialogInterface, _ ->
+            dialogBuilder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->
                 if (dialogCheckBox.isChecked){
                     AnalyticsManager.logSelect(AnalyticsItem.BIRTHDAY_DO_NOT_SHOW)
                     pref.edit { putInt("birthDayOpened", now.year) }

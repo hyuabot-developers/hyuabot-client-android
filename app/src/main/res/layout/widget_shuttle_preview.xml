@@ -36,7 +36,7 @@
             android:layout_marginStart="6dp"
             android:textSize="14sp"
             android:textColor="@color/secondary_text"
-            android:text="· 한대앞" />
+            android:text="@string/widget_preview_shuttle_stop_station" />
 
         <TextView
             android:layout_width="wrap_content"
