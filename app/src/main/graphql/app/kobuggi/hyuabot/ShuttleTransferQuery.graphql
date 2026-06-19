@@ -9,6 +9,8 @@ query ShuttleTransferQuery($weekday: String!) {
             entries {
                 minutes
                 isRealtime
+                location
+                stops
                 terminal { stationID name }
             }
         }

@@ -248,6 +248,10 @@
     <string name="transfer_subway_format">%1$d分钟（%2$s方向）</string>
     <string name="transfer_bus_minutes_format">%1$d分钟</string>
     <string name="transfer_bus_stops_suffix"> （前%1$d站）</string>
+    <string name="transfer_bus_boarding_stop">城浦住公\n4团地</string>
+    <string name="transfer_subway_boarding_station">汉大前站</string>
+    <string name="transfer_vehicle_destination">开往%1$s</string>
+    <string name="transfer_vehicle_minutes_stops">%1$d分钟（前%2$d站）</string>
     <string name="cafeteria_date_title">选择学食日期</string>
     <string name="menu">菜单</string>
     <string name="menu_book">阅览室座位查询</string>

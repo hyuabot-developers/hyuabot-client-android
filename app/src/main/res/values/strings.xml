@@ -322,6 +322,10 @@
     <string name="transfer_subway_format">%1$d분(%2$s행)</string>
     <string name="transfer_bus_minutes_format">%1$d분</string>
     <string name="transfer_bus_stops_suffix"> (%1$d 정류장 전)</string>
+    <string name="transfer_bus_boarding_stop">성포주공\n4단지</string>
+    <string name="transfer_subway_boarding_station">한대앞</string>
+    <string name="transfer_vehicle_destination">%1$s행</string>
+    <string name="transfer_vehicle_minutes_stops">%1$d분 (%2$d전)</string>
     <string name="cafeteria_date_title">학식 날짜 선택</string>
     <string name="menu">메뉴</string>
     <string name="menu_book">열람실 좌석 조회</string>

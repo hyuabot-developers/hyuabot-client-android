@@ -46,7 +46,8 @@ object ShuttleTransferBinder {
             name.text = row.name
             name.backgroundTintList =
                 ColorStateList.valueOf(ContextCompat.getColor(container.context, row.colorRes))
-            view.findViewById<TextView>(R.id.transfer_detail).text = row.detail
+            val timeline = view.findViewById<TransitTimelineView>(R.id.transfer_timeline)
+            timeline.bind(row)
             container.addView(view)
         }
         section.visibility = View.VISIBLE

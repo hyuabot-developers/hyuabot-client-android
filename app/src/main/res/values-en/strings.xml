@@ -270,6 +270,10 @@
     <string name="transfer_subway_format">%1$dmin (%2$s)</string>
     <string name="transfer_bus_minutes_format">%1$dmin</string>
     <string name="transfer_bus_stops_suffix"> (%1$d stops)</string>
+    <string name="transfer_bus_boarding_stop">Seongpo\nJugong 4</string>
+    <string name="transfer_subway_boarding_station">Hanyang Univ. at Ansan</string>
+    <string name="transfer_vehicle_destination">to %1$s</string>
+    <string name="transfer_vehicle_minutes_stops">%1$dmin (%2$d stops)</string>
     <string name="cafeteria_date_title">Select Date</string>
     <string name="menu">Menu</string>
     <string name="menu_book">Reading Room Seat Lookup</string>

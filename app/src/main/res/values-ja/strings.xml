@@ -248,6 +248,10 @@
     <string name="transfer_subway_format">%1$d分（%2$s行）</string>
     <string name="transfer_bus_minutes_format">%1$d分</string>
     <string name="transfer_bus_stops_suffix"> （%1$d停留所前）</string>
+    <string name="transfer_bus_boarding_stop">城浦住公\n4団地</string>
+    <string name="transfer_subway_boarding_station">韓大前駅</string>
+    <string name="transfer_vehicle_destination">%1$s行</string>
+    <string name="transfer_vehicle_minutes_stops">%1$d分（%2$d前）</string>
     <string name="cafeteria_date_title">学食日付選択</string>
     <string name="menu">メニュー</string>
     <string name="menu_book">閲覧室座席照会</string>

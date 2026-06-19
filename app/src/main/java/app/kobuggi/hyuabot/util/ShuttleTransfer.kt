@@ -15,6 +15,21 @@ data class TransitRow(
     val name: String,
     @param:ColorRes val colorRes: Int,
     val detail: String,
+    val vehicleType: TransitVehicleType,
+    val timeline: List<TransitTimelineEntry> = emptyList(),
+)
+
+enum class TransitVehicleType {
+    SUBWAY,
+    BUS,
+}
+
+data class TransitTimelineEntry(
+    val destination: String,
+    val minutes: Int?,
+    val stops: Int?,
+    val locationLabel: String?,
+    val isRealtime: Boolean,
 )
 
 private const val BUS_STOP_KWANGMYEONG = 216000759
@@ -68,7 +83,16 @@ private fun subwayRow(
             localizedStationName(context, it.terminal.stationID, it.terminal.name),
         )
     }
-    return TransitRow(context.getString(nameRes), colorRes, detail)
+    val timeline = entries.map {
+        TransitTimelineEntry(
+            destination = localizedStationName(context, it.terminal.stationID, it.terminal.name),
+            minutes = it.minutes,
+            stops = it.stops,
+            locationLabel = it.location,
+            isRealtime = it.isRealtime,
+        )
+    }
+    return TransitRow(context.getString(nameRes), colorRes, detail, TransitVehicleType.SUBWAY, timeline)
 }
 
 private val SUBWAY_STATION_NAMES: Map<String, Int> = mapOf(
@@ -108,5 +132,15 @@ private fun busRow(
             minutes
         }
     }
-    return TransitRow(context.getString(nameRes), R.color.green_bus, detail)
+    val destination = context.getString(nameRes)
+    val timeline = arrivals.map {
+        TransitTimelineEntry(
+            destination = destination,
+            minutes = it.minutes,
+            stops = it.stops,
+            locationLabel = it.stops?.let { stops -> context.getString(R.string.transfer_bus_stops_suffix, stops).trim() },
+            isRealtime = it.isRealtime,
+        )
+    }
+    return TransitRow(destination, R.color.green_bus, detail, TransitVehicleType.BUS, timeline)
 }
