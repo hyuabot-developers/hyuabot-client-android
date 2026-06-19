@@ -2,9 +2,15 @@ package app.kobuggi.hyuabot.ui.map
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.UIUtility
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +19,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,6 +34,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.NaverMap
+import com.naver.maps.map.NaverMap.MapType
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.clustering.ClusterMarkerInfo
 import com.naver.maps.map.clustering.Clusterer
@@ -51,6 +57,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private lateinit var naverMap: NaverMap
     private lateinit var buildingClusterer: Clusterer<BuildingClusterKey>
     private var searchMarker: Marker? = null
+    private val buildingMarkerIconCache = mutableMapOf<String, OverlayImage>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -157,6 +164,9 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                 isRotateGesturesEnabled = false
                 isTiltGesturesEnabled = false
             }
+            mapType = MapType.Basic
+            isNightModeEnabled = UIUtility.isDarkModeOn(resources)
+            symbolScale = 0f
             moveCamera(CameraUpdate.scrollAndZoomTo(CAMPUS_CENTER, 16.0))
             buildingClusterer = createBuildingClusterer()
             buildingClusterer.map = this
@@ -177,10 +187,6 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             addClusterItems(buildings)
         }
     }
-
-    private fun getMarkerIcon() = ResourcesCompat.getDrawable(resources, R.drawable.map_marker, null)
-        ?.toBitmap(64, 64)
-        ?.let { OverlayImage.fromBitmap(it) }
 
     private fun addClusterItems(buildings: List<MapPageQuery.Building>) {
         if (!this::naverMap.isInitialized) return
@@ -203,7 +209,6 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         AnalyticsManager.logSelect(AnalyticsItem.MAP_SELECT_SEARCH_RESULT, type = AnalyticsContentType.LIST_ITEM, name = room.name)
         binding.searchView.hide()
         if (this::naverMap.isInitialized) {
-            val markerIcon = getMarkerIcon() ?: return
             naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(LatLng(room.latitude, room.longitude), 18.0))
             if (this::buildingClusterer.isInitialized) {
                 buildingClusterer.clear()
@@ -211,12 +216,15 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             searchMarker?.map = null
             searchMarker = Marker().apply {
                 position = LatLng(room.latitude, room.longitude)
-                captionText = room.name
-                subCaptionText = room.building
-                icon = markerIcon
+                captionText = ""
+                subCaptionText = ""
+                icon = buildingMarkerIcon(room.name)
+                width = Marker.SIZE_AUTO
+                height = Marker.SIZE_AUTO
+                isHideCollidedSymbols = false
                 map = naverMap
                 setOnClickListener {
-                    openExternalMap(position.latitude, position.longitude, captionText)
+                    openBuildingUrlOrMap(room.url, position.latitude, position.longitude, room.name)
                     true
                 }
             }
@@ -224,26 +232,39 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     }
 
     private fun createBuildingClusterer(): Clusterer<BuildingClusterKey> {
-        val markerIcon = getMarkerIcon()
         return Clusterer.Builder<BuildingClusterKey>()
             .leafMarkerUpdater { info: LeafMarkerInfo, marker: Marker ->
                 val building = info.tag as? MapPageQuery.Building
+                val key = info.key as? BuildingClusterKey
+                val buildingName = key?.name ?: building?.name.orEmpty()
                 marker.position = info.position
-                marker.captionText = building?.name.orEmpty()
-                marker.icon = markerIcon ?: Marker.DEFAULT_ICON
+                marker.captionText = ""
+                marker.subCaptionText = ""
+                marker.icon = buildingMarkerIcon(buildingName)
+                marker.width = Marker.SIZE_AUTO
+                marker.height = Marker.SIZE_AUTO
+                marker.isHideCollidedSymbols = false
                 marker.setOnClickListener {
                     val selected = info.tag as? MapPageQuery.Building
-                    openExternalMap(
+                    val label = key?.name ?: selected?.name.orEmpty()
+                    openBuildingUrlOrMap(
+                        selected?.url,
                         marker.position.latitude,
                         marker.position.longitude,
-                        selected?.name.orEmpty()
+                        label
                     )
                     true
                 }
             }
             .clusterMarkerUpdater { info: ClusterMarkerInfo, marker: Marker ->
                 marker.position = info.position
-                marker.captionText = info.size.toString()
+                marker.captionText = ""
+                marker.subCaptionText = ""
+                marker.icon = clusterIcon(info.size)
+                marker.width = Marker.SIZE_AUTO
+                marker.height = Marker.SIZE_AUTO
+                marker.isHideCollidedSymbols = false
+                marker.isHideCollidedCaptions = true
                 marker.setOnClickListener {
                     val nextZoom = (naverMap.cameraPosition.zoom + 1.5).coerceAtMost(18.0)
                     naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(info.position, nextZoom))
@@ -253,15 +274,135 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             .build()
     }
 
+    private fun clusterIcon(size: Int): OverlayImage {
+        val diameter = when {
+            size >= 100 -> 76
+            size >= 10 -> 68
+            else -> 60
+        }
+        val bitmap = Bitmap.createBitmap(diameter, diameter, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val center = diameter / 2f
+        val outerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.parseColor("#0E4A84")
+        }
+        val innerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.parseColor("#1565A9")
+        }
+        val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
+            textAlign = Paint.Align.CENTER
+            textSize = when {
+                size >= 100 -> 24f
+                size >= 10 -> 26f
+                else -> 28f
+            }
+            isFakeBoldText = true
+        }
+        canvas.drawCircle(center, center, center, outerPaint)
+        canvas.drawCircle(center, center, center - 5f, innerPaint)
+        val label = if (size > 99) "99+" else size.toString()
+        val textY = center - (textPaint.descent() + textPaint.ascent()) / 2f
+        canvas.drawText(label, center, textY, textPaint)
+        return OverlayImage.fromBitmap(bitmap)
+    }
+
+    private fun buildingMarkerIcon(name: String): OverlayImage {
+        val label = name.ifBlank { getString(R.string.menu_map) }
+        val isDarkMode = UIUtility.isDarkModeOn(resources)
+        val cacheKey = "${if (isDarkMode) "dark" else "light"}:$label"
+        return buildingMarkerIconCache.getOrPut(cacheKey) {
+            val markerSize = 52
+            val labelHeight = 30
+            val labelGap = 4
+            val maxLabelWidth = 220
+            val labelHorizontalPadding = 16
+            val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.parseColor(if (isDarkMode) "#F5F8FF" else "#FFFFFF")
+                textAlign = Paint.Align.CENTER
+                textSize = 20f
+                isFakeBoldText = true
+            }
+            val displayLabel = label.ellipsize(textPaint, maxLabelWidth - labelHorizontalPadding * 2)
+            val textWidth = textPaint.measureText(displayLabel)
+            val labelWidth = (textWidth + labelHorizontalPadding * 2).toInt().coerceIn(72, maxLabelWidth)
+            val bitmapWidth = maxOf(labelWidth, markerSize)
+            val bitmapHeight = labelHeight + labelGap + markerSize
+            val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            val labelRect = RectF(
+                (bitmapWidth - labelWidth) / 2f,
+                0f,
+                (bitmapWidth + labelWidth) / 2f,
+                labelHeight.toFloat()
+            )
+            val labelBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.parseColor(if (isDarkMode) "#1D2533" else "#0E4A84")
+            }
+            val labelStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.parseColor(if (isDarkMode) "#4F6B8A" else "#06325A")
+                style = Paint.Style.STROKE
+                strokeWidth = 2f
+            }
+            canvas.drawRoundRect(labelRect, 8f, 8f, labelBackgroundPaint)
+            canvas.drawRoundRect(labelRect, 8f, 8f, labelStrokePaint)
+            val textY = labelRect.centerY() - (textPaint.descent() + textPaint.ascent()) / 2f
+            canvas.drawText(displayLabel, labelRect.centerX(), textY, textPaint)
+
+            ResourcesCompat.getDrawable(resources, R.drawable.map_marker, null)
+                ?.mutate()
+                ?.apply {
+                    val markerLeft = (bitmapWidth - markerSize) / 2
+                    val markerTop = labelHeight + labelGap
+                    setBounds(markerLeft, markerTop, markerLeft + markerSize, markerTop + markerSize)
+                    draw(canvas)
+                }
+
+            OverlayImage.fromBitmap(bitmap)
+        }
+    }
+
+    private fun String.ellipsize(paint: Paint, maxWidth: Int): String {
+        if (paint.measureText(this) <= maxWidth) return this
+        var end = length
+        while (end > 1 && paint.measureText(take(end) + "...") > maxWidth) {
+            end--
+        }
+        return take(end) + "..."
+    }
+
+    private fun openBuildingUrlOrMap(url: String?, latitude: Double, longitude: Double, label: String) {
+        if (!url.isNullOrBlank()) {
+            val webUrl = if (url.startsWith("http://") || url.startsWith("https://")) {
+                url
+            } else {
+                "https://$url"
+            }
+            BuildingWebViewSheet.newInstance(label, webUrl).show(parentFragmentManager, "BuildingWebViewSheet")
+            return
+        }
+        openExternalMap(latitude, longitude, label)
+    }
+
     private fun openExternalMap(latitude: Double, longitude: Double, label: String) {
         val encodedLabel = Uri.encode(label.ifBlank { getString(R.string.menu_map) })
-        val intent = Intent(
+        val geoIntent = Intent(
             Intent.ACTION_VIEW,
             "geo:$latitude,$longitude?q=$latitude,$longitude($encodedLabel)".toUri()
         )
-        if (intent.resolveActivity(requireContext().packageManager) != null) {
-            startActivity(intent)
-        } else {
+        val webIntent = Intent(
+            Intent.ACTION_VIEW,
+            "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude".toUri()
+        )
+        try {
+            startActivity(geoIntent)
+        } catch (_: android.content.ActivityNotFoundException) {
+            try {
+                startActivity(webIntent)
+            } catch (_: android.content.ActivityNotFoundException) {
+                Toast.makeText(requireContext(), R.string.map_external_error, Toast.LENGTH_SHORT).show()
+            }
+        } catch (_: SecurityException) {
             Toast.makeText(requireContext(), R.string.map_external_error, Toast.LENGTH_SHORT).show()
         }
     }

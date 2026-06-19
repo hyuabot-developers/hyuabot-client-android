@@ -19,6 +19,14 @@
         tools:ignore="AdvertisingIdPolicy" />
     <queries>
         <package android:name="kr.ac.hanyang.library" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="geo" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
     </queries>
     <application
         android:allowBackup="true"
