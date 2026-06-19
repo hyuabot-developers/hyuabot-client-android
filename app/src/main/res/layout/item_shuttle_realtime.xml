@@ -58,8 +58,8 @@
         app:layout_constraintBottom_toBottomOf="parent" />
     <ImageButton
         android:id="@+id/shuttle_alarm_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_alarm"
         android:contentDescription="@string/shuttle_alarm_button_desc"
