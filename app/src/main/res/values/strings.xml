@@ -474,6 +474,14 @@
     <string name="coachmark_shuttle_realtime_updates_reset">셔틀 실시간 코치마크를 다시 볼 수 있어요.</string>
     <string name="coachmark_cafeteria_widget_title">학식 위젯</string>
     <string name="coachmark_cafeteria_widget_desc">홈 화면에 \'학식\' 위젯을 추가하면 오늘의 식단을 바로 확인할 수 있어요.</string>
+    <string name="shortcut_shuttle_short">셔틀</string>
+    <string name="shortcut_shuttle_long">셔틀버스 도착 정보</string>
+    <string name="shortcut_cafeteria_short">학식</string>
+    <string name="shortcut_cafeteria_long">오늘의 학식</string>
+    <string name="shortcut_reading_room_short">열람실</string>
+    <string name="shortcut_reading_room_long">열람실 좌석 현황</string>
+    <string name="shortcut_map_short">지도</string>
+    <string name="shortcut_map_long">캠퍼스 지도</string>
     <!-- Bus Help Dialog -->
     <string name="bus_help_title">노선버스 도움말</string>
     <string name="bus_help_realtime_title">1. 실시간 도착 정보</string>

@@ -13,6 +13,7 @@
             android:name="stop"
             app:argType="string"
             android:defaultValue="" />
+        <deepLink app:uri="hyuabot://shuttle" />
         <deepLink app:uri="hyuabot://shuttle?stop={stop}" />
         <action
             android:id="@+id/action_shuttleRealtimeFragment_to_shuttleStopDialogFragment"
@@ -128,12 +129,16 @@
         android:id="@+id/readingRoomFragment"
         android:name="app.kobuggi.hyuabot.ui.readingRoom.ReadingRoomFragment"
         android:label="열람실 정보"
-        tools:layout="@layout/fragment_reading_room" />
+        tools:layout="@layout/fragment_reading_room">
+        <deepLink app:uri="hyuabot://reading-room" />
+    </fragment>
     <fragment
         android:id="@+id/mapFragment"
         android:name="app.kobuggi.hyuabot.ui.map.MapFragment"
         android:label="지도"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map">
+        <deepLink app:uri="hyuabot://map" />
+    </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="app.kobuggi.hyuabot.ui.setting.SettingFragment"

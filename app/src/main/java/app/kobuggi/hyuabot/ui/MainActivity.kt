@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         checkLocationPermission()
         openBirthDayDialog()
         requestInAppReview()
+        navController.handleDeepLink(intent)
     }
 
     private fun suggestLanguageIfNeeded() {

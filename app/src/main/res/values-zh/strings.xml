@@ -396,6 +396,14 @@
     <string name="coachmark_shuttle_realtime_updates_reset">可再次查看校车实时引导。</string>
     <string name="coachmark_cafeteria_widget_title">学食小组件</string>
     <string name="coachmark_cafeteria_widget_desc">在主屏幕添加「学食」小组件，可随时查看今日菜单。</string>
+    <string name="shortcut_shuttle_short">校车</string>
+    <string name="shortcut_shuttle_long">校车到达信息</string>
+    <string name="shortcut_cafeteria_short">学食</string>
+    <string name="shortcut_cafeteria_long">今日菜单</string>
+    <string name="shortcut_reading_room_short">阅览室</string>
+    <string name="shortcut_reading_room_long">阅览室座位</string>
+    <string name="shortcut_map_short">地图</string>
+    <string name="shortcut_map_long">校园地图</string>
     <string name="language_suggestion_title">语言切换建议</string>
     <string name="language_suggestion_message">您的系统语言设置为%1$s。是否切换应用语言？</string>
     <string name="language_suggestion_keep_english">保持英语</string>

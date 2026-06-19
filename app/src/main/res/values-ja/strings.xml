@@ -396,6 +396,14 @@
     <string name="coachmark_shuttle_realtime_updates_reset">シャトルリアルタイムのコーチマークをもう一度表示できます。</string>
     <string name="coachmark_cafeteria_widget_title">学食ウィジェット</string>
     <string name="coachmark_cafeteria_widget_desc">ホーム画面に「学食」ウィジェットを追加すると、今日のメニューをすぐに確認できます。</string>
+    <string name="shortcut_shuttle_short">シャトル</string>
+    <string name="shortcut_shuttle_long">シャトル到着情報</string>
+    <string name="shortcut_cafeteria_short">学食</string>
+    <string name="shortcut_cafeteria_long">今日の学食</string>
+    <string name="shortcut_reading_room_short">閲覧室</string>
+    <string name="shortcut_reading_room_long">閲覧室座席状況</string>
+    <string name="shortcut_map_short">地図</string>
+    <string name="shortcut_map_long">キャンパスマップ</string>
     <string name="language_suggestion_title">言語切替の提案</string>
     <string name="language_suggestion_message">システム言語が%1$sに設定されています。アプリの言語を変更しますか？</string>
     <string name="language_suggestion_keep_english">英語を維持</string>

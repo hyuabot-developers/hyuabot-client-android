@@ -416,6 +416,14 @@
     <string name="coachmark_shuttle_realtime_updates_reset">Shuttle realtime coachmarks will be shown again.</string>
     <string name="coachmark_cafeteria_widget_title">Cafeteria widget</string>
     <string name="coachmark_cafeteria_widget_desc">Add the \'Cafeteria\' widget to your home screen to check today\'s menu at a glance.</string>
+    <string name="shortcut_shuttle_short">Shuttle</string>
+    <string name="shortcut_shuttle_long">Shuttle arrivals</string>
+    <string name="shortcut_cafeteria_short">Dining</string>
+    <string name="shortcut_cafeteria_long">Today\'s menu</string>
+    <string name="shortcut_reading_room_short">Seats</string>
+    <string name="shortcut_reading_room_long">Reading room seats</string>
+    <string name="shortcut_map_short">Map</string>
+    <string name="shortcut_map_long">Campus map</string>
     <string name="language_japanese">Japanese</string>
     <string name="language_chinese">Chinese (Simplified)</string>
     <string name="language_suggestion_title">Language Suggestion</string>
