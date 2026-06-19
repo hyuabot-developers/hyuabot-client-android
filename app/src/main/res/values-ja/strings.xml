@@ -417,8 +417,8 @@
     <string name="shuttle_alarm_boarding_title">%1$s 乗車アラート</string>
     <string name="shuttle_alarm_boarding_initial">%1$d分後に出発</string>
     <string name="shuttle_alarm_boarding_initial_checkpoint">%1$d分後に出発 · %2$s通過</string>
-    <string name="shuttle_alarm_boarding_content">%1$d分 · %2$s方向 %3$dm</string>
-    <string name="shuttle_alarm_boarding_content_checkpoint">%1$d分 · %2$s通過 · %3$s方向 %4$dm</string>
+    <string name="shuttle_alarm_boarding_content">%1$d分 · %2$s方向 %3$s</string>
+    <string name="shuttle_alarm_boarding_content_checkpoint">%1$d分 · %2$s通過 · %3$s方向 %4$s</string>
     <string name="shuttle_alarm_boarding_short">%1$d分</string>
     <string name="shuttle_alarm_checkpoint_waiting">%1$s待機</string>
     <string name="shuttle_alarm_checkpoint_departed">%1$s出発</string>
@@ -426,11 +426,11 @@
     <string name="shuttle_alarm_now">まもなく</string>
     <string name="shuttle_alarm_alighting_title">%1$s 降車準備</string>
     <string name="shuttle_alarm_alighting_preparing">降車停留所を監視中</string>
-    <string name="shuttle_alarm_alighting_content">停留所まで約%1$dm</string>
-    <string name="shuttle_alarm_distance_short">%1$dm</string>
+    <string name="shuttle_alarm_alighting_content">停留所まで約%1$s</string>
+    <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">追跡中</string>
     <string name="shuttle_alarm_alighting_alert_title">降車の準備をしてください！</string>
-    <string name="shuttle_alarm_alighting_alert_content">%1$s停留所が%2$dm先です</string>
+    <string name="shuttle_alarm_alighting_alert_content">%1$s停留所が%2$s先です</string>
     <string name="shuttle_alarm_channel_id">shuttle_alarm_channel</string>
     <string name="shuttle_alarm_channel_name">シャトルバス通知</string>
     <string name="shuttle_alarm_channel_desc">シャトルバス乗降車通知</string>

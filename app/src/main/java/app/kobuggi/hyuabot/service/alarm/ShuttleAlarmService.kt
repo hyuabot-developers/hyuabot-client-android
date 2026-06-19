@@ -19,6 +19,7 @@ import com.google.android.gms.location.Priority
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
+import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -243,7 +244,7 @@ class ShuttleAlarmService : Service() {
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notification = NotificationCompat.Builder(this, getString(R.string.shuttle_alarm_channel_id))
             .setContentTitle(getString(R.string.shuttle_alarm_alighting_alert_title))
-            .setContentText(getString(R.string.shuttle_alarm_alighting_alert_content, destStopName, distanceM))
+            .setContentText(getString(R.string.shuttle_alarm_alighting_alert_content, destStopName, formatAlarmDistance(distanceM)))
             .setSmallIcon(R.drawable.ic_notification_shuttle)
             .setColor(ContextCompat.getColor(this, R.color.hanyang_blue))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -264,7 +265,7 @@ class ShuttleAlarmService : Service() {
     ): Notification {
         val title = getString(R.string.shuttle_alarm_boarding_title, stopName)
         val content = if (distanceM != null && direction != null) {
-            getString(R.string.shuttle_alarm_boarding_content, minutes, direction, distanceM)
+            getString(R.string.shuttle_alarm_boarding_content, minutes, direction, formatAlarmDistance(distanceM))
         } else {
             getString(R.string.shuttle_alarm_boarding_initial, minutes)
         }
@@ -289,12 +290,12 @@ class ShuttleAlarmService : Service() {
     private fun buildAlightingNotification(destStopName: String, distanceM: Int?, cancelPi: PendingIntent): Notification {
         val title = getString(R.string.shuttle_alarm_alighting_title, destStopName)
         val content = if (distanceM != null) {
-            getString(R.string.shuttle_alarm_alighting_content, distanceM)
+            getString(R.string.shuttle_alarm_alighting_content, formatAlarmDistance(distanceM))
         } else {
             getString(R.string.shuttle_alarm_alighting_preparing)
         }
         val shortText = if (distanceM != null) {
-            getString(R.string.shuttle_alarm_distance_short, distanceM)
+            getString(R.string.shuttle_alarm_distance_short, formatAlarmDistance(distanceM))
         } else {
             getString(R.string.shuttle_alarm_tracking_short)
         }
@@ -419,6 +420,18 @@ class ShuttleAlarmService : Service() {
     private fun alightingProgress(distanceM: Int): Int {
         val cappedDistance = min(distanceM, 2_000)
         return (100 - cappedDistance / 20).coerceIn(0, 100)
+    }
+
+    private fun formatAlarmDistance(distanceM: Int): String {
+        return if (distanceM >= 1_000) {
+            if (distanceM % 1_000 == 0) {
+                "${distanceM / 1_000}km"
+            } else {
+                String.format(Locale.US, "%.1fkm", distanceM / 1_000.0)
+            }
+        } else {
+            "${distanceM}m"
+        }
     }
 
     private fun stopAlarm() {
