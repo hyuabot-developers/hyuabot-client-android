@@ -1,9 +1,6 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -15,11 +12,8 @@ import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.SheetBusAlternativeStopBinding
-import app.kobuggi.hyuabot.widget.ShuttleWidgetSupport
-import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -32,7 +26,6 @@ import com.naver.maps.map.overlay.InfoWindow
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.overlay.PathOverlay
-import kotlinx.coroutines.launch
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -103,7 +96,6 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
         }
     }
 
-    @SuppressLint("MissingPermission")
     override fun onMapReady(map: NaverMap) {
         val shuttleLatLng = LatLng(shuttleStop.lat, shuttleStop.lng)
         val busLatLng = LatLng(busStop.lat, busStop.lng)
@@ -115,10 +107,6 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
         map.uiSettings.isRotateGesturesEnabled = false
         map.uiSettings.isZoomControlEnabled = false
         map.uiSettings.isLocationButtonEnabled = false
-        val shouldFitWithLocation = hasLocationPermission()
-        if (shouldFitWithLocation) {
-            focusMapOnStopsAndCurrentLocation(map, shuttleLatLng, busLatLng)
-        }
 
         val shuttleMarker = Marker().apply {
             position = shuttleLatLng
@@ -160,17 +148,20 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
             this.map = map
         }
 
+        var didMoveInitialCamera = false
+        fun moveInitialCameraIfNeeded() {
+            if (didMoveInitialCamera) return
+            didMoveInitialCamera = true
+            focusMapOnStops(map, shuttleLatLng, busLatLng)
+        }
+
         binding.routeMapView.post {
-            if (!shouldFitWithLocation) {
-                focusMapOnStops(map, shuttleLatLng, busLatLng)
-            }
+            moveInitialCameraIfNeeded()
             shuttleInfoWindow.open(shuttleMarker)
             busInfoWindow.open(busMarker)
         }
         map.addOnLoadListener {
-            if (!shouldFitWithLocation) {
-                focusMapOnStops(map, shuttleLatLng, busLatLng)
-            }
+            moveInitialCameraIfNeeded()
             shuttleInfoWindow.open(shuttleMarker)
             busInfoWindow.open(busMarker)
         }
@@ -179,30 +170,6 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
     private fun focusMapOnStops(map: NaverMap, shuttleLatLng: LatLng, busLatLng: LatLng) {
         val bounds = LatLngBounds.from(listOf(shuttleLatLng, busLatLng))
         map.moveCamera(CameraUpdate.fitBounds(bounds, MAP_CAMERA_PADDING))
-    }
-
-    private fun focusMapOnStopsAndCurrentLocation(map: NaverMap, shuttleLatLng: LatLng, busLatLng: LatLng) {
-        lifecycleScope.launch {
-            val location = ShuttleWidgetSupport.getLocation(
-                context = requireContext(),
-                priority = Priority.PRIORITY_BALANCED_POWER_ACCURACY,
-                maxAgeMillis = 15_000L,
-                currentTimeoutMillis = 3_000L
-            )
-            val boundsPoints = mutableListOf(shuttleLatLng, busLatLng)
-            if (location != null) {
-                val currentLatLng = LatLng(location.latitude, location.longitude)
-                boundsPoints.add(currentLatLng)
-                map.locationOverlay.apply {
-                    position = currentLatLng
-                    isVisible = true
-                }
-            }
-            val bounds = LatLngBounds.from(boundsPoints)
-            binding.routeMapView.post {
-                map.moveCamera(CameraUpdate.fitBounds(bounds, MAP_CAMERA_PADDING))
-            }
-        }
     }
 
     private fun markerIcon(@DrawableRes iconRes: Int, @ColorInt color: Int): OverlayImage {
@@ -226,11 +193,6 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
         icon.draw(canvas)
 
         return OverlayImage.fromBitmap(bitmap)
-    }
-
-    private fun hasLocationPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun vectorIcon(@DrawableRes iconRes: Int, @ColorInt color: Int, size: Int): OverlayImage {
