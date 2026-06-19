@@ -1,11 +1,16 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogShuttleAlarmBinding
@@ -15,6 +20,16 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
 
     private val binding by lazy { DialogShuttleAlarmBinding.inflate(layoutInflater) }
+    private var pendingAlarmStart: (() -> Unit)? = null
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                pendingAlarmStart?.invoke()
+            } else {
+                Toast.makeText(requireContext(), R.string.shuttle_alarm_no_permission, Toast.LENGTH_SHORT).show()
+            }
+            pendingAlarmStart = null
+        }
 
     companion object {
         private const val ARG_BOARDING_NAME = "boarding_name"
@@ -88,8 +103,10 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
         } else {
             binding.boardingStartButton.text = getString(R.string.shuttle_alarm_start)
             binding.boardingStartButton.setOnClickListener {
-                startBoardingAlarm(alarmKey, boardingName, boardingLat, boardingLng, minutes, departureTimeMillis, checkpointNames, checkpointTimes)
-                dismiss()
+                startWithNotificationPermission {
+                    startBoardingAlarm(alarmKey, boardingName, boardingLat, boardingLng, minutes, departureTimeMillis, checkpointNames, checkpointTimes)
+                    dismiss()
+                }
             }
         }
 
@@ -112,30 +129,44 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
             } else {
                 binding.alightingStartButton.text = getString(R.string.shuttle_alarm_start)
                 binding.alightingStartButton.setOnClickListener {
-                    val selectedId = binding.destinationRadioGroup.checkedRadioButtonId
-                    val selectedIndex = (0 until binding.destinationRadioGroup.childCount).firstOrNull {
-                        binding.destinationRadioGroup.getChildAt(it).id == selectedId
-                    } ?: return@setOnClickListener
-                    if (selectedIndex < destLats.size && selectedIndex < destTimes.size) {
-                        val alightingCheckpointNames = arrayOf(boardingName) + destNames.take(selectedIndex + 1)
-                        val alightingCheckpointTimes = longArrayOf(departureTimeMillis) + destTimes.take(selectedIndex + 1)
-                        startAlightingAlarm(
-                            alarmKey,
-                            destNames[selectedIndex],
-                            destLats[selectedIndex],
-                            destLngs[selectedIndex],
-                            destTimes[selectedIndex],
-                            minutes,
-                            alightingCheckpointNames,
-                            alightingCheckpointTimes
-                        )
-                        dismiss()
+                    startWithNotificationPermission {
+                        val selectedId = binding.destinationRadioGroup.checkedRadioButtonId
+                        val selectedIndex = (0 until binding.destinationRadioGroup.childCount).firstOrNull {
+                            binding.destinationRadioGroup.getChildAt(it).id == selectedId
+                        } ?: return@startWithNotificationPermission
+                        if (selectedIndex < destLats.size && selectedIndex < destTimes.size) {
+                            val alightingCheckpointNames = arrayOf(boardingName) + destNames.take(selectedIndex + 1)
+                            val alightingCheckpointTimes = longArrayOf(departureTimeMillis) + destTimes.take(selectedIndex + 1)
+                            startAlightingAlarm(
+                                alarmKey,
+                                destNames[selectedIndex],
+                                destLats[selectedIndex],
+                                destLngs[selectedIndex],
+                                destTimes[selectedIndex],
+                                minutes,
+                                alightingCheckpointNames,
+                                alightingCheckpointTimes
+                            )
+                            dismiss()
+                        }
                     }
                 }
             }
         }
 
         return binding.root
+    }
+
+    private fun startWithNotificationPermission(action: () -> Unit) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            ContextCompat.checkSelfPermission(requireContext(), POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        ) {
+            action()
+            return
+        }
+
+        pendingAlarmStart = action
+        notificationPermissionLauncher.launch(POST_NOTIFICATIONS)
     }
 
     private fun startBoardingAlarm(
