@@ -419,6 +419,10 @@
     <string name="coachmark_reset_settings">Show feature guide again</string>
     <string name="coachmark_reset_settings_description">Show the app coachmark guide again.</string>
     <string name="coachmark_reset_complete">Feature guides will be shown again.</string>
+    <string name="contact_action_copy_phone">Copy phone number</string>
+    <string name="contact_action_share">Share contact</string>
+    <string name="contact_phone_copied">Phone number copied.</string>
+    <string name="contact_share_format">%1$s\n%2$s</string>
     <string name="shortcut_shuttle_short">Shuttle</string>
     <string name="shortcut_shuttle_long">Shuttle arrivals</string>
     <string name="shortcut_cafeteria_short">Dining</string>

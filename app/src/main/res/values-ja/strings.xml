@@ -399,6 +399,10 @@
     <string name="coachmark_reset_settings">機能ガイドを再表示</string>
     <string name="coachmark_reset_settings_description">アプリのコーチマーク案内をもう一度表示します。</string>
     <string name="coachmark_reset_complete">機能ガイドをもう一度表示できます。</string>
+    <string name="contact_action_copy_phone">電話番号をコピー</string>
+    <string name="contact_action_share">連絡先を共有</string>
+    <string name="contact_phone_copied">電話番号をコピーしました。</string>
+    <string name="contact_share_format">%1$s\n%2$s</string>
     <string name="shortcut_shuttle_short">シャトル</string>
     <string name="shortcut_shuttle_long">シャトル到着情報</string>
     <string name="shortcut_cafeteria_short">学食</string>

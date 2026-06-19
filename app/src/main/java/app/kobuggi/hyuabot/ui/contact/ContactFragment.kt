@@ -1,5 +1,9 @@
 package app.kobuggi.hyuabot.ui.contact
 
+import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,8 +32,8 @@ class ContactFragment @Inject constructor() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val listAdapter = ContactListAdapter(emptyList()) { onClickItem(it) }
-        val searchListAdapter = ContactListAdapter(emptyList()) { onClickItem(it) }
+        val listAdapter = ContactListAdapter(emptyList(), { onClickItem(it) }, { showContactActions(it) })
+        val searchListAdapter = ContactListAdapter(emptyList(), { onClickItem(it) }, { showContactActions(it) })
         viewModel.apply {
             fetchContactVersion()
             queryError.observe(viewLifecycleOwner) {
@@ -81,5 +85,35 @@ class ContactFragment @Inject constructor() : Fragment() {
         val intent = Intent(Intent.ACTION_DIAL)
         intent.data = "tel:${contact.phone}".toUri()
         startActivity(intent)
+    }
+
+    private fun showContactActions(contact: Contact) {
+        val labels = arrayOf(
+            getString(R.string.contact_action_copy_phone),
+            getString(R.string.contact_action_share)
+        )
+        AlertDialog.Builder(requireContext())
+            .setTitle(contact.name)
+            .setItems(labels) { _, which ->
+                when (which) {
+                    0 -> copyContactPhone(contact)
+                    1 -> shareContact(contact)
+                }
+            }
+            .show()
+    }
+
+    private fun copyContactPhone(contact: Contact) {
+        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText(contact.name, contact.phone))
+        Toast.makeText(requireContext(), R.string.contact_phone_copied, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun shareContact(contact: Contact) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_share_format, contact.name, contact.phone))
+        }
+        startActivity(Intent.createChooser(intent, getString(R.string.contact_action_share)))
     }
 }

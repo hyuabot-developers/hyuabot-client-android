@@ -477,6 +477,10 @@
     <string name="coachmark_reset_settings">기능 안내 다시 보기</string>
     <string name="coachmark_reset_settings_description">앱의 코치마크 안내를 다시 표시합니다.</string>
     <string name="coachmark_reset_complete">기능 안내를 다시 볼 수 있어요.</string>
+    <string name="contact_action_copy_phone">전화번호 복사</string>
+    <string name="contact_action_share">연락처 공유</string>
+    <string name="contact_phone_copied">전화번호를 복사했어요.</string>
+    <string name="contact_share_format">%1$s\n%2$s</string>
     <string name="shortcut_shuttle_short">셔틀</string>
     <string name="shortcut_shuttle_long">셔틀버스 도착 정보</string>
     <string name="shortcut_cafeteria_short">학식</string>

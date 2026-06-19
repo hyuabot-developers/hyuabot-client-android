@@ -12,13 +12,18 @@ import app.kobuggi.hyuabot.service.database.entity.Contact
 
 class ContactListAdapter(
     private var contacts: List<Contact>,
-    private val onClickItem: (Contact) -> Unit
+    private val onClickItem: (Contact) -> Unit,
+    private val onLongClickItem: (Contact) -> Unit = {},
 ): RecyclerView.Adapter<ContactListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemContactBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(contact: Contact) {
             binding.contactName.text = contact.name
             binding.contactPhone.text = contact.phone
             binding.root.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.CONTACT_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = contact.name); onClickItem(contact) }
+            binding.root.setOnLongClickListener {
+                onLongClickItem(contact)
+                true
+            }
         }
     }
 
