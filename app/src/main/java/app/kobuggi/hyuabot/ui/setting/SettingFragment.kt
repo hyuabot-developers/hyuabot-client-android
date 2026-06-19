@@ -45,6 +45,12 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
             settingLanguage.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "language"); openLanguageDialog() }
             settingTheme.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "theme"); openThemeDialog() }
             appInfo.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "info"); openInfoDialog() }
+            settingCoachmarkReset.setOnClickListener {
+                lifecycleScope.launch {
+                    Coachmarks.USER_VISIBLE_KEYS.forEach { userPreferencesRepository.resetCoachmark(it) }
+                    Toast.makeText(requireContext(), R.string.coachmark_reset_complete, Toast.LENGTH_SHORT).show()
+                }
+            }
             appInfo.setOnLongClickListener {
                 lifecycleScope.launch {
                     userPreferencesRepository.resetCoachmark(Coachmarks.SHUTTLE_REALTIME_UPDATES)

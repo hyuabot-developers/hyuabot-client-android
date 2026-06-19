@@ -396,6 +396,9 @@
     <string name="coachmark_shuttle_realtime_updates_reset">可再次查看校车实时引导。</string>
     <string name="coachmark_cafeteria_widget_title">学食小组件</string>
     <string name="coachmark_cafeteria_widget_desc">在主屏幕添加「学食」小组件，可随时查看今日菜单。</string>
+    <string name="coachmark_reset_settings">再次查看功能引导</string>
+    <string name="coachmark_reset_settings_description">再次显示应用功能引导。</string>
+    <string name="coachmark_reset_complete">可再次查看功能引导。</string>
     <string name="shortcut_shuttle_short">校车</string>
     <string name="shortcut_shuttle_long">校车到达信息</string>
     <string name="shortcut_cafeteria_short">学食</string>

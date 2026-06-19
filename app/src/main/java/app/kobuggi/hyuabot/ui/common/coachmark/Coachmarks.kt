@@ -32,6 +32,20 @@ object Coachmarks {
         MAP,
         SETTING,
     )
+
+    val USER_VISIBLE_KEYS = setOf(
+        SHUTTLE,
+        SHUTTLE_REALTIME_UPDATES,
+        SHUTTLE_TIMETABLE,
+        SHUTTLE_BUS_ALTERNATIVE,
+        BUS,
+        SUBWAY,
+        CAFETERIA,
+        MENU,
+        READING_ROOM,
+        MAP,
+        SETTING,
+    )
 }
 
 suspend fun Context.ensureCoachmarkBaseline(repository: UserPreferencesRepository) {
