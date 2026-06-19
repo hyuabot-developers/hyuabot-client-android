@@ -35,6 +35,39 @@
     <string name="shuttle_bus_alternative_route_n80b">N80B (기숙사 방면)</string>
     <string name="shuttle_bus_alternative_time">%1$d분</string>
     <string name="shuttle_bus_alternative_no_data">도착 정보 없음</string>
+    <!-- 셔틀버스 알림 -->
+    <string name="shuttle_alarm_button_desc">알림 설정</string>
+    <string name="shuttle_alarm_boarding">승차 알림</string>
+    <string name="shuttle_alarm_alighting">하차 알림</string>
+    <string name="shuttle_alarm_start">알림 시작</string>
+    <string name="shuttle_alarm_cancel">알림 취소</string>
+    <string name="shuttle_alarm_boarding_title">%1$s 탑승 알림</string>
+    <string name="shuttle_alarm_boarding_initial">%1$d분 후 출발</string>
+    <string name="shuttle_alarm_boarding_content">%1$d분 · %2$s방향 %3$dm</string>
+    <string name="shuttle_alarm_boarding_short">%1$d분</string>
+    <string name="shuttle_alarm_now">곧 도착</string>
+    <string name="shuttle_alarm_alighting_title">%1$s 하차 준비</string>
+    <string name="shuttle_alarm_alighting_preparing">하차 정류장 모니터링 중</string>
+    <string name="shuttle_alarm_alighting_content">정류장까지 약 %1$dm</string>
+    <string name="shuttle_alarm_distance_short">%1$dm</string>
+    <string name="shuttle_alarm_tracking_short">추적 중</string>
+    <string name="shuttle_alarm_alighting_alert_title">하차 준비하세요!</string>
+    <string name="shuttle_alarm_alighting_alert_content">%1$s 정류장이 %2$dm 앞입니다</string>
+    <string name="shuttle_alarm_channel_id">shuttle_alarm_channel</string>
+    <string name="shuttle_alarm_channel_name">셔틀버스 알림</string>
+    <string name="shuttle_alarm_channel_desc">셔틀버스 탑승 및 하차 알림</string>
+    <string name="shuttle_alarm_select_destination">하차 정류장 선택</string>
+    <string name="shuttle_alarm_no_permission">알림 권한이 필요합니다</string>
+    <!-- 방향 -->
+    <string name="direction_north">북</string>
+    <string name="direction_northeast">북동</string>
+    <string name="direction_east">동</string>
+    <string name="direction_southeast">남동</string>
+    <string name="direction_south">남</string>
+    <string name="direction_southwest">남서</string>
+    <string name="direction_west">서</string>
+    <string name="direction_northwest">북서</string>
+    <!-- 버스 대체 정류장 정보 -->
     <string name="bus_alternative_stop_info">정류장 위치</string>
     <string name="shuttle_no_realtime_data">도착 정보가 없습니다.</string>
     <!-- 셔틀버스 도착 정보 시간 -->

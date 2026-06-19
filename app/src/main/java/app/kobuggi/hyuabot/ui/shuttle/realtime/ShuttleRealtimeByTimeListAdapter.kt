@@ -27,6 +27,7 @@ class ShuttleRealtimeByTimeListAdapter(
     private val stopID: Int,
     private val childFragmentManager: FragmentManager,
     private var shuttleList: List<ShuttleRealtimePageQuery.Order>,
+    private val onAlarmClick: ((ShuttleRealtimePageQuery.Order) -> Unit)? = null,
 ) : RecyclerView.Adapter<ShuttleRealtimeByTimeListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ClickableViewAccessibility")
@@ -62,6 +63,15 @@ class ShuttleRealtimeByTimeListAdapter(
                 AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SELECT_VIA_ROW, type = AnalyticsContentType.LIST_ITEM)
                 val viaSheet = ShuttleViaSheetDialog(stopsOfTimetableByOrder = item.stops)
                 viaSheet.show(childFragmentManager, "ShuttleViaSheetDialog")
+            }
+
+            if (onAlarmClick != null) {
+                binding.shuttleAlarmButton.visibility = android.view.View.VISIBLE
+                binding.shuttleAlarmButton.setOnClickListener {
+                    onAlarmClick.invoke(item)
+                }
+            } else {
+                binding.shuttleAlarmButton.visibility = android.view.View.INVISIBLE
             }
         }
     }

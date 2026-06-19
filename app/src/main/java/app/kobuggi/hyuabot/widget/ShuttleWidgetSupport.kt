@@ -43,20 +43,25 @@ internal object ShuttleWidgetSupport {
     }
 
     @SuppressLint("MissingPermission")
-    suspend fun getLocation(context: Context): Location? {
+    suspend fun getLocation(
+        context: Context,
+        priority: Int = Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+        maxAgeMillis: Long = LOCATION_MAX_AGE_MILLIS,
+        currentTimeoutMillis: Long = 6000L
+    ): Location? {
         val client = LocationServices.getFusedLocationProviderClient(context)
         val last = withTimeoutOrNull(2000) { awaitTask(client.lastLocation) }
-        if (last != null && isFresh(last)) return last
+        if (last != null && isFresh(last, maxAgeMillis)) return last
         val tokenSource = CancellationTokenSource()
-        val current = withTimeoutOrNull(6000) {
-            awaitTask(client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token))
+        val current = withTimeoutOrNull(currentTimeoutMillis) {
+            awaitTask(client.getCurrentLocation(priority, tokenSource.token))
         }
         return current ?: last
     }
 
-    private fun isFresh(location: Location): Boolean {
+    private fun isFresh(location: Location, maxAgeMillis: Long): Boolean {
         val ageMillis = (SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos) / 1_000_000
-        return ageMillis in 0..LOCATION_MAX_AGE_MILLIS
+        return ageMillis in 0..maxAgeMillis
     }
 
     private suspend fun <T> awaitTask(task: Task<T>): T? =

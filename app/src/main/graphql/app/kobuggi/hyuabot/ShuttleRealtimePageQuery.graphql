@@ -23,6 +23,7 @@ query ShuttleRealtimePageQuery($language: String!, $after: LocalTime) {
             name
             timetable {
                 order {
+                    seq
                     route {
                         tag
                         name
@@ -36,6 +37,7 @@ query ShuttleRealtimePageQuery($language: String!, $after: LocalTime) {
                 destination {
                     destination
                     entries {
+                        seq
                         route {
                             tag
                             name

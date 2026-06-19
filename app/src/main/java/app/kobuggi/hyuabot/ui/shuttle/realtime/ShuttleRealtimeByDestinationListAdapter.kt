@@ -25,6 +25,7 @@ class ShuttleRealtimeByDestinationListAdapter(
     private val headerID: Int,
     private val childFragmentManager: FragmentManager,
     private var shuttleList: List<ShuttleRealtimePageQuery.Entry>,
+    private val onAlarmClick: ((ShuttleRealtimePageQuery.Entry) -> Unit)? = null,
 ) : RecyclerView.Adapter<ShuttleRealtimeByDestinationListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         val darkMode = context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -184,6 +185,15 @@ class ShuttleRealtimeByDestinationListAdapter(
                 AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SELECT_VIA_ROW, type = AnalyticsContentType.LIST_ITEM)
                 val viaSheet = ShuttleViaSheetDialog(stopsOfTimetableByDestination = item.stops)
                 viaSheet.show(childFragmentManager, "ShuttleViaSheetDialog")
+            }
+
+            if (onAlarmClick != null) {
+                binding.shuttleAlarmButton.visibility = ViewGroup.VISIBLE
+                binding.shuttleAlarmButton.setOnClickListener {
+                    onAlarmClick.invoke(item)
+                }
+            } else {
+                binding.shuttleAlarmButton.visibility = ViewGroup.INVISIBLE
             }
         }
     }
