@@ -15,7 +15,7 @@
         android:textFontWeight="700"
         android:background="@color/hanyang_blue" />
 
-    <com.google.android.gms.maps.MapView
+    <com.naver.maps.map.MapView
         android:id="@+id/stop_map_view"
         android:layout_width="match_parent"
         android:layout_height="300dp" />

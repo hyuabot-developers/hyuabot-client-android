@@ -4,11 +4,14 @@ import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.addTextChangedListener
@@ -23,12 +26,16 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.clustering.ClusterManager
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.clustering.ClusterMarkerInfo
+import com.naver.maps.map.clustering.Clusterer
+import com.naver.maps.map.clustering.ClusteringKey
+import com.naver.maps.map.clustering.LeafMarkerInfo
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -41,8 +48,9 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
     private val bundleKey = "MapViewBundleKey"
-    private lateinit var clusterManager: ClusterManager<BuildingMarkerItem>
-    private lateinit var googleMap: GoogleMap
+    private lateinit var naverMap: NaverMap
+    private lateinit var buildingClusterer: Clusterer<BuildingClusterKey>
+    private var searchMarker: Marker? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,14 +82,14 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         binding.backToMoveButton.setOnClickListener {
             AnalyticsManager.logSelect(AnalyticsItem.MAP_RECENTER)
             viewModel.searchRooms.value = false
-            if (this::googleMap.isInitialized) {
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(37.29753535479288, 126.83544659517665), 16f))
+            if (this::naverMap.isInitialized) {
+                naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(CAMPUS_CENTER, 16.0))
             }
         }
         viewModel.searchRooms.observe(viewLifecycleOwner) {
             binding.backToMoveButton.visibility = if (it) View.VISIBLE else View.GONE
-            if (this::googleMap.isInitialized) {
-                googleMap.uiSettings.apply {
+            if (this::naverMap.isInitialized) {
+                naverMap.uiSettings.apply {
                     isScrollGesturesEnabled = !it
                     isZoomGesturesEnabled = !it
                 }
@@ -142,64 +150,133 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     }
 
     @SuppressLint("PotentialBehaviorOverride")
-    override fun onMapReady(map: GoogleMap) {
-        googleMap = map
+    override fun onMapReady(map: NaverMap) {
+        naverMap = map
         map.apply {
             uiSettings.apply {
                 isRotateGesturesEnabled = false
                 isTiltGesturesEnabled = false
             }
-            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(37.29753535479288, 126.83544659517665), 16f))
-            clusterManager = BuildingClusterManager(requireContext(), map, viewModel)
-            BuildingClusterRenderer(requireContext(), map, clusterManager)
-            setOnCameraIdleListener(clusterManager)
-            setOnMarkerClickListener(clusterManager)
-        }
-        map.setOnMapLoadedCallback {
-            viewModel.buildings.observe(viewLifecycleOwner) { buildings ->
-                addClusterItems(buildings)
+            moveCamera(CameraUpdate.scrollAndZoomTo(CAMPUS_CENTER, 16.0))
+            buildingClusterer = createBuildingClusterer()
+            buildingClusterer.map = this
+            addOnCameraIdleListener {
+                if (viewModel.searchRooms.value == true) {
+                    return@addOnCameraIdleListener
+                }
+                val bounds = contentBounds
+                viewModel.fetchBuildings(
+                    bounds.northLatitude,
+                    bounds.southLatitude,
+                    bounds.westLongitude,
+                    bounds.eastLongitude
+                )
             }
+        }
+        viewModel.buildings.observe(viewLifecycleOwner) { buildings ->
+            addClusterItems(buildings)
         }
     }
 
-    private fun getMarkerDescriptor() = ResourcesCompat.getDrawable(resources, R.drawable.map_marker, null)
+    private fun getMarkerIcon() = ResourcesCompat.getDrawable(resources, R.drawable.map_marker, null)
         ?.toBitmap(64, 64)
-        ?.let { BitmapDescriptorFactory.fromBitmap(it) }
+        ?.let { OverlayImage.fromBitmap(it) }
 
     private fun addClusterItems(buildings: List<MapPageQuery.Building>) {
-        val markerDescriptor = getMarkerDescriptor() ?: return
-        clusterManager.apply {
-            clearItems()
-            buildings.forEach { building ->
-                clusterManager.addItem(BuildingMarkerItem(
-                    building.name,
-                    building.latitude,
-                    building.longitude,
-                    "",
-                    markerDescriptor
-                ))
-            }
-            cluster()
-        }
+        if (!this::naverMap.isInitialized) return
+        searchMarker?.map = null
+        searchMarker = null
+        if (!this::buildingClusterer.isInitialized) return
+        buildingClusterer.clear()
+        buildingClusterer.addAll(
+            buildings.associateWith { building ->
+                BuildingClusterKey(
+                    name = building.name,
+                    latitude = building.latitude,
+                    longitude = building.longitude
+                )
+            }.entries.associate { (building, key) -> key to building }
+        )
     }
 
     private fun onClickSearchResult(room: RoomItem) {
         AnalyticsManager.logSelect(AnalyticsItem.MAP_SELECT_SEARCH_RESULT, type = AnalyticsContentType.LIST_ITEM, name = room.name)
         binding.searchView.hide()
-        if (this::googleMap.isInitialized) {
-            val markerDescriptor = getMarkerDescriptor() ?: return
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(room.latitude, room.longitude), 18f))
-            clusterManager.apply {
-                clearItems()
-                addItem(BuildingMarkerItem(
-                    room.name,
-                    room.latitude,
-                    room.longitude,
-                    room.building,
-                    markerDescriptor
-                ))
-                cluster()
+        if (this::naverMap.isInitialized) {
+            val markerIcon = getMarkerIcon() ?: return
+            naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(LatLng(room.latitude, room.longitude), 18.0))
+            if (this::buildingClusterer.isInitialized) {
+                buildingClusterer.clear()
+            }
+            searchMarker?.map = null
+            searchMarker = Marker().apply {
+                position = LatLng(room.latitude, room.longitude)
+                captionText = room.name
+                subCaptionText = room.building
+                icon = markerIcon
+                map = naverMap
+                setOnClickListener {
+                    openExternalMap(position.latitude, position.longitude, captionText)
+                    true
+                }
             }
         }
+    }
+
+    private fun createBuildingClusterer(): Clusterer<BuildingClusterKey> {
+        val markerIcon = getMarkerIcon()
+        return Clusterer.Builder<BuildingClusterKey>()
+            .leafMarkerUpdater { info: LeafMarkerInfo, marker: Marker ->
+                val building = info.tag as? MapPageQuery.Building
+                marker.position = info.position
+                marker.captionText = building?.name.orEmpty()
+                marker.icon = markerIcon ?: Marker.DEFAULT_ICON
+                marker.setOnClickListener {
+                    val selected = info.tag as? MapPageQuery.Building
+                    openExternalMap(
+                        marker.position.latitude,
+                        marker.position.longitude,
+                        selected?.name.orEmpty()
+                    )
+                    true
+                }
+            }
+            .clusterMarkerUpdater { info: ClusterMarkerInfo, marker: Marker ->
+                marker.position = info.position
+                marker.captionText = info.size.toString()
+                marker.setOnClickListener {
+                    val nextZoom = (naverMap.cameraPosition.zoom + 1.5).coerceAtMost(18.0)
+                    naverMap.moveCamera(CameraUpdate.scrollAndZoomTo(info.position, nextZoom))
+                    true
+                }
+            }
+            .build()
+    }
+
+    private fun openExternalMap(latitude: Double, longitude: Double, label: String) {
+        val encodedLabel = Uri.encode(label.ifBlank { getString(R.string.menu_map) })
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            "geo:$latitude,$longitude?q=$latitude,$longitude($encodedLabel)".toUri()
+        )
+        if (intent.resolveActivity(requireContext().packageManager) != null) {
+            startActivity(intent)
+        } else {
+            Toast.makeText(requireContext(), R.string.map_external_error, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    companion object {
+        private val CAMPUS_CENTER = LatLng(37.29753535479288, 126.83544659517665)
+    }
+
+    private data class BuildingClusterKey(
+        val name: String,
+        val latitude: Double,
+        val longitude: Double
+    ) : ClusteringKey {
+        private val latLng = LatLng(latitude, longitude)
+
+        override fun getPosition(): LatLng = latLng
     }
 }

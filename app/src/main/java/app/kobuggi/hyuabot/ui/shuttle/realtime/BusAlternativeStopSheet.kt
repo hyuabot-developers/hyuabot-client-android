@@ -19,21 +19,19 @@ import androidx.lifecycle.lifecycleScope
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.SheetBusAlternativeStopBinding
 import app.kobuggi.hyuabot.widget.ShuttleWidgetSupport
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.location.Priority
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.Dot
-import com.google.android.gms.maps.model.Gap
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.InfoWindow
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
+import com.naver.maps.map.overlay.PathOverlay
 import kotlinx.coroutines.launch
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -52,6 +50,7 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
         private const val ARG_BUS_STOP_NAME = "bus_stop_name"
         private const val ARG_BUS_STOP_LAT = "bus_stop_lat"
         private const val ARG_BUS_STOP_LNG = "bus_stop_lng"
+        private const val MAP_CAMERA_PADDING = 260
 
         fun newInstance(
             shuttleStopName: String,
@@ -105,81 +104,84 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
     }
 
     @SuppressLint("MissingPermission")
-    override fun onMapReady(map: GoogleMap) {
+    override fun onMapReady(map: NaverMap) {
         val shuttleLatLng = LatLng(shuttleStop.lat, shuttleStop.lng)
         val busLatLng = LatLng(busStop.lat, busStop.lng)
 
-        map.uiSettings.isMapToolbarEnabled = false
         map.uiSettings.isCompassEnabled = true
         map.uiSettings.isScrollGesturesEnabled = false
         map.uiSettings.isZoomGesturesEnabled = false
         map.uiSettings.isTiltGesturesEnabled = false
         map.uiSettings.isRotateGesturesEnabled = false
-        map.uiSettings.isZoomControlsEnabled = false
-        if (hasLocationPermission()) {
-            map.isMyLocationEnabled = true
-            map.uiSettings.isMyLocationButtonEnabled = true
-            map.setOnMyLocationButtonClickListener {
-                focusMapOnStopsAndCurrentLocation(map, shuttleLatLng, busLatLng)
-                true
-            }
+        map.uiSettings.isZoomControlEnabled = false
+        map.uiSettings.isLocationButtonEnabled = false
+        val shouldFitWithLocation = hasLocationPermission()
+        if (shouldFitWithLocation) {
+            focusMapOnStopsAndCurrentLocation(map, shuttleLatLng, busLatLng)
         }
-        map.setOnMarkerClickListener { marker ->
-            marker.showInfoWindow()
+
+        val shuttleMarker = Marker().apply {
+            position = shuttleLatLng
+            captionText = shuttleStop.name
+            subCaptionText = getString(R.string.bus_alternative_shuttle_stop)
+            icon = markerIcon(R.drawable.ic_shuttle_bus, Color.parseColor("#0E4A84"))
+            anchor = Marker.DEFAULT_ANCHOR
+            this.map = map
+        }
+        val busMarker = Marker().apply {
+            position = busLatLng
+            captionText = busStop.name
+            subCaptionText = getString(R.string.bus_alternative_bus_stop)
+            icon = markerIcon(R.drawable.ic_bus, Color.parseColor("#7DB928"))
+            anchor = Marker.DEFAULT_ANCHOR
+            this.map = map
+        }
+        val shuttleInfoWindow = infoWindow(shuttleStop.name, getString(R.string.bus_alternative_shuttle_stop))
+        val busInfoWindow = infoWindow(busStop.name, getString(R.string.bus_alternative_bus_stop))
+        shuttleMarker.setOnClickListener {
+            shuttleInfoWindow.open(shuttleMarker)
             true
         }
-
-        val shuttleMarker = map.addMarker(
-            MarkerOptions()
-                .position(shuttleLatLng)
-                .title(shuttleStop.name)
-                .snippet(getString(R.string.bus_alternative_shuttle_stop))
-                .icon(markerIcon(R.drawable.ic_shuttle_bus, Color.parseColor("#0E4A84")))
-                .anchor(0.5f, 0.5f)
-        )
-        map.addMarker(
-            MarkerOptions()
-                .position(busLatLng)
-                .title(busStop.name)
-                .snippet(getString(R.string.bus_alternative_bus_stop))
-                .icon(markerIcon(R.drawable.ic_bus, Color.parseColor("#7DB928")))
-                .anchor(0.5f, 0.5f)
-        )
-        map.addPolyline(
-            PolylineOptions()
-                .add(shuttleLatLng, busLatLng)
-                .color(Color.parseColor("#0E4A84"))
-                .pattern(listOf(Dot(), Gap(18f)))
-                .width(10f)
-        )
-        map.addMarker(
-            MarkerOptions()
-                .position(midpoint(shuttleLatLng, busLatLng))
-                .icon(vectorIcon(R.drawable.ic_arrow_right, Color.parseColor("#0E4A84"), 44))
-                .anchor(0.5f, 0.5f)
-                .flat(true)
-                .rotation(bearing(shuttleLatLng, busLatLng) - 90f)
-        )
+        busMarker.setOnClickListener {
+            busInfoWindow.open(busMarker)
+            true
+        }
+        PathOverlay().apply {
+            coords = listOf(shuttleLatLng, busLatLng)
+            color = Color.parseColor("#0E4A84")
+            width = 5
+            this.map = map
+        }
+        Marker().apply {
+            position = midpoint(shuttleLatLng, busLatLng)
+            icon = vectorIcon(R.drawable.ic_arrow_right, Color.parseColor("#0E4A84"), 44)
+            anchor = Marker.DEFAULT_ANCHOR
+            angle = bearing(shuttleLatLng, busLatLng) - 90f
+            this.map = map
+        }
 
         binding.routeMapView.post {
-            focusMapOnStops(map, shuttleLatLng, busLatLng)
-            shuttleMarker?.showInfoWindow()
+            if (!shouldFitWithLocation) {
+                focusMapOnStops(map, shuttleLatLng, busLatLng)
+            }
+            shuttleInfoWindow.open(shuttleMarker)
+            busInfoWindow.open(busMarker)
         }
-        map.setOnMapLoadedCallback {
-            focusMapOnStops(map, shuttleLatLng, busLatLng)
-            shuttleMarker?.showInfoWindow()
+        map.addOnLoadListener {
+            if (!shouldFitWithLocation) {
+                focusMapOnStops(map, shuttleLatLng, busLatLng)
+            }
+            shuttleInfoWindow.open(shuttleMarker)
+            busInfoWindow.open(busMarker)
         }
     }
 
-    private fun focusMapOnStops(map: GoogleMap, shuttleLatLng: LatLng, busLatLng: LatLng) {
-        val bounds = LatLngBounds.builder()
-            .include(shuttleLatLng)
-            .include(busLatLng)
-            .build()
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 180))
+    private fun focusMapOnStops(map: NaverMap, shuttleLatLng: LatLng, busLatLng: LatLng) {
+        val bounds = LatLngBounds.from(listOf(shuttleLatLng, busLatLng))
+        map.moveCamera(CameraUpdate.fitBounds(bounds, MAP_CAMERA_PADDING))
     }
 
-    private fun focusMapOnStopsAndCurrentLocation(map: GoogleMap, shuttleLatLng: LatLng, busLatLng: LatLng) {
+    private fun focusMapOnStopsAndCurrentLocation(map: NaverMap, shuttleLatLng: LatLng, busLatLng: LatLng) {
         lifecycleScope.launch {
             val location = ShuttleWidgetSupport.getLocation(
                 context = requireContext(),
@@ -187,22 +189,23 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
                 maxAgeMillis = 15_000L,
                 currentTimeoutMillis = 3_000L
             )
-            val bounds = LatLngBounds.builder()
-                .include(shuttleLatLng)
-                .include(busLatLng)
-                .apply {
-                    if (location != null) {
-                        include(LatLng(location.latitude, location.longitude))
-                    }
+            val boundsPoints = mutableListOf(shuttleLatLng, busLatLng)
+            if (location != null) {
+                val currentLatLng = LatLng(location.latitude, location.longitude)
+                boundsPoints.add(currentLatLng)
+                map.locationOverlay.apply {
+                    position = currentLatLng
+                    isVisible = true
                 }
-                .build()
+            }
+            val bounds = LatLngBounds.from(boundsPoints)
             binding.routeMapView.post {
-                map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 180))
+                map.moveCamera(CameraUpdate.fitBounds(bounds, MAP_CAMERA_PADDING))
             }
         }
     }
 
-    private fun markerIcon(@DrawableRes iconRes: Int, @ColorInt color: Int): BitmapDescriptor {
+    private fun markerIcon(@DrawableRes iconRes: Int, @ColorInt color: Int): OverlayImage {
         val size = 88
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -222,7 +225,7 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
         icon.setBounds(inset, inset, size - inset, size - inset)
         icon.draw(canvas)
 
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
+        return OverlayImage.fromBitmap(bitmap)
     }
 
     private fun hasLocationPermission(): Boolean {
@@ -230,14 +233,24 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun vectorIcon(@DrawableRes iconRes: Int, @ColorInt color: Int, size: Int): BitmapDescriptor {
+    private fun vectorIcon(@DrawableRes iconRes: Int, @ColorInt color: Int, size: Int): OverlayImage {
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val icon = ContextCompat.getDrawable(requireContext(), iconRes)!!.mutate()
         icon.setTint(color)
         icon.setBounds(0, 0, size, size)
         icon.draw(canvas)
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
+        return OverlayImage.fromBitmap(bitmap)
+    }
+
+    private fun infoWindow(title: String, subtitle: String): InfoWindow {
+        return InfoWindow().apply {
+            adapter = object : InfoWindow.DefaultTextAdapter(requireContext()) {
+                override fun getText(infoWindow: InfoWindow): CharSequence {
+                    return "$title\n$subtitle"
+                }
+            }
+        }
     }
 
     private fun midpoint(from: LatLng, to: LatLng): LatLng {
@@ -293,4 +306,5 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
         val lat: Double,
         val lng: Double
     )
+
 }

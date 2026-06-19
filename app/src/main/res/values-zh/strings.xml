@@ -46,7 +46,6 @@
     <string name="shuttle_type_dormitory_circular">宿舍（循环）</string>
     <string name="shuttle_type_jungang_circular">宿舍（中央站）</string>
     <string name="shuttle_type_shuttlecock_finishing">羽毛球场终点</string>
-    <string name="map_id">15fbba8d56d94b31</string>
     <string name="shuttle_first_last_time_title">首班/末班信息</string>
     <string name="shuttle_first_last_time_no_data_weekdays">--:--（工作日）</string>
     <string name="shuttle_first_last_time_no_data_weekends">--:--（周末）</string>
@@ -252,6 +251,7 @@
     <string name="menu_review">评价应用</string>
     <string name="menu_map">校园地图</string>
     <string name="map_search_guide">请输入要搜索的教室</string>
+    <string name="map_external_error">没有可打开地图的应用。</string>
     <string name="room_description_format">%1$s/%2$s号</string>
     <string name="reading_room_alarm_description">阅览室延长提醒</string>
     <string name="reading_room_alarm_3_hour">3小时（考试期间）</string>

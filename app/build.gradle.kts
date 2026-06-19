@@ -50,7 +50,7 @@ android {
         versionName = "5.1.3"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
+        manifestPlaceholders["MAP_CLIENT_ID"] = props["MAP_CLIENT_ID"]?.toString() ?: ""
     }
 
     buildTypes {
@@ -151,8 +151,7 @@ dependencies {
     implementation(libs.firebaseAnalytics)
     implementation(libs.firebaseCrashlytics)
     // Map
-    implementation(libs.playServicesMaps)
-    implementation(libs.mapsUtils)
+    implementation(libs.naver.map)
     // SplashScreen
     implementation(libs.splashScreen)
     // SwipeRefreshLayout

@@ -12,15 +12,15 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogBusStopInfoBinding
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -62,20 +62,20 @@ class BusStopInfoFragment @Inject constructor() : BottomSheetDialogFragment(), O
         return dialog
     }
 
-    override fun onMapReady(map: GoogleMap) {
+    override fun onMapReady(map: NaverMap) {
         viewModel.result.observe(viewLifecycleOwner) { busList ->
             if (busList.isEmpty()) return@observe
             val stopLat = busList.first().stop.latitude
             val stopLng = busList.first().stop.longitude
             val stopName = busList.first().stop.name
             val location = LatLng(stopLat, stopLng)
-            map.addMarker(
-                MarkerOptions()
-                    .position(location)
-                    .title(stopName)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-            )
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17f))
+            Marker().apply {
+                position = location
+                captionText = stopName
+                icon = OverlayImage.fromResource(R.drawable.ic_bus_marker)
+                this.map = map
+            }
+            map.moveCamera(CameraUpdate.scrollAndZoomTo(location, 17.0))
         }
     }
 

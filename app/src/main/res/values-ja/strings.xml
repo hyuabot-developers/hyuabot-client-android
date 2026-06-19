@@ -46,7 +46,6 @@
     <string name="shuttle_type_dormitory_circular">寮（循環）</string>
     <string name="shuttle_type_jungang_circular">寮（中央駅）</string>
     <string name="shuttle_type_shuttlecock_finishing">シャトルコック終着</string>
-    <string name="map_id">15fbba8d56d94b31</string>
     <string name="shuttle_first_last_time_title">始発/終発情報</string>
     <string name="shuttle_first_last_time_no_data_weekdays">--:--（平日）</string>
     <string name="shuttle_first_last_time_no_data_weekends">--:--（週末）</string>
@@ -252,6 +251,7 @@
     <string name="menu_review">アプリ評価</string>
     <string name="menu_map">キャンパスマップ</string>
     <string name="map_search_guide">検索する講義室を入力してください</string>
+    <string name="map_external_error">地図を開けるアプリがありません。</string>
     <string name="room_description_format">%1$s/%2$s号</string>
     <string name="reading_room_alarm_description">閲覧室延長通知</string>
     <string name="reading_room_alarm_3_hour">3時間（試験期間）</string>

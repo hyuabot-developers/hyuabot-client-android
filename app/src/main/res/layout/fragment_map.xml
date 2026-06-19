@@ -4,9 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.google.android.gms.maps.MapView
+    <com.naver.maps.map.MapView
         android:id="@+id/map_view"
-        app:mapId="@string/map_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/searchbar_scrolling_view_behavior"
@@ -48,4 +47,3 @@
         app:layout_anchor="@id/map_view"
         app:layout_anchorGravity="bottom|end" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-

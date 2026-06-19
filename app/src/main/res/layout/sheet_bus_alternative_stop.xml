@@ -17,10 +17,9 @@
         android:textFontWeight="700"
         android:textSize="18sp" />
 
-    <com.google.android.gms.maps.MapView
+    <com.naver.maps.map.MapView
         android:id="@+id/route_map_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        app:mapId="@string/map_id" />
+        android:layout_weight="1" />
 </LinearLayout>

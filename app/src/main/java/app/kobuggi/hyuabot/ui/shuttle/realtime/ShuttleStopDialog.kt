@@ -10,15 +10,15 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogShuttleStopBinding
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -218,10 +218,10 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment(), OnM
         super.onDestroy()
     }
 
-    override fun onMapReady(map: GoogleMap) {
+    override fun onMapReady(map: NaverMap) {
         map.apply {
             uiSettings.apply {
-                isZoomControlsEnabled = false
+                isZoomControlEnabled = false
                 isZoomGesturesEnabled = false
                 isScrollGesturesEnabled = false
                 isRotateGesturesEnabled = false
@@ -230,12 +230,12 @@ class ShuttleStopDialog @Inject constructor() : BottomSheetDialogFragment(), OnM
         }
         viewModel.result.observe(viewLifecycleOwner) {
             if (it != null) {
-                map.apply {
-                    moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), 17f))
-                    addMarker(MarkerOptions().apply {
-                        position(LatLng(it.latitude, it.longitude))
-                        icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus_marker))
-                    })
+                val location = LatLng(it.latitude, it.longitude)
+                map.moveCamera(CameraUpdate.scrollAndZoomTo(location, 17.0))
+                Marker().apply {
+                    position = location
+                    icon = OverlayImage.fromResource(R.drawable.ic_bus_marker)
+                    this.map = map
                 }
             }
         }

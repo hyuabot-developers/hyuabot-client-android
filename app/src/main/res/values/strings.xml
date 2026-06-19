@@ -97,7 +97,6 @@
     <string name="shuttle_type_jungang_circular">기숙사 (중앙역)</string>
     <string name="shuttle_type_shuttlecock_finishing">셔틀콕 종착</string>
     <!-- 셔틀버스 첫막차 시간 -->
-    <string name="map_id">15fbba8d56d94b31</string>
     <string name="shuttle_first_last_time_title">첫차/막차 정보</string>
     <string name="shuttle_first_last_time_no_data_weekdays">--:-- (평일)</string>
     <string name="shuttle_first_last_time_no_data_weekends">--:-- (주말)</string>
@@ -326,6 +325,7 @@
     <string name="menu_review">앱 평가하기</string>
     <string name="menu_map">캠퍼스 지도</string>
     <string name="map_search_guide">검색할 강의실을 입력하세요</string>
+    <string name="map_external_error">지도를 열 수 있는 앱이 없습니다.</string>
     <string name="room_description_format">%1$s/%2$s호</string>
     <string name="reading_room_alarm_description">열람실 연장 알림</string>
     <string name="reading_room_alarm_3_hour">3시간 (시험 기간)</string>
