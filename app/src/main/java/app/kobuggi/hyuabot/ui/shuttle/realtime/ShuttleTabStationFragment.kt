@@ -464,8 +464,43 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
         binding.busAlternativeDormitory.visibility = if (shouldShow) View.VISIBLE else View.GONE
         if (shouldShow) {
             binding.busAlternativeDormitoryTime.text = getString(R.string.shuttle_bus_alternative_time, data.minutes)
+            bindBusAlternativeInfo(
+                binding.busAlternativeDormitoryInfo,
+                "station",
+                getString(R.string.shuttle_tab_station),
+                data
+            )
+        } else {
+            binding.busAlternativeDormitoryInfo.isEnabled = false
+            binding.busAlternativeDormitoryInfo.alpha = 0.38f
         }
         binding.busAlternativeDormitory2.visibility = View.GONE
+    }
+
+    private fun bindBusAlternativeInfo(
+        button: View,
+        shuttleStopId: String,
+        shuttleStopName: String,
+        data: BusAlternativeData?
+    ) {
+        val hasStopInfo = data != null && data.stopLat != 0.0
+        button.isEnabled = hasStopInfo
+        button.alpha = if (hasStopInfo) 1f else 0.38f
+        if (!hasStopInfo) {
+            button.setOnClickListener(null)
+            return
+        }
+        val shuttleStop = parentViewModel.result.value?.firstOrNull { it.name == shuttleStopId }
+        button.setOnClickListener {
+            BusAlternativeStopSheet.newInstance(
+                shuttleStopName,
+                shuttleStop?.latitude ?: 0.0,
+                shuttleStop?.longitude ?: 0.0,
+                data.stopName,
+                data.stopLat,
+                data.stopLng
+            ).show(childFragmentManager, "bus_stop_info")
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

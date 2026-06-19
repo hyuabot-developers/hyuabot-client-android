@@ -240,6 +240,16 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
             binding.busAlternativeDormitoryRoute.setTextColor(blueColor)
             binding.busAlternativeDormitoryRoute.text = getString(data80.routeDisplayName)
             binding.busAlternativeDormitoryTime.text = getString(R.string.shuttle_bus_alternative_time, data80.minutes)
+
+            bindBusAlternativeInfo(
+                binding.busAlternativeDormitoryInfo,
+                "terminal",
+                getString(R.string.shuttle_tab_terminal),
+                data80
+            )
+        } else {
+            binding.busAlternativeDormitoryInfo.isEnabled = false
+            binding.busAlternativeDormitoryInfo.alpha = 0.38f
         }
 
         val shouldShow62 = data62?.minutes != null
@@ -249,6 +259,41 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
             binding.busAlternativeDormitory2Route.setTextColor(greenColor)
             binding.busAlternativeDormitory2Route.text = getString(data62.routeDisplayName)
             binding.busAlternativeDormitory2Time.text = getString(R.string.shuttle_bus_alternative_time, data62.minutes)
+            bindBusAlternativeInfo(
+                binding.busAlternativeDormitory2Info,
+                "terminal",
+                getString(R.string.shuttle_tab_terminal),
+                data62
+            )
+        } else {
+            binding.busAlternativeDormitory2Info.isEnabled = false
+            binding.busAlternativeDormitory2Info.alpha = 0.38f
+        }
+    }
+
+    private fun bindBusAlternativeInfo(
+        button: View,
+        shuttleStopId: String,
+        shuttleStopName: String,
+        data: BusAlternativeData?
+    ) {
+        val hasStopInfo = data != null && data.stopLat != 0.0
+        button.isEnabled = hasStopInfo
+        button.alpha = if (hasStopInfo) 1f else 0.38f
+        if (!hasStopInfo) {
+            button.setOnClickListener(null)
+            return
+        }
+        val shuttleStop = parentViewModel.result.value?.firstOrNull { it.name == shuttleStopId }
+        button.setOnClickListener {
+            BusAlternativeStopSheet.newInstance(
+                shuttleStopName,
+                shuttleStop?.latitude ?: 0.0,
+                shuttleStop?.longitude ?: 0.0,
+                data.stopName,
+                data.stopLat,
+                data.stopLng
+            ).show(childFragmentManager, "bus_stop_info")
         }
     }
 

@@ -448,4 +448,6 @@
     <string name="direction_west">西</string>
     <string name="direction_northwest">北西</string>
     <string name="bus_alternative_stop_info">停留所の位置</string>
+    <string name="bus_alternative_shuttle_stop">シャトルバス停留所</string>
+    <string name="bus_alternative_bus_stop">バス乗車停留所</string>
 </resources>

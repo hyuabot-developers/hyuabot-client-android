@@ -448,4 +448,6 @@
     <string name="direction_west">西</string>
     <string name="direction_northwest">西北</string>
     <string name="bus_alternative_stop_info">站点位置</string>
+    <string name="bus_alternative_shuttle_stop">校车站</string>
+    <string name="bus_alternative_bus_stop">公交上车站</string>
 </resources>
