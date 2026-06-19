@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.navArgs
+import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
@@ -383,7 +384,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         )
         for (id in recyclerIds) {
             val recycler = root.findViewById<RecyclerView>(id)
-            if (recycler != null && recycler.isShown && recycler.childCount > 0) {
+            if (recycler != null && recycler.isShown && recycler.isNotEmpty()) {
                 val target = recycler.getChildAt(0).findViewById<View>(childId)
                 if (target != null && target.isShown) return target
             }
@@ -402,7 +403,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         )
         for (id in recyclerIds) {
             val recycler = root.findViewById<RecyclerView>(id)
-            if (recycler != null && recycler.isShown && recycler.childCount > 0) {
+            if (recycler != null && recycler.isShown && recycler.isNotEmpty()) {
                 return recycler.getChildAt(0)
             }
         }

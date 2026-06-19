@@ -6,7 +6,6 @@ import app.kobuggi.hyuabot.util.UIUtility
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -17,8 +16,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.net.toUri
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.toColorInt
+import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -280,14 +281,14 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             size >= 10 -> 68
             else -> 60
         }
-        val bitmap = Bitmap.createBitmap(diameter, diameter, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(diameter, diameter)
         val canvas = Canvas(bitmap)
         val center = diameter / 2f
         val outerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.parseColor("#0E4A84")
+            color = "#0E4A84".toColorInt()
         }
         val innerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.parseColor("#1565A9")
+            color = "#1565A9".toColorInt()
         }
         val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE
@@ -318,7 +319,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             val maxLabelWidth = 220
             val labelHorizontalPadding = 16
             val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor(if (isDarkMode) "#F5F8FF" else "#FFFFFF")
+                color = (if (isDarkMode) "#F5F8FF" else "#FFFFFF").toColorInt()
                 textAlign = Paint.Align.CENTER
                 textSize = 20f
                 isFakeBoldText = true
@@ -328,7 +329,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             val labelWidth = (textWidth + labelHorizontalPadding * 2).toInt().coerceIn(72, maxLabelWidth)
             val bitmapWidth = maxOf(labelWidth, markerSize)
             val bitmapHeight = labelHeight + labelGap + markerSize
-            val bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888)
+            val bitmap = createBitmap(bitmapWidth, bitmapHeight)
             val canvas = Canvas(bitmap)
             val labelRect = RectF(
                 (bitmapWidth - labelWidth) / 2f,
@@ -337,10 +338,10 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                 labelHeight.toFloat()
             )
             val labelBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor(if (isDarkMode) "#1D2533" else "#0E4A84")
+                color = (if (isDarkMode) "#1D2533" else "#0E4A84").toColorInt()
             }
             val labelStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor(if (isDarkMode) "#4F6B8A" else "#06325A")
+                color = (if (isDarkMode) "#4F6B8A" else "#06325A").toColorInt()
                 style = Paint.Style.STROKE
                 strokeWidth = 2f
             }

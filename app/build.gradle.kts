@@ -65,9 +65,26 @@ android {
         }
     }
 
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
+    packaging {
+        jniLibs {
+            keepDebugSymbols.addAll(
+                listOf(
+                    "**/libdatastore_shared_counter.so",
+                    "**/libnavermap.so",
+                )
+            )
+        }
+    }
+
     buildFeatures {
         viewBinding = true
-        buildConfig = false
+        buildConfig = true
     }
 
     compileOptions {
@@ -79,22 +96,11 @@ android {
     productFlavors {
         create("dev") {
             dimension = "appType"
+            buildConfigField("String", "API_URL", "\"https://backend.hyuabot.app\"")
         }
         create("production") {
             dimension = "appType"
-        }
-    }
-
-    sourceSets {
-        named("dev") {
-            kotlin.directories.addAll(listOf(
-                "src/dev/kotlin",
-            ))
-        }
-        named("production") {
-            kotlin.directories.addAll(listOf(
-                "src/production/kotlin",
-            ))
+            buildConfigField("String", "API_URL", "\"https://backend.hyuabot.app\"")
         }
     }
 

@@ -1,7 +1,6 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 
 import android.app.Dialog
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -12,6 +11,8 @@ import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.toColorInt
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.SheetBusAlternativeStopBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -112,7 +113,7 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
             position = shuttleLatLng
             captionText = shuttleStop.name
             subCaptionText = getString(R.string.bus_alternative_shuttle_stop)
-            icon = markerIcon(R.drawable.ic_shuttle_bus, Color.parseColor("#0E4A84"))
+            icon = markerIcon(R.drawable.ic_shuttle_bus, "#0E4A84".toColorInt())
             anchor = Marker.DEFAULT_ANCHOR
             this.map = map
         }
@@ -120,7 +121,7 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
             position = busLatLng
             captionText = busStop.name
             subCaptionText = getString(R.string.bus_alternative_bus_stop)
-            icon = markerIcon(R.drawable.ic_bus, Color.parseColor("#7DB928"))
+            icon = markerIcon(R.drawable.ic_bus, "#7DB928".toColorInt())
             anchor = Marker.DEFAULT_ANCHOR
             this.map = map
         }
@@ -136,13 +137,13 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
         }
         PathOverlay().apply {
             coords = listOf(shuttleLatLng, busLatLng)
-            color = Color.parseColor("#0E4A84")
+            color = "#0E4A84".toColorInt()
             width = 5
             this.map = map
         }
         Marker().apply {
             position = midpoint(shuttleLatLng, busLatLng)
-            icon = vectorIcon(R.drawable.ic_arrow_right, Color.parseColor("#0E4A84"), 44)
+            icon = vectorIcon(R.drawable.ic_arrow_right, "#0E4A84".toColorInt(), 44)
             anchor = Marker.DEFAULT_ANCHOR
             angle = bearing(shuttleLatLng, busLatLng) - 90f
             this.map = map
@@ -174,7 +175,7 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
 
     private fun markerIcon(@DrawableRes iconRes: Int, @ColorInt color: Int): OverlayImage {
         val size = 88
-        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(size, size)
         val canvas = Canvas(bitmap)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.color = color
@@ -196,7 +197,7 @@ class BusAlternativeStopSheet : BottomSheetDialogFragment(), OnMapReadyCallback 
     }
 
     private fun vectorIcon(@DrawableRes iconRes: Int, @ColorInt color: Int, size: Int): OverlayImage {
-        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(size, size)
         val canvas = Canvas(bitmap)
         val icon = ContextCompat.getDrawable(requireContext(), iconRes)!!.mutate()
         icon.setTint(color)

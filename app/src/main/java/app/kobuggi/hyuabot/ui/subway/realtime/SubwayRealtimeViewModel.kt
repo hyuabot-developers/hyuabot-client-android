@@ -84,7 +84,6 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     fun stop() { _disposable.clear() }
 
     override fun onCleared() {
-        super.onCleared()
         stop()
     }
 }

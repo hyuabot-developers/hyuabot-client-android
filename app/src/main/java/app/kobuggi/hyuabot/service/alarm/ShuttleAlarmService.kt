@@ -11,6 +11,7 @@ import android.graphics.drawable.Icon
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import app.kobuggi.hyuabot.R
@@ -378,6 +379,8 @@ class ShuttleAlarmService : Service() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.BAKLAVA)
+    @SuppressLint("NewApi")
     private fun buildLiveUpdateNotification(
         title: String,
         content: String,
@@ -409,7 +412,13 @@ class ShuttleAlarmService : Service() {
             .setSubText(subText)
             .setShortCriticalText(shortText)
             .setStyle(style)
-            .addAction(android.R.drawable.ic_delete, getString(R.string.shuttle_alarm_cancel), cancelPi)
+            .addAction(
+                Notification.Action.Builder(
+                    Icon.createWithResource(this, android.R.drawable.ic_delete),
+                    getString(R.string.shuttle_alarm_cancel),
+                    cancelPi
+                ).build()
+            )
             .build()
     }
 

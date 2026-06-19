@@ -55,7 +55,7 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = false
+        buildConfig = true
     }
 
     tasks.withType(JavaCompile::class.java) {
@@ -71,11 +71,14 @@ android {
     productFlavors {
         create("dev") {
             dimension = "appType"
+            buildConfigField("String", "API_URL", "\"https://backend.hyuabot.app\"")
         }
         create("production") {
             dimension = "appType"
+            buildConfigField("String", "API_URL", "\"https://backend.hyuabot.app\"")
         }
     }
+
 }
 
 dependencies {

@@ -214,7 +214,6 @@ class ShuttleRealtimeViewModel @Inject constructor(
     fun stop() { _disposable.clear() }
 
     override fun onCleared() {
-        super.onCleared()
         stop()
     }
 }

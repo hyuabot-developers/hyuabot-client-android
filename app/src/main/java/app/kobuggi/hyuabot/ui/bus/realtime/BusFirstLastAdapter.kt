@@ -37,8 +37,8 @@ class BusFirstLastAdapter(
         holder.routeName.setTextColor(color)
         val up = item.route.runningTime.up
         val down = item.route.runningTime.down
-        holder.upTimes.text = ctx.getString(R.string.bus_first_last_up, up.first ?: "-", up.last ?: "-")
-        holder.downTimes.text = ctx.getString(R.string.bus_first_last_down, down.first ?: "-", down.last ?: "-")
+        holder.upTimes.text = ctx.getString(R.string.bus_first_last_up, up.first, up.last)
+        holder.downTimes.text = ctx.getString(R.string.bus_first_last_down, down.first, down.last)
     }
 
     override fun getItemCount() = items.size

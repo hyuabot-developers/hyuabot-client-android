@@ -4,7 +4,6 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -38,16 +37,14 @@ class GlobalApplication : Application() {
     }
 
     private fun createNotificationChannels() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val channel = NotificationChannel(
-                getString(R.string.shuttle_alarm_channel_id),
-                getString(R.string.shuttle_alarm_channel_name),
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = getString(R.string.shuttle_alarm_channel_desc)
-            }
-            nm.createNotificationChannel(channel)
+        val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channel = NotificationChannel(
+            getString(R.string.shuttle_alarm_channel_id),
+            getString(R.string.shuttle_alarm_channel_name),
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            description = getString(R.string.shuttle_alarm_channel_desc)
         }
+        nm.createNotificationChannel(channel)
     }
 }

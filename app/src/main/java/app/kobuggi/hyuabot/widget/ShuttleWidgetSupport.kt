@@ -7,7 +7,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.os.Build
 import android.os.SystemClock
 import androidx.core.content.ContextCompat
 import app.kobuggi.hyuabot.R
@@ -35,9 +34,6 @@ internal object ShuttleWidgetSupport {
             ContextCompat.checkSelfPermission(context, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         if (!foreground) {
             return false
-        }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return true
         }
         return ContextCompat.checkSelfPermission(context, ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
     }

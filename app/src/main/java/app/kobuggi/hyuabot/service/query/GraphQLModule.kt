@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.service.query
 
 import app.kobuggi.hyuabot.cache.Cache.cache
+import app.kobuggi.hyuabot.SdBuildConfig
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.memory.MemoryCacheFactory
 import com.apollographql.apollo.network.okHttpClient
@@ -16,9 +17,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object GraphQLModule {
-    private const val BASE_URL = "${SdBuildConfig.API_URL}/graphql"
+    private val BASE_URL = "${SdBuildConfig.API_URL}/graphql"
 
-    private val apolloClient = {
+    private fun createApolloClient(): ApolloClient {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
@@ -30,7 +31,7 @@ object GraphQLModule {
             .writeTimeout(90, TimeUnit.SECONDS)
             .build()
 
-        ApolloClient.Builder()
+        return ApolloClient.Builder()
             .serverUrl(BASE_URL)
             .okHttpClient(okHttpClient)
             .cache(MemoryCacheFactory(maxSizeBytes = 10 * 1024 * 1024))
@@ -39,5 +40,5 @@ object GraphQLModule {
 
     @Provides
     @Singleton
-    fun provideApolloClient(): ApolloClient = apolloClient()
+    fun provideApolloClient(): ApolloClient = createApolloClient()
 }

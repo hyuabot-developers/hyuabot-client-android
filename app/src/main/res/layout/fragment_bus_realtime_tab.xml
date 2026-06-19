@@ -46,14 +46,15 @@
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:textFontWeight="700"
-                        android:paddingStart="40dp" />
+                        android:paddingStart="40dp"
+                        android:paddingEnd="40dp" />
                     <ImageButton
                         android:id="@+id/header_first_stop_btn"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
-                        android:tint="@android:color/white"
+                        app:tint="@android:color/white"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@null" />
                 </LinearLayout>
@@ -119,14 +120,15 @@
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:textFontWeight="700"
-                        android:paddingStart="40dp" />
+                        android:paddingStart="40dp"
+                        android:paddingEnd="40dp" />
                     <ImageButton
                         android:id="@+id/header_second_stop_btn"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
-                        android:tint="@android:color/white"
+                        app:tint="@android:color/white"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@null" />
                 </LinearLayout>
@@ -192,14 +194,15 @@
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:textFontWeight="700"
-                        android:paddingStart="40dp" />
+                        android:paddingStart="40dp"
+                        android:paddingEnd="40dp" />
                     <ImageButton
                         android:id="@+id/header_third_stop_btn"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
-                        android:tint="@android:color/white"
+                        app:tint="@android:color/white"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@null" />
                 </LinearLayout>
@@ -265,14 +268,15 @@
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:textFontWeight="700"
-                        android:paddingStart="40dp" />
+                        android:paddingStart="40dp"
+                        android:paddingEnd="40dp" />
                     <ImageButton
                         android:id="@+id/header_fourth_stop_btn"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
-                        android:tint="@android:color/white"
+                        app:tint="@android:color/white"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@null" />
                 </LinearLayout>
