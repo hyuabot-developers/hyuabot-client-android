@@ -438,8 +438,13 @@
     <string name="shuttle_alarm_cancel">Cancel Alert</string>
     <string name="shuttle_alarm_boarding_title">%1$s Boarding Alert</string>
     <string name="shuttle_alarm_boarding_initial">Departs in %1$d min</string>
+    <string name="shuttle_alarm_boarding_initial_checkpoint">Departs in %1$d min · passed %2$s</string>
     <string name="shuttle_alarm_boarding_content">%1$d min · %2$s direction %3$dm</string>
+    <string name="shuttle_alarm_boarding_content_checkpoint">%1$d min · passed %2$s · %3$s direction %4$dm</string>
     <string name="shuttle_alarm_boarding_short">%1$d min</string>
+    <string name="shuttle_alarm_checkpoint_waiting">Waiting at %1$s</string>
+    <string name="shuttle_alarm_checkpoint_departed">Departed %1$s</string>
+    <string name="shuttle_alarm_checkpoint_approaching">Approaching %1$s</string>
     <string name="shuttle_alarm_now">Now</string>
     <string name="shuttle_alarm_alighting_title">%1$s Alighting Prep</string>
     <string name="shuttle_alarm_alighting_preparing">Monitoring alighting stop</string>

@@ -17,6 +17,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.widget.ShuttleWidgetSupport
 import com.google.android.gms.location.Priority
 import kotlin.math.ceil
+import kotlin.math.max
 import kotlin.math.min
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,6 +44,8 @@ class ShuttleAlarmService : Service() {
         const val EXTRA_MINUTES = "extra_minutes"
         const val EXTRA_DEPARTURE_TIME_MILLIS = "extra_departure_time_millis"
         const val EXTRA_ALARM_KEY = "extra_alarm_key"
+        const val EXTRA_CHECKPOINT_NAMES = "extra_checkpoint_names"
+        const val EXTRA_CHECKPOINT_TIMES_MILLIS = "extra_checkpoint_times_millis"
         const val EXTRA_DEST_STOP_NAME = "extra_dest_stop_name"
         const val EXTRA_DEST_STOP_LAT = "extra_dest_stop_lat"
         const val EXTRA_DEST_STOP_LNG = "extra_dest_stop_lng"
@@ -50,6 +53,7 @@ class ShuttleAlarmService : Service() {
         const val NOTIFICATION_ID_ONGOING = 2001
         const val NOTIFICATION_ID_ALERT = 2002
         private const val UPDATE_INTERVAL_MS = 5_000L
+        private const val CHECKPOINT_APPROACH_THRESHOLD_MS = 60_000L
         private const val LOCATION_MAX_AGE_MS = 15_000L
         private const val LOCATION_TIMEOUT_MS = 3_000L
 
@@ -97,7 +101,9 @@ class ShuttleAlarmService : Service() {
                     System.currentTimeMillis() + minutes * 60_000L
                 )
                 val alarmKey = intent.getStringExtra(EXTRA_ALARM_KEY).orEmpty()
-                startBoardingAlert(alarmKey, stopName, stopLat, stopLng, departureTimeMillis)
+                val checkpointNames = intent.getStringArrayExtra(EXTRA_CHECKPOINT_NAMES) ?: emptyArray()
+                val checkpointTimes = intent.getLongArrayExtra(EXTRA_CHECKPOINT_TIMES_MILLIS) ?: LongArray(0)
+                startBoardingAlert(alarmKey, stopName, stopLat, stopLng, departureTimeMillis, checkpointNames, checkpointTimes)
             }
             ACTION_START_ALIGHTING -> {
                 val destName = intent.getStringExtra(EXTRA_DEST_STOP_NAME) ?: return START_NOT_STICKY
@@ -112,14 +118,32 @@ class ShuttleAlarmService : Service() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun startBoardingAlert(alarmKey: String, stopName: String, stopLat: Double, stopLng: Double, departureTimeMillis: Long) {
+    private fun startBoardingAlert(
+        alarmKey: String,
+        stopName: String,
+        stopLat: Double,
+        stopLng: Double,
+        departureTimeMillis: Long,
+        checkpointNames: Array<String>,
+        checkpointTimes: LongArray
+    ) {
         val cancelPi = buildCancelPendingIntent()
         activeAlarmType = ActiveAlarmType.BOARDING
         activeAlarmLabel = stopName
         activeAlarmKey = alarmKey
         val initialMinutes = remainingMinutesUntil(departureTimeMillis)
         val totalMinutes = initialMinutes.coerceAtLeast(1)
-        val notification = buildBoardingNotification(stopName, initialMinutes, null, null, cancelPi, 0)
+        val progressSegments = checkpointProgressSegments(checkpointTimes)
+        val notification = buildBoardingNotification(
+            stopName,
+            initialMinutes,
+            null,
+            null,
+            cancelPi,
+            boardingProgress(totalMinutes, initialMinutes, checkpointTimes),
+            progressSegments,
+            checkpointStatusText(checkpointNames, checkpointTimes)
+        )
         startForeground(NOTIFICATION_ID_ONGOING, notification)
 
         updateJob?.cancel()
@@ -127,16 +151,17 @@ class ShuttleAlarmService : Service() {
             val stopDeadline = departureTimeMillis + UPDATE_INTERVAL_MS
             while (isActive && System.currentTimeMillis() < stopDeadline) {
                 val remainingMinutes = remainingMinutesUntil(departureTimeMillis)
-                val progress = boardingProgress(totalMinutes, remainingMinutes)
+                val progress = boardingProgress(totalMinutes, remainingMinutes, checkpointTimes)
+                val checkpointStatusText = checkpointStatusText(checkpointNames, checkpointTimes)
                 val location = getAlarmLocation()
                 if (location != null) {
                     val result = FloatArray(2)
                     Location.distanceBetween(location.latitude, location.longitude, stopLat, stopLng, result)
                     val distance = result[0].toInt()
                     val direction = bearingToDirection(result[1].toDouble())
-                    updateBoardingNotification(stopName, remainingMinutes, distance, direction, cancelPi, progress)
+                    updateBoardingNotification(stopName, remainingMinutes, distance, direction, cancelPi, progress, progressSegments, checkpointStatusText)
                 } else {
-                    updateBoardingNotification(stopName, remainingMinutes, null, null, cancelPi, progress)
+                    updateBoardingNotification(stopName, remainingMinutes, null, null, cancelPi, progress, progressSegments, checkpointStatusText)
                 }
                 if (System.currentTimeMillis() >= departureTimeMillis) {
                     stopAlarm()
@@ -195,9 +220,18 @@ class ShuttleAlarmService : Service() {
         )
     }
 
-    private fun updateBoardingNotification(stopName: String, minutes: Int, distanceM: Int?, direction: String?, cancelPi: PendingIntent, progress: Int) {
+    private fun updateBoardingNotification(
+        stopName: String,
+        minutes: Int,
+        distanceM: Int?,
+        direction: String?,
+        cancelPi: PendingIntent,
+        progress: Int,
+        progressSegments: IntArray,
+        checkpointText: String?
+    ) {
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        nm.notify(NOTIFICATION_ID_ONGOING, buildBoardingNotification(stopName, minutes, distanceM, direction, cancelPi, progress))
+        nm.notify(NOTIFICATION_ID_ONGOING, buildBoardingNotification(stopName, minutes, distanceM, direction, cancelPi, progress, progressSegments, checkpointText))
     }
 
     private fun updateAlightingNotification(destStopName: String, distanceM: Int, cancelPi: PendingIntent) {
@@ -224,7 +258,9 @@ class ShuttleAlarmService : Service() {
         distanceM: Int?,
         direction: String?,
         cancelPi: PendingIntent,
-        progress: Int
+        progress: Int,
+        progressSegments: IntArray,
+        checkpointText: String?
     ): Notification {
         val title = getString(R.string.shuttle_alarm_boarding_title, stopName)
         val content = if (distanceM != null && direction != null) {
@@ -234,11 +270,12 @@ class ShuttleAlarmService : Service() {
         }
         val shortText = if (minutes > 0) getString(R.string.shuttle_alarm_boarding_short, minutes) else getString(R.string.shuttle_alarm_now)
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            buildLiveUpdateNotification(title, content, shortText, progress, cancelPi)
+            buildLiveUpdateNotification(title, content, shortText, progress, cancelPi, progressSegments, checkpointText)
         } else {
             NotificationCompat.Builder(this, getString(R.string.shuttle_alarm_channel_id))
                 .setContentTitle(title)
                 .setContentText(content)
+                .setSubText(checkpointText)
                 .setSmallIcon(R.drawable.ic_notification_shuttle)
                 .setColor(ContextCompat.getColor(this, R.color.hanyang_blue))
                 .setOngoing(true)
@@ -283,12 +320,17 @@ class ShuttleAlarmService : Service() {
         content: String,
         shortText: String,
         progress: Int,
-        cancelPi: PendingIntent
+        cancelPi: PendingIntent,
+        progressSegments: IntArray = intArrayOf(100),
+        subText: String? = null
     ): Notification {
         val color = ContextCompat.getColor(this, R.color.hanyang_blue)
         val style = Notification.ProgressStyle()
-            .addProgressSegment(Notification.ProgressStyle.Segment(100).setColor(color))
-            .setProgress(progress.coerceIn(0, 100))
+        val segments = if (progressSegments.isEmpty()) intArrayOf(100) else progressSegments
+        segments.forEach { segmentLength ->
+            style.addProgressSegment(Notification.ProgressStyle.Segment(segmentLength).setColor(color))
+        }
+        style.setProgress(progress.coerceIn(0, 100))
             .setProgressStartIcon(Icon.createWithResource(this, R.drawable.ic_live_update_shuttle).setTint(color))
             .setProgressTrackerIcon(Icon.createWithResource(this, R.drawable.ic_live_update_arrow_right).setTint(color))
             .setStyledByProgress(true)
@@ -301,15 +343,73 @@ class ShuttleAlarmService : Service() {
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setRequestPromotedOngoing(true)
+            .setSubText(subText)
             .setShortCriticalText(shortText)
             .setStyle(style)
             .addAction(android.R.drawable.ic_delete, getString(R.string.shuttle_alarm_cancel), cancelPi)
             .build()
     }
 
-    private fun boardingProgress(totalMinutes: Int, remainingMinutes: Int): Int {
+    private fun boardingProgress(totalMinutes: Int, remainingMinutes: Int, checkpointTimes: LongArray): Int {
+        if (checkpointTimes.size >= 2) {
+            val startTimeMillis = checkpointTimes.first()
+            val endTimeMillis = checkpointTimes.last()
+            val totalDurationMillis = endTimeMillis - startTimeMillis
+            if (totalDurationMillis > 0) {
+                val elapsedMillis = (System.currentTimeMillis() - startTimeMillis).coerceIn(0, totalDurationMillis)
+                return ((elapsedMillis * 100) / totalDurationMillis).toInt().coerceIn(0, 100)
+            }
+        }
         if (totalMinutes <= 0) return 100
         return (((totalMinutes - remainingMinutes).coerceAtLeast(0) * 100) / totalMinutes).coerceIn(0, 100)
+    }
+
+    private fun checkpointProgressSegments(checkpointTimes: LongArray): IntArray {
+        if (checkpointTimes.size < 2) return intArrayOf(100)
+
+        val intervals = mutableListOf<Long>()
+        for (index in 0 until checkpointTimes.lastIndex) {
+            intervals += (checkpointTimes[index + 1] - checkpointTimes[index]).coerceAtLeast(1L)
+        }
+        val total = intervals.sum()
+        if (total <= 0) return intArrayOf(100)
+
+        val segments = intervals.map { max(1, ((it * 100) / total).toInt()) }.toIntArray()
+        var diff = 100 - segments.sum()
+        var index = segments.lastIndex
+        while (diff != 0 && segments.isNotEmpty()) {
+            val step = if (diff > 0) 1 else -1
+            if (segments[index] + step > 0) {
+                segments[index] += step
+                diff -= step
+            }
+            index = if (index == 0) segments.lastIndex else index - 1
+        }
+        return segments
+    }
+
+    private fun checkpointStatusText(checkpointNames: Array<String>, checkpointTimes: LongArray): String? {
+        if (checkpointNames.size < 2 || checkpointNames.size != checkpointTimes.size) return null
+
+        val now = System.currentTimeMillis()
+        if (now < checkpointTimes.first()) {
+            return getString(R.string.shuttle_alarm_checkpoint_waiting, checkpointNames.first())
+        }
+
+        for (index in 1 until checkpointTimes.size) {
+            val checkpointTime = checkpointTimes[index]
+            if (now < checkpointTime && checkpointTime - now <= CHECKPOINT_APPROACH_THRESHOLD_MS) {
+                return getString(R.string.shuttle_alarm_checkpoint_approaching, checkpointNames[index])
+            }
+        }
+
+        for (index in checkpointTimes.lastIndex - 1 downTo 0) {
+            if (checkpointTimes[index] <= now) {
+                return getString(R.string.shuttle_alarm_checkpoint_departed, checkpointNames[index])
+            }
+        }
+
+        return getString(R.string.shuttle_alarm_checkpoint_waiting, checkpointNames.first())
     }
 
     private fun remainingMinutesUntil(timeMillis: Long): Int {

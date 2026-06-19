@@ -42,7 +42,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
             childFragmentManager,
             emptyList(),
             onAlarmClick = { entry ->
-                showAlarmDialogForStop("jungang_stn", R.string.shuttle_tab_jungang_station, entry.seq, entry.time, entry.stops.map { it.stop })
+                showAlarmDialogForStop("jungang_stn", R.string.shuttle_tab_jungang_station, entry.seq, entry.time, entry.stops.map { it.stop to it.time })
             }
         )
         val shuttleCampusRouteAdapter = ShuttleRouteAdapter(
@@ -80,7 +80,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
             childFragmentManager,
             emptyList(),
             onAlarmClick = { order ->
-                showAlarmDialogForStop("jungang_stn", R.string.shuttle_tab_jungang_station, order.seq, order.time, order.stops.map { it.stop })
+                showAlarmDialogForStop("jungang_stn", R.string.shuttle_tab_jungang_station, order.seq, order.time, order.stops.map { it.stop to it.time })
             }
         )
 
@@ -192,7 +192,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
         return binding.root
     }
 
-    private fun showAlarmDialogForStop(boardingStopId: String, boardingLabelRes: Int, timetableSeq: Int, time: java.time.LocalTime, stopNames: List<String>) {
+    private fun showAlarmDialogForStop(boardingStopId: String, boardingLabelRes: Int, timetableSeq: Int, time: java.time.LocalTime, routeStops: List<Pair<String, java.time.LocalTime>>) {
         val boardingStop = parentViewModel.result.value?.firstOrNull { it.name == boardingStopId } ?: return
         val now = java.time.ZonedDateTime.now()
         var departureTime = now.toLocalDate().atTime(time).atZone(java.time.ZoneId.systemDefault())
@@ -200,15 +200,17 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
         val departureTimeMillis = departureTime.toInstant().toEpochMilli()
         val minutes = kotlin.math.ceil((departureTimeMillis - System.currentTimeMillis()) / 60_000.0).toInt().coerceAtLeast(0)
         val allStops = parentViewModel.result.value ?: return
-        val destStops = stopNames.mapNotNull { name ->
+        val destStops = routeStops.mapNotNull { (name, _) ->
             allStops.firstOrNull { it.name == name }?.let {
                 Triple(ShuttleWidgetSupport.stopDisplayName(requireContext(), it.name), it.latitude, it.longitude)
             }
         }
         val alarmKey = app.kobuggi.hyuabot.service.alarm.ShuttleAlarmService.buildAlarmKey(boardingStopId, timetableSeq)
+        val checkpointTimes = buildShuttleAlarmCheckpointTimes(routeStops, boardingStopId, departureTimeMillis)
+        val checkpointNames = buildShuttleAlarmCheckpointStopIds(routeStops, boardingStopId).map { ShuttleWidgetSupport.stopDisplayName(requireContext(), it) }.toTypedArray()
         ShuttleAlarmDialogFragment.newInstance(
             getString(boardingLabelRes), boardingStop.latitude, boardingStop.longitude,
-            minutes, departureTimeMillis, alarmKey, destStops
+            minutes, departureTimeMillis, alarmKey, checkpointNames, checkpointTimes, destStops
         ).show(childFragmentManager, "shuttle_alarm")
     }
 

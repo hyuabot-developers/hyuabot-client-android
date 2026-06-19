@@ -43,8 +43,13 @@
     <string name="shuttle_alarm_cancel">알림 취소</string>
     <string name="shuttle_alarm_boarding_title">%1$s 탑승 알림</string>
     <string name="shuttle_alarm_boarding_initial">%1$d분 후 출발</string>
+    <string name="shuttle_alarm_boarding_initial_checkpoint">%1$d분 후 출발 · %2$s 통과</string>
     <string name="shuttle_alarm_boarding_content">%1$d분 · %2$s방향 %3$dm</string>
+    <string name="shuttle_alarm_boarding_content_checkpoint">%1$d분 · %2$s 통과 · %3$s방향 %4$dm</string>
     <string name="shuttle_alarm_boarding_short">%1$d분</string>
+    <string name="shuttle_alarm_checkpoint_waiting">%1$s 대기</string>
+    <string name="shuttle_alarm_checkpoint_departed">%1$s 출발</string>
+    <string name="shuttle_alarm_checkpoint_approaching">%1$s 접근</string>
     <string name="shuttle_alarm_now">곧 도착</string>
     <string name="shuttle_alarm_alighting_title">%1$s 하차 준비</string>
     <string name="shuttle_alarm_alighting_preparing">하차 정류장 모니터링 중</string>

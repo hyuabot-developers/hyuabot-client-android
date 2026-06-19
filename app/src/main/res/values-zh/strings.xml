@@ -416,8 +416,13 @@
     <string name="shuttle_alarm_cancel">取消提醒</string>
     <string name="shuttle_alarm_boarding_title">%1$s 上车提醒</string>
     <string name="shuttle_alarm_boarding_initial">%1$d分钟后出发</string>
+    <string name="shuttle_alarm_boarding_initial_checkpoint">%1$d分钟后出发 · 已经过%2$s</string>
     <string name="shuttle_alarm_boarding_content">%1$d分钟 · %2$s方向 %3$dm</string>
+    <string name="shuttle_alarm_boarding_content_checkpoint">%1$d分钟 · 已经过%2$s · %3$s方向 %4$dm</string>
     <string name="shuttle_alarm_boarding_short">%1$d分钟</string>
+    <string name="shuttle_alarm_checkpoint_waiting">%1$s等候</string>
+    <string name="shuttle_alarm_checkpoint_departed">%1$s出发</string>
+    <string name="shuttle_alarm_checkpoint_approaching">接近%1$s</string>
     <string name="shuttle_alarm_now">即将到达</string>
     <string name="shuttle_alarm_alighting_title">%1$s 下车准备</string>
     <string name="shuttle_alarm_alighting_preparing">正在监控下车站</string>
