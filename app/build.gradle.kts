@@ -46,8 +46,8 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 29
         targetSdk = 37
-        versionCode = 513000000
-        versionName = "5.1.3"
+        versionCode = 514000000
+        versionName = "5.1.4"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAP_CLIENT_ID"] = props["MAP_CLIENT_ID"]?.toString() ?: ""
