@@ -16,18 +16,21 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.navArgs
+import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkController
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkBaseline
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Runnable
@@ -35,6 +38,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
@@ -43,6 +47,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private val viewModel: ShuttleRealtimeViewModel by viewModels()
     private val args: ShuttleRealtimeFragmentArgs by navArgs()
     private var currentPosition = 0
+    private var manuallyScrolled = false
     private var setClosestStop = false
     private var honorDeepLinkStop = false
     private var coachmarkShown = false
@@ -94,7 +99,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         if (now.dayOfWeek.value in 1..5 && now.hour < 10) {
             Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_toast), Toast.LENGTH_SHORT).show()
         }
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     @SuppressLint("MissingPermission")
@@ -102,8 +107,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        viewModel.fetchData()
-        viewModel.start()
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
         }
@@ -112,13 +115,13 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 binding.noticeLayout.visibility = View.VISIBLE
                 (binding.noticeViewPager.adapter as ShuttleNoticeAdapter).updateList(notices)
                 autoScrollRunnable = Runnable {
-                    if (binding.noticeViewPager.adapter != null && binding.noticeViewPager.adapter!!.itemCount > 0) {
+                    if (binding.noticeViewPager.adapter != null && binding.noticeViewPager.adapter!!.itemCount > 0 && !manuallyScrolled) {
                         currentPosition = (currentPosition + 1) % binding.noticeViewPager.adapter!!.itemCount
                         binding.noticeViewPager.setCurrentItem(currentPosition, true)
                         scrollHandler.postDelayed(autoScrollRunnable, 5000)
                     }
                 }
-                scrollHandler.postDelayed(autoScrollRunnable, 5000)
+                if (!manuallyScrolled) scrollHandler.postDelayed(autoScrollRunnable, 5000)
             } else {
                 binding.noticeLayout.visibility = View.GONE
                 if (::autoScrollRunnable.isInitialized) {
@@ -126,6 +129,17 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 }
             }
         }
+        binding.noticeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                    manuallyScrolled = true
+                    scrollHandler.removeCallbacks(autoScrollRunnable)
+                }
+                if (state == ViewPager2.SCROLL_STATE_IDLE && manuallyScrolled) {
+                    currentPosition = binding.noticeViewPager.currentItem
+                }
+            }
+        })
         viewModel.result.observe(viewLifecycleOwner) { stops ->
             if (setClosestStop) {
                 return@observe
@@ -168,6 +182,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         if (!honorDeepLinkStop) {
             setClosestStop = false
         }
+        manuallyScrolled = false
         if (::autoScrollRunnable.isInitialized) {
             scrollHandler.postDelayed(autoScrollRunnable, 5000)
         }
@@ -236,7 +251,11 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         coachmarkShown = true
         viewLifecycleOwner.lifecycleScope.launch {
             requireContext().ensureCoachmarkBaseline(viewModel.userPreferencesRepository)
-            if (viewModel.userPreferencesRepository.coachmarkSeen(COACHMARK_KEY).first()) return@launch
+            val showMainCoachmark = !viewModel.userPreferencesRepository.coachmarkSeen(COACHMARK_KEY).first()
+            val showRealtimeUpdatesCoachmark =
+                !viewModel.userPreferencesRepository.coachmarkSeen(REALTIME_UPDATES_COACHMARK_KEY).first()
+            if (!showMainCoachmark && !showRealtimeUpdatesCoachmark) return@launch
+
             val originalByDestination = viewModel.userPreferencesRepository.getShowShuttleByDestination().first()
             val originalDepartureTime = viewModel.userPreferencesRepository.getShowShuttleDepartureTime().first()
             setClosestStop = true
@@ -248,8 +267,10 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                         binding.showByDestination.isChecked = originalByDestination
                         binding.showDepartureTime.isChecked = originalDepartureTime
                     }
+                    viewModel.setForceShowBusAlternative(false)
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.userPreferencesRepository.markCoachmarkSeen(COACHMARK_KEY)
+                        viewModel.userPreferencesRepository.markCoachmarkSeen(REALTIME_UPDATES_COACHMARK_KEY)
                     }
                 }
             }
@@ -292,6 +313,35 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             R.string.coachmark_shuttle_via_title, R.string.coachmark_shuttle_via_desc
         ),
         CoachmarkStep(
+            { firstVisibleRealtimeRowChild(R.id.shuttle_alarm_button) },
+            R.string.coachmark_shuttle_alarm_title,
+            R.string.coachmark_shuttle_alarm_desc,
+            shape = CoachmarkShape.CIRCLE
+        ),
+        CoachmarkStep(
+            {
+                viewModel.setForceShowBusAlternative(true)
+                currentTabView()?.findViewById(R.id.bus_alternative_station)
+            },
+            R.string.coachmark_shuttle_bus_alternative_title,
+            R.string.coachmark_shuttle_bus_alternative_desc
+        ),
+        CoachmarkStep(
+            {
+                viewModel.setForceShowBusAlternative(true)
+                firstVisibleChildView(
+                    R.id.bus_alternative_station_info,
+                    R.id.bus_alternative_dormitory_info,
+                    R.id.bus_alternative_dormitory_2_info,
+                    R.id.bus_alternative_terminal_info,
+                    R.id.bus_alternative_jungang_station_info
+                )
+            },
+            R.string.coachmark_shuttle_bus_alternative_stop_title,
+            R.string.coachmark_shuttle_bus_alternative_stop_desc,
+            shape = CoachmarkShape.CIRCLE
+        ),
+        CoachmarkStep(
             { firstVisibleChildView(R.id.transfer_section) },
             R.string.coachmark_shuttle_transfer_title, R.string.coachmark_shuttle_transfer_desc
         ),
@@ -322,6 +372,25 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         return null
     }
 
+    private fun firstVisibleRealtimeRowChild(childId: Int): View? {
+        val root = currentTabView() ?: return null
+        val recyclerIds = intArrayOf(
+            R.id.realtime_view,
+            R.id.realtime_view_bound_for_dormitory,
+            R.id.realtime_view_bound_for_terminal,
+            R.id.realtime_view_bound_for_jungang_station,
+            R.id.realtime_view_bound_for_station,
+        )
+        for (id in recyclerIds) {
+            val recycler = root.findViewById<RecyclerView>(id)
+            if (recycler != null && recycler.isShown && recycler.isNotEmpty()) {
+                val target = recycler.getChildAt(0).findViewById<View>(childId)
+                if (target != null && target.isShown) return target
+            }
+        }
+        return null
+    }
+
     private fun firstVisibleRealtimeRow(): View? {
         val root = currentTabView() ?: return null
         val recyclerIds = intArrayOf(
@@ -333,7 +402,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         )
         for (id in recyclerIds) {
             val recycler = root.findViewById<RecyclerView>(id)
-            if (recycler != null && recycler.isShown && recycler.childCount > 0) {
+            if (recycler != null && recycler.isShown && recycler.isNotEmpty()) {
                 return recycler.getChildAt(0)
             }
         }
@@ -361,5 +430,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     companion object {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
         private val COACHMARK_KEY = Coachmarks.SHUTTLE
+        private val REALTIME_UPDATES_COACHMARK_KEY = Coachmarks.SHUTTLE_REALTIME_UPDATES
     }
 }

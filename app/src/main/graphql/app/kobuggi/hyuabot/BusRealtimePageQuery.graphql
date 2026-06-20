@@ -26,7 +26,7 @@ query BusRealtimePageQuery($language: String!) {
         ]
     ) {
         route { seq, name }
-        stop { seq }
+        stop { seq, latitude, longitude }
         order
         arrival {
             stops
@@ -35,6 +35,7 @@ query BusRealtimePageQuery($language: String!) {
             lowFloor
             isRealtime
             time
+            arrivalTime
         }
     }
 }

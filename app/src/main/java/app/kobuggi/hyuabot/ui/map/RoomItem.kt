@@ -6,4 +6,5 @@ data class RoomItem(
     val building: String,
     val latitude: Double,
     val longitude: Double,
+    val url: String?,
 )

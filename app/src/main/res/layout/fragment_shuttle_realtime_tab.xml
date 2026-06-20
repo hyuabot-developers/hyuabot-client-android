@@ -91,6 +91,56 @@
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_station" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bus_alternative_station"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_station">
+                <View
+                    android:id="@+id/bus_accent_bar_station"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="@color/green_bus"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/bus_alternative_station_route"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textFontWeight="700"
+                    android:textSize="18sp"
+                    android:textColor="@color/green_bus"
+                    android:text="@string/shuttle_bus_alternative_route_campus"
+                    app:layout_constraintStart_toEndOf="@id/bus_accent_bar_station"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <ImageButton
+                    android:id="@+id/bus_alternative_station_info"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:alpha="0.38"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/bus_alternative_stop_info"
+                    android:enabled="false"
+                    android:src="@drawable/ic_info"
+                    app:tint="?attr/colorControlNormal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/bus_alternative_station_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toStartOf="@id/bus_alternative_station_info"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <Button
                 android:id="@+id/entire_timetable_bound_for_station"
                 android:layout_width="match_parent"
@@ -99,7 +149,7 @@
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
-                app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_station" />
+                app:layout_constraintTop_toBottomOf="@id/bus_alternative_station" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_dormitory"
                 android:layout_width="match_parent"
@@ -173,6 +223,105 @@
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_dormitory" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bus_alternative_dormitory"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_dormitory">
+                <View
+                    android:id="@+id/bus_accent_bar_dormitory"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="@color/green_bus"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/bus_alternative_dormitory_route"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textFontWeight="700"
+                    android:textSize="18sp"
+                    android:textColor="@color/green_bus"
+                    android:text="@string/shuttle_bus_alternative_route"
+                    app:layout_constraintStart_toEndOf="@id/bus_accent_bar_dormitory"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <ImageButton
+                    android:id="@+id/bus_alternative_dormitory_info"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:alpha="0.38"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/bus_alternative_stop_info"
+                    android:enabled="false"
+                    android:src="@drawable/ic_info"
+                    app:tint="?attr/colorControlNormal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/bus_alternative_dormitory_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toStartOf="@id/bus_alternative_dormitory_info"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bus_alternative_dormitory_2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/bus_alternative_dormitory">
+                <View
+                    android:id="@+id/bus_accent_bar_dormitory_2"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="@color/green_bus"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/bus_alternative_dormitory_2_route"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textFontWeight="700"
+                    android:textSize="18sp"
+                    android:textColor="@color/green_bus"
+                    app:layout_constraintStart_toEndOf="@id/bus_accent_bar_dormitory_2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <ImageButton
+                    android:id="@+id/bus_alternative_dormitory_2_info"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:alpha="0.38"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/bus_alternative_stop_info"
+                    android:enabled="false"
+                    android:src="@drawable/ic_info"
+                    app:tint="?attr/colorControlNormal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/bus_alternative_dormitory_2_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toStartOf="@id/bus_alternative_dormitory_2_info"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <Button
                 android:id="@+id/entire_timetable_bound_for_dormitory"
                 android:layout_width="match_parent"
@@ -181,7 +330,7 @@
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
-                app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_dormitory" />
+                app:layout_constraintTop_toBottomOf="@id/bus_alternative_dormitory_2" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_terminal"
                 android:layout_width="match_parent"
@@ -255,6 +404,55 @@
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_terminal" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bus_alternative_terminal"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_terminal">
+                <View
+                    android:id="@+id/bus_accent_bar_terminal"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="@color/green_bus"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/bus_alternative_terminal_route"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textFontWeight="700"
+                    android:textSize="18sp"
+                    android:textColor="@color/green_bus"
+                    app:layout_constraintStart_toEndOf="@id/bus_accent_bar_terminal"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <ImageButton
+                    android:id="@+id/bus_alternative_terminal_info"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:alpha="0.38"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/bus_alternative_stop_info"
+                    android:enabled="false"
+                    android:src="@drawable/ic_info"
+                    app:tint="?attr/colorControlNormal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/bus_alternative_terminal_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toStartOf="@id/bus_alternative_terminal_info"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <Button
                 android:id="@+id/entire_timetable_bound_for_terminal"
                 android:layout_width="match_parent"
@@ -263,7 +461,7 @@
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
-                app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_terminal" />
+                app:layout_constraintTop_toBottomOf="@id/bus_alternative_terminal" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_jungang_station"
                 android:layout_width="match_parent"
@@ -337,6 +535,55 @@
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_jungang_station" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bus_alternative_jungang_station"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_jungang_station">
+                <View
+                    android:id="@+id/bus_accent_bar_jungang_station"
+                    android:layout_width="4dp"
+                    android:layout_height="0dp"
+                    android:background="@color/green_bus"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/bus_alternative_jungang_station_route"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textFontWeight="700"
+                    android:textSize="18sp"
+                    android:textColor="@color/green_bus"
+                    app:layout_constraintStart_toEndOf="@id/bus_accent_bar_jungang_station"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <ImageButton
+                    android:id="@+id/bus_alternative_jungang_station_info"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:alpha="0.38"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/bus_alternative_stop_info"
+                    android:enabled="false"
+                    android:src="@drawable/ic_info"
+                    app:tint="?attr/colorControlNormal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/bus_alternative_jungang_station_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toStartOf="@id/bus_alternative_jungang_station_info"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <Button
                 android:id="@+id/entire_timetable_bound_for_jungang_station"
                 android:layout_width="match_parent"
@@ -345,7 +592,7 @@
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 style="@style/Widget.Material3.Button.TextButton"
-                app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_jungang_station" />
+                app:layout_constraintTop_toBottomOf="@id/bus_alternative_jungang_station" />
             <LinearLayout
                 android:id="@+id/transfer_section"
                 android:layout_width="match_parent"

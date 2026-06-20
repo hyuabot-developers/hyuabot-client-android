@@ -17,6 +17,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -30,6 +31,7 @@ import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.presentation.NavigationUtils.Companion.NavigationStack
 import app.kobuggi.hyuabot.presentation.theme.HYUabotTheme
 import app.kobuggi.hyuabot.service.GraphQLModule
@@ -49,11 +51,11 @@ class MainActivity : ComponentActivity() {
     companion object {
         private val hanyangBlue = Color(0xFF0E4A84)
         private val stops = listOf(
-            "기숙사",
-            "셔틀콕",
-            "한대앞",
-            "예술인",
-            "중앙역",
+            ShuttleStop("dormitory", R.string.stop_dormitory),
+            ShuttleStop("shuttlecock", R.string.stop_shuttlecock),
+            ShuttleStop("station", R.string.stop_station),
+            ShuttleStop("terminal", R.string.stop_terminal),
+            ShuttleStop("jungang", R.string.stop_jungang),
         )
 
         @Composable
@@ -65,7 +67,7 @@ class MainActivity : ComponentActivity() {
                         .background(Color(0xFF000000)),
                     contentAlignment = Alignment.Center
                 ) {
-                    NavigationStack(if (stopID != null) "detail/${stopID}" else Screen.Main.route)
+                    NavigationStack(if (stopID != null) "detail/${normalizeStopId(stopID)}" else Screen.Main.route)
                 }
             }
         }
@@ -86,7 +88,7 @@ class MainActivity : ComponentActivity() {
                     stops.forEach { stop ->
                         item {
                             Button(
-                                onClick = { navController.navigate("detail/$stop") },
+                                onClick = { navController.navigate("detail/${stop.id}") },
                                 colors = ButtonDefaults.buttonColors(
                                     contentColor = Color.White,
                                     disabledContentColor = Color.White,
@@ -97,7 +99,7 @@ class MainActivity : ComponentActivity() {
                                     .fillMaxWidth()
                                     .height(50.dp)
                             ) {
-                                Text(stop)
+                                Text(stringResource(stop.labelRes))
                             }
                         }
                     }
@@ -122,7 +124,7 @@ class MainActivity : ComponentActivity() {
             Scaffold (
                 positionIndicator = { PositionIndicator(scalingLazyListState = scrollState) }
             ) {
-                if (stopID == "기숙사") {
+                if (stopID == "dormitory") {
                     ScalingLazyColumn (
                         modifier = Modifier
                             .fillMaxSize()
@@ -130,12 +132,12 @@ class MainActivity : ComponentActivity() {
                         state = scrollState,
                     ) {
                         item { Spacer(modifier = Modifier.height(40.dp)) }
-                        item { ShuttleButton("한대앞", firstItem.value?.time) }
-                        item { ShuttleButton("예술인", secondItem.value?.time) }
-                        item { ShuttleButton("중앙역", thirdItem.value?.time) }
+                        item { ShuttleButton(stringResource(R.string.stop_station), firstItem.value?.time) }
+                        item { ShuttleButton(stringResource(R.string.stop_terminal), secondItem.value?.time) }
+                        item { ShuttleButton(stringResource(R.string.stop_jungang), thirdItem.value?.time) }
                         item { Spacer(modifier = Modifier.height(40.dp)) }
                     }
-                } else if (stopID == "셔틀콕"){
+                } else if (stopID == "shuttlecock"){
                     ScalingLazyColumn (
                         modifier = Modifier
                             .fillMaxSize()
@@ -143,13 +145,13 @@ class MainActivity : ComponentActivity() {
                         state = scrollState,
                     ) {
                         item { Spacer(modifier = Modifier.height(40.dp)) }
-                        item { ShuttleButton("한대앞", firstItem.value?.time) }
-                        item { ShuttleButton("예술인", secondItem.value?.time) }
-                        item { ShuttleButton("중앙역", thirdItem.value?.time) }
-                        item { ShuttleButton("기숙사", fourthItem.value?.time) }
+                        item { ShuttleButton(stringResource(R.string.stop_station), firstItem.value?.time) }
+                        item { ShuttleButton(stringResource(R.string.stop_terminal), secondItem.value?.time) }
+                        item { ShuttleButton(stringResource(R.string.stop_jungang), thirdItem.value?.time) }
+                        item { ShuttleButton(stringResource(R.string.stop_dormitory), fourthItem.value?.time) }
                         item { Spacer(modifier = Modifier.height(40.dp)) }
                     }
-                } else if (stopID == "한대앞"){
+                } else if (stopID == "station"){
                     ScalingLazyColumn (
                         modifier = Modifier
                             .fillMaxSize()
@@ -158,20 +160,24 @@ class MainActivity : ComponentActivity() {
                     ) {
                         item { Spacer(modifier = Modifier.height(40.dp)) }
                         item { ShuttleButton(
-                            if (firstItem.value?.route?.name?.endsWith("S") == true) "셔틀콕" else "기숙사",
+                            if (firstItem.value?.route?.name?.endsWith("S") == true) {
+                                stringResource(R.string.stop_shuttlecock)
+                            } else {
+                                stringResource(R.string.stop_dormitory)
+                            },
                             firstItem.value?.time
                         )}
-                        item { ShuttleButton("예술인", secondItem.value?.time) }
-                        item { ShuttleButton("중앙역", thirdItem.value?.time) }
+                        item { ShuttleButton(stringResource(R.string.stop_terminal), secondItem.value?.time) }
+                        item { ShuttleButton(stringResource(R.string.stop_jungang), thirdItem.value?.time) }
                         item { Spacer(modifier = Modifier.height(40.dp)) }
                     }
-                } else if (stopID == "예술인"){
+                } else if (stopID == "terminal"){
                     if (result.value == null || result.value!!.isEmpty()) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("도착 예정인\n셔틀이 없습니다.", textAlign = TextAlign.Center, color = Color(0xFF0E4A84))
+                            Text(stringResource(R.string.no_scheduled_shuttle), textAlign = TextAlign.Center, color = Color(0xFF0E4A84))
                         }
                     } else {
                         ScalingLazyColumn (
@@ -183,20 +189,24 @@ class MainActivity : ComponentActivity() {
                             item { Spacer(modifier = Modifier.height(40.dp)) }
                             result.value?.subList(0, minOf(result.value!!.size, 3))?.forEach { item ->
                                 item { ShuttleButton(
-                                    if (item.route.name.endsWith("S")) "셔틀콕" else "기숙사",
+                                    if (item.route.name.endsWith("S")) {
+                                        stringResource(R.string.stop_shuttlecock)
+                                    } else {
+                                        stringResource(R.string.stop_dormitory)
+                                    },
                                     item.time
                                 )}
                             }
                             item { Spacer(modifier = Modifier.height(40.dp)) }
                         }
                     }
-                } else if (stopID == "중앙역"){
+                } else if (stopID == "jungang"){
                     if (result.value == null || result.value!!.isEmpty()) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("도착 예정인\n셔틀이 없습니다.", textAlign = TextAlign.Center, color = Color(0xFF0E4A84))
+                            Text(stringResource(R.string.no_scheduled_shuttle), textAlign = TextAlign.Center, color = Color(0xFF0E4A84))
                         }
                     } else {
                         ScalingLazyColumn (
@@ -207,7 +217,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             item { Spacer(modifier = Modifier.height(40.dp)) }
                             result.value?.subList(0, minOf(result.value!!.size, 3))?.forEach { item ->
-                                item { ShuttleButton("기숙사", item.time) }
+                                item { ShuttleButton(stringResource(R.string.stop_dormitory), item.time) }
                             }
                             item { Spacer(modifier = Modifier.height(40.dp)) }
                         }
@@ -243,9 +253,20 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Text(destination)
                     Spacer(modifier = Modifier.weight(1f))
-                    Text(if (time == null) "운행 종료" else shuttleTime(time))
+                    Text(if (time == null) stringResource(R.string.shuttle_service_ended) else shuttleTime(time))
                 }
             }
+        }
+
+        private data class ShuttleStop(val id: String, val labelRes: Int)
+
+        private fun normalizeStopId(stopID: String): String = when (stopID) {
+            "기숙사" -> "dormitory"
+            "셔틀콕" -> "shuttlecock"
+            "한대앞" -> "station"
+            "예술인" -> "terminal"
+            "중앙역" -> "jungang"
+            else -> stopID
         }
     }
 }

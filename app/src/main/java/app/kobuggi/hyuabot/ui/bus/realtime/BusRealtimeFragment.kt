@@ -3,9 +3,13 @@ package app.kobuggi.hyuabot.ui.bus.realtime
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 
+import android.annotation.SuppressLint
+import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +17,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeBinding
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
@@ -21,10 +26,15 @@ import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Runnable
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 
 @AndroidEntryPoint
 class BusRealtimeFragment @Inject constructor() : Fragment() {
@@ -35,6 +45,8 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
     private var currentPosition = 0
+    private var manuallyScrolled = false
+    private var setClosestStop = false
     private val scrollHandler = Handler(Looper.getMainLooper())
     private lateinit var autoScrollRunnable: Runnable
 
@@ -44,8 +56,6 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel.initSelectedStopID()
-        viewModel.fetchData()
-        viewModel.start()
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_realtime_error), Toast.LENGTH_SHORT).show() }
         }
@@ -57,18 +67,23 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                 binding.noticeLayout.visibility = View.VISIBLE
                 (binding.noticeViewPager.adapter as BusNoticeAdapter).updateList(notices)
                 autoScrollRunnable = Runnable {
-                    if (binding.noticeViewPager.adapter != null && binding.noticeViewPager.adapter!!.itemCount > 0) {
+                    if (binding.noticeViewPager.adapter != null && binding.noticeViewPager.adapter!!.itemCount > 0 && !manuallyScrolled) {
                         currentPosition = (currentPosition + 1) % binding.noticeViewPager.adapter!!.itemCount
                         binding.noticeViewPager.setCurrentItem(currentPosition, true)
                         scrollHandler.postDelayed(autoScrollRunnable, 5000)
                     }
                 }
-                scrollHandler.postDelayed(autoScrollRunnable, 5000)
+                if (!manuallyScrolled) scrollHandler.postDelayed(autoScrollRunnable, 5000)
             } else {
                 binding.noticeLayout.visibility = View.GONE
                 if (::autoScrollRunnable.isInitialized) {
                     scrollHandler.removeCallbacks(autoScrollRunnable)
                 }
+            }
+        }
+        viewModel.result.observe(viewLifecycleOwner) { buses ->
+            if (!setClosestStop && buses.isNotEmpty()) {
+                moveToNearestStop(LocationServices.getFusedLocationProviderClient(requireActivity()))
             }
         }
         val viewpagerAdapter = BusRealtimeViewPagerAdapter(childFragmentManager, lifecycle)
@@ -82,11 +97,22 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         binding.viewPager.adapter = viewpagerAdapter
         binding.stopFab.setOnClickListener {
             AnalyticsManager.logSelect(AnalyticsItem.BUS_STOP_BUTTON)
-            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopDialogFragment().also {
+            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusHelpDialogFragment().also {
                 findNavController().safeNavigate(it)
             }
         }
         binding.noticeViewPager.adapter = noticeAdapter
+        binding.noticeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                    manuallyScrolled = true
+                    scrollHandler.removeCallbacks(autoScrollRunnable)
+                }
+                if (state == ViewPager2.SCROLL_STATE_IDLE && manuallyScrolled) {
+                    currentPosition = binding.noticeViewPager.currentItem
+                }
+            }
+        })
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
@@ -114,7 +140,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                 ),
             )
         }
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     private fun firstVisibleBusChildView(vararg ids: Int): View? {
@@ -124,6 +150,58 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             if (target != null && target.isShown) return target
         }
         return null
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun moveToNearestStop(client: FusedLocationProviderClient) {
+        val stops = viewModel.result.value
+            ?.distinctBy { it.stop.seq }
+            ?.filter { it.stop.seq in listOf(216000379, 216000381, 216000383) }
+            ?.map { item ->
+                val resId = when (item.stop.seq) {
+                    216000379 -> R.string.bus_stop_convention
+                    216000381 -> R.string.bus_stop_cluster
+                    216000383 -> R.string.bus_stop_dormitory
+                    else -> -1
+                }
+                Triple(resId, item.stop.latitude, item.stop.longitude)
+            } ?: emptyList()
+
+        if (stops.isEmpty()) return
+
+        fun selectNearest(location: Location) {
+            if (setClosestStop) return
+            val nearest = stops.minByOrNull { (_, lat, lng) ->
+                (lat - location.latitude) * (lat - location.latitude) +
+                    (lng - location.longitude) * (lng - location.longitude)
+            }
+            nearest?.let { (stopRes, _, _) ->
+                setClosestStop = true
+                viewModel.setSelectedStopID(stopRes)
+            }
+        }
+
+        client.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null && isFresh(location)) {
+                    selectNearest(location)
+                } else {
+                    val tokenSource = CancellationTokenSource()
+                    client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token)
+                        .addOnSuccessListener { loc -> loc?.let { selectNearest(it) } }
+                        .addOnFailureListener { Log.e("BusRealtimeFragment", "Failed to get location", it) }
+                }
+            }
+            .addOnFailureListener {
+                val tokenSource = CancellationTokenSource()
+                client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token)
+                    .addOnSuccessListener { loc -> loc?.let { selectNearest(it) } }
+            }
+    }
+
+    private fun isFresh(location: Location): Boolean {
+        val ageMillis = (SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos) / 1_000_000
+        return ageMillis in 0..LOCATION_MAX_AGE_MILLIS
     }
 
     override fun onPause() {
@@ -137,7 +215,8 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.start()
-        if (::autoScrollRunnable.isInitialized) {
+        manuallyScrolled = false
+        if (::autoScrollRunnable.isInitialized && !manuallyScrolled) {
             scrollHandler.postDelayed(autoScrollRunnable, 5000)
         }
     }
@@ -148,5 +227,9 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
         }
         binding.viewPager.adapter = null
+    }
+
+    companion object {
+        private const val LOCATION_MAX_AGE_MILLIS = 60_000L
     }
 }

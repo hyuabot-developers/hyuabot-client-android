@@ -26,6 +26,9 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
+private const val ACTION_REFRESH_CAFETERIA = "app.kobuggi.hyuabot.widget.ACTION_REFRESH_CAFETERIA"
+private const val CAFETERIA_WIDGET_TIMEOUT_MS = 8_000L
+
 class CafeteriaWidgetProvider : AppWidgetProvider() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -39,7 +42,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        if (intent.action == ACTION_REFRESH) {
+        if (intent.action == ACTION_REFRESH_CAFETERIA) {
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val ids = appWidgetManager.getAppWidgetIds(
                 ComponentName(context, CafeteriaWidgetProvider::class.java)
@@ -56,7 +59,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
         val pendingResult = goAsync()
         scope.launch {
             try {
-                withTimeout(WIDGET_TIMEOUT_MS) {
+                withTimeout(CAFETERIA_WIDGET_TIMEOUT_MS) {
                     val appContext = context.applicationContext
                     val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
                     val meal = WidgetMeal.current(now.toLocalTime())
@@ -139,7 +142,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
         )
 
         val refreshIntent = Intent(context, CafeteriaWidgetProvider::class.java).apply {
-            action = ACTION_REFRESH
+            action = ACTION_REFRESH_CAFETERIA
         }
         views.setOnClickPendingIntent(
             R.id.widget_refresh,
@@ -243,11 +246,6 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
             else -> R.string.cafeteria_1
         }
     )
-
-    companion object {
-        const val ACTION_REFRESH = "app.kobuggi.hyuabot.widget.ACTION_REFRESH_CAFETERIA"
-        private const val WIDGET_TIMEOUT_MS = 8_000L
-    }
 }
 
 data class CafeteriaWidgetMenu(val food: String, val price: String)

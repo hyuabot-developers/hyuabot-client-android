@@ -30,10 +30,14 @@ class ShuttleRouteItemView @JvmOverloads constructor(
     private val passedColor = Color.LTGRAY
     private var routeData: Route? = null
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        strokeWidth = 6f
-        style = Paint.Style.STROKE
+        strokeWidth = 2f * resources.displayMetrics.density
+        strokeCap = Paint.Cap.ROUND
     }
     private val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
+    private val innerCirclePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.WHITE
         style = Paint.Style.FILL
     }
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -54,12 +58,12 @@ class ShuttleRouteItemView @JvmOverloads constructor(
 
     private fun recalculateStopPositions() {
         routeData?.stops?.forEachIndexed { index, stop ->
-            stopPositions[index] = paddingWidth + allStops.indexOf(stop) * colWidth
+            stopPositions[index] = stopX(stop)
         }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        centerY = 26f
+        centerY = h / 2f
         colWidth = width / allStops.size.toFloat()
         paddingWidth = colWidth / 2f
         recalculateStopPositions()
@@ -80,11 +84,12 @@ class ShuttleRouteItemView @JvmOverloads constructor(
             val isCurrent = i == data.currentStopIndex
             val color = if (isPassed) passedColor else data.color
             if (isCurrent) {
-                linePaint.color = data.color
-                canvas.drawCircle(x, centerY, 22f, linePaint)
+                circlePaint.color = data.color
+                canvas.drawCircle(x, centerY, 9f * resources.displayMetrics.density, circlePaint)
             }
             circlePaint.color = color
-            canvas.drawCircle(x, centerY, if (isCurrent) 18f else 12f, circlePaint)
+            canvas.drawCircle(x, centerY, 5f * resources.displayMetrics.density, circlePaint)
+            canvas.drawCircle(x, centerY, 2f * resources.displayMetrics.density, innerCirclePaint)
             data.labels?.get(data.stops[i])?.let { label ->
                 if (label <= 0) return@let
                 textPaint.color = if (isPassed) Color.GRAY else Color.WHITE
@@ -94,4 +99,6 @@ class ShuttleRouteItemView @JvmOverloads constructor(
             }
         }
     }
+
+    private fun stopX(stop: Int): Float = paddingWidth + allStops.indexOf(stop).coerceAtLeast(0) * colWidth
 }

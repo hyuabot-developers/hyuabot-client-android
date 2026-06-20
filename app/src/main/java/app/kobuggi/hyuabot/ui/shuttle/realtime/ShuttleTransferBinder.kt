@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
-import app.kobuggi.hyuabot.ShuttleTransferQuery
+import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.util.buildTransitRows
 
@@ -31,7 +31,7 @@ object ShuttleTransferBinder {
         section: View,
         container: LinearLayout,
         stopName: String,
-        data: ShuttleTransferQuery.Data?,
+        data: ShuttleRealtimePageQuery.Data?,
     ) {
         val rows = data?.let { buildTransitRows(container.context, stopName, it) } ?: emptyList()
         container.removeAllViews()
@@ -46,7 +46,8 @@ object ShuttleTransferBinder {
             name.text = row.name
             name.backgroundTintList =
                 ColorStateList.valueOf(ContextCompat.getColor(container.context, row.colorRes))
-            view.findViewById<TextView>(R.id.transfer_detail).text = row.detail
+            val timeline = view.findViewById<TransitTimelineView>(R.id.transfer_timeline)
+            timeline.bind(row)
             container.addView(view)
         }
         section.visibility = View.VISIBLE

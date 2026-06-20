@@ -38,7 +38,7 @@
             android:ellipsize="end"
             android:textSize="12sp"
             android:textColor="@color/secondary_text"
-            android:text="· 한대앞" />
+            android:text="@string/widget_preview_shuttle_stop_station" />
 
         <ImageView
             android:layout_width="18dp"

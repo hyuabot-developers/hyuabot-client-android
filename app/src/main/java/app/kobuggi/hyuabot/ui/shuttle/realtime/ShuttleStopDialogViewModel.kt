@@ -47,9 +47,10 @@ class ShuttleStopDialogViewModel @Inject constructor(private val apolloClient: A
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.shuttle?.stops != null) {
-                _result.value = response.data?.shuttle?.stops?.get(0)
-                _departureList.value = response.data?.shuttle?.stops?.get(0)?.timetable?.destination
-                _queryError.value = null
+                val stop = response.data?.shuttle?.stops?.firstOrNull()
+                _result.value = stop
+                _departureList.value = stop?.timetable?.destination ?: emptyList()
+                _queryError.value = if (stop == null) QueryError.UNKNOWN_ERROR else null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
             }

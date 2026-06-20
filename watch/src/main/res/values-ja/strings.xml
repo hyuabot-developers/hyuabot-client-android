@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">HYUabot</string>
+    <string name="shuttle">シャトルバス</string>
+    <string name="stop_dormitory">寮</string>
+    <string name="stop_shuttlecock">シャトルコック</string>
+    <string name="stop_station">韓大前駅</string>
+    <string name="stop_terminal">芸術人村</string>
+    <string name="stop_jungang">中央駅</string>
+    <string name="no_scheduled_shuttle">予定されている\nシャトルがありません。</string>
+    <string name="shuttle_service_ended">運行終了</string>
+</resources>

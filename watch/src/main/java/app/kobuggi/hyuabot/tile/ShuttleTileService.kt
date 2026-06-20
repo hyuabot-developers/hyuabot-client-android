@@ -14,6 +14,7 @@ import androidx.wear.protolayout.material.layouts.PrimaryLayout
 import androidx.wear.tiles.RequestBuilders
 import androidx.wear.tiles.RequestBuilders.TileRequest
 import androidx.wear.tiles.TileBuilders
+import app.kobuggi.hyuabot.R
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.tiles.SuspendingTileService
 
@@ -38,11 +39,11 @@ class ShuttleTileService: SuspendingTileService() {
 
     companion object {
         private val stops = listOf(
-            "기숙사",
-            "셔틀콕",
-            "한대앞",
-            "예술인",
-            "중앙역",
+            ShuttleStop("dormitory", R.string.stop_dormitory),
+            ShuttleStop("shuttlecock", R.string.stop_shuttlecock),
+            ShuttleStop("station", R.string.stop_station),
+            ShuttleStop("terminal", R.string.stop_terminal),
+            ShuttleStop("jungang", R.string.stop_jungang),
         )
 
         private fun getClickable(action: LaunchAction) = ModifiersBuilders.Clickable.Builder()
@@ -63,13 +64,14 @@ class ShuttleTileService: SuspendingTileService() {
             )
             .build()
 
-        private fun getShuttleButtonLayout(context: Context, name: String): Button {
+        private fun getShuttleButtonLayout(context: Context, stop: ShuttleStop): Button {
+            val name = context.getString(stop.labelRes)
             val launchAction = LaunchAction.Builder()
                 .setAndroidActivity(
                     ActionBuilders.AndroidActivity.Builder()
                         .setPackageName(context.packageName)
                         .setClassName("app.kobuggi.hyuabot.presentation.MainActivity")
-                        .addKeyToExtraMapping("stopID", ActionBuilders.stringExtra(name))
+                        .addKeyToExtraMapping("stopID", ActionBuilders.stringExtra(stop.id))
                         .build()
                 ).build()
             return Button.Builder(context, getClickable(launchAction))
@@ -77,5 +79,7 @@ class ShuttleTileService: SuspendingTileService() {
                 .setTextContent(name, Typography.TYPOGRAPHY_CAPTION1)
                 .build()
         }
+
+        private data class ShuttleStop(val id: String, val labelRes: Int)
     }
 }

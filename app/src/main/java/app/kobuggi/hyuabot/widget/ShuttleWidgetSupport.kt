@@ -7,7 +7,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.os.Build
 import android.os.SystemClock
 import androidx.core.content.ContextCompat
 import app.kobuggi.hyuabot.R
@@ -36,27 +35,29 @@ internal object ShuttleWidgetSupport {
         if (!foreground) {
             return false
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return true
-        }
         return ContextCompat.checkSelfPermission(context, ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     @SuppressLint("MissingPermission")
-    suspend fun getLocation(context: Context): Location? {
+    suspend fun getLocation(
+        context: Context,
+        priority: Int = Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+        maxAgeMillis: Long = LOCATION_MAX_AGE_MILLIS,
+        currentTimeoutMillis: Long = 6000L
+    ): Location? {
         val client = LocationServices.getFusedLocationProviderClient(context)
         val last = withTimeoutOrNull(2000) { awaitTask(client.lastLocation) }
-        if (last != null && isFresh(last)) return last
+        if (last != null && isFresh(last, maxAgeMillis)) return last
         val tokenSource = CancellationTokenSource()
-        val current = withTimeoutOrNull(6000) {
-            awaitTask(client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token))
+        val current = withTimeoutOrNull(currentTimeoutMillis) {
+            awaitTask(client.getCurrentLocation(priority, tokenSource.token))
         }
         return current ?: last
     }
 
-    private fun isFresh(location: Location): Boolean {
+    private fun isFresh(location: Location, maxAgeMillis: Long): Boolean {
         val ageMillis = (SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos) / 1_000_000
-        return ageMillis in 0..LOCATION_MAX_AGE_MILLIS
+        return ageMillis in 0..maxAgeMillis
     }
 
     private suspend fun <T> awaitTask(task: Task<T>): T? =
@@ -85,7 +86,7 @@ internal object ShuttleWidgetSupport {
     }
 
     fun stopDisplayName(context: Context, name: String): String = when (name) {
-        "dormitory_o" -> context.getString(R.string.shuttle_tab_dormitory_out)
+        "dormitory_o", "dormitory_i" -> context.getString(R.string.shuttle_tab_dormitory_out)
         "shuttlecock_o" -> context.getString(R.string.shuttle_tab_shuttlecock_out)
         "station" -> context.getString(R.string.shuttle_tab_station)
         "terminal" -> context.getString(R.string.shuttle_tab_terminal)

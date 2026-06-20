@@ -46,11 +46,11 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 29
         targetSdk = 37
-        versionCode = 513000000
-        versionName = "5.1.3"
+        versionCode = 514000000
+        versionName = "5.1.4"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders["MAPS_API_KEY"] = props["GOOGLE_MAP_API_KEY"]?.toString() ?: ""
+        manifestPlaceholders["MAP_CLIENT_ID"] = props["MAP_CLIENT_ID"]?.toString() ?: ""
     }
 
     buildTypes {
@@ -65,9 +65,26 @@ android {
         }
     }
 
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
+    packaging {
+        jniLibs {
+            keepDebugSymbols.addAll(
+                listOf(
+                    "**/libdatastore_shared_counter.so",
+                    "**/libnavermap.so",
+                )
+            )
+        }
+    }
+
     buildFeatures {
         viewBinding = true
-        buildConfig = false
+        buildConfig = true
     }
 
     compileOptions {
@@ -79,22 +96,11 @@ android {
     productFlavors {
         create("dev") {
             dimension = "appType"
+            buildConfigField("String", "API_URL", "\"https://backend.hyuabot.app\"")
         }
         create("production") {
             dimension = "appType"
-        }
-    }
-
-    sourceSets {
-        named("dev") {
-            kotlin.directories.addAll(listOf(
-                "src/dev/kotlin",
-            ))
-        }
-        named("production") {
-            kotlin.directories.addAll(listOf(
-                "src/production/kotlin",
-            ))
+            buildConfigField("String", "API_URL", "\"https://backend.hyuabot.app\"")
         }
     }
 
@@ -151,8 +157,7 @@ dependencies {
     implementation(libs.firebaseAnalytics)
     implementation(libs.firebaseCrashlytics)
     // Map
-    implementation(libs.playServicesMaps)
-    implementation(libs.mapsUtils)
+    implementation(libs.naver.map)
     // SplashScreen
     implementation(libs.splashScreen)
     // SwipeRefreshLayout

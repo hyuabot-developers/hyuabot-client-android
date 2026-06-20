@@ -17,6 +17,7 @@ import app.kobuggi.hyuabot.databinding.FragmentSubwayRealtimeTabBinding
 import app.kobuggi.hyuabot.service.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 
 @AndroidEntryPoint
 class SubwayTabBlueFragment @Inject constructor() : Fragment() {
@@ -80,7 +81,7 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
                 binding.noRealtimeDataDown.visibility = View.GONE
             }
         }
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         checkLocationPermission()
         openBirthDayDialog()
         requestInAppReview()
+        navController.handleDeepLink(intent)
     }
 
     private fun suggestLanguageIfNeeded() {
@@ -125,7 +126,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
                 Toast.makeText(
                     this,
-                    "가까운 정류장을 찾기 위해 위치 권한이 필요합니다.",
+                    getString(R.string.location_permission_nearest_stop),
                     Toast.LENGTH_SHORT
                 ).show()
                 ActivityCompat.requestPermissions(
@@ -219,7 +220,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.shuttleTimetableFilterDialogFragment -> AnalyticsScreen.SHUTTLE_TIMETABLE_FILTER
         R.id.busRealtimeFragment -> AnalyticsScreen.BUS_REALTIME
         R.id.busTimetableFragment -> AnalyticsScreen.BUS_TIMETABLE
-        R.id.busStopDialogFragment -> AnalyticsScreen.BUS_STOP_INFO
+        R.id.busHelpDialogFragment -> AnalyticsScreen.BUS_HELP
+        R.id.busStopInfoFragment -> AnalyticsScreen.BUS_STOP_INFO
         R.id.busDepartureLogDialogFragment -> AnalyticsScreen.BUS_DEPARTURE_LOG
         R.id.busRouteInfoDialogFragment -> AnalyticsScreen.BUS_ROUTE_INFO
         R.id.subwayRealtimeFragment -> AnalyticsScreen.SUBWAY_REALTIME
@@ -228,7 +230,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.readingRoomFragment -> AnalyticsScreen.READING_ROOM
         R.id.mapFragment -> AnalyticsScreen.MAP
         R.id.settingFragment -> AnalyticsScreen.SETTING
-        R.id.noticeFragment -> AnalyticsScreen.NOTICE
         R.id.noticeWebViewFragment -> AnalyticsScreen.WEB_VIEW
         R.id.contactFragment -> AnalyticsScreen.CONTACT
         R.id.calendarFragment -> AnalyticsScreen.CALENDAR
@@ -273,7 +274,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             dialogBuilder.setMessage(getString(R.string.dialog_message))
             dialogBuilder.setView(dialogView)
 
-            dialogBuilder.setPositiveButton("확인") { dialogInterface, _ ->
+            dialogBuilder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->
                 if (dialogCheckBox.isChecked){
                     AnalyticsManager.logSelect(AnalyticsItem.BIRTHDAY_DO_NOT_SHOW)
                     pref.edit { putInt("birthDayOpened", now.year) }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/hanyang_blue"
+        android:gravity="center"
+        android:text="@string/bus_alternative_stop_info"
+        android:textColor="@android:color/white"
+        android:textFontWeight="700"
+        android:textSize="18sp" />
+
+    <com.naver.maps.map.MapView
+        android:id="@+id/route_map_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

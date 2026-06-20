@@ -20,7 +20,7 @@
             app:titleCentered="true"
             app:titleTextColor="@android:color/white" />
     </com.google.android.material.appbar.AppBarLayout>
-    <com.google.android.gms.maps.MapView
+    <com.naver.maps.map.MapView
         android:id="@+id/stop_map_view"
         android:layout_width="match_parent"
         android:layout_height="300dp"

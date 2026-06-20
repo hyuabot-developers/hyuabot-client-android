@@ -25,10 +25,64 @@
     <string name="shuttle_footer_stop_info">정류장 정보</string>
     <string name="shuttle_footer_help">셔틀버스 도움말</string>
     <!-- 셔틀버스 도착 정보 없음 -->
+    <string name="shuttle_bus_alternative_route">10-1 (상록수역 출발)</string>
+    <string name="shuttle_bus_alternative_route_campus">10-1 (상록수역 방면)</string>
+    <string name="shuttle_bus_alternative_route_62_terminal">62 (성안길입구)</string>
+    <string name="shuttle_bus_alternative_route_62_dormitory">62 (셔틀콕 방면)</string>
+    <string name="shuttle_bus_alternative_route_80a">80A (경기테크노파크)</string>
+    <string name="shuttle_bus_alternative_route_n80a">N80A (경기테크노파크)</string>
+    <string name="shuttle_bus_alternative_route_80b">80B (기숙사 방면)</string>
+    <string name="shuttle_bus_alternative_route_n80b">N80B (기숙사 방면)</string>
+    <string name="shuttle_bus_alternative_time">%1$d분</string>
+    <string name="shuttle_bus_alternative_no_data">도착 정보 없음</string>
+    <!-- 셔틀버스 알림 -->
+    <string name="shuttle_alarm_button_desc">알림 설정</string>
+    <string name="shuttle_alarm_boarding">승차 알림</string>
+    <string name="shuttle_alarm_alighting">하차 알림 · 여정 공유</string>
+    <string name="shuttle_alarm_start">알림 시작</string>
+    <string name="shuttle_alarm_cancel">알림 취소</string>
+    <string name="shuttle_alarm_boarding_title">%1$s 탑승 알림</string>
+    <string name="shuttle_alarm_boarding_initial">%1$d분 후 출발</string>
+    <string name="shuttle_alarm_boarding_initial_checkpoint">%1$d분 후 출발 · %2$s 통과</string>
+    <string name="shuttle_alarm_boarding_content">%1$d분 · %2$s방향 %3$s</string>
+    <string name="shuttle_alarm_boarding_content_checkpoint">%1$d분 · %2$s 통과 · %3$s방향 %4$s</string>
+    <string name="shuttle_alarm_boarding_short">%1$d분</string>
+    <string name="shuttle_alarm_checkpoint_waiting">%1$s 대기</string>
+    <string name="shuttle_alarm_checkpoint_departed">%1$s 출발</string>
+    <string name="shuttle_alarm_checkpoint_approaching">%1$s 접근</string>
+    <string name="shuttle_alarm_now">곧 도착</string>
+    <string name="shuttle_alarm_alighting_title">%1$s 하차 준비</string>
+    <string name="shuttle_alarm_alighting_preparing">하차 정류장 모니터링 중</string>
+    <string name="shuttle_alarm_alighting_content">정류장까지 약 %1$s</string>
+    <string name="shuttle_alarm_alighting_checkpoint_distance">%1$s, %2$s까지 %3$s</string>
+    <string name="shuttle_alarm_alighting_checkpoint_tracking">%1$s, %2$s까지 거리 확인 중</string>
+    <string name="shuttle_alarm_distance_short">%1$s</string>
+    <string name="shuttle_alarm_tracking_short">추적 중</string>
+    <string name="shuttle_alarm_alighting_alert_title">하차 준비하세요!</string>
+    <string name="shuttle_alarm_alighting_alert_content">%1$s 정류장이 %2$s 앞입니다</string>
+    <string name="shuttle_alarm_alighting_alert_time_content">%1$s 정류장 도착 예정 시간입니다</string>
+    <string name="shuttle_alarm_channel_id">shuttle_alarm_channel</string>
+    <string name="shuttle_alarm_channel_name">셔틀버스 알림</string>
+    <string name="shuttle_alarm_channel_desc">셔틀버스 탑승 및 하차 알림</string>
+    <string name="shuttle_alarm_select_destination">하차 정류장 선택</string>
+    <string name="shuttle_alarm_no_permission">알림 권한이 필요합니다</string>
+    <!-- 방향 -->
+    <string name="direction_north">북</string>
+    <string name="direction_northeast">북동</string>
+    <string name="direction_east">동</string>
+    <string name="direction_southeast">남동</string>
+    <string name="direction_south">남</string>
+    <string name="direction_southwest">남서</string>
+    <string name="direction_west">서</string>
+    <string name="direction_northwest">북서</string>
+    <!-- 버스 대체 정류장 정보 -->
+    <string name="bus_alternative_stop_info">정류장 위치</string>
+    <string name="bus_alternative_shuttle_stop">셔틀버스 정류장</string>
+    <string name="bus_alternative_bus_stop">버스 탑승 정류장</string>
     <string name="shuttle_no_realtime_data">도착 정보가 없습니다.</string>
     <!-- 셔틀버스 도착 정보 시간 -->
     <string name="shuttle_time_type_1">%1$s시 %2$s분 출발</string>
-    <string name="shuttle_time_type_2">%1$s분 후 출발</string>
+    <string name="shuttle_time_type_2">%1$s분</string>
     <string name="shuttle_time_type_3">%1$s:%2$s</string>
     <!-- 셔틀버스 노선 타입 -->
     <string name="shuttle_type_direct">직행</string>
@@ -43,7 +97,6 @@
     <string name="shuttle_type_jungang_circular">기숙사 (중앙역)</string>
     <string name="shuttle_type_shuttlecock_finishing">셔틀콕 종착</string>
     <!-- 셔틀버스 첫막차 시간 -->
-    <string name="map_id">15fbba8d56d94b31</string>
     <string name="shuttle_first_last_time_title">첫차/막차 정보</string>
     <string name="shuttle_first_last_time_no_data_weekdays">--:-- (평일)</string>
     <string name="shuttle_first_last_time_no_data_weekends">--:-- (주말)</string>
@@ -80,6 +133,7 @@
     <string name="shuttle_period_vacation">방학 중</string>
     <string name="shuttle_period_vacation_session">계절학기 중</string>
     <string name="confirm">확인</string>
+    <string name="location_permission_nearest_stop">가까운 정류장을 찾기 위해 위치 권한이 필요합니다.</string>
     <!-- 셔틀버스 등하교 팝업 -->
     <string name="shuttle_realtime_toast">등하교 집중 시간대에는 셔틀콕에서 일부 셔틀버스가 운행하지 않을 수 있습니다.</string>
     <!-- 셔틀버스 소요 시간 -->
@@ -108,21 +162,22 @@
     </string-array>
     <!-- 노선버스 도착 정보 시간 -->
     <plurals name="bus_realtime_format_seats">
-        <item quantity="one">%1$d분 후 도착 (%2$d전, %3$d석)</item>
-        <item quantity="other">%1$d분 후 도착 (%2$d전, %3$d석)</item>
+        <item quantity="one">%1$d분 (%2$d전, %3$d석)</item>
+        <item quantity="other">%1$d분 (%2$d전, %3$d석)</item>
     </plurals>
     <plurals name="bus_realtime_format_no_seats">
-        <item quantity="one">%1$d분 후 도착 (%2$d전)</item>
-        <item quantity="other">%1$d분 후 도착 (%2$d전)</item>
+        <item quantity="one">%1$d분 (%2$d전)</item>
+        <item quantity="other">%1$d분 (%2$d전)</item>
     </plurals>
+    <string name="bus_arrival_estimated_format">%1$d분 (예정)</string>
     <string name="bus_timetable_format">%1$s시 %2$s분 출발</string>
     <plurals name="bus_realtime_format_seats_last">
-        <item quantity="one">%1$d분 후 도착 (%2$d전, %3$d석, 막차)</item>
-        <item quantity="other">%1$d분 후 도착 (%2$d전, %3$d석, 막차)</item>
+        <item quantity="one">%1$d분 (%2$d전, %3$d석, 막차)</item>
+        <item quantity="other">%1$d분 (%2$d전, %3$d석, 막차)</item>
     </plurals>
     <plurals name="bus_realtime_format_no_seats_last">
-        <item quantity="one">%1$d분 후 도착 (%2$d전, 막차)</item>
-        <item quantity="other">%1$d분 후 도착 (%2$d전, 막차)</item>
+        <item quantity="one">%1$d분 (%2$d전, 막차)</item>
+        <item quantity="other">%1$d분 (%2$d전, 막차)</item>
     </plurals>
     <string name="bus_timetable_format_last">%1$s시 %2$s분 출발 (막차)</string>
     <!-- 노선버스 도착 정보 없음 -->
@@ -181,13 +236,13 @@
     <string name="subway_realtime_destination_format">%1$s행</string>
     <string name="subway_realtime_destination_format_last">%1$s행(막차)</string>
     <plurals name="subway_realtime_format">
-        <item quantity="one">%1$d분 후 도착 (%2$s)</item>
-        <item quantity="other">%1$d분 후 도착 (%2$s)</item>
+        <item quantity="one">%1$d분 (%2$s · %3$d전)</item>
+        <item quantity="other">%1$d분 (%2$s · %3$d전)</item>
     </plurals>
     <!-- 전철 시간표 -->
     <plurals name="subway_realtime_timetable_format">
-        <item quantity="one">%1$d분 후 도착</item>
-        <item quantity="other">%1$d분 후 도착</item>
+        <item quantity="one">%1$d분</item>
+        <item quantity="other">%1$d분</item>
     </plurals>
     <!-- 전철 종착역 -->
     <string name="subway_station_K209">청량리</string>
@@ -227,11 +282,22 @@
     <string name="cafeteria_15">창업보육센터</string>
     <!-- 학식 가격 -->
     <string name="cafeteria_running_time_format">운영 시간: %1$s</string>
+    <string name="cafeteria_running_time_status_format">운영 시간: %1$s · %2$s</string>
+    <string name="cafeteria_status_open">운영 중</string>
+    <string name="cafeteria_status_soon">운영 전</string>
+    <string name="cafeteria_status_closed">운영 종료</string>
+    <string name="cafeteria_status_has_menu">메뉴 있음</string>
+    <string name="cafeteria_status_no_menu">메뉴 없음</string>
     <string name="cafeteria_price_format">%1$s 원</string>
     <string name="widget_cafeteria_name">학식 메뉴</string>
     <string name="widget_cafeteria_description">현재 시간에 맞는 학식 메뉴를 보여줍니다.</string>
     <string name="widget_cafeteria_no_data">메뉴 정보가 없습니다.</string>
     <string name="widget_cafeteria_refresh">새로고침</string>
+    <string name="widget_preview_cafeteria_student">학생식당</string>
+    <string name="widget_preview_cafeteria_staff">교직원식당</string>
+    <string name="widget_preview_menu_spicy_pork">제육볶음</string>
+    <string name="widget_preview_menu_kimchi_stew">김치찌개</string>
+    <string name="widget_preview_menu_pork_cutlet">돈까스</string>
     <string name="widget_meal_closed">학식 종료</string>
     <string name="widget_shuttle_description_small">가장 가까운 정류장의 셔틀 출발 시간 (작게)</string>
     <string name="widget_shuttle_description_medium">가장 가까운 정류장의 셔틀 출발 시간 (중간)</string>
@@ -243,6 +309,9 @@
     <string name="widget_shuttle_background_location_message">셔틀 위젯이 앱을 사용하지 않을 때에도 현재 위치에서 가장 가까운 정류장을 표시하기 위해 백그라운드에서 위치 정보를 사용합니다. 다음 화면에서 위치 권한을 \'항상 허용\'으로 설정해 주세요.</string>
     <string name="widget_shuttle_background_location_allow">허용</string>
     <string name="widget_shuttle_background_location_later">나중에</string>
+    <string name="widget_preview_shuttle_stop_station">· 한대앞</string>
+    <string name="widget_preview_subway_danggogae">3분(당고개행)</string>
+    <string name="widget_preview_bus_remaining_stops">8분 (2 정류장 전)</string>
     <string name="widget_shuttle_transfer_name">셔틀 + 환승</string>
     <string name="widget_shuttle_transfer_description">가장 가까운 정류장의 셔틀버스와 연결 교통수단을 함께 보여줍니다.</string>
     <string name="shuttle_transfer_section_title">환승 연결 정보</string>
@@ -253,6 +322,10 @@
     <string name="transfer_subway_format">%1$d분(%2$s행)</string>
     <string name="transfer_bus_minutes_format">%1$d분</string>
     <string name="transfer_bus_stops_suffix"> (%1$d 정류장 전)</string>
+    <string name="transfer_bus_boarding_stop">성포주공\n4단지</string>
+    <string name="transfer_subway_boarding_station">한대앞</string>
+    <string name="transfer_vehicle_destination">%1$s행</string>
+    <string name="transfer_vehicle_minutes_stops">%1$d분 (%2$d전)</string>
     <string name="cafeteria_date_title">학식 날짜 선택</string>
     <string name="menu">메뉴</string>
     <string name="menu_book">열람실 좌석 조회</string>
@@ -265,6 +338,12 @@
     <string name="menu_review">앱 평가하기</string>
     <string name="menu_map">캠퍼스 지도</string>
     <string name="map_search_guide">검색할 강의실을 입력하세요</string>
+    <string name="map_external_error">지도를 열 수 있는 앱이 없습니다.</string>
+    <string name="map_current_location">현재 위치</string>
+    <string name="map_campus_center">캠퍼스 중심</string>
+    <string name="map_search_reset">검색 결과 초기화</string>
+    <string name="map_location_permission_required">현재 위치를 보려면 위치 권한이 필요합니다.</string>
+    <string name="map_current_location_error">현재 위치를 가져오지 못했습니다.</string>
     <string name="room_description_format">%1$s/%2$s호</string>
     <string name="reading_room_alarm_description">열람실 연장 알림</string>
     <string name="reading_room_alarm_3_hour">3시간 (시험 기간)</string>
@@ -296,7 +375,8 @@
     <string name="theme_system">시스템</string>
     <string name="campus_erica">ERICA</string>
     <string name="campus_seoul">서울</string>
-    <string name="empty_cafeteria">메뉴 정보가 없습니다.</string>
+    <string name="bus_low_floor">저상</string>
+    <string name="empty_cafeteria">오늘 메뉴가 등록되지 않았습니다.</string>
     <string name="language_korean">한국어</string>
     <string name="language_english">English</string>
     <string name="language_japanese">일본어</string>
@@ -409,6 +489,51 @@
     <string name="coachmark_subway_transfer_tip_desc">한대앞~인천을 한 번에 운행하는 열차는 약 30분 간격이에요. 한대앞~오이도, 오이도~인천을 오가는 열차는 7~15분 간격이라 오이도에서 갈아타는 게 더 빠를 수 있어요.</string>
     <string name="coachmark_shuttle_widget_title">셔틀 위젯</string>
     <string name="coachmark_shuttle_widget_desc">홈 화면에 \'셔틀\' 위젯과 \'셔틀+환승\' 위젯을 추가하면 앱을 열지 않고도 가까운 정류장의 도착·환승 정보를 바로 볼 수 있어요.</string>
+    <string name="coachmark_shuttle_bus_alternative_title">셔틀버스 대체 정보 제공</string>
+    <string name="coachmark_shuttle_bus_alternative_desc">방학이나 주말처럼 셔틀버스 배차 간격이 넓을 때 활용할 수 있도록 대체 노선의 도착 정보가 제공됩니다.</string>
+    <string name="coachmark_shuttle_alarm_title">셔틀버스 알림</string>
+    <string name="coachmark_shuttle_alarm_desc">도착 항목 옆 알림 버튼을 누르면 승차 알림과 하차 알림을 설정할 수 있어요. 이미 설정된 알림은 같은 화면에서 해제할 수 있습니다.</string>
+    <string name="coachmark_shuttle_bus_alternative_stop_title">대체노선 정류장 위치</string>
+    <string name="coachmark_shuttle_bus_alternative_stop_desc">정류장 위치 버튼을 누르면 셔틀버스 정류장과 노선버스 정류장의 위치, 이동 방향, 현재 위치를 지도에서 확인할 수 있어요.</string>
+    <string name="coachmark_shuttle_realtime_updates_reset">셔틀 실시간 코치마크를 다시 볼 수 있어요.</string>
     <string name="coachmark_cafeteria_widget_title">학식 위젯</string>
     <string name="coachmark_cafeteria_widget_desc">홈 화면에 \'학식\' 위젯을 추가하면 오늘의 식단을 바로 확인할 수 있어요.</string>
+    <string name="coachmark_reset_settings">기능 안내 다시 보기</string>
+    <string name="coachmark_reset_settings_description">앱의 코치마크 안내를 다시 표시합니다.</string>
+    <string name="coachmark_reset_complete">기능 안내를 다시 볼 수 있어요.</string>
+    <string name="contact_action_copy_phone">전화번호 복사</string>
+    <string name="contact_action_share">연락처 공유</string>
+    <string name="contact_phone_copied">전화번호를 복사했어요.</string>
+    <string name="contact_share_format">%1$s\n%2$s</string>
+    <string name="shuttle_share_journey">여정 공유</string>
+    <string name="shuttle_share_journey_title">셔틀 여정 공유</string>
+    <string name="shuttle_share_journey_format">셔틀 같이 탈래요?\n\n승차  %1$s · %2$s\n하차  %3$s · %4$s\n\n실시간 정보는 여기서 볼 수 있어요\n%5$s</string>
+    <string name="cafeteria_share">학식 공유</string>
+    <string name="cafeteria_share_title">학식 공유</string>
+    <string name="cafeteria_share_format">%1$s %2$s\n%3$s</string>
+    <string name="shortcut_shuttle_short">셔틀</string>
+    <string name="shortcut_shuttle_long">셔틀버스 도착 정보</string>
+    <string name="shortcut_cafeteria_short">학식</string>
+    <string name="shortcut_cafeteria_long">오늘의 학식</string>
+    <string name="shortcut_reading_room_short">열람실</string>
+    <string name="shortcut_reading_room_long">열람실 좌석 현황</string>
+    <string name="shortcut_map_short">지도</string>
+    <string name="shortcut_map_long">캠퍼스 지도</string>
+    <!-- Bus Help Dialog -->
+    <string name="bus_help_title">노선버스 도움말</string>
+    <string name="bus_help_realtime_title">1. 실시간 도착 정보</string>
+    <string name="bus_help_realtime_content">버스 도착까지 남은 시간을 실시간으로 확인할 수 있어요.</string>
+    <string name="bus_help_timetable_title">2. 시간표 보기</string>
+    <string name="bus_help_timetable_content">전체 시간표 버튼을 눌러 노선별 시간표를 확인할 수 있어요.</string>
+    <string name="bus_help_departure_title">3. 출발 기록</string>
+    <string name="bus_help_departure_content">출발 기록 버튼을 눌러 최근 버스 출발 이력을 확인할 수 있어요.</string>
+    <string name="bus_help_stop_title">4. 정류장 정보</string>
+    <string name="bus_help_stop_content">노선 헤더의 위치 아이콘을 눌러 정류장 위치와 첫/막차 정보를 확인할 수 있어요.</string>
+    <!-- Bus Stop Info Dialog -->
+    <string name="bus_stop_info_title">정류장 정보</string>
+    <string name="bus_stop_info_empty">정류장 정보를 불러올 수 없습니다.</string>
+    <string name="bus_stop_info_error">정보를 불러오는데 실패했습니다.</string>
+    <string name="bus_first_last_up">상행: 첫차 %1$s / 막차 %2$s</string>
+    <string name="bus_first_last_down">하행: 첫차 %1$s / 막차 %2$s</string>
+    <string name="bus_stop_first_last_title">첫차/막차 정보</string>
 </resources>

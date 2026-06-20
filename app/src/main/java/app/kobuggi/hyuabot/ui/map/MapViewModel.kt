@@ -51,7 +51,8 @@ class MapViewModel @Inject constructor(private val apolloClient: ApolloClient) :
                             number = room.number,
                             building = building.name,
                             latitude = building.latitude,
-                            longitude = building.longitude
+                            longitude = building.longitude,
+                            url = building.url
                         )
                     }
                 } ?: emptyList()

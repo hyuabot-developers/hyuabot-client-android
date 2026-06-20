@@ -19,7 +19,9 @@ import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 import kotlin.math.min
+import app.kobuggi.hyuabot.widget.ShuttleWidgetSupport
 
 @AndroidEntryPoint
 class ShuttleTabStationFragment @Inject constructor() : Fragment() {
@@ -39,7 +41,10 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             R.string.shuttle_tab_station,
             R.string.shuttle_header_bound_for_dormitory,
             childFragmentManager,
-            emptyList()
+            emptyList(),
+            onAlarmClick = { entry ->
+                showAlarmDialogForStop("station", R.string.shuttle_tab_station, entry.seq, entry.time, entry.stops.map { it.stop to it.time })
+            }
         )
         val shuttleCampusRouteAdapter = ShuttleRouteAdapter(
             listOf(
@@ -151,7 +156,10 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             R.string.shuttle_tab_station,
             R.string.shuttle_header_bound_for_terminal,
             childFragmentManager,
-            emptyList()
+            emptyList(),
+            onAlarmClick = { entry ->
+                showAlarmDialogForStop("station", R.string.shuttle_tab_station, entry.seq, entry.time, entry.stops.map { it.stop to it.time })
+            }
         )
         val shuttleTerminalRouteAdapter = ShuttleRouteAdapter(
             listOf(
@@ -207,7 +215,10 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             R.string.shuttle_tab_station,
             R.string.shuttle_header_bound_for_jungang_station,
             childFragmentManager,
-            emptyList()
+            emptyList(),
+            onAlarmClick = { entry ->
+                showAlarmDialogForStop("station", R.string.shuttle_tab_station, entry.seq, entry.time, entry.stops.map { it.stop to it.time })
+            }
         )
         val shuttleJungangStationRouteAdapter = ShuttleRouteAdapter(
             listOf(
@@ -242,7 +253,10 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             viewLifecycleOwner,
             R.string.shuttle_tab_station,
             childFragmentManager,
-            emptyList()
+            emptyList(),
+            onAlarmClick = { order ->
+                showAlarmDialogForStop("station", R.string.shuttle_tab_station, order.seq, order.time, order.stops.map { it.stop to it.time })
+            }
         )
 
         binding.apply {
@@ -408,6 +422,9 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
                 shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)))
             }
         }
+        parentViewModel.busAlternativeStation.observe(viewLifecycleOwner) { busMinutes ->
+            updateBusAlternativeDormitory(busMinutes)
+        }
 
         binding.apply {
             headerBoundForStation.visibility = View.GONE
@@ -417,7 +434,74 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             entireTimetableStation.visibility = View.GONE
         }
         bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
+    }
+
+    private fun showAlarmDialogForStop(boardingStopId: String, boardingLabelRes: Int, timetableSeq: Int, time: java.time.LocalTime, routeStops: List<Pair<String, java.time.LocalTime>>) {
+        val boardingStop = parentViewModel.result.value?.firstOrNull { it.name == boardingStopId } ?: return
+        val now = java.time.ZonedDateTime.now()
+        var departureTime = now.toLocalDate().atTime(time).atZone(java.time.ZoneId.systemDefault())
+        if (departureTime.isBefore(now)) departureTime = departureTime.plusDays(1)
+        val departureTimeMillis = departureTime.toInstant().toEpochMilli()
+        val minutes = kotlin.math.ceil((departureTimeMillis - System.currentTimeMillis()) / 60_000.0).toInt().coerceAtLeast(0)
+        val allStops = parentViewModel.result.value ?: return
+        val destStops = buildShuttleAlarmDestinationStopIds(routeStops, boardingStopId).mapNotNull { name ->
+            allStops.firstOrNull { it.name == shuttleAlarmLocationStopId(name) }?.let {
+                Triple(ShuttleWidgetSupport.stopDisplayName(requireContext(), it.name), it.latitude, it.longitude)
+            }
+        }
+        val alarmKey = app.kobuggi.hyuabot.service.alarm.ShuttleAlarmService.buildAlarmKey(boardingStopId, timetableSeq)
+        val checkpointTimes = buildShuttleAlarmCheckpointTimes(routeStops, boardingStopId, departureTimeMillis)
+        val checkpointNames = buildShuttleAlarmCheckpointStopIds(routeStops, boardingStopId).map { ShuttleWidgetSupport.stopDisplayName(requireContext(), it) }.toTypedArray()
+        val destTimes = buildShuttleAlarmDestinationTimes(routeStops, boardingStopId, departureTimeMillis)
+        ShuttleAlarmDialogFragment.newInstance(
+            getString(boardingLabelRes), boardingStop.latitude, boardingStop.longitude,
+            minutes, departureTimeMillis, alarmKey, checkpointNames, checkpointTimes, destTimes, destStops
+        ).show(childFragmentManager, "shuttle_alarm")
+    }
+
+    private fun updateBusAlternativeDormitory(data: BusAlternativeData?) {
+        val shouldShow = data?.minutes != null
+        binding.busAlternativeDormitory.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        if (shouldShow) {
+            binding.busAlternativeDormitoryTime.text = getString(R.string.shuttle_bus_alternative_time, data.minutes)
+            bindBusAlternativeInfo(
+                binding.busAlternativeDormitoryInfo,
+                "station",
+                getString(R.string.shuttle_tab_station),
+                data
+            )
+        } else {
+            binding.busAlternativeDormitoryInfo.isEnabled = false
+            binding.busAlternativeDormitoryInfo.alpha = 0.38f
+        }
+        binding.busAlternativeDormitory2.visibility = View.GONE
+    }
+
+    private fun bindBusAlternativeInfo(
+        button: View,
+        shuttleStopId: String,
+        shuttleStopName: String,
+        data: BusAlternativeData?
+    ) {
+        val hasStopInfo = data != null && data.stopLat != 0.0
+        button.isEnabled = hasStopInfo
+        button.alpha = if (hasStopInfo) 1f else 0.38f
+        if (!hasStopInfo) {
+            button.setOnClickListener(null)
+            return
+        }
+        val shuttleStop = parentViewModel.result.value?.firstOrNull { it.name == shuttleStopId }
+        button.setOnClickListener {
+            BusAlternativeStopSheet.newInstance(
+                shuttleStopName,
+                shuttleStop?.latitude ?: 0.0,
+                shuttleStop?.longitude ?: 0.0,
+                data.stopName,
+                data.stopLat,
+                data.stopLng
+            ).show(childFragmentManager, "bus_stop_info")
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

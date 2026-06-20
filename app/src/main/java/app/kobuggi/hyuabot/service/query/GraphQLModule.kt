@@ -1,6 +1,8 @@
 package app.kobuggi.hyuabot.service.query
 
 import app.kobuggi.hyuabot.cache.Cache.cache
+import app.kobuggi.hyuabot.BuildConfig
+import app.kobuggi.hyuabot.SdBuildConfig
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.memory.MemoryCacheFactory
 import com.apollographql.apollo.network.okHttpClient
@@ -16,21 +18,26 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object GraphQLModule {
-    private const val BASE_URL = "${SdBuildConfig.API_URL}/graphql"
+    private val BASE_URL = "${SdBuildConfig.API_URL}/graphql"
 
-    private val apolloClient = {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+    private fun createApolloClient(): ApolloClient {
+        val okHttpClientBuilder = OkHttpClient.Builder()
+            .callTimeout(20, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(12, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
+
+        if (BuildConfig.DEBUG) {
+            okHttpClientBuilder.addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                },
+            )
         }
 
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(90, TimeUnit.SECONDS)
-            .build()
+        val okHttpClient = okHttpClientBuilder.build()
 
-        ApolloClient.Builder()
+        return ApolloClient.Builder()
             .serverUrl(BASE_URL)
             .okHttpClient(okHttpClient)
             .cache(MemoryCacheFactory(maxSizeBytes = 10 * 1024 * 1024))
@@ -39,5 +46,5 @@ object GraphQLModule {
 
     @Provides
     @Singleton
-    fun provideApolloClient(): ApolloClient = apolloClient()
+    fun provideApolloClient(): ApolloClient = createApolloClient()
 }

@@ -45,6 +45,10 @@ class BusRealtimeViewModel @Inject constructor(
         }
     }
 
+    fun setSelectedStopID(stopID: Int) {
+        viewModelScope.launch { userPreferencesRepository.setBusStop(stopID) }
+    }
+
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
         val locale = AppCompatDelegate.getApplicationLocales().get(0)
@@ -75,6 +79,7 @@ class BusRealtimeViewModel @Inject constructor(
     }
 
     fun start() {
+        if (_disposable.size() > 0) return
         _disposable.add(
             Observable.interval(0, 15, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -91,7 +96,6 @@ class BusRealtimeViewModel @Inject constructor(
     fun stop() { _disposable.clear() }
 
     override fun onCleared() {
-        super.onCleared()
         stop()
     }
 }

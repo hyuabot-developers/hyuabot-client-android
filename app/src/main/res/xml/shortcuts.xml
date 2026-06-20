@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="shortcut_shuttle"
+        android:enabled="true"
+        android:icon="@drawable/ic_widget_shuttle"
+        android:shortcutShortLabel="@string/shortcut_shuttle_short"
+        android:shortcutLongLabel="@string/shortcut_shuttle_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="hyuabot://shuttle"
+            android:targetClass="app.kobuggi.hyuabot.ui.MainActivity"
+            android:targetPackage="app.kobuggi.hyuabot" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_cafeteria"
+        android:enabled="true"
+        android:icon="@drawable/ic_meal_lunch"
+        android:shortcutShortLabel="@string/shortcut_cafeteria_short"
+        android:shortcutLongLabel="@string/shortcut_cafeteria_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="hyuabot://cafeteria?tab=lunch"
+            android:targetClass="app.kobuggi.hyuabot.ui.MainActivity"
+            android:targetPackage="app.kobuggi.hyuabot" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_reading_room"
+        android:enabled="true"
+        android:icon="@drawable/ic_book"
+        android:shortcutShortLabel="@string/shortcut_reading_room_short"
+        android:shortcutLongLabel="@string/shortcut_reading_room_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="hyuabot://reading-room"
+            android:targetClass="app.kobuggi.hyuabot.ui.MainActivity"
+            android:targetPackage="app.kobuggi.hyuabot" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_map"
+        android:enabled="true"
+        android:icon="@drawable/ic_map"
+        android:shortcutShortLabel="@string/shortcut_map_short"
+        android:shortcutLongLabel="@string/shortcut_map_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="hyuabot://map"
+            android:targetClass="app.kobuggi.hyuabot.ui.MainActivity"
+            android:targetPackage="app.kobuggi.hyuabot" />
+    </shortcut>
+</shortcuts>

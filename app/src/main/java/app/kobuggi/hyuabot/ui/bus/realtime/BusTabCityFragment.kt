@@ -18,6 +18,7 @@ import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 
 @AndroidEntryPoint
 class BusTabCityFragment @Inject constructor() : Fragment() {
@@ -37,7 +38,12 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
             when (it) {
                 R.string.bus_stop_convention -> {
                     binding.apply {
-                        headerFirst.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))
+                        headerFirstTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))
+                        headerFirstStopBtn.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000379, 216000068).also { direction ->
+                                findNavController().safeNavigate(direction)
+                            }
+                        }
                         departureLogFirst.setOnClickListener {
                             AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000379, 216000068).also { direction ->
@@ -64,7 +70,12 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 }
                 R.string.bus_stop_cluster -> {
                     binding.apply {
-                        headerFirst.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_cluster))
+                        headerFirstTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_cluster))
+                        headerFirstStopBtn.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000381, 216000068).also { direction ->
+                                findNavController().safeNavigate(direction)
+                            }
+                        }
                         departureLogFirst.setOnClickListener {
                             AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000381, 216000068).also { direction ->
@@ -91,7 +102,12 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 }
                 R.string.bus_stop_dormitory -> {
                     binding.apply {
-                        headerFirst.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_dormitory))
+                        headerFirstTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_dormitory))
+                        headerFirstStopBtn.setOnClickListener {
+                            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000383, 216000068).also { direction ->
+                                findNavController().safeNavigate(direction)
+                            }
+                        }
                         departureLogFirst.setOnClickListener {
                             AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(216000383, 216000068).also { direction ->
@@ -130,7 +146,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
             val secondBusRealtime = secondBusList.arrival.filter { arrival -> arrival.isRealtime }
             val secondBusTimetable = if (secondBusRealtime.isNotEmpty()) {
                 secondBusList.arrival.filter { arrival ->
-                    !arrival.isRealtime && arrival.time!! > currentTime.plusMinutes(secondBusRealtime.last().minutes!!.toLong())
+                    !arrival.isRealtime && arrival.arrivalTime!! > currentTime.plusMinutes(secondBusRealtime.last().minutes!!.toLong())
                 }
             } else {
                 secondBusList.arrival.filter { arrival -> !arrival.isRealtime }
@@ -143,17 +159,22 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
             binding.noRealtimeDataSecond.visibility = if (secondBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
         }
         binding.apply {
-            headerFirst.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))
+            headerFirstTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))
             realtimeViewFirst.apply {
                 adapter = busFirstAdapter
                 layoutManager = LinearLayoutManager(context)
                 addItemDecoration(decoration)
             }
-            headerSecond.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_sangnoksu_station))
+            headerSecondTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_sangnoksu_station))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 layoutManager = LinearLayoutManager(context)
                 addItemDecoration(decoration)
+            }
+            headerSecondStopBtn.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000138, 216000068).also { direction ->
+                    findNavController().safeNavigate(direction)
+                }
             }
             departureLogSecond.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
@@ -184,7 +205,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -16,6 +16,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 
 @AndroidEntryPoint
 class SubwayRealtimeFragment @Inject constructor() : Fragment() {
@@ -30,8 +31,6 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel.fetchData()
-        viewModel.start()
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
         }
@@ -62,7 +61,7 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
                 ),
             )
         }
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     override fun onPause() {

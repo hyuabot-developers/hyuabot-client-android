@@ -36,7 +36,7 @@
             android:layout_marginStart="6dp"
             android:textSize="14sp"
             android:textColor="@color/secondary_text"
-            android:text="· 한대앞" />
+            android:text="@string/widget_preview_shuttle_stop_station" />
 
         <ImageView
             android:layout_width="20dp"
@@ -142,7 +142,7 @@
             android:layout_marginStart="10dp"
             android:textSize="13sp"
             android:textColor="@color/primary_text"
-            android:text="3분(당고개행)" />
+            android:text="@string/widget_preview_subway_danggogae" />
     </LinearLayout>
 
     <LinearLayout
@@ -170,6 +170,6 @@
             android:layout_marginStart="10dp"
             android:textSize="13sp"
             android:textColor="@color/primary_text"
-            android:text="8분 (2 정류장 전)" />
+            android:text="@string/widget_preview_bus_remaining_stops" />
     </LinearLayout>
 </LinearLayout>

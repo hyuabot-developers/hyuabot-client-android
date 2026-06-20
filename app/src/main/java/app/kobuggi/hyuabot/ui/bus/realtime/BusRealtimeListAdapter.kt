@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemBusRealtimeBinding
 import app.kobuggi.hyuabot.util.UIUtility
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.min
 
 class BusRealtimeListAdapter(
-    private var arrivalList: List<BusArrivalItem> = emptyList()
+    private var arrivalList: List<BusArrivalItem> = emptyList(),
+    private val maxCount: Int = 5,
 ) : RecyclerView.Adapter<BusRealtimeListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemBusRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         private val hourFormatter = DateTimeFormatter.ofPattern("HH")
@@ -21,7 +23,9 @@ class BusRealtimeListAdapter(
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: BusArrivalItem, position: Int) {
             val routeName = item.route
-            val item = item.item
+            val arrival = item.item
+            binding.busLowFloorBadge.visibility = if (arrival.lowFloor == true) android.view.View.VISIBLE else android.view.View.GONE
+            val item = arrival
             if (item.isRealtime) {
                 binding.busRouteText.apply {
                     text = routeName
@@ -70,16 +74,17 @@ class BusRealtimeListAdapter(
                     setTextColor(ResourcesCompat.getColor(resources, getRouteColor(routeName), null))
                 }
                 binding.busTimeText.apply {
-                    text = binding.root.context.getString(
-                        R.string.bus_timetable_format,
-                        hourFormatter.format(item.time),
-                        minuteFormatter.format(item.time)
-                    )
-                    setTextColor(if (UIUtility.isDarkModeOn(binding.root.context.resources)) {
-                        binding.root.context.getColor(android.R.color.white)
-                    } else {
-                        binding.root.context.getColor(android.R.color.black)
-                    })
+                    val arrivalTime = item.arrivalTime
+                    if (arrivalTime != null) {
+                        val now = LocalTime.now()
+                        val toServiceSec = { t: LocalTime ->
+                            val s = t.toSecondOfDay()
+                            if (s < 4 * 3600) s + 86400 else s
+                        }
+                        val remainingMinutes = (toServiceSec(arrivalTime) - toServiceSec(now)) / 60
+                        text = binding.root.context.getString(R.string.bus_arrival_estimated_format, remainingMinutes)
+                    }
+                    setTextColor(binding.root.context.getColor(R.color.secondary_text))
                     setTypeface(typeface, android.graphics.Typeface.NORMAL)
                 }
             }
@@ -95,7 +100,7 @@ class BusRealtimeListAdapter(
         holder.bind(arrivalList[position], position)
     }
 
-    override fun getItemCount(): Int = min(arrivalList.size, 5)
+    override fun getItemCount(): Int = min(arrivalList.size, maxCount)
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newArrivalList: List<BusArrivalItem>) {

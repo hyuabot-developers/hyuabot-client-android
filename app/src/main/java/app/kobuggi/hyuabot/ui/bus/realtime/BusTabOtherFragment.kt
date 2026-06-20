@@ -16,6 +16,7 @@ import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
 import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 
 @AndroidEntryPoint
 class BusTabOtherFragment @Inject constructor() : Fragment() {
@@ -47,22 +48,23 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                 busSecondAdapter.updateData(emptyList())
                 binding.noRealtimeDataSecond.visibility = View.VISIBLE
             } else {
-                busSecondAdapter.updateData(secondBusList.arrival.filter {
-                    !it.isRealtime
-                }.map { arrival ->
+                busSecondAdapter.updateData(secondBusList.arrival.map { arrival ->
                     BusArrivalItem(secondBusList.route.name, arrival)
                 })
-                binding.noRealtimeDataSecond.visibility = if (
-                    secondBusList.arrival.none { arrival -> arrival.isRealtime }
-                ) View.VISIBLE else View.GONE
+                binding.noRealtimeDataSecond.visibility = if (secondBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
             }
         }
         binding.apply {
-            headerFirst.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
+            headerFirstTitle.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
             realtimeViewFirst.apply {
                 adapter = busFirstAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
+            }
+            headerFirstStopBtn.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000759, 216000075).also { direction ->
+                    findNavController().safeNavigate(direction)
+                }
             }
             departureLogFirst.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
@@ -76,11 +78,16 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(direction)
                 }
             }
-            headerSecond.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_gwangmyeong_station))
+            headerSecondTitle.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_gwangmyeong_station))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
+            }
+            headerSecondStopBtn.setOnClickListener {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(213000487, 216000075).also { direction ->
+                    findNavController().safeNavigate(direction)
+                }
             }
             departureLogSecond.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
@@ -111,7 +118,7 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

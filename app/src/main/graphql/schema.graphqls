@@ -81,6 +81,8 @@ type BusArrival {
   isRealtime: Boolean!
 
   time: LocalTime
+
+  arrivalTime: LocalTime
 }
 
 type BusCompany {

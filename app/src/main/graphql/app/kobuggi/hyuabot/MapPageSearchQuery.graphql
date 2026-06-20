@@ -3,6 +3,7 @@ query MapPageSearchQuery ($keyword: String!) {
         name
         latitude
         longitude
+        url
         rooms {
             name
             number

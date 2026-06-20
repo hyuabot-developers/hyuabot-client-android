@@ -315,6 +315,15 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    override suspend fun resetCoachmark(screen: String) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                val current = preferences[COACHMARKS_SEEN_KEY] ?: emptySet()
+                preferences[COACHMARKS_SEEN_KEY] = current - screen
+            }
+        }
+    }
+
     override suspend fun resetCoachmarks() {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->

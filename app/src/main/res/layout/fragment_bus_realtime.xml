@@ -78,6 +78,6 @@
         app:backgroundTint="@color/hanyang_green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_location"
+        app:srcCompat="@drawable/ic_help"
         android:importantForAccessibility="no" />
 </androidx.constraintlayout.widget.ConstraintLayout>

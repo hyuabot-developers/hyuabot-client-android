@@ -61,17 +61,17 @@ class CalendarFragment @Inject constructor() : Fragment() {
                     dayBinder = object : MonthDayBinder<DayViewContainer> {
                         override fun create(view: View) = DayViewContainer(view)
                         @SuppressLint("SetTextI18n")
-                        override fun bind(container: DayViewContainer, day: CalendarDay) {
+                        override fun bind(container: DayViewContainer, data: CalendarDay) {
                             container.dayTextView.apply {
-                                text = day.date.dayOfMonth.toString()
-                                when (day.position) {
+                                text = data.date.dayOfMonth.toString()
+                                when (data.position) {
                                     DayPosition.MonthDate -> setTextColor(ResourcesCompat.getColor(resources, R.color.primary_text, null))
                                     else -> setTextColor(ResourcesCompat.getColor(resources, android.R.color.darker_gray, null))
                                 }
                             }
-                            if (day.date in eventMap) {
-                                if (eventMap[day.date] == null) return
-                                val events = eventMap[day.date]!!
+                            if (data.date in eventMap) {
+                                if (eventMap[data.date] == null) return
+                                val events = eventMap[data.date]!!
                                 if (events.contains("전체")) {
                                     container.otherSchedule.visibility = View.VISIBLE
                                 } else if (events.contains("1학년")) {
@@ -101,11 +101,11 @@ class CalendarFragment @Inject constructor() : Fragment() {
             calendarView.apply {
                 monthHeaderBinder = object : MonthHeaderFooterBinder<MonthHeaderFooterViewContainer> {
                     override fun create(view: View) = MonthHeaderFooterViewContainer(view)
-                    override fun bind(container: MonthHeaderFooterViewContainer, month: CalendarMonth) {
+                    override fun bind(container: MonthHeaderFooterViewContainer, data: CalendarMonth) {
                         container.headerTextView.text = getString(
                             R.string.month_header,
-                            month.yearMonth.year,
-                            month.yearMonth.monthValue
+                            data.yearMonth.year,
+                            data.yearMonth.monthValue
                         )
                     }
                 }

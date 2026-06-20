@@ -28,8 +28,18 @@
     <string name="shuttle_no_realtime_data">No arrival information.</string>
     <!-- 셔틀버스 도착 정보 시간 -->
     <string name="shuttle_time_type_1">Depart at %1$s:%2$s</string>
-    <string name="shuttle_time_type_2">%1$s mins left</string>
+    <string name="shuttle_time_type_2">%1$s min</string>
     <string name="shuttle_time_type_3">%1$s:%2$s</string>
+    <string name="shuttle_bus_alternative_route">10-1 (from Sangnoksu Stn.)</string>
+    <string name="shuttle_bus_alternative_route_campus">10-1 (to Sangnoksu Stn.)</string>
+    <string name="shuttle_bus_alternative_route_62_terminal">62 (Seong-an-gil)</string>
+    <string name="shuttle_bus_alternative_route_62_dormitory">62 (to Shuttlecoke)</string>
+    <string name="shuttle_bus_alternative_route_80a">80A (Gyeonggi Technopark)</string>
+    <string name="shuttle_bus_alternative_route_n80a">N80A (Gyeonggi Technopark)</string>
+    <string name="shuttle_bus_alternative_route_80b">80B (to Dormitory)</string>
+    <string name="shuttle_bus_alternative_route_n80b">N80B (to Dormitory)</string>
+    <string name="shuttle_bus_alternative_time">%1$d min</string>
+    <string name="shuttle_bus_alternative_no_data">No arrival info</string>
     <!-- 셔틀버스 노선 타입 -->
     <string name="shuttle_type_direct">Direct</string>
     <string name="shuttle_type_circular">Cycle</string>
@@ -43,7 +53,6 @@
     <string name="shuttle_type_jungang_circular">Dormitory (Jungang Stn.)</string>
     <string name="shuttle_type_shuttlecock_finishing">Shuttlecoke</string>
     <!-- 셔틀버스 첫막차 시간 -->
-    <string name="map_id">15fbba8d56d94b31</string>
     <string name="shuttle_first_last_time_title">First/Last Shuttle</string>
     <string name="shuttle_first_last_time_no_data_weekdays">--:--\n(Weekdays)</string>
     <string name="shuttle_first_last_time_no_data_weekends">--:--\n(Weekends)</string>
@@ -80,6 +89,7 @@
     <string name="shuttle_period_vacation">Vacation</string>
     <string name="shuttle_period_vacation_session">Seasonal</string>
     <string name="confirm">Apply</string>
+    <string name="location_permission_nearest_stop">Location permission is required to find the nearest stop.</string>
     <!-- 셔틀버스 등하교 팝업 -->
     <string name="shuttle_realtime_toast">During peak school commute hours, some shuttle may not depart from Shuttlecoke.</string>
     <!-- 셔틀버스 소요 시간 -->
@@ -108,23 +118,24 @@
     </string-array>
     <!-- 노선버스 도착 정보 시간 -->
     <plurals name="bus_realtime_format_seats">
-        <item quantity="one">%1$d min left (%2$d stops, %3$d seats)</item>
-        <item quantity="other">%1$d mins left (%2$d stops, %3$d seats)</item>
+        <item quantity="one">%1$d min (%2$d stops, %3$d seats)</item>
+        <item quantity="other">%1$d min (%2$d stops, %3$d seats)</item>
     </plurals>
     <plurals name="bus_realtime_format_no_seats">
-        <item quantity="one">%1$d min left (%2$d stops)</item>
-        <item quantity="other">%1$d mins left (%2$d stops)</item>
+        <item quantity="one">%1$d min (%2$d stops)</item>
+        <item quantity="other">%1$d min (%2$d stops)</item>
     </plurals>
     <string name="bus_timetable_format">Departs at %1$s:%2$s</string>
     <plurals name="bus_realtime_format_seats_last">
-        <item quantity="one">%1$d min left (%2$d stops, %3$d seats, Last)</item>
-        <item quantity="other">%1$d mins left (%2$d stops, %3$d seats, Last)</item>
+        <item quantity="one">%1$d min (%2$d stops, %3$d seats, Last)</item>
+        <item quantity="other">%1$d min (%2$d stops, %3$d seats, Last)</item>
     </plurals>
     <plurals name="bus_realtime_format_no_seats_last">
-        <item quantity="one">%1$d min left (%2$d stops, Last)</item>
-        <item quantity="other">%1$d mins left (%2$d stops, Last)</item>
+        <item quantity="one">%1$d min (%2$d stops, Last)</item>
+        <item quantity="other">%1$d min (%2$d stops, Last)</item>
     </plurals>
     <string name="bus_timetable_format_last">Departs at %1$s:%2$s (Last)</string>
+    <string name="bus_arrival_estimated_format">%1$d min (scheduled)</string>
     <!-- 노선버스 도착 정보 없음 -->
     <string name="bus_no_realtime_data">No arrival information.</string>
     <string name="bus_departure_log">Departure Log</string>
@@ -179,12 +190,12 @@
     <string name="subway_realtime_destination_format">To %1$s</string>
     <string name="subway_realtime_destination_format_last">To %1$s (Last train)</string>
     <plurals name="subway_realtime_format">
-        <item quantity="one">Arriving in %1$d minute (%2$s)</item>
-        <item quantity="other">Arriving in %1$d minutes (%2$s)</item>
+        <item quantity="one">%1$d min · %3$d stops</item>
+        <item quantity="other">%1$d min · %3$d stops</item>
     </plurals>
     <plurals name="subway_realtime_timetable_format">
-        <item quantity="one">Arriving in %1$d minute</item>
-        <item quantity="other">Arriving in %1$d minutes</item>
+        <item quantity="one">%1$d min</item>
+        <item quantity="other">%1$d min</item>
     </plurals>
     <string name="subway_station_K209">Cheongnyangni</string>
     <string name="subway_station_K210">Wangsimni</string>
@@ -219,11 +230,22 @@
     <string name="cafeteria_14">Food Court</string>
     <string name="cafeteria_15">Business Incubator</string>
     <string name="cafeteria_running_time_format">Operating Hours: %1$s</string>
+    <string name="cafeteria_running_time_status_format">Hours: %1$s · %2$s</string>
+    <string name="cafeteria_status_open">Open now</string>
+    <string name="cafeteria_status_soon">Not open yet</string>
+    <string name="cafeteria_status_closed">Closed</string>
+    <string name="cafeteria_status_has_menu">Menu available</string>
+    <string name="cafeteria_status_no_menu">No menu</string>
     <string name="cafeteria_price_format">₩ %1$s</string>
     <string name="widget_cafeteria_name">Cafeteria Menu</string>
     <string name="widget_cafeteria_description">Shows the cafeteria menu for the current time.</string>
     <string name="widget_cafeteria_no_data">No menu information available.</string>
     <string name="widget_cafeteria_refresh">Refresh</string>
+    <string name="widget_preview_cafeteria_student">Student Cafeteria</string>
+    <string name="widget_preview_cafeteria_staff">Staff Cafeteria</string>
+    <string name="widget_preview_menu_spicy_pork">Spicy pork</string>
+    <string name="widget_preview_menu_kimchi_stew">Kimchi stew</string>
+    <string name="widget_preview_menu_pork_cutlet">Pork cutlet</string>
     <string name="widget_meal_closed">Closed</string>
     <string name="widget_shuttle_description_small">Shuttle departures from the nearest stop (small)</string>
     <string name="widget_shuttle_description_medium">Shuttle departures from the nearest stop (medium)</string>
@@ -235,6 +257,9 @@
     <string name="widget_shuttle_background_location_message">The shuttle widget uses your location in the background, even when the app is closed, to show the nearest stop. Please set location permission to \'Allow all the time\' on the next screen.</string>
     <string name="widget_shuttle_background_location_allow">Allow</string>
     <string name="widget_shuttle_background_location_later">Later</string>
+    <string name="widget_preview_shuttle_stop_station">· Hanyang Univ. at Ansan</string>
+    <string name="widget_preview_subway_danggogae">3 min (to Danggogae)</string>
+    <string name="widget_preview_bus_remaining_stops">8 min (2 stops away)</string>
     <string name="widget_shuttle_transfer_name">Shuttle &amp; Transfer</string>
     <string name="widget_shuttle_transfer_description">Shows shuttle bus and connecting transit at the nearest stop.</string>
     <string name="shuttle_transfer_section_title">Transfer Connections</string>
@@ -245,6 +270,10 @@
     <string name="transfer_subway_format">%1$dmin (%2$s)</string>
     <string name="transfer_bus_minutes_format">%1$dmin</string>
     <string name="transfer_bus_stops_suffix"> (%1$d stops)</string>
+    <string name="transfer_bus_boarding_stop">Seongpo\nJugong 4</string>
+    <string name="transfer_subway_boarding_station">Hanyang Univ. at Ansan</string>
+    <string name="transfer_vehicle_destination">to %1$s</string>
+    <string name="transfer_vehicle_minutes_stops">%1$dmin (%2$d stops)</string>
     <string name="cafeteria_date_title">Select Date</string>
     <string name="menu">Menu</string>
     <string name="menu_book">Reading Room Seat Lookup</string>
@@ -257,6 +286,12 @@
     <string name="menu_review">Rate this App</string>
     <string name="menu_map">Campus Map</string>
     <string name="map_search_guide">Enter a room to search</string>
+    <string name="map_external_error">No app is available to open the map.</string>
+    <string name="map_current_location">Current location</string>
+    <string name="map_campus_center">Campus center</string>
+    <string name="map_search_reset">Clear search result</string>
+    <string name="map_location_permission_required">Location permission is required to show your current location.</string>
+    <string name="map_current_location_error">Could not get your current location.</string>
     <string name="room_description_format">Room %1$s/%2$s</string>
     <string name="reading_room_alarm_description">Reading Room Extension Reminder</string>
     <string name="reading_room_alarm_3_hour">3 Hours\n(Exam Period)</string>
@@ -288,7 +323,8 @@
     <string name="theme_system">System</string>
     <string name="campus_erica">ERICA</string>
     <string name="campus_seoul">Seoul</string>
-    <string name="empty_cafeteria">No menu information available.</string>
+    <string name="bus_low_floor">Low-floor</string>
+    <string name="empty_cafeteria">Today\'s menu has not been registered.</string>
     <string name="language_korean">Korean</string>
     <string name="language_english">English</string>
     <string name="about">App Information</string>
@@ -357,6 +393,8 @@
     <string name="coachmark_shuttle_route_desc">Tap the button next to a destination header to expand which stops each route passes through.</string>
     <string name="coachmark_shuttle_via_title">Route and travel time</string>
     <string name="coachmark_shuttle_via_desc">Tap an arrival to see when that bus departs from each stop.</string>
+    <string name="coachmark_shuttle_bus_alternative_title">Shuttle Bus Alternative Info</string>
+    <string name="coachmark_shuttle_bus_alternative_desc">When shuttle bus departures are infrequent, such as during breaks or on weekends, alternative route arrival information is provided for your convenience.</string>
     <string name="coachmark_shuttle_transfer_title">Transfer info</string>
     <string name="coachmark_shuttle_transfer_desc">At the Dormitory and Shuttlecock stops, you can check transfer routes below the arrivals.</string>
     <string name="coachmark_shuttle_stop_title">Stop information</string>
@@ -395,11 +433,93 @@
     <string name="coachmark_subway_transfer_tip_desc">Trains running 한대앞–인천 directly come about every 30 min, while trains shuttling 한대앞–오이도 and 오이도–인천 come every 7–15 min, so transferring at 오이도 can be faster.</string>
     <string name="coachmark_shuttle_widget_title">Shuttle widgets</string>
     <string name="coachmark_shuttle_widget_desc">Add the \'Shuttle\' and \'Shuttle + Transfer\' widgets to your home screen to see nearby arrivals and transfers without opening the app.</string>
+    <string name="coachmark_shuttle_alarm_title">Shuttle alerts</string>
+    <string name="coachmark_shuttle_alarm_desc">Tap the alert button next to an arrival to set boarding or alighting alerts. Active alerts can be canceled from the same screen.</string>
+    <string name="coachmark_shuttle_bus_alternative_stop_title">Alternative stop locations</string>
+    <string name="coachmark_shuttle_bus_alternative_stop_desc">Tap the stop location button to see the shuttle stop, bus stop, walking direction, and your current location on the map.</string>
+    <string name="coachmark_shuttle_realtime_updates_reset">Shuttle realtime coachmarks will be shown again.</string>
     <string name="coachmark_cafeteria_widget_title">Cafeteria widget</string>
     <string name="coachmark_cafeteria_widget_desc">Add the \'Cafeteria\' widget to your home screen to check today\'s menu at a glance.</string>
+    <string name="coachmark_reset_settings">Show feature guide again</string>
+    <string name="coachmark_reset_settings_description">Show the app coachmark guide again.</string>
+    <string name="coachmark_reset_complete">Feature guides will be shown again.</string>
+    <string name="contact_action_copy_phone">Copy phone number</string>
+    <string name="contact_action_share">Share contact</string>
+    <string name="contact_phone_copied">Phone number copied.</string>
+    <string name="contact_share_format">%1$s\n%2$s</string>
+    <string name="shuttle_share_journey">Share trip</string>
+    <string name="shuttle_share_journey_title">Share shuttle trip</string>
+    <string name="shuttle_share_journey_format">Want to take the shuttle together?\n\nBoard  %1$s · %2$s\nGet off  %3$s · %4$s\n\nLive shuttle info is here\n%5$s</string>
+    <string name="cafeteria_share">Share meal</string>
+    <string name="cafeteria_share_title">Share cafeteria menu</string>
+    <string name="cafeteria_share_format">%1$s %2$s\n%3$s</string>
+    <string name="shortcut_shuttle_short">Shuttle</string>
+    <string name="shortcut_shuttle_long">Shuttle arrivals</string>
+    <string name="shortcut_cafeteria_short">Dining</string>
+    <string name="shortcut_cafeteria_long">Today\'s menu</string>
+    <string name="shortcut_reading_room_short">Seats</string>
+    <string name="shortcut_reading_room_long">Reading room seats</string>
+    <string name="shortcut_map_short">Map</string>
+    <string name="shortcut_map_long">Campus map</string>
     <string name="language_japanese">Japanese</string>
     <string name="language_chinese">Chinese (Simplified)</string>
     <string name="language_suggestion_title">Language Suggestion</string>
     <string name="language_suggestion_message">Your system language is %1$s. Would you like to switch the app language?</string>
     <string name="language_suggestion_keep_english">Keep English</string>
+    <string name="bus_help_title">Bus Help</string>
+    <string name="bus_help_realtime_title">1. Real-time Arrival</string>
+    <string name="bus_help_realtime_content">Check how long until the bus arrives in real time.</string>
+    <string name="bus_help_timetable_title">2. Timetable</string>
+    <string name="bus_help_timetable_content">Tap the full timetable button to view schedules by route.</string>
+    <string name="bus_help_departure_title">3. Departure Log</string>
+    <string name="bus_help_departure_content">Tap the departure log button to view recent bus departure history.</string>
+    <string name="bus_help_stop_title">4. Stop Info</string>
+    <string name="bus_help_stop_content">Tap the location icon in the route header to view stop location and first/last bus info.</string>
+    <string name="bus_stop_info_title">Stop Information</string>
+    <string name="bus_stop_info_empty">Stop information is unavailable.</string>
+    <string name="bus_stop_info_error">Failed to load information.</string>
+    <string name="bus_first_last_up">Northbound: First %1$s / Last %2$s</string>
+    <string name="bus_first_last_down">Southbound: First %1$s / Last %2$s</string>
+    <string name="bus_stop_first_last_title">First/Last Bus</string>
+    <string name="shuttle_alarm_button_desc">Set Notification</string>
+    <string name="shuttle_alarm_boarding">Boarding Alert</string>
+    <string name="shuttle_alarm_alighting">Alighting Alert · Share Trip</string>
+    <string name="shuttle_alarm_start">Start Alert</string>
+    <string name="shuttle_alarm_cancel">Cancel Alert</string>
+    <string name="shuttle_alarm_boarding_title">%1$s Boarding Alert</string>
+    <string name="shuttle_alarm_boarding_initial">Departs in %1$d min</string>
+    <string name="shuttle_alarm_boarding_initial_checkpoint">Departs in %1$d min · passed %2$s</string>
+    <string name="shuttle_alarm_boarding_content">%1$d min · %2$s direction %3$s</string>
+    <string name="shuttle_alarm_boarding_content_checkpoint">%1$d min · passed %2$s · %3$s direction %4$s</string>
+    <string name="shuttle_alarm_boarding_short">%1$d min</string>
+    <string name="shuttle_alarm_checkpoint_waiting">Waiting at %1$s</string>
+    <string name="shuttle_alarm_checkpoint_departed">Departed %1$s</string>
+    <string name="shuttle_alarm_checkpoint_approaching">Approaching %1$s</string>
+    <string name="shuttle_alarm_now">Now</string>
+    <string name="shuttle_alarm_alighting_title">%1$s Alighting Prep</string>
+    <string name="shuttle_alarm_alighting_preparing">Monitoring alighting stop</string>
+    <string name="shuttle_alarm_alighting_content">About %1$s to stop</string>
+    <string name="shuttle_alarm_alighting_checkpoint_distance">%1$s, %3$s to %2$s</string>
+    <string name="shuttle_alarm_alighting_checkpoint_tracking">%1$s, checking distance to %2$s</string>
+    <string name="shuttle_alarm_distance_short">%1$s</string>
+    <string name="shuttle_alarm_tracking_short">Tracking</string>
+    <string name="shuttle_alarm_alighting_alert_title">Get ready to alight!</string>
+    <string name="shuttle_alarm_alighting_alert_content">%1$s stop is %2$s ahead</string>
+    <string name="shuttle_alarm_alighting_alert_time_content">Scheduled arrival time for %1$s stop</string>
+    <string name="shuttle_alarm_channel_id">shuttle_alarm_channel</string>
+    <string name="shuttle_alarm_channel_name">Shuttle Bus Alerts</string>
+    <string name="shuttle_alarm_channel_desc">Shuttle bus boarding and alighting alerts</string>
+    <string name="shuttle_alarm_select_destination">Select Alighting Stop</string>
+    <string name="shuttle_alarm_no_permission">Notification permission required</string>
+    <string name="direction_north">N</string>
+    <string name="direction_northeast">NE</string>
+    <string name="direction_east">E</string>
+    <string name="direction_southeast">SE</string>
+    <string name="direction_south">S</string>
+    <string name="direction_southwest">SW</string>
+    <string name="direction_west">W</string>
+    <string name="direction_northwest">NW</string>
+    <string name="bus_alternative_stop_info">Stop Location</string>
+    <string name="bus_alternative_shuttle_stop">Shuttle Bus Stop</string>
+    <string name="bus_alternative_bus_stop">Bus Boarding Stop</string>
 </resources>

@@ -17,13 +17,14 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.graphics.toColorInt
 import androidx.core.view.doOnLayout
 import androidx.core.view.updateLayoutParams
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ViewCoachmarkBubbleBinding
 
 class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
-    private val scrimColor = Color.parseColor("#B3000000")
+    private val scrimColor = "#B3000000".toColorInt()
     private val clearPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
     }
@@ -205,8 +206,14 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
             if (allowTapThrough && hasSpotlight && spotlight.contains(event.x, event.y)) {
                 return false
             }
-            advance()
+            performClick()
         }
+        return true
+    }
+
+    override fun performClick(): Boolean {
+        super.performClick()
+        advance()
         return true
     }
 

@@ -68,6 +68,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     }
 
     fun start() {
+        if (_disposable.size() > 0) return
         _disposable.add(
             Observable.interval(0, 15, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -84,7 +85,6 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     fun stop() { _disposable.clear() }
 
     override fun onCleared() {
-        super.onCleared()
         stop()
     }
 }
