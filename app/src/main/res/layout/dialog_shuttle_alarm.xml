@@ -99,6 +99,13 @@
                     android:layout_height="wrap_content"
                     android:text="@string/shuttle_alarm_start"
                     android:layout_marginTop="8dp" />
+                <Button
+                    android:id="@+id/share_journey_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/shuttle_share_journey"
+                    android:layout_marginTop="8dp"
+                    style="@style/Widget.Material3.Button.TextButton" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

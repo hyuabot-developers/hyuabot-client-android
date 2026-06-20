@@ -427,6 +427,9 @@
     <string name="contact_action_share">連絡先を共有</string>
     <string name="contact_phone_copied">電話番号をコピーしました。</string>
     <string name="contact_share_format">%1$s\n%2$s</string>
+    <string name="shuttle_share_journey">行程を共有</string>
+    <string name="shuttle_share_journey_title">シャトル行程を共有</string>
+    <string name="shuttle_share_journey_format">シャトル、一緒に乗りませんか？\n\n乗車  %1$s · %2$s\n下車  %3$s · %4$s\n\nリアルタイム情報はこちら\n%5$s</string>
     <string name="shortcut_shuttle_short">シャトル</string>
     <string name="shortcut_shuttle_long">シャトル到着情報</string>
     <string name="shortcut_cafeteria_short">学食</string>
@@ -455,7 +458,7 @@
     <string name="bus_stop_first_last_title">始発・終バス情報</string>
     <string name="shuttle_alarm_button_desc">通知設定</string>
     <string name="shuttle_alarm_boarding">乗車アラート</string>
-    <string name="shuttle_alarm_alighting">降車アラート</string>
+    <string name="shuttle_alarm_alighting">降車アラート · 行程を共有</string>
     <string name="shuttle_alarm_start">アラート開始</string>
     <string name="shuttle_alarm_cancel">アラートキャンセル</string>
     <string name="shuttle_alarm_boarding_title">%1$s 乗車アラート</string>

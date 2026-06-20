@@ -447,6 +447,9 @@
     <string name="contact_action_share">Share contact</string>
     <string name="contact_phone_copied">Phone number copied.</string>
     <string name="contact_share_format">%1$s\n%2$s</string>
+    <string name="shuttle_share_journey">Share trip</string>
+    <string name="shuttle_share_journey_title">Share shuttle trip</string>
+    <string name="shuttle_share_journey_format">Want to take the shuttle together?\n\nBoard  %1$s · %2$s\nGet off  %3$s · %4$s\n\nLive shuttle info is here\n%5$s</string>
     <string name="shortcut_shuttle_short">Shuttle</string>
     <string name="shortcut_shuttle_long">Shuttle arrivals</string>
     <string name="shortcut_cafeteria_short">Dining</string>
@@ -477,7 +480,7 @@
     <string name="bus_stop_first_last_title">First/Last Bus</string>
     <string name="shuttle_alarm_button_desc">Set Notification</string>
     <string name="shuttle_alarm_boarding">Boarding Alert</string>
-    <string name="shuttle_alarm_alighting">Alighting Alert</string>
+    <string name="shuttle_alarm_alighting">Alighting Alert · Share Trip</string>
     <string name="shuttle_alarm_start">Start Alert</string>
     <string name="shuttle_alarm_cancel">Cancel Alert</string>
     <string name="shuttle_alarm_boarding_title">%1$s Boarding Alert</string>

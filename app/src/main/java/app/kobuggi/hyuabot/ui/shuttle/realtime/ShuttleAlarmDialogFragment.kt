@@ -16,6 +16,9 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogShuttleAlarmBinding
 import app.kobuggi.hyuabot.service.alarm.ShuttleAlarmService
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
 
@@ -32,6 +35,7 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
         }
 
     companion object {
+        private const val SHUTTLE_DEEP_LINK = "hyuabot://shuttle"
         private const val ARG_BOARDING_NAME = "boarding_name"
         private const val ARG_BOARDING_LAT = "boarding_lat"
         private const val ARG_BOARDING_LNG = "boarding_lng"
@@ -152,9 +156,49 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
                     }
                 }
             }
+            binding.shareJourneyButton.setOnClickListener {
+                val selectedIndex = selectedDestinationIndex() ?: return@setOnClickListener
+                if (selectedIndex < destNames.size && selectedIndex < destTimes.size) {
+                    shareJourney(
+                        boardingName,
+                        departureTimeMillis,
+                        destNames[selectedIndex],
+                        destTimes[selectedIndex],
+                    )
+                }
+            }
         }
 
         return binding.root
+    }
+
+    private fun selectedDestinationIndex(): Int? {
+        val selectedId = binding.destinationRadioGroup.checkedRadioButtonId
+        return (0 until binding.destinationRadioGroup.childCount).firstOrNull {
+            binding.destinationRadioGroup.getChildAt(it).id == selectedId
+        }
+    }
+
+    private fun shareJourney(
+        boardingName: String,
+        departureTimeMillis: Long,
+        destinationName: String,
+        arrivalTimeMillis: Long,
+    ) {
+        val formatter = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.of("Asia/Seoul"))
+        val text = getString(
+            R.string.shuttle_share_journey_format,
+            boardingName,
+            formatter.format(Instant.ofEpochMilli(departureTimeMillis)),
+            destinationName,
+            formatter.format(Instant.ofEpochMilli(arrivalTimeMillis)),
+            SHUTTLE_DEEP_LINK,
+        )
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, text)
+        }
+        startActivity(Intent.createChooser(intent, getString(R.string.shuttle_share_journey_title)))
     }
 
     private fun startWithNotificationPermission(action: () -> Unit) {
