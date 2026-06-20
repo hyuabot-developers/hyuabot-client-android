@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="40dp">
+    android:layout_height="44dp">
     <TextView
         android:id="@+id/route_name_text"
         android:layout_width="80dp"
@@ -13,12 +13,14 @@
         android:textFontWeight="700"
         android:text="@string/shuttle_type_direct"
         android:textAlignment="center"
+        android:gravity="center"
         app:autoSizeTextType="uniform"
         app:autoSizeMinTextSize="10sp"
         app:autoSizeMaxTextSize="18sp"
         app:autoSizeStepGranularity="1sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
     <app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleRouteItemView
         android:id="@+id/route_item_view"
         android:layout_width="0dp"
