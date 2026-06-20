@@ -19,6 +19,7 @@ import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 import kotlin.math.min
 import app.kobuggi.hyuabot.widget.ShuttleWidgetSupport
 
@@ -177,7 +178,7 @@ class ShuttleTabShuttlecockInFragment @Inject constructor() : Fragment() {
             entireTimetableJungangStation.visibility = View.GONE
         }
         bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     private fun showAlarmDialogForStop(boardingStopId: String, boardingLabelRes: Int, timetableSeq: Int, time: java.time.LocalTime, routeStops: List<Pair<String, java.time.LocalTime>>) {

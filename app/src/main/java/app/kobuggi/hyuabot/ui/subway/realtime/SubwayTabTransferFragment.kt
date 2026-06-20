@@ -13,6 +13,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentSubwayRealtimeTabBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 
 @AndroidEntryPoint
 class SubwayTabTransferFragment @Inject constructor() : Fragment() {
@@ -115,7 +116,7 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
             upAdapter.updateData(upEntries)
             downAdapter.updateData(downEntries)
         }
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

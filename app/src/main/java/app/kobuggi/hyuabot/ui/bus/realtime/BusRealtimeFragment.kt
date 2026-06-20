@@ -34,6 +34,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Runnable
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 
 @AndroidEntryPoint
 class BusRealtimeFragment @Inject constructor() : Fragment() {
@@ -139,7 +140,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                 ),
             )
         }
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     private fun firstVisibleBusChildView(vararg ids: Int): View? {

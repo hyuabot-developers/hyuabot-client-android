@@ -16,6 +16,7 @@ import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
 import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 
 @AndroidEntryPoint
 class BusTabOtherFragment @Inject constructor() : Fragment() {
@@ -117,7 +118,7 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

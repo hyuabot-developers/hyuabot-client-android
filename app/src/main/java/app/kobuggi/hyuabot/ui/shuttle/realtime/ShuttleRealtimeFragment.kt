@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
@@ -98,7 +99,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         if (now.dayOfWeek.value in 1..5 && now.hour < 10) {
             Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_toast), Toast.LENGTH_SHORT).show()
         }
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     @SuppressLint("MissingPermission")

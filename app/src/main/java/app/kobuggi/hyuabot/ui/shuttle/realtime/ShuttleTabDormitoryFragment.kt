@@ -19,6 +19,7 @@ import app.kobuggi.hyuabot.util.LinearLayoutManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import javax.inject.Inject
+import app.kobuggi.hyuabot.util.disableViewStateSaving
 import kotlin.math.min
 import androidx.core.view.isVisible
 import app.kobuggi.hyuabot.widget.ShuttleWidgetSupport
@@ -373,7 +374,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             ShuttleTransferBinder.bind(binding.transferSection, binding.transferContainer, "dormitory_o", data)
         }
         bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
-        return binding.root
+        return binding.root.also { disableViewStateSaving(it) }
     }
 
     private fun updateBusAlternativeStation(data: BusAlternativeData?, forceShow: Boolean = false) {
