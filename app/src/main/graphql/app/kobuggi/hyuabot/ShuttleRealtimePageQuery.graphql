@@ -1,4 +1,4 @@
-query ShuttleRealtimePageQuery($language: String!, $after: LocalTime) {
+query ShuttleRealtimePageQuery($language: String!, $after: LocalTime, $weekday: String!) {
     notices(input: {language: $language, category: "셔틀,날씨"}) {
         notices {
             title
@@ -51,5 +51,47 @@ query ShuttleRealtimePageQuery($language: String!, $after: LocalTime) {
                 }
             }
         }
+    }
+    subway(input: { keys: [
+        { stationID: "K449", direction: ["up", "down"], weekdays: [$weekday], limit: 2 },
+        { stationID: "K251", direction: ["up", "down"], weekdays: [$weekday], limit: 2 },
+    ]}) {
+        stationID
+        arrival {
+            direction
+            entries {
+                minutes
+                isRealtime
+                location
+                stops
+                terminal { stationID name }
+            }
+        }
+    }
+    transferBus: bus(input: [
+        { route: 216000075, stop: 216000759, limit: 2 },
+        { route: 216000075, stop: 216000117, limit: 2 },
+    ]) {
+        route { seq name }
+        stop { seq }
+        arrival { minutes stops isRealtime }
+    }
+    busAlternative: bus(input: [
+        { route: 216000068, stop: 216000383, limit: 1 },
+        { route: 216000068, stop: 216000379, limit: 1 },
+        { route: 216000068, stop: 216000138, limit: 1 },
+        { route: 216000081, stop: 216000028, limit: 1 },
+        { route: 216000101, stop: 216000028, limit: 1 },
+        { route: 216000016, stop: 216000152, limit: 1 },
+        { route: 216000082, stop: 216000077, limit: 1 },
+        { route: 216000102, stop: 216000077, limit: 1 },
+        { route: 216000016, stop: 216000074, limit: 1 },
+        { route: 216000082, stop: 217000140, limit: 1 },
+        { route: 216000102, stop: 217000140, limit: 1 },
+        { route: 216000016, stop: 217000264, limit: 1 },
+    ]) {
+        route { seq }
+        stop { seq name latitude longitude }
+        arrival { stops seats minutes lowFloor isRealtime time }
     }
 }

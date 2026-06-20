@@ -9,15 +9,15 @@
 
     <TextView
         android:id="@+id/transfer_name"
-        android:layout_width="wrap_content"
+        android:layout_width="112dp"
         android:layout_height="wrap_content"
-        android:minWidth="84dp"
         android:gravity="center"
-        android:paddingHorizontal="10dp"
+        android:paddingHorizontal="8dp"
         android:paddingVertical="4dp"
         android:background="@drawable/bg_transfer_chip"
+        android:singleLine="true"
         android:textColor="@android:color/white"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <app.kobuggi.hyuabot.ui.shuttle.realtime.TransitTimelineView
@@ -25,5 +25,5 @@
         android:layout_width="0dp"
         android:layout_height="74dp"
         android:layout_weight="1"
-        android:layout_marginStart="12dp" />
+        android:layout_marginStart="4dp" />
 </LinearLayout>
