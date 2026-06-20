@@ -14,6 +14,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,6 +65,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private lateinit var naverMap: NaverMap
     private lateinit var buildingClusterer: Clusterer<BuildingClusterKey>
     private var searchMarker: Marker? = null
+    private var isMapViewCreated = false
     private val buildingMarkerIconCache = mutableMapOf<String, OverlayImage>()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,6 +76,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         val searchResultAdapter = BuildingSearchAdapter(requireContext(), ::onClickSearchResult, emptyList())
         binding.mapView.let {
             it.onCreate(mapViewBundle)
+            isMapViewCreated = true
             it.getMapAsync(this)
         }
         binding.searchRecyclerView.apply {
@@ -168,34 +171,53 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             mapViewBundle = Bundle()
             outState.putBundle(bundleKey, mapViewBundle)
         }
-        binding.mapView.onSaveInstanceState(mapViewBundle)
+        if (isMapViewCreated) {
+            binding.mapView.onSaveInstanceState(mapViewBundle)
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        binding.mapView.onStart()
+        if (isMapViewCreated) {
+            binding.mapView.onStart()
+        }
     }
     override fun onStop() {
         super.onStop()
-        binding.mapView.onStop()
+        if (isMapViewCreated) {
+            binding.mapView.onStop()
+        }
     }
     override fun onResume() {
         super.onResume()
-        binding.mapView.onResume()
+        if (isMapViewCreated) {
+            binding.mapView.onResume()
+        }
     }
     override fun onPause() {
         super.onPause()
-        binding.mapView.onPause()
+        if (isMapViewCreated) {
+            binding.mapView.onPause()
+        }
     }
 
     @Deprecated("Deprecated in Java")
     override fun onLowMemory() {
         super.onLowMemory()
-        binding.mapView.onLowMemory()
+        if (isMapViewCreated) {
+            binding.mapView.onLowMemory()
+        }
     }
-    override fun onDestroy() {
-        binding.mapView.onDestroy()
-        super.onDestroy()
+    override fun onDestroyView() {
+        if (isMapViewCreated) {
+            runCatching {
+                binding.mapView.onDestroy()
+            }.onFailure {
+                Log.w(TAG, "Failed to destroy map view", it)
+            }
+            isMapViewCreated = false
+        }
+        super.onDestroyView()
     }
 
     @SuppressLint("PotentialBehaviorOverride")
@@ -450,6 +472,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     }
 
     companion object {
+        private const val TAG = "MapFragment"
         private val CAMPUS_CENTER = LatLng(37.29753535479288, 126.83544659517665)
     }
 
