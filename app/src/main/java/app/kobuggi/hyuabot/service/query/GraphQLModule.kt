@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.service.query
 
 import app.kobuggi.hyuabot.cache.Cache.cache
+import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.SdBuildConfig
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.memory.MemoryCacheFactory
@@ -20,16 +21,21 @@ object GraphQLModule {
     private val BASE_URL = "${SdBuildConfig.API_URL}/graphql"
 
     private fun createApolloClient(): ApolloClient {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+        val okHttpClientBuilder = OkHttpClient.Builder()
+            .callTimeout(20, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(12, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
+
+        if (BuildConfig.DEBUG) {
+            okHttpClientBuilder.addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                },
+            )
         }
 
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(90, TimeUnit.SECONDS)
-            .build()
+        val okHttpClient = okHttpClientBuilder.build()
 
         return ApolloClient.Builder()
             .serverUrl(BASE_URL)

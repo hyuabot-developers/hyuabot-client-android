@@ -55,8 +55,6 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel.initSelectedStopID()
-        viewModel.fetchData()
-        viewModel.start()
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_realtime_error), Toast.LENGTH_SHORT).show() }
         }

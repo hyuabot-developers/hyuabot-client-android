@@ -79,6 +79,7 @@ class BusRealtimeViewModel @Inject constructor(
     }
 
     fun start() {
+        if (_disposable.size() > 0) return
         _disposable.add(
             Observable.interval(0, 15, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())

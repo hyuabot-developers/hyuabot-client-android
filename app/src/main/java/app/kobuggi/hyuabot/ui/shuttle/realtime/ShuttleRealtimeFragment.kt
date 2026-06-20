@@ -106,8 +106,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        viewModel.fetchData()
-        viewModel.start()
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
         }
