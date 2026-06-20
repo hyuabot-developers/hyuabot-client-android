@@ -32,7 +32,7 @@ class CafeteriaListAdapter(
                 }
                 else -> "-"
             }
-            val menus = cafeteriaItem.menus.filter { it.type.contains(mealTypeLabel()) }
+            val menus = cafeteriaItem.menus.filter { it.type.contains(mealTypeQuery(type)) }
                 .distinctBy { it.food }
             menuAdapter.updateList(menus)
             val decoration = DividerItemWithoutLastDecoration(context, DividerItemDecoration.VERTICAL)
@@ -83,13 +83,6 @@ class CafeteriaListAdapter(
             15 -> context.getString(R.string.cafeteria_15)
             else -> context.getString(R.string.cafeteria_1)
         }
-    }
-
-    private fun mealTypeLabel(): String = when (type) {
-        "breakfast" -> context.getString(R.string.cafeteria_tab_breakfast)
-        "lunch" -> context.getString(R.string.cafeteria_tab_lunch)
-        "dinner" -> context.getString(R.string.cafeteria_tab_dinner)
-        else -> ""
     }
 
     private fun statusText(runningTime: String, hasMenu: Boolean): String {

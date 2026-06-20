@@ -430,6 +430,9 @@
     <string name="shuttle_share_journey">分享行程</string>
     <string name="shuttle_share_journey_title">分享校车行程</string>
     <string name="shuttle_share_journey_format">一起坐校车吗？\n\n上车  %1$s · %2$s\n下车  %3$s · %4$s\n\n实时校车信息在这里\n%5$s</string>
+    <string name="cafeteria_share">分享学食</string>
+    <string name="cafeteria_share_title">分享学食菜单</string>
+    <string name="cafeteria_share_format">%1$s %2$s\n%3$s</string>
     <string name="shortcut_shuttle_short">校车</string>
     <string name="shortcut_shuttle_long">校车到达信息</string>
     <string name="shortcut_cafeteria_short">学食</string>

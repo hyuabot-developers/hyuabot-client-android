@@ -450,6 +450,9 @@
     <string name="shuttle_share_journey">Share trip</string>
     <string name="shuttle_share_journey_title">Share shuttle trip</string>
     <string name="shuttle_share_journey_format">Want to take the shuttle together?\n\nBoard  %1$s · %2$s\nGet off  %3$s · %4$s\n\nLive shuttle info is here\n%5$s</string>
+    <string name="cafeteria_share">Share meal</string>
+    <string name="cafeteria_share_title">Share cafeteria menu</string>
+    <string name="cafeteria_share_format">%1$s %2$s\n%3$s</string>
     <string name="shortcut_shuttle_short">Shuttle</string>
     <string name="shortcut_shuttle_long">Shuttle arrivals</string>
     <string name="shortcut_cafeteria_short">Dining</string>
