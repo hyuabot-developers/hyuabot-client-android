@@ -55,7 +55,10 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("config")
         }
@@ -68,17 +71,6 @@ android {
     bundle {
         language {
             enableSplit = false
-        }
-    }
-
-    packaging {
-        jniLibs {
-            keepDebugSymbols.addAll(
-                listOf(
-                    "**/libdatastore_shared_counter.so",
-                    "**/libnavermap.so",
-                )
-            )
         }
     }
 
