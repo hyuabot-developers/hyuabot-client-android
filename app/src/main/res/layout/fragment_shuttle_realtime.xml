@@ -65,7 +65,9 @@
             android:maxLines="2"
             android:theme="@style/Widget.App.Switch.Shuttle"
             android:text="@string/show_by_destination"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            app:thumbTint="@color/shuttle_switch_thumb"
+            app:trackTint="@color/shuttle_switch_track" />
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/show_departure_time"
             android:layout_width="0dp"
@@ -77,7 +79,9 @@
             android:maxLines="2"
             android:theme="@style/Widget.App.Switch.Shuttle"
             android:text="@string/show_departure_time"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            app:thumbTint="@color/shuttle_switch_thumb"
+            app:trackTint="@color/shuttle_switch_track" />
     </LinearLayout>
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
