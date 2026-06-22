@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui.common.coachmark
 
 import android.content.Context
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import kotlinx.coroutines.flow.first
@@ -59,13 +60,17 @@ fun Fragment.showCoachmarkOnce(
     key: String,
     steps: () -> List<CoachmarkStep>,
 ) {
-    viewLifecycleOwner.lifecycleScope.launch {
+    val owner = viewLifecycleOwner
+    owner.lifecycleScope.launch {
         requireContext().ensureCoachmarkBaseline(repository)
         if (repository.coachmarkSeen(key).first()) return@launch
-        view?.post {
-            if (!isAdded) return@post
-            CoachmarkController.show(requireActivity(), steps()) {
-                viewLifecycleOwner.lifecycleScope.launch {
+        val rootView = view ?: return@launch
+        rootView.post {
+            if (!isAdded || view == null || !owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                return@post
+            }
+            CoachmarkController.show(requireActivity(), steps(), owner) {
+                lifecycleScope.launch {
                     repository.markCoachmarkSeen(key)
                 }
             }
