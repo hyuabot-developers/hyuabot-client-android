@@ -21,7 +21,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkController
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
-import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkBaseline
+import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkEligibility
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -193,7 +193,7 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
     private fun maybeShowCoachmark() {
         val owner = viewLifecycleOwner
         owner.lifecycleScope.launch {
-            requireContext().ensureCoachmarkBaseline(userPreferencesRepository)
+            requireContext().ensureCoachmarkEligibility(userPreferencesRepository)
             if (userPreferencesRepository.coachmarkSeen(Coachmarks.SHUTTLE_TIMETABLE).first()) return@launch
             val rootView = view ?: return@launch
             rootView.post {

@@ -21,19 +21,6 @@ object Coachmarks {
     const val MAP = "map"
     const val SETTING = "setting"
 
-    val EXISTING_FEATURE_KEYS = setOf(
-        SHUTTLE,
-        SHUTTLE_TIMETABLE,
-        SHUTTLE_BUS_ALTERNATIVE,
-        BUS,
-        SUBWAY,
-        CAFETERIA,
-        MENU,
-        READING_ROOM,
-        MAP,
-        SETTING,
-    )
-
     val USER_VISIBLE_KEYS = setOf(
         SHUTTLE,
         SHUTTLE_REALTIME_UPDATES,
@@ -49,10 +36,10 @@ object Coachmarks {
     )
 }
 
-suspend fun Context.ensureCoachmarkBaseline(repository: UserPreferencesRepository) {
+suspend fun Context.ensureCoachmarkEligibility(repository: UserPreferencesRepository) {
     val packageInfo = packageManager.getPackageInfo(packageName, 0)
     val isFreshInstall = packageInfo.firstInstallTime == packageInfo.lastUpdateTime
-    repository.initCoachmarkBaselineIfNeeded(isFreshInstall, Coachmarks.EXISTING_FEATURE_KEYS)
+    repository.syncCoachmarkEligibility(isFreshInstall, Coachmarks.USER_VISIBLE_KEYS)
 }
 
 fun Fragment.showCoachmarkOnce(
@@ -62,7 +49,7 @@ fun Fragment.showCoachmarkOnce(
 ) {
     val owner = viewLifecycleOwner
     owner.lifecycleScope.launch {
-        requireContext().ensureCoachmarkBaseline(repository)
+        requireContext().ensureCoachmarkEligibility(repository)
         if (repository.coachmarkSeen(key).first()) return@launch
         val rootView = view ?: return@launch
         rootView.post {

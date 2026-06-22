@@ -25,5 +25,5 @@ interface UserPreferencesRepositoryImpl {
     suspend fun markCoachmarkSeen(screen: String)
     suspend fun resetCoachmark(screen: String)
     suspend fun resetCoachmarks()
-    suspend fun initCoachmarkBaselineIfNeeded(isFreshInstall: Boolean, existingFeatureKeys: Set<String>)
+    suspend fun syncCoachmarkEligibility(isFreshInstall: Boolean, allCoachmarkKeys: Set<String>)
 }

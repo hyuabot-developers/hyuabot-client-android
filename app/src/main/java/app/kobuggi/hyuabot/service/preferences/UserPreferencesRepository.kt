@@ -333,14 +333,16 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
-    override suspend fun initCoachmarkBaselineIfNeeded(isFreshInstall: Boolean, existingFeatureKeys: Set<String>) {
+    override suspend fun syncCoachmarkEligibility(isFreshInstall: Boolean, allCoachmarkKeys: Set<String>) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
-                if (preferences[COACHMARK_INITIALIZED_KEY] == true) return@edit
-                preferences[COACHMARK_INITIALIZED_KEY] = true
                 if (!isFreshInstall) {
                     val current = preferences[COACHMARKS_SEEN_KEY] ?: emptySet()
-                    preferences[COACHMARKS_SEEN_KEY] = current + existingFeatureKeys
+                    preferences[COACHMARKS_SEEN_KEY] = current + allCoachmarkKeys
+                    return@edit
+                }
+                if (preferences[COACHMARK_INITIALIZED_KEY] != true) {
+                    preferences[COACHMARK_INITIALIZED_KEY] = true
                 }
             }
         }

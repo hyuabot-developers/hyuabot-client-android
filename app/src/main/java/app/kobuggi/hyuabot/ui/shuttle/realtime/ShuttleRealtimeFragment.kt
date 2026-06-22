@@ -26,7 +26,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkController
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
-import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkBaseline
+import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkEligibility
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -252,7 +252,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         coachmarkShown = true
         val owner = viewLifecycleOwner
         owner.lifecycleScope.launch {
-            requireContext().ensureCoachmarkBaseline(viewModel.userPreferencesRepository)
+            requireContext().ensureCoachmarkEligibility(viewModel.userPreferencesRepository)
             val showMainCoachmark = !viewModel.userPreferencesRepository.coachmarkSeen(COACHMARK_KEY).first()
             val showRealtimeUpdatesCoachmark =
                 !viewModel.userPreferencesRepository.coachmarkSeen(REALTIME_UPDATES_COACHMARK_KEY).first()
