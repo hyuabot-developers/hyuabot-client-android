@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
@@ -20,7 +21,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkController
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
-import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkBaseline
+import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkEligibility
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -190,13 +191,17 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
     }
 
     private fun maybeShowCoachmark() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            requireContext().ensureCoachmarkBaseline(userPreferencesRepository)
+        val owner = viewLifecycleOwner
+        owner.lifecycleScope.launch {
+            requireContext().ensureCoachmarkEligibility(userPreferencesRepository)
             if (userPreferencesRepository.coachmarkSeen(Coachmarks.SHUTTLE_TIMETABLE).first()) return@launch
-            view?.post {
-                if (!isAdded) return@post
-                CoachmarkController.show(requireActivity(), buildCoachmarkSteps()) {
-                    viewLifecycleOwner.lifecycleScope.launch {
+            val rootView = view ?: return@launch
+            rootView.post {
+                if (!isAdded || view == null || !owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                    return@post
+                }
+                CoachmarkController.show(requireActivity(), buildCoachmarkSteps(), owner) {
+                    lifecycleScope.launch {
                         userPreferencesRepository.markCoachmarkSeen(Coachmarks.SHUTTLE_TIMETABLE)
                     }
                 }

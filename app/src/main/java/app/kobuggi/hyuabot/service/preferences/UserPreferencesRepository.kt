@@ -311,6 +311,8 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             userDataStorePreferences.edit { preferences ->
                 val current = preferences[COACHMARKS_SEEN_KEY] ?: emptySet()
                 preferences[COACHMARKS_SEEN_KEY] = current + screen
+                val resetKeys = preferences[COACHMARK_RESET_KEYS_KEY] ?: emptySet()
+                preferences[COACHMARK_RESET_KEYS_KEY] = resetKeys - screen
             }
         }
     }
@@ -320,6 +322,8 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             userDataStorePreferences.edit { preferences ->
                 val current = preferences[COACHMARKS_SEEN_KEY] ?: emptySet()
                 preferences[COACHMARKS_SEEN_KEY] = current - screen
+                val resetKeys = preferences[COACHMARK_RESET_KEYS_KEY] ?: emptySet()
+                preferences[COACHMARK_RESET_KEYS_KEY] = resetKeys + screen
             }
         }
     }
@@ -329,18 +333,22 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             userDataStorePreferences.edit { preferences ->
                 preferences.remove(COACHMARKS_SEEN_KEY)
                 preferences.remove(COACHMARK_INITIALIZED_KEY)
+                preferences.remove(COACHMARK_RESET_KEYS_KEY)
             }
         }
     }
 
-    override suspend fun initCoachmarkBaselineIfNeeded(isFreshInstall: Boolean, existingFeatureKeys: Set<String>) {
+    override suspend fun syncCoachmarkEligibility(isFreshInstall: Boolean, allCoachmarkKeys: Set<String>) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
-                if (preferences[COACHMARK_INITIALIZED_KEY] == true) return@edit
-                preferences[COACHMARK_INITIALIZED_KEY] = true
                 if (!isFreshInstall) {
                     val current = preferences[COACHMARKS_SEEN_KEY] ?: emptySet()
-                    preferences[COACHMARKS_SEEN_KEY] = current + existingFeatureKeys
+                    val resetKeys = preferences[COACHMARK_RESET_KEYS_KEY] ?: emptySet()
+                    preferences[COACHMARKS_SEEN_KEY] = current + (allCoachmarkKeys - resetKeys)
+                    return@edit
+                }
+                if (preferences[COACHMARK_INITIALIZED_KEY] != true) {
+                    preferences[COACHMARK_INITIALIZED_KEY] = true
                 }
             }
         }
@@ -361,5 +369,6 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val REVIEW_REQUESTED_AT_KEY = longPreferencesKey("review_requested_at")
         private val COACHMARKS_SEEN_KEY = stringSetPreferencesKey("coachmarks_seen")
         private val COACHMARK_INITIALIZED_KEY = booleanPreferencesKey("coachmark_initialized")
+        private val COACHMARK_RESET_KEYS_KEY = stringSetPreferencesKey("coachmark_reset_keys")
     }
 }

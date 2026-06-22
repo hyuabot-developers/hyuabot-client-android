@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui.common.coachmark
 
 import android.content.Context
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import kotlinx.coroutines.flow.first
@@ -20,19 +21,6 @@ object Coachmarks {
     const val MAP = "map"
     const val SETTING = "setting"
 
-    val EXISTING_FEATURE_KEYS = setOf(
-        SHUTTLE,
-        SHUTTLE_TIMETABLE,
-        SHUTTLE_BUS_ALTERNATIVE,
-        BUS,
-        SUBWAY,
-        CAFETERIA,
-        MENU,
-        READING_ROOM,
-        MAP,
-        SETTING,
-    )
-
     val USER_VISIBLE_KEYS = setOf(
         SHUTTLE,
         SHUTTLE_REALTIME_UPDATES,
@@ -48,10 +36,10 @@ object Coachmarks {
     )
 }
 
-suspend fun Context.ensureCoachmarkBaseline(repository: UserPreferencesRepository) {
+suspend fun Context.ensureCoachmarkEligibility(repository: UserPreferencesRepository) {
     val packageInfo = packageManager.getPackageInfo(packageName, 0)
     val isFreshInstall = packageInfo.firstInstallTime == packageInfo.lastUpdateTime
-    repository.initCoachmarkBaselineIfNeeded(isFreshInstall, Coachmarks.EXISTING_FEATURE_KEYS)
+    repository.syncCoachmarkEligibility(isFreshInstall, Coachmarks.USER_VISIBLE_KEYS)
 }
 
 fun Fragment.showCoachmarkOnce(
@@ -59,13 +47,17 @@ fun Fragment.showCoachmarkOnce(
     key: String,
     steps: () -> List<CoachmarkStep>,
 ) {
-    viewLifecycleOwner.lifecycleScope.launch {
-        requireContext().ensureCoachmarkBaseline(repository)
+    val owner = viewLifecycleOwner
+    owner.lifecycleScope.launch {
+        requireContext().ensureCoachmarkEligibility(repository)
         if (repository.coachmarkSeen(key).first()) return@launch
-        view?.post {
-            if (!isAdded) return@post
-            CoachmarkController.show(requireActivity(), steps()) {
-                viewLifecycleOwner.lifecycleScope.launch {
+        val rootView = view ?: return@launch
+        rootView.post {
+            if (!isAdded || view == null || !owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                return@post
+            }
+            CoachmarkController.show(requireActivity(), steps(), owner) {
+                lifecycleScope.launch {
                     repository.markCoachmarkSeen(key)
                 }
             }

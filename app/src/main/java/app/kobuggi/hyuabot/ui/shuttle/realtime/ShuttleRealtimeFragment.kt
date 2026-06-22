@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.navArgs
@@ -25,7 +26,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkController
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
-import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkBaseline
+import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkEligibility
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -249,8 +250,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private fun maybeShowCoachmark() {
         if (coachmarkShown) return
         coachmarkShown = true
-        viewLifecycleOwner.lifecycleScope.launch {
-            requireContext().ensureCoachmarkBaseline(viewModel.userPreferencesRepository)
+        val owner = viewLifecycleOwner
+        owner.lifecycleScope.launch {
+            requireContext().ensureCoachmarkEligibility(viewModel.userPreferencesRepository)
             val showMainCoachmark = !viewModel.userPreferencesRepository.coachmarkSeen(COACHMARK_KEY).first()
             val showRealtimeUpdatesCoachmark =
                 !viewModel.userPreferencesRepository.coachmarkSeen(REALTIME_UPDATES_COACHMARK_KEY).first()
@@ -260,15 +262,18 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             val originalDepartureTime = viewModel.userPreferencesRepository.getShowShuttleDepartureTime().first()
             setClosestStop = true
             binding.viewPager.setCurrentItem(0, false)
-            view?.post {
-                if (!isAdded) return@post
-                CoachmarkController.show(requireActivity(), buildShuttleCoachmarkSteps()) {
-                    if (isAdded) {
+            val rootView = view ?: return@launch
+            rootView.post {
+                if (!isAdded || view == null || !owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                    return@post
+                }
+                CoachmarkController.show(requireActivity(), buildShuttleCoachmarkSteps(), owner) {
+                    if (owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
                         binding.showByDestination.isChecked = originalByDestination
                         binding.showDepartureTime.isChecked = originalDepartureTime
                     }
                     viewModel.setForceShowBusAlternative(false)
-                    viewLifecycleOwner.lifecycleScope.launch {
+                    lifecycleScope.launch {
                         viewModel.userPreferencesRepository.markCoachmarkSeen(COACHMARK_KEY)
                         viewModel.userPreferencesRepository.markCoachmarkSeen(REALTIME_UPDATES_COACHMARK_KEY)
                     }
