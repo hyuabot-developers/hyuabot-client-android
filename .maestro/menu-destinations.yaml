@@ -1,0 +1,49 @@
+appId: app.kobuggi.hyuabot
+name: Menu destinations smoke
+tags:
+  - smoke
+---
+- launchApp:
+    permissions:
+      all: allow
+- tapOn: "Menu"
+- runFlow:
+    when:
+      visible: "Skip"
+    commands:
+      - tapOn: "Skip"
+- tapOn: "Reading Room Seat Lookup"
+- runFlow:
+    when:
+      visible: "Skip"
+    commands:
+      - tapOn: "Skip"
+- assertVisible: "Reading Room Extension Reminder"
+- back
+- tapOn: "Menu"
+- tapOn: "Campus Map"
+- runFlow:
+    when:
+      visible: "Skip"
+    commands:
+      - tapOn: "Skip"
+- assertVisible: "Enter a room to search"
+- back
+- tapOn: "Menu"
+- tapOn: "Campus Contacts"
+- assertVisible: "Enter a contact to search"
+- back
+- tapOn: "Menu"
+- tapOn: "Academic Calendar"
+- assertVisible:
+    id: "app.kobuggi.hyuabot:id/calendar_view"
+- back
+- tapOn: "Menu"
+- tapOn: "Settings"
+- runFlow:
+    when:
+      visible: "Skip"
+    commands:
+      - tapOn: "Skip"
+- assertVisible:
+    id: "app.kobuggi.hyuabot:id/setting_campus"
