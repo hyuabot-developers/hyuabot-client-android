@@ -169,6 +169,12 @@ jobs:
         env:
             GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
+      - name: Enable KVM
+        run: |
+            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger --name-match=kvm
+
       - name: Run connected Android tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -177,6 +183,7 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
+          disable-linux-hw-accel: false
           script: ./gradlew app:connectedAndroidTest
 
       - name: Upload connected Android test reports
@@ -249,6 +256,12 @@ jobs:
             maestro check-syntax .maestro/main-navigation.yaml
             maestro check-syntax .maestro/menu-destinations.yaml
 
+      - name: Enable KVM
+        run: |
+            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger --name-match=kvm
+
       - name: Run Maestro flows
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -257,6 +270,7 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
+          disable-linux-hw-accel: false
           script: |
             ./gradlew app:installDevDebug
             maestro test .maestro
