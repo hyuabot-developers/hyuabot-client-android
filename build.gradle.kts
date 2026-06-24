@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlinKsp) apply false
     alias(libs.plugins.hiltPlugin) apply false
     alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.kover) apply false
     alias(libs.plugins.secretsGradlePlugin) apply false
     alias(libs.plugins.googleServicesPlugin) apply false
     alias(libs.plugins.crashlyticsPlugin) apply false

@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.secretsGradlePlugin)
     alias(libs.plugins.googleServicesPlugin)
     alias(libs.plugins.crashlyticsPlugin)
+    alias(libs.plugins.kover)
 }
 
 val props = Properties()
@@ -104,6 +105,10 @@ android {
             ),
         )
     }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -112,6 +117,10 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     // Hilt
@@ -168,4 +177,30 @@ dependencies {
 
 hilt {
     enableAggregatingTask = true
+}
+
+kover {
+    reports {
+        variant("devDebug") {
+            filters {
+                includes {
+                    classes(
+                        "app.kobuggi.hyuabot.service.query.LocalDateAdapter",
+                        "app.kobuggi.hyuabot.service.query.LocalTimeAdapter",
+                        "app.kobuggi.hyuabot.service.query.ZonedDateTimeAdapter",
+                        "app.kobuggi.hyuabot.ui.setting.CampusSettingDialogViewModel",
+                        "app.kobuggi.hyuabot.ui.setting.LanguageSettingDialogViewModel",
+                        "app.kobuggi.hyuabot.ui.setting.ThemeSettingDialogViewModel",
+                        "app.kobuggi.hyuabot.util.UIUtility",
+                        "app.kobuggi.hyuabot.widget.WidgetMeal",
+                    )
+                }
+            }
+            verify {
+                rule("logic line coverage") {
+                    minBound(100)
+                }
+            }
+        }
+    }
 }

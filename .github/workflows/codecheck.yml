@@ -106,7 +106,7 @@ jobs:
             GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
       - name: Run unit tests
-        run: ./gradlew testDevDebugUnitTest
+        run: ./gradlew testDevDebugUnitTest app:koverVerifyDevDebug app:koverHtmlReportDevDebug app:koverXmlReportDevDebug
 
       - name: Upload unit test reports
         if: always()
@@ -116,4 +116,5 @@ jobs:
           path: |
             **/build/reports/tests/testDevDebugUnitTest/
             **/build/test-results/testDevDebugUnitTest/
+            **/build/reports/kover/
           if-no-files-found: ignore

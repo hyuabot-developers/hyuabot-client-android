@@ -3,6 +3,7 @@ agp = "9.2.1"
 hilt = "2.59.2"
 kotlin = "2.3.21"
 coreKtx = "1.19.0"
+coreTesting = "2.2.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
@@ -10,9 +11,12 @@ appcompat = "1.7.1"
 material = "1.14.0"
 ksp = "2.3.8"
 ktlint = "14.2.0"
+kover = "0.9.8"
 navigation = "2.9.8"
+robolectric = "4.16.1"
 rxJava = "3.1.12"
 rxAndroid = "3.0.2"
+coroutinesTest = "1.10.2"
 gson = "2.14.0"
 okhttp = "5.4.0"
 apollo = "5.0.0"
@@ -52,11 +56,13 @@ naverMap = "3.23.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "coreTesting" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 materialCompose = { group = "androidx.compose.material3", name = "material3", version.ref = "materialCompose" }
@@ -65,6 +71,7 @@ navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx",
 navigation-dynamic-features-fragment = { group = "androidx.navigation", name = "navigation-dynamic-features-fragment", version.ref = "navigation" }
 rxJava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxJava" }
 rxAndroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = "rxAndroid" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttpLogging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
@@ -119,6 +126,7 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hiltPlugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
 safeArgs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 secretsGradlePlugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
