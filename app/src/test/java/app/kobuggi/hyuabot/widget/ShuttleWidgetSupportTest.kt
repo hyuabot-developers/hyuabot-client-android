@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = Application::class, sdk = [36])
+@Config(application = Application::class, sdk = [35])
 class ShuttleWidgetSupportTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
 
