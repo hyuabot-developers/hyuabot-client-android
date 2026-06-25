@@ -132,7 +132,7 @@ jobs:
 
   connected-android-test:
     name: Run connected Android tests
-    runs-on: [self-hosted, android-emulator]
+    runs-on: [self-hosted, Linux, X64, android-emulator]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -183,9 +183,8 @@ jobs:
       - name: Enable KVM
         if: runner.os == 'Linux'
         run: |
-            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-            sudo udevadm control --reload-rules
-            sudo udevadm trigger --name-match=kvm
+            test -r /dev/kvm
+            test -w /dev/kvm
 
       - name: Run connected Android tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -271,9 +270,8 @@ jobs:
       - name: Enable KVM
         if: runner.os == 'Linux'
         run: |
-            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-            sudo udevadm control --reload-rules
-            sudo udevadm trigger --name-match=kvm
+            test -r /dev/kvm
+            test -w /dev/kvm
 
       - name: Run Maestro flows
         uses: reactivecircus/android-emulator-runner@v2
