@@ -8,10 +8,15 @@ on:
     branches:
       - main
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   ktlint:
     name: Check Kotlin code style
-    runs-on: [self-hosted, X64]
+    runs-on: [self-hosted, android-gradle]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,6 +25,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -57,7 +68,7 @@ jobs:
 
   unit-test:
     name: Run unit tests
-    runs-on: [self-hosted, X64]
+    runs-on: [self-hosted, android-gradle]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -121,7 +132,7 @@ jobs:
 
   connected-android-test:
     name: Run connected Android tests
-    runs-on: [self-hosted, X64]
+    runs-on: [self-hosted, android-emulator]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -170,6 +181,7 @@ jobs:
             GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
       - name: Enable KVM
+        if: runner.os == 'Linux'
         run: |
             echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
             sudo udevadm control --reload-rules
@@ -180,7 +192,7 @@ jobs:
         with:
           api-level: 35
           target: google_apis
-          arch: x86_64
+          arch: ${{ runner.arch == 'ARM64' && 'arm64-v8a' || 'x86_64' }}
           profile: pixel_6
           disable-animations: true
           disable-linux-hw-accel: false
@@ -198,7 +210,7 @@ jobs:
 
   maestro-e2e:
     name: Run Maestro E2E smoke tests
-    runs-on: [self-hosted, X64]
+    runs-on: [self-hosted, android-emulator]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -257,6 +269,7 @@ jobs:
             maestro check-syntax .maestro/menu-destinations.yaml
 
       - name: Enable KVM
+        if: runner.os == 'Linux'
         run: |
             echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
             sudo udevadm control --reload-rules
@@ -267,7 +280,7 @@ jobs:
         with:
           api-level: 35
           target: google_apis
-          arch: x86_64
+          arch: ${{ runner.arch == 'ARM64' && 'arm64-v8a' || 'x86_64' }}
           profile: pixel_6
           disable-animations: true
           disable-linux-hw-accel: false
@@ -285,7 +298,7 @@ jobs:
 
   release-build:
     name: Build release bundle
-    runs-on: [self-hosted, X64]
+    runs-on: [self-hosted, android-gradle]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
