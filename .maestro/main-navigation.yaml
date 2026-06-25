@@ -1,0 +1,50 @@
+appId: app.kobuggi.hyuabot
+name: Main navigation smoke
+tags:
+  - smoke
+---
+- launchApp:
+    permissions:
+      all: allow
+- runFlow:
+    when:
+      visible: "Skip"
+    commands:
+      - tapOn: "Skip"
+- assertVisible: "Shuttle"
+- assertVisible: "Dormitory"
+- tapOn: "Bus"
+- runFlow:
+    when:
+      visible: "Skip"
+    commands:
+      - tapOn: "Skip"
+- assertVisible: "Sangnoksu"
+- assertVisible: "Gangnam"
+- tapOn: "Subway"
+- runFlow:
+    when:
+      visible: "Skip"
+    commands:
+      - tapOn: "Skip"
+- assertVisible: "Line 4"
+- assertVisible: "Suin-Bundang Line"
+- tapOn: "Cafeteria"
+- runFlow:
+    when:
+      visible: "Skip"
+    commands:
+      - tapOn: "Skip"
+- assertVisible: "Breakfast"
+- assertVisible: "Lunch"
+- tapOn: "Menu"
+- runFlow:
+    when:
+      visible: "Skip"
+    commands:
+      - tapOn: "Skip"
+- assertVisible: "Reading Room Seat Lookup"
+- assertVisible: "Campus Map"
+- assertVisible: "Campus Contacts"
+- assertVisible: "Academic Calendar"
+- assertVisible: "Settings"
