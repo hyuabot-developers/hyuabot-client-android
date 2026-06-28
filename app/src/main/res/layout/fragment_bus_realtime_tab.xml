@@ -29,25 +29,25 @@
                 android:paddingBottom="75dp">
 
                 <!-- Section 1 header with stop info button -->
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/header_first"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
                     android:background="@color/hanyang_blue"
                     app:layout_constraintTop_toTopOf="parent">
                     <TextView
                         android:id="@+id/header_first_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginHorizontal="56dp"
                         android:gravity="center"
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:textFontWeight="700"
-                        android:paddingStart="40dp"
-                        android:paddingEnd="40dp" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
                     <ImageButton
                         android:id="@+id/header_first_stop_btn"
                         android:layout_width="40dp"
@@ -56,8 +56,11 @@
                         android:src="@drawable/ic_location"
                         app:tint="@android:color/white"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@null" />
-                </LinearLayout>
+                        android:contentDescription="@null"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_first"
@@ -103,25 +106,25 @@
                 </LinearLayout>
 
                 <!-- Section 2 header with stop info button -->
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/header_second"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
                     android:background="@color/hanyang_blue"
                     app:layout_constraintTop_toBottomOf="@id/button_layout_first">
                     <TextView
                         android:id="@+id/header_second_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginHorizontal="56dp"
                         android:gravity="center"
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:textFontWeight="700"
-                        android:paddingStart="40dp"
-                        android:paddingEnd="40dp" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
                     <ImageButton
                         android:id="@+id/header_second_stop_btn"
                         android:layout_width="40dp"
@@ -130,8 +133,11 @@
                         android:src="@drawable/ic_location"
                         app:tint="@android:color/white"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@null" />
-                </LinearLayout>
+                        android:contentDescription="@null"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_second"
@@ -177,25 +183,25 @@
                 </LinearLayout>
 
                 <!-- Section 3 header -->
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/header_third"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
                     android:background="@color/hanyang_blue"
                     app:layout_constraintTop_toBottomOf="@id/button_layout_second">
                     <TextView
                         android:id="@+id/header_third_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginHorizontal="56dp"
                         android:gravity="center"
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:textFontWeight="700"
-                        android:paddingStart="40dp"
-                        android:paddingEnd="40dp" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
                     <ImageButton
                         android:id="@+id/header_third_stop_btn"
                         android:layout_width="40dp"
@@ -204,8 +210,11 @@
                         android:src="@drawable/ic_location"
                         app:tint="@android:color/white"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@null" />
-                </LinearLayout>
+                        android:contentDescription="@null"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_third"
@@ -251,25 +260,25 @@
                 </LinearLayout>
 
                 <!-- Section 4 header -->
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/header_fourth"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
                     android:background="@color/hanyang_blue"
                     app:layout_constraintTop_toBottomOf="@id/button_layout_third">
                     <TextView
                         android:id="@+id/header_fourth_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginHorizontal="56dp"
                         android:gravity="center"
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:textFontWeight="700"
-                        android:paddingStart="40dp"
-                        android:paddingEnd="40dp" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
                     <ImageButton
                         android:id="@+id/header_fourth_stop_btn"
                         android:layout_width="40dp"
@@ -278,8 +287,11 @@
                         android:src="@drawable/ic_location"
                         app:tint="@android:color/white"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@null" />
-                </LinearLayout>
+                        android:contentDescription="@null"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_fourth"
