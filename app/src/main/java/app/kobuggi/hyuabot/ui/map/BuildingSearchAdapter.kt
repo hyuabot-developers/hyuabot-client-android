@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemBuildingSearchBinding
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 
 class BuildingSearchAdapter(
     private val context: Context,
@@ -17,9 +18,15 @@ class BuildingSearchAdapter(
         fun bind(room: RoomItem) {
             binding.apply {
                 itemBuildingSearch.setOnClickListener { onClick(room) }
-                roomName.text = room.name
+                itemBuildingSearch.tag = room
+                DynamicTextTranslator.bind(roomName, room.name)
                 roomDescription.text =
                     context.getString(R.string.room_description_format, room.name, room.number)
+                DynamicTextTranslator.translateText(context.resources, room.name) { translatedName ->
+                    if (itemBuildingSearch.tag == room) {
+                        roomDescription.text = context.getString(R.string.room_description_format, translatedName, room.number)
+                    }
+                }
             }
         }
     }

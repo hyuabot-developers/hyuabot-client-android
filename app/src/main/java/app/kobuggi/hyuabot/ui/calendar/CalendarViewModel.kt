@@ -9,6 +9,7 @@ import app.kobuggi.hyuabot.CalendarPageVersionQuery
 import app.kobuggi.hyuabot.service.database.AppDatabase
 import app.kobuggi.hyuabot.service.database.entity.Event
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.FetchPolicy
@@ -60,8 +61,7 @@ class CalendarViewModel @Inject constructor(
             } else if (response.data?.calendar != null) {
                 dao.deleteAll()
                 response.data?.calendar?.let { calendar ->
-                    calendar.version.let { version -> userPreferencesRepository.setCalendarVersion(version) }
-                    calendar.categories.flatMap { category ->
+                    val events = calendar.categories.flatMap { category ->
                         category.events.map {
                             Event(
                                 eventID = it.seq,
@@ -72,15 +72,28 @@ class CalendarViewModel @Inject constructor(
                                 category = category.name
                             )
                         }
-                    }.let {
-                        dao.insertAll(*it.toTypedArray())
                     }
+                    dao.insertAll(*events.toTypedArray())
+                    calendar.version.let { version -> userPreferencesRepository.setCalendarVersion(version) }
+                    translateEventsInCache(events)
                 }
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
             }
             _updating.postValue(false)
+        }
+    }
+
+    private fun translateEventsInCache(events: List<Event>) {
+        viewModelScope.launch {
+            val translatedEvents = events.map {
+                it.copy(
+                    title = DynamicTextTranslator.translateForCurrentAppLocale(it.title),
+                    description = DynamicTextTranslator.translateForCurrentAppLocale(it.description),
+                )
+            }
+            database.calendarDao().insertAll(*translatedEvents.toTypedArray())
         }
     }
 }

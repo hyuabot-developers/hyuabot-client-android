@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ReadingRoomPageQuery
 import app.kobuggi.hyuabot.databinding.ItemReadingRoomBinding
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 
 class ReadingRoomListAdapter(
     private val context: Context,
@@ -21,7 +22,7 @@ class ReadingRoomListAdapter(
     inner class ViewHolder (private val binding: ItemReadingRoomBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(room: ReadingRoomPageQuery.ReadingRoom) {
             binding.apply {
-                readingRoomName.text = room.name
+                DynamicTextTranslator.bind(readingRoomName, room.name)
                 readingRoomSeatCount.text =
                     context.getString(R.string.reading_room_seat_format, room.seats.available, room.seats.active)
                 readingRoomAlarmButton.apply {

@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.service.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import app.kobuggi.hyuabot.service.database.entity.Contact
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +24,10 @@ interface ContactDao {
     @Query("SELECT * FROM contact WHERE (name LIKE :name OR phone LIKE :phone) AND campusID = :campusID")
     fun findByNameOrPhoneAndCampusID(name: String, phone: String, campusID: Int): Flow<List<Contact>>
 
-    @Insert
+    @Query("SELECT COUNT(*) FROM contact")
+    suspend fun count(): Int
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg contacts: Contact)
 
     @Query("DELETE FROM contact")

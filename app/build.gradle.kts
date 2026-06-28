@@ -175,6 +175,8 @@ dependencies {
     implementation(libs.playReviewKtx)
     // App Widget
     implementation(libs.coreRemoteViews)
+    // ML Kit
+    implementation(libs.mlkit.translate)
 }
 
 hilt {

@@ -33,6 +33,7 @@ import app.kobuggi.hyuabot.MapPageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMapBinding
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
@@ -67,6 +68,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private var searchMarker: Marker? = null
     private var isMapViewCreated = false
     private val buildingMarkerIconCache = mutableMapOf<String, OverlayImage>()
+    private val markerTranslationRequests = mutableSetOf<String>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -373,8 +375,10 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
 
     private fun buildingMarkerIcon(name: String): OverlayImage {
         val label = name.ifBlank { getString(R.string.menu_map) }
+        val translatedLabel = DynamicTextTranslator.cachedOrOriginal(resources, label)
         val isDarkMode = UIUtility.isDarkModeOn(resources)
-        val cacheKey = "${if (isDarkMode) "dark" else "light"}:$label"
+        val cacheKey = "${if (isDarkMode) "dark" else "light"}:$translatedLabel"
+        requestMarkerTranslation(label)
         return buildingMarkerIconCache.getOrPut(cacheKey) {
             val markerSize = 52
             val labelHeight = 30
@@ -387,7 +391,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                 textSize = 20f
                 isFakeBoldText = true
             }
-            val displayLabel = label.ellipsize(textPaint, maxLabelWidth - labelHorizontalPadding * 2)
+            val displayLabel = translatedLabel.ellipsize(textPaint, maxLabelWidth - labelHorizontalPadding * 2)
             val textWidth = textPaint.measureText(displayLabel)
             val labelWidth = (textWidth + labelHorizontalPadding * 2).toInt().coerceIn(72, maxLabelWidth)
             val bitmapWidth = maxOf(labelWidth, markerSize)
@@ -423,6 +427,18 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                 }
 
             OverlayImage.fromBitmap(bitmap)
+        }
+    }
+
+    private fun requestMarkerTranslation(label: String) {
+        if (!markerTranslationRequests.add(label)) return
+        DynamicTextTranslator.translateText(resources, label) {
+            if (!this::naverMap.isInitialized) return@translateText
+            buildingMarkerIconCache.clear()
+            viewModel.buildings.value?.let { addClusterItems(it) }
+            searchMarker?.let { marker ->
+                marker.icon = buildingMarkerIcon(label)
+            }
         }
     }
 

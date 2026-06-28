@@ -209,10 +209,26 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    suspend fun clearContactVersion() {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences.remove(CONTACT_KEY)
+            }
+        }
+    }
+
     override suspend fun setCalendarVersion(version: String) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
                 preferences[CALENDAR_KEY] = version
+            }
+        }
+    }
+
+    suspend fun clearCalendarVersion() {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences.remove(CALENDAR_KEY)
             }
         }
     }

@@ -50,7 +50,9 @@ class LanguageSettingDialog @Inject constructor() : DialogFragment() {
                 "ja" -> AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ja-JP"))
                 "zh" -> AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("zh-CN"))
             }
+            val hostActivity = activity
             dismiss()
+            hostActivity?.recreate()
         }
         return binding.root
     }

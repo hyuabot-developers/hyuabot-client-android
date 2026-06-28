@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.CafeteriaPageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ItemMenuBinding
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 
 class MenuListAdapter(
     private val context: Context,
@@ -16,7 +17,7 @@ class MenuListAdapter(
     inner class ViewHolder(private val binding: ItemMenuBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cafeteriaItem: CafeteriaPageQuery.Menu) {
             binding.apply {
-                menuTextView.text = cafeteriaItem.food
+                DynamicTextTranslator.bind(menuTextView, cafeteriaItem.food)
                 if (cafeteriaItem.price.endsWith("원")) {
                     menuPriceView.text = context.getString(R.string.cafeteria_price_format, cafeteriaItem.price.replace("원", ""))
                 } else {

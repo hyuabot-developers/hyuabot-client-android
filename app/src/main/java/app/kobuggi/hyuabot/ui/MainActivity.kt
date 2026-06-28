@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         firebaseAnalytics = Firebase.analytics
         binding.bottomNavigation.apply {
             setupWithNavController(navController)
+            updateBottomNavigationLabels()
             setOnItemSelectedListener(this@MainActivity)
             setOnItemReselectedListener(this@MainActivity)
         }
@@ -83,6 +84,19 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         openBirthDayDialog()
         requestInAppReview()
         navController.handleDeepLink(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateBottomNavigationLabels()
+    }
+
+    private fun updateBottomNavigationLabels() {
+        binding.bottomNavigation.menu.findItem(R.id.shuttleRealtimeFragment)?.title = getString(R.string.shuttle_bus)
+        binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)?.title = getString(R.string.bus)
+        binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)?.title = getString(R.string.subway)
+        binding.bottomNavigation.menu.findItem(R.id.cafeteriaFragment)?.title = getString(R.string.cafeteria)
+        binding.bottomNavigation.menu.findItem(R.id.menuFragment)?.title = getString(R.string.menu)
     }
 
     private fun suggestLanguageIfNeeded() {

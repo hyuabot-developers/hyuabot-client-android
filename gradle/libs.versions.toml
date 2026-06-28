@@ -55,6 +55,7 @@ navigationCompose = "2.9.8"
 materialCompose = "1.4.0"
 runtimeLivedata = "1.11.3"
 naverMap = "3.23.2"
+mlkitTranslate = "17.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -124,6 +125,7 @@ androidx-watchface-complications-data-source-ktx = { group = "androidx.wear.watc
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 naver-map = { group = "com.naver.maps", name = "map-sdk", version.ref = "naverMap" }
+mlkit-translate = { group = "com.google.mlkit", name = "translate", version.ref = "mlkitTranslate" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

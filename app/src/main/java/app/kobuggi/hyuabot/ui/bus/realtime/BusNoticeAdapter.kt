@@ -10,13 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.BusRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.ItemNoticeBinding
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 
 class BusNoticeAdapter(private var items: List<BusRealtimePageQuery.Notice1>): RecyclerView.Adapter<BusNoticeAdapter.ViewHolder>() {
     class ViewHolder(private val binding: ItemNoticeBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: BusRealtimePageQuery.Notice1) {
             binding.tvNoticeTitle.apply {
-                text = item.title
+                DynamicTextTranslator.bind(this, item.title)
                 if (item.url.isEmpty()) {
                     setOnClickListener(null)
                 } else {
