@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">HYUabot</string>
     <string name="close">关闭</string>
+    <string name="common_help">帮助</string>
+    <string name="common_share">分享</string>
     <string name="shuttle_bus">校车</string>
     <string name="bus">路线公交</string>
     <string name="shuttle_tab_dormitory_out">宿舍</string>
@@ -437,6 +439,7 @@
     <string name="cafeteria_share">分享学食</string>
     <string name="cafeteria_share_title">分享学食菜单</string>
     <string name="cafeteria_share_format">%1$s %2$s\n%3$s</string>
+    <string name="cafeteria_action_bar_title">可分享当前菜单</string>
     <string name="shortcut_shuttle_short">校车</string>
     <string name="shortcut_shuttle_long">校车到达信息</string>
     <string name="shortcut_cafeteria_short">学食</string>
@@ -449,14 +452,15 @@
     <string name="language_suggestion_message">您的系统语言设置为%1$s。是否切换应用语言？</string>
     <string name="language_suggestion_keep_english">保持英语</string>
     <string name="bus_help_title">公交帮助</string>
-    <string name="bus_help_realtime_title">1. 实时到达信息</string>
-    <string name="bus_help_realtime_content">可以实时确认公交到达前的剩余时间。</string>
-    <string name="bus_help_timetable_title">2. 查看时刻表</string>
-    <string name="bus_help_timetable_content">点击全部时刻表按钮，可查看各路线的时刻表。</string>
-    <string name="bus_help_departure_title">3. 出发记录</string>
-    <string name="bus_help_departure_content">点击出发记录按钮，可查看最近的公交出发记录。</string>
-    <string name="bus_help_stop_title">4. 站点信息</string>
-    <string name="bus_help_stop_content">点击路线标题中的位置图标，可查看站点位置及首末班信息。</string>
+    <string name="bus_action_bar_title">公交路线使用指南</string>
+    <string name="bus_help_realtime_title">1. 查看路线公交到达信息</string>
+    <string name="bus_help_realtime_content">路线公交到达信息按实时到达信息和运输公司提供的终点出发时间顺序显示。如果站内电子屏幕未显示到达信息，可在终点出发时间后查看实时到达信息。</string>
+    <string name="bus_help_stop_title">2. 查看路线公交站点信息</string>
+    <string name="bus_help_stop_content">显示校园内外停车站的位置及各路线首末班车时间。部分路线可能没有时刻表，因此首末班车数据可能不显示。</string>
+    <string name="bus_help_timetable_title">3. 查看路线公交时刻表</string>
+    <string name="bus_help_timetable_content">安山市公交间隔较长，站内电子屏幕常显示终点及起始站等待。因此可查看运输公司提供的终点出发时间。</string>
+    <string name="bus_help_departure_title">4. 查看路线公交出发时刻</string>
+    <string name="bus_help_departure_content">提供京畿道提供的各路线站点通过时间。即使没有实时到达信息，也可作为参考估算公交到达时间。</string>
     <string name="bus_stop_info_title">站点信息</string>
     <string name="bus_stop_info_empty">无法加载站点信息。</string>
     <string name="bus_stop_info_error">信息加载失败。</string>

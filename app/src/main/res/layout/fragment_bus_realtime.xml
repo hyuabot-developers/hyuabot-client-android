@@ -49,16 +49,68 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/notice_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bus_action_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:saveEnabled="false" />
+
+    <View
+        android:id="@+id/bus_action_bar_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/calendar_grid_line"
+        app:layout_constraintBottom_toTopOf="@id/bus_action_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/bus_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:background="@color/background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/bus_action_bar_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/bus_action_bar_title"
+            android:textColor="@color/secondary_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/help_button"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:contentDescription="@string/bus_help_title"
+            android:minHeight="36dp"
+            android:paddingHorizontal="12dp"
+            android:text="@string/common_help"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/hanyang_green"
+            app:icon="@drawable/ic_help"
+            app:iconGravity="textStart"
+            app:iconTint="@android:color/white"
+            app:iconPadding="6dp" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/loadingLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/tabLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bus_action_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/background"
@@ -70,15 +122,4 @@
             android:layout_gravity="center"
             android:indeterminate="true" />
     </LinearLayout>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/stop_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:tint="@android:color/white"
-        app:backgroundTint="@color/hanyang_green"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_help"
-        android:importantForAccessibility="no" />
 </androidx.constraintlayout.widget.ConstraintLayout>

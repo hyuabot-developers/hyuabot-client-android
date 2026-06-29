@@ -95,8 +95,8 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             R.string.bus_tab_other
         )
         binding.viewPager.adapter = viewpagerAdapter
-        binding.stopFab.setOnClickListener {
-            AnalyticsManager.logSelect(AnalyticsItem.BUS_STOP_BUTTON)
+        binding.helpButton.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.BUS_OPEN_HELP)
             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusHelpDialogFragment().also {
                 findNavController().safeNavigate(it)
             }
@@ -123,9 +123,9 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                     R.string.coachmark_bus_tab_title, R.string.coachmark_bus_tab_desc
                 ),
                 CoachmarkStep(
-                    { binding.stopFab },
+                    { binding.helpButton },
                     R.string.coachmark_bus_stop_title, R.string.coachmark_bus_stop_desc,
-                    shape = CoachmarkShape.CIRCLE
+                    shape = CoachmarkShape.ROUNDED_RECT
                 ),
                 CoachmarkStep(
                     {

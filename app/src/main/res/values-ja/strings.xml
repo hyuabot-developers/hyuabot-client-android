@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">HYUabot</string>
     <string name="close">閉じる</string>
+    <string name="common_help">ヘルプ</string>
+    <string name="common_share">共有</string>
     <string name="shuttle_bus">シャトルバス</string>
     <string name="bus">路線バス</string>
     <string name="shuttle_tab_dormitory_out">寮</string>
@@ -437,6 +439,7 @@
     <string name="cafeteria_share">学食を共有</string>
     <string name="cafeteria_share_title">学食メニューを共有</string>
     <string name="cafeteria_share_format">%1$s %2$s\n%3$s</string>
+    <string name="cafeteria_action_bar_title">現在のメニューを共有できます</string>
     <string name="shortcut_shuttle_short">シャトル</string>
     <string name="shortcut_shuttle_long">シャトル到着情報</string>
     <string name="shortcut_cafeteria_short">学食</string>
@@ -449,14 +452,15 @@
     <string name="language_suggestion_message">システム言語が%1$sに設定されています。アプリの言語を変更しますか？</string>
     <string name="language_suggestion_keep_english">英語を維持</string>
     <string name="bus_help_title">バスのヘルプ</string>
-    <string name="bus_help_realtime_title">1. リアルタイム到着情報</string>
-    <string name="bus_help_realtime_content">バス到着までの残り時間をリアルタイムで確認できます。</string>
-    <string name="bus_help_timetable_title">2. 時刻表の表示</string>
-    <string name="bus_help_timetable_content">全時刻表ボタンを押すと、路線別の時刻表を確認できます。</string>
-    <string name="bus_help_departure_title">3. 出発記録</string>
-    <string name="bus_help_departure_content">出発記録ボタンを押すと、最近のバス出発履歴を確認できます。</string>
-    <string name="bus_help_stop_title">4. 停留所情報</string>
-    <string name="bus_help_stop_content">路線ヘッダーの位置アイコンを押すと、停留所の位置と始発・終バスの情報を確認できます。</string>
+    <string name="bus_action_bar_title">バス利用案内</string>
+    <string name="bus_help_realtime_title">1. 路線バス到着情報の確認</string>
+    <string name="bus_help_realtime_content">路線バスの到着情報は、リアルタイム到着情報と運送会社が提供する終点出発時間の順に表示されます。停留所の電光掲示板に到着情報が表示されない場合、終点出発時間以降にリアルタイム到着情報を確認できます。</string>
+    <string name="bus_help_stop_title">2. 路線バス停留所情報の確認</string>
+    <string name="bus_help_stop_content">キャンパス内外の停留所の位置と各路線の始発・終発時間を表示します。一部の路線は時刻表が存在しないため、始発・終発データが表示されない場合があります。</string>
+    <string name="bus_help_timetable_title">3. 路線バス時刻表の確認</string>
+    <string name="bus_help_timetable_content">安山市の市内バスは配車間隔が長いため、停留所の電光掲示板に終点・出発地待機が表示されることが多いです。そのため、運送会社が提供する終点出発時間を確認できます。</string>
+    <string name="bus_help_departure_title">4. 路線バス出発時刻の確認</string>
+    <string name="bus_help_departure_content">京畿道が提供する各路線の停留所通過時間を提供します。リアルタイム到着情報がない場合でも、バス到着時間の目安として参考にできます。</string>
     <string name="bus_stop_info_title">停留所情報</string>
     <string name="bus_stop_info_empty">停留所情報を読み込めません。</string>
     <string name="bus_stop_info_error">情報の読み込みに失敗しました。</string>

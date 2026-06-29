@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">HYUabot</string>
     <string name="close">Close</string>
+    <string name="common_help">Help</string>
+    <string name="common_share">Share</string>
     <!-- Bottom Navigation -->
     <string name="shuttle_bus">Shuttle</string>
     <string name="bus">Bus</string>
@@ -457,6 +459,7 @@
     <string name="cafeteria_share">Share meal</string>
     <string name="cafeteria_share_title">Share cafeteria menu</string>
     <string name="cafeteria_share_format">%1$s %2$s\n%3$s</string>
+    <string name="cafeteria_action_bar_title">Share the current menu</string>
     <string name="shortcut_shuttle_short">Shuttle</string>
     <string name="shortcut_shuttle_long">Shuttle arrivals</string>
     <string name="shortcut_cafeteria_short">Dining</string>
@@ -471,14 +474,15 @@
     <string name="language_suggestion_message">Your system language is %1$s. Would you like to switch the app language?</string>
     <string name="language_suggestion_keep_english">Keep English</string>
     <string name="bus_help_title">Bus Help</string>
-    <string name="bus_help_realtime_title">1. Real-time Arrival</string>
-    <string name="bus_help_realtime_content">Check how long until the bus arrives in real time.</string>
-    <string name="bus_help_timetable_title">2. Timetable</string>
-    <string name="bus_help_timetable_content">Tap the full timetable button to view schedules by route.</string>
-    <string name="bus_help_departure_title">3. Departure Log</string>
-    <string name="bus_help_departure_content">Tap the departure log button to view recent bus departure history.</string>
-    <string name="bus_help_stop_title">4. Stop Info</string>
-    <string name="bus_help_stop_content">Tap the location icon in the route header to view stop location and first/last bus info.</string>
+    <string name="bus_action_bar_title">Bus route guidance</string>
+    <string name="bus_help_realtime_title">1. Checking Route Bus Arrival Information</string>
+    <string name="bus_help_realtime_content">Route bus arrival information is displayed in the order of real-time arrival information and departure times from the terminal provided by the transportation company. If arrival information is not displayed on the electronic board at the stop, real-time arrival information can be checked after the terminal departure time.</string>
+    <string name="bus_help_stop_title">2. Checking Route Bus Stop Information</string>
+    <string name="bus_help_stop_content">Displays the location of bus stops on and around the campus and the first and last bus times for each route. Some routes may not have a timetable, so first and last bus data may not be displayed.</string>
+    <string name="bus_help_timetable_title">3. Checking Route Bus Timetable</string>
+    <string name="bus_help_timetable_content">For city buses in Ansan, due to long intervals, the electronic board at the stop may display waiting times for terminals and departure points. As a result, you can check the departure times from the terminal provided by the transportation company.</string>
+    <string name="bus_help_departure_title">4. Checking Route Bus Departure Time</string>
+    <string name="bus_help_departure_content">Provides the stop passing times for each route as provided by Gyeonggi-do. Even if real-time arrival information is not available, this can be referenced to estimate the bus arrival time.</string>
     <string name="bus_stop_info_title">Stop Information</string>
     <string name="bus_stop_info_empty">Stop information is unavailable.</string>
     <string name="bus_stop_info_error">Failed to load information.</string>
