@@ -41,7 +41,9 @@ class CalendarViewModel @Inject constructor(
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.calendar != null) {
                 val localVersion = userPreferencesRepository.calendarVersion.first()
-                if (localVersion != response.data?.calendar?.version || database.calendarDao().count() == 0) {
+                val serverVersion = response.data?.calendar?.version
+                val localizedVersion = localizedVersion(serverVersion)
+                if (localVersion != localizedVersion || database.calendarDao().count() == 0) {
                     fetchEvents()
                 }
                 _queryError.value = null
@@ -74,8 +76,8 @@ class CalendarViewModel @Inject constructor(
                         }
                     }
                     dao.insertAll(*events.toTypedArray())
-                    calendar.version.let { version -> userPreferencesRepository.setCalendarVersion(version) }
                     translateEventsInCache(events)
+                    calendar.version.let { version -> userPreferencesRepository.setCalendarVersion(localizedVersion(version)) }
                 }
                 _queryError.value = null
             } else {
@@ -85,15 +87,17 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
-    private fun translateEventsInCache(events: List<Event>) {
-        viewModelScope.launch {
-            val translatedEvents = events.map {
-                it.copy(
-                    title = DynamicTextTranslator.translateForCurrentAppLocale(it.title),
-                    description = DynamicTextTranslator.translateForCurrentAppLocale(it.description),
-                )
-            }
-            database.calendarDao().insertAll(*translatedEvents.toTypedArray())
+    private suspend fun translateEventsInCache(events: List<Event>) {
+        val translatedEvents = events.map {
+            it.copy(
+                title = DynamicTextTranslator.translateForCurrentAppLocale(it.title),
+                description = DynamicTextTranslator.translateForCurrentAppLocale(it.description),
+            )
         }
+        database.calendarDao().insertAll(*translatedEvents.toTypedArray())
+    }
+
+    private fun localizedVersion(version: String?): String {
+        return "${version.orEmpty()}:${DynamicTextTranslator.currentAppLanguageTag()}"
     }
 }

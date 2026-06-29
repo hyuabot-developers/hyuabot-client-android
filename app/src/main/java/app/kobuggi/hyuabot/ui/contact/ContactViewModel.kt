@@ -43,7 +43,9 @@ class ContactViewModel @Inject constructor(
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.phonebook != null) {
                 val localVersion = userPreferencesRepository.contactVersion.first()
-                if (localVersion != response.data?.phonebook?.version || database.contactDao().count() == 0) {
+                val serverVersion = response.data?.phonebook?.version
+                val localizedVersion = localizedVersion(serverVersion)
+                if (localVersion != localizedVersion || database.contactDao().count() == 0) {
                     fetchContacts()
                 }
                 _queryError.value = null
@@ -74,8 +76,8 @@ class ContactViewModel @Inject constructor(
                         }
                     }
                     dao.insertAll(*contacts.toTypedArray())
-                    userPreferencesRepository.setContactVersion(phonebook.version)
                     translateContactsInCache(contacts)
+                    userPreferencesRepository.setContactVersion(localizedVersion(phonebook.version))
                 }
                 _queryError.value = null
             } else {
@@ -85,13 +87,15 @@ class ContactViewModel @Inject constructor(
         }
     }
 
-    private fun translateContactsInCache(contacts: List<Contact>) {
-        viewModelScope.launch {
-            val translatedContacts = contacts.map {
-                it.copy(name = DynamicTextTranslator.translateForCurrentAppLocale(it.name))
-            }
-            database.contactDao().insertAll(*translatedContacts.toTypedArray())
+    private suspend fun translateContactsInCache(contacts: List<Contact>) {
+        val translatedContacts = contacts.map {
+            it.copy(name = DynamicTextTranslator.translateForCurrentAppLocale(it.name))
         }
+        database.contactDao().insertAll(*translatedContacts.toTypedArray())
+    }
+
+    private fun localizedVersion(version: String?): String {
+        return "${version.orEmpty()}:${DynamicTextTranslator.currentAppLanguageTag()}"
     }
 
     fun searchContacts(query: String, campusID: Int) {

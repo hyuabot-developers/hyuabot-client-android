@@ -89,6 +89,11 @@ object DynamicTextTranslator {
             .getOrDefault(text)
     }
 
+    fun currentAppLanguageTag(): String {
+        val appLocale = AppCompatDelegate.getApplicationLocales().get(0)
+        return appLocale?.toLanguageTag() ?: Locale.getDefault().toLanguageTag()
+    }
+
     private suspend fun translate(text: String, sourceLanguage: String, targetLanguage: String): String {
         val translator = translator(sourceLanguage, targetLanguage)
         translator.downloadModelIfNeeded(downloadConditions).await()
