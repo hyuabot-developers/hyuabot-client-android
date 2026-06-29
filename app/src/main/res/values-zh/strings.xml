@@ -315,6 +315,10 @@
     <string name="month_header">%1$d年%2$d月</string>
     <string name="event_date_format">%1$d月%2$d日</string>
     <string name="event_date_range_format">%1$d月%2$d日 - %3$d月%4$d日</string>
+    <string name="calendar_select_date_hint">选择日期即可查看日程</string>
+    <string name="calendar_previous_month">上个月</string>
+    <string name="calendar_next_month">下个月</string>
+    <string name="calendar_event_ongoing">进行中</string>
     <string name="calendar_loading">正在加载学事历。</string>
     <string name="do_not_show_again_this_year">今年不再显示</string>
     <string name="dialog_title">开发者生日通知</string>

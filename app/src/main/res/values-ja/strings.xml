@@ -315,6 +315,10 @@
     <string name="month_header">%1$d年%2$d月</string>
     <string name="event_date_format">%1$d月%2$d日</string>
     <string name="event_date_range_format">%1$d月%2$d日 〜 %3$d月%4$d日</string>
+    <string name="calendar_select_date_hint">日付を選択すると予定を確認できます</string>
+    <string name="calendar_previous_month">前の月</string>
+    <string name="calendar_next_month">次の月</string>
+    <string name="calendar_event_ongoing">進行中</string>
     <string name="calendar_loading">学事暦を読み込み中です。</string>
     <string name="do_not_show_again_this_year">今年は表示しない</string>
     <string name="dialog_title">開発者の誕生日のお知らせ</string>

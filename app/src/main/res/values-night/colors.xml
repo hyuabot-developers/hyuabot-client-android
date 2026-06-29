@@ -5,4 +5,11 @@
     <color name="secondary_text">#757575</color>
     <!-- 배경 색상 -->
     <color name="background">#000000</color>
+    <!-- 캘린더 -->
+    <color name="calendar_grid_line">#252525</color>
+    <color name="calendar_today_fill">#1976D2</color>
+    <color name="calendar_selected_fill">#143A5C</color>
+    <color name="calendar_event_text">#FFFFFF</color>
+    <color name="calendar_sunday">#FF5252</color>
+    <color name="calendar_saturday">#29B6F6</color>
 </resources>
