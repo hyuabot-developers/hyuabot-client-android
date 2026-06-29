@@ -50,8 +50,8 @@
                         app:layout_constraintBottom_toBottomOf="parent" />
                     <ImageButton
                         android:id="@+id/header_first_stop_btn"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
                         app:tint="@android:color/white"
@@ -127,8 +127,8 @@
                         app:layout_constraintBottom_toBottomOf="parent" />
                     <ImageButton
                         android:id="@+id/header_second_stop_btn"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
                         app:tint="@android:color/white"
@@ -204,8 +204,8 @@
                         app:layout_constraintBottom_toBottomOf="parent" />
                     <ImageButton
                         android:id="@+id/header_third_stop_btn"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
                         app:tint="@android:color/white"
@@ -281,8 +281,8 @@
                         app:layout_constraintBottom_toBottomOf="parent" />
                     <ImageButton
                         android:id="@+id/header_fourth_stop_btn"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
                         app:tint="@android:color/white"

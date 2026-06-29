@@ -30,6 +30,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:layout_margin="8dp"
             android:clickable="true"
             android:focusable="true"
@@ -38,8 +39,8 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/notice_view_pager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="4dp"
+                android:layout_height="48dp"
+                android:minHeight="48dp"
                 android:saveEnabled="false" />
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>

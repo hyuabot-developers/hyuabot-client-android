@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:paddingBottom="24dp">
+            android:paddingBottom="48dp">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_station"
                 android:layout_width="match_parent"
@@ -40,8 +40,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/info_button_bound_for_station"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/info_button_shuttle"
@@ -120,8 +120,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/bus_alternative_station_info"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -172,8 +172,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/info_button_bound_for_dormitory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/info_button_shuttle"
@@ -252,8 +252,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/bus_alternative_dormitory_info"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -301,8 +301,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/bus_alternative_dormitory_2_info"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -353,8 +353,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/info_button_bound_for_terminal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/info_button_shuttle"
@@ -432,8 +432,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/bus_alternative_terminal_info"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -484,8 +484,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/info_button_bound_for_jungang_station"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/info_button_shuttle"
@@ -563,8 +563,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/bus_alternative_jungang_station_info"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -658,7 +658,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:paddingBottom="24dp">
+            android:paddingBottom="48dp">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/realtime_view"
                 android:layout_width="match_parent"
