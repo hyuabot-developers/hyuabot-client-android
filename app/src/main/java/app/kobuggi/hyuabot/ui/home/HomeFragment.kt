@@ -14,6 +14,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -120,7 +121,6 @@ class HomeFragment : Fragment() {
         viewModel.showBus50Transfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.showSubwayTransfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.subwayTransferDestination.observe(viewLifecycleOwner) { render(viewModel.data.value) }
-        viewModel.bus50TerminalLogTimes.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let {
                 binding.homeSwipeRefreshLayout.isRefreshing = false
@@ -391,7 +391,6 @@ class HomeFragment : Fragment() {
             else -> emptyList()
         }
             .filterNotNull()
-            .sortedBy { row -> row.trailing.filter(Char::isDigit).toIntOrNull() ?: Int.MAX_VALUE }
     }
 
     private fun transferConnections(
@@ -433,11 +432,6 @@ class HomeFragment : Fragment() {
             .mapNotNull { it.minutes?.let(::timeAfterMinutes) }
             .filter { !it.isBefore(terminalArrival) }
             .minOrNull()
-            ?: viewModel.bus50TerminalLogTimes.value
-                .orEmpty()
-                .map(::dateTimeFor)
-                .filter { !it.isBefore(terminalArrival) }
-                .minOrNull()
             ?: return null
         val bufferMinutes = Duration.between(terminalArrival, busArrival).toMinutes().coerceAtLeast(0).toInt()
         val tint = ContextCompat.getColor(
@@ -745,11 +739,10 @@ class HomeFragment : Fragment() {
     private fun createLinkBadge(tint: Int): View {
         return LinearLayout(requireContext()).apply {
             gravity = Gravity.CENTER
-            addView(TextView(requireContext()).apply {
-                text = "↔"
-                gravity = Gravity.CENTER
-                textSize = 12f
-                setTextColor(ColorUtils.setAlphaComponent(tint, 184))
+            addView(ImageView(requireContext()).apply {
+                setImageResource(R.drawable.ic_home_link)
+                imageTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(tint, 184))
+                scaleType = ImageView.ScaleType.CENTER
                 background = android.graphics.drawable.GradientDrawable().apply {
                     shape = android.graphics.drawable.GradientDrawable.OVAL
                     setColor(ContextCompat.getColor(requireContext(), R.color.background))

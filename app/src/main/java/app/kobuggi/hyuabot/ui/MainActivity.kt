@@ -93,10 +93,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     private fun updateBottomNavigationLabels() {
-        binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)?.title = getString(R.string.bus)
+        binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)?.title = getString(R.string.tabbar_bus)
         binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)?.title = getString(R.string.subway)
         binding.bottomNavigation.menu.findItem(R.id.cafeteriaFragment)?.title = getString(R.string.cafeteria)
-        binding.bottomNavigation.menu.findItem(R.id.menuFragment)?.title = getString(R.string.menu)
+        binding.bottomNavigation.menu.findItem(R.id.menuFragment)?.title = getString(R.string.tabbar_more)
     }
 
     private fun updatePrimaryNavigationItem(destinationId: Int?) {

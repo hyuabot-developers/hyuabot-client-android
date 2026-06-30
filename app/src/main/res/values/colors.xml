@@ -20,6 +20,9 @@
     <color name="background">#FFFFFF</color>
     <color name="home_row_background">#F6F7F9</color>
     <color name="home_action_button_background">#DBEDF9</color>
+    <color name="home_segmented_track">#E7E7EC</color>
+    <color name="bottom_navigation_indicator">#E6E7EB</color>
+    <color name="bottom_navigation_unselected">#202124</color>
     <color name="skeleton_placeholder">#E0E0E0</color>
     <color name="skeleton_placeholder_highlight">#F5F5F5</color>
     <!-- 캘린더 -->

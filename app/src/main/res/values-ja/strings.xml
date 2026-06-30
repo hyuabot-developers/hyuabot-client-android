@@ -7,6 +7,8 @@
     <string name="home">ホーム</string>
     <string name="shuttle_bus">シャトルバス</string>
     <string name="bus">路線バス</string>
+    <string name="tabbar_bus">バス</string>
+    <string name="tabbar_more">もっと見る</string>
     <string name="home_hero_title">今必要なものだけ</string>
     <string name="home_hero_subtitle">移動から食事まで、今の状況に合う情報を表示します。</string>
     <string name="home_movement_title">今の移動</string>
@@ -56,7 +58,7 @@
     <string name="home_alt_direction_sangnoksu">常緑樹駅</string>
     <string name="home_alt_direction_shuttlecock_dormitory">シャトルコック・寄宿舎</string>
     <string name="home_alt_intercity_terminal">市外バスターミナル</string>
-    <string name="home_shuttle_no_via">経由なし</string>
+    <string name="home_shuttle_no_via">直行</string>
     <string name="home_shuttle_via">%1$s 経由</string>
     <string name="home_badge_free">無料</string>
     <string name="home_meal_breakfast">今日の朝食</string>

@@ -7,6 +7,8 @@
     <string name="home">홈</string>
     <string name="shuttle_bus">셔틀버스</string>
     <string name="bus">노선버스</string>
+    <string name="tabbar_bus">버스</string>
+    <string name="tabbar_more">더 보기</string>
     <!-- 홈 -->
     <string name="home_hero_title">지금 필요한 것만</string>
     <string name="home_hero_subtitle">이동부터 식사까지, 지금 상황에 맞는 정보를 보여줘요.</string>
@@ -57,7 +59,7 @@
     <string name="home_alt_direction_sangnoksu">상록수역</string>
     <string name="home_alt_direction_shuttlecock_dormitory">셔틀콕·기숙사</string>
     <string name="home_alt_intercity_terminal">시외버스터미널</string>
-    <string name="home_shuttle_no_via">경유 없음</string>
+    <string name="home_shuttle_no_via">무정차</string>
     <string name="home_shuttle_via">%1$s 경유</string>
     <string name="home_badge_free">무료</string>
     <string name="home_meal_breakfast">오늘 아침</string>

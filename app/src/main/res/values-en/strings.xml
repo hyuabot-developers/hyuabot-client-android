@@ -7,6 +7,8 @@
     <string name="home">Home</string>
     <string name="shuttle_bus">Shuttle</string>
     <string name="bus">Bus</string>
+    <string name="tabbar_bus">Bus</string>
+    <string name="tabbar_more">More</string>
     <!-- Home -->
     <string name="home_hero_title">Only what you need now</string>
     <string name="home_hero_subtitle">See information that fits the moment, from transit to meals.</string>
@@ -57,7 +59,7 @@
     <string name="home_alt_direction_sangnoksu">Sangnoksu Station</string>
     <string name="home_alt_direction_shuttlecock_dormitory">Shuttlecock · Dormitory</string>
     <string name="home_alt_intercity_terminal">Intercity Bus Terminal</string>
-    <string name="home_shuttle_no_via">No stops in between</string>
+    <string name="home_shuttle_no_via">Nonstop</string>
     <string name="home_shuttle_via">Via %1$s</string>
     <string name="home_badge_free">Free</string>
     <string name="home_meal_breakfast">Breakfast</string>
