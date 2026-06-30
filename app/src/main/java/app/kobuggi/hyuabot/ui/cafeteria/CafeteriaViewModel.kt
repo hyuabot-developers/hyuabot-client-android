@@ -12,6 +12,7 @@ import com.apollographql.cache.normalized.FetchPolicy
 import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
@@ -27,6 +28,7 @@ class CafeteriaViewModel @Inject constructor(
     private val _lunch = MutableLiveData<List<CafeteriaPageQuery.Cafeterium>>()
     private val _dinner = MutableLiveData<List<CafeteriaPageQuery.Cafeterium>>()
     private val _queryError = MutableLiveData<QueryError?>(null)
+    private var lastRequest: Pair<LocalDate, Int>? = null
 
     val isLoading get() = _isLoading
     val date get() = _date
@@ -37,14 +39,20 @@ class CafeteriaViewModel @Inject constructor(
     val queryError get() = _queryError
 
     fun fetchData(campusID: Int = 2) {
+        val date = (_date.value ?: LocalDateTime.now(ZoneId.of("Asia/Seoul"))).toLocalDate()
+        val request = date to campusID
+        if (request == lastRequest && _queryError.value == null) return
+        lastRequest = request
+
         viewModelScope.launch {
             _isLoading.value = true
             val response = apolloClient.query(
                 CafeteriaPageQuery(
-                    (_date.value ?: LocalDateTime.now(ZoneId.of("Asia/Seoul"))).toLocalDate(),
+                    date,
                     campusID
                 )
             ).fetchPolicy(FetchPolicy.CacheFirst).execute()
+            if (lastRequest != request) return@launch
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.cafeteria != null) {

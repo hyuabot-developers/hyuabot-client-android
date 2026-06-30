@@ -58,12 +58,7 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
             .build()
         datePicker.addOnPositiveButtonClickListener {
             AnalyticsManager.logSelect(AnalyticsItem.CAFETERIA_DATE_CHANGED, type = AnalyticsContentType.DATE_CONTROL)
-            viewModel.apply {
-                date.value = LocalDateTime.ofEpochSecond(it / 1000, 0, ZoneOffset.ofHours(9))
-                campusID.observe(viewLifecycleOwner) { campusID ->
-                    fetchData(campusID)
-                }
-            }
+            viewModel.date.value = LocalDateTime.ofEpochSecond(it / 1000, 0, ZoneOffset.ofHours(9))
         }
 
         viewModel.apply {
@@ -116,9 +111,9 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
             "breakfast" -> 0
             "lunch" -> 1
             "dinner" -> 2
-            else -> null
+            else -> defaultMealTab(viewModel.date.value ?: LocalDateTime.now())
         }
-        initialTab?.let { binding.viewPager.setCurrentItem(it, false) }
+        binding.viewPager.setCurrentItem(initialTab, false)
         showCoachmarkOnce(userPreferencesRepository, Coachmarks.CAFETERIA) {
             listOf(
                 CoachmarkStep(
@@ -150,6 +145,12 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
         1 -> "lunch" to (viewModel.lunch.value ?: emptyList())
         2 -> "dinner" to (viewModel.dinner.value ?: emptyList())
         else -> "lunch" to (viewModel.lunch.value ?: emptyList())
+    }
+
+    private fun defaultMealTab(dateTime: LocalDateTime): Int = when (dateTime.hour) {
+        in 0..10 -> 0
+        in 11..16 -> 1
+        else -> 2
     }
 
     override fun onDestroyView() {
