@@ -98,7 +98,7 @@
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:backgroundTint="@color/hanyang_green"
+            app:backgroundTint="@color/hanyang_blue"
             app:icon="@drawable/ic_help"
             app:iconGravity="textStart"
             app:iconTint="@android:color/white"
