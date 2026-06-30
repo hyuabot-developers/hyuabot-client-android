@@ -5,213 +5,219 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll_view"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/home_swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        android:paddingBottom="18dp"
         app:layout_constraintBottom_toTopOf="@id/home_action_bar"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="18dp"
-            android:paddingTop="22dp">
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:paddingBottom="18dp">
 
-            <TextView
-                android:id="@+id/date_text"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/secondary_text"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:paddingHorizontal="18dp"
+                android:paddingTop="22dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@string/home_hero_title"
-                android:textColor="@color/primary_text"
-                android:textSize="25sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@string/home_hero_subtitle"
-                android:textColor="@color/secondary_text"
-                android:textSize="14sp" />
-
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/destination_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                app:selectionRequired="true"
-                app:singleSelection="true" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                app:cardBackgroundColor="@color/background"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/calendar_grid_line"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/date_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="14dp">
+                    android:textColor="@color/secondary_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/home_hero_title"
+                    android:textColor="@color/primary_text"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/home_hero_subtitle"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/destination_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    app:selectionRequired="true"
+                    app:singleSelection="true" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    app:cardBackgroundColor="@color/background"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/calendar_grid_line"
+                    app:strokeWidth="1dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/movement_title"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/home_movement_title"
-                            android:textColor="@color/primary_text"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/movement_detail"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:gravity="center"
-                            android:paddingHorizontal="8dp"
-                            android:text="@string/home_movement_detail"
-                            android:textColor="@color/hanyang_blue"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/route_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/secondary_text"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                    <com.faltenreich.skeletonlayout.SkeletonLayout
-                        android:id="@+id/movement_loading"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        app:maskColor="@color/skeleton_placeholder"
-                        app:maskCornerRadius="8dp"
-                        app:shimmerColor="@color/skeleton_placeholder_highlight">
+                        android:orientation="vertical"
+                        android:padding="14dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="58dp"
-                                android:background="@drawable/bg_home_row" />
+                            <TextView
+                                android:id="@+id/movement_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/home_movement_title"
+                                android:textColor="@color/primary_text"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="58dp"
-                                android:layout_marginTop="8dp"
-                                android:background="@drawable/bg_home_row" />
+                            <TextView
+                                android:id="@+id/movement_detail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="40dp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"
+                                android:text="@string/home_movement_detail"
+                                android:textColor="@color/hanyang_blue"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
                         </LinearLayout>
-                    </com.faltenreich.skeletonlayout.SkeletonLayout>
 
-                    <LinearLayout
-                        android:id="@+id/movement_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="vertical" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:id="@+id/route_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                app:cardBackgroundColor="@color/background"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/calendar_grid_line"
-                app:strokeWidth="1dp">
+                        <com.faltenreich.skeletonlayout.SkeletonLayout
+                            android:id="@+id/movement_loading"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            app:maskColor="@color/skeleton_placeholder"
+                            app:maskCornerRadius="8dp"
+                            app:shimmerColor="@color/skeleton_placeholder_highlight">
 
-                <LinearLayout
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="58dp"
+                                    android:background="@drawable/bg_home_row" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="58dp"
+                                    android:layout_marginTop="8dp"
+                                    android:background="@drawable/bg_home_row" />
+                            </LinearLayout>
+                        </com.faltenreich.skeletonlayout.SkeletonLayout>
+
+                        <LinearLayout
+                            android:id="@+id/movement_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="14dp">
+                    android:layout_marginTop="14dp"
+                    app:cardBackgroundColor="@color/background"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/calendar_grid_line"
+                    app:strokeWidth="1dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:padding="14dp">
 
-                        <TextView
-                            android:id="@+id/meal_title"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textColor="@color/primary_text"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/meal_detail"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:gravity="center"
-                            android:paddingHorizontal="8dp"
-                            android:text="@string/home_cafeteria_detail"
-                            android:textColor="@color/hanyang_blue"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <com.faltenreich.skeletonlayout.SkeletonLayout
-                        android:id="@+id/meal_loading"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        app:maskColor="@color/skeleton_placeholder"
-                        app:maskCornerRadius="8dp"
-                        app:shimmerColor="@color/skeleton_placeholder_highlight">
-
-                        <View
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="110dp"
-                            android:background="@drawable/bg_home_row" />
-                    </com.faltenreich.skeletonlayout.SkeletonLayout>
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:id="@+id/meal_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="vertical" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                            <TextView
+                                android:id="@+id/meal_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textColor="@color/primary_text"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/meal_detail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="40dp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"
+                                android:text="@string/home_cafeteria_detail"
+                                android:textColor="@color/hanyang_blue"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <com.faltenreich.skeletonlayout.SkeletonLayout
+                            android:id="@+id/meal_loading"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            app:maskColor="@color/skeleton_placeholder"
+                            app:maskCornerRadius="8dp"
+                            app:shimmerColor="@color/skeleton_placeholder_highlight">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="110dp"
+                                android:background="@drawable/bg_home_row" />
+                        </com.faltenreich.skeletonlayout.SkeletonLayout>
+
+                        <LinearLayout
+                            android:id="@+id/meal_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <View
         android:id="@+id/home_action_bar_divider"

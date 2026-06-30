@@ -1,14 +1,25 @@
 package app.kobuggi.hyuabot.ui.home
 
+import android.Manifest
 import android.content.res.ColorStateList
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
+import android.text.TextUtils
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -17,12 +28,17 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentHomeBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.util.setSkeletonLoading
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.DateFormat
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.Duration
 import java.util.Date
 import kotlin.math.ceil
 
@@ -32,6 +48,14 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModels()
     private var selectedDeparture = HomeDeparture.DORMITORY
     private var selectedDestination = HomeDestination.STATION
+    private var setNearestDeparture = false
+    private val refreshHandler = Handler(Looper.getMainLooper())
+    private val autoRefreshRunnable = object : Runnable {
+        override fun run() {
+            refreshHome()
+            refreshHandler.postDelayed(this, AUTO_REFRESH_INTERVAL_MILLIS)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,11 +64,34 @@ class HomeFragment : Fragment() {
     ): View {
         binding.dateText.text = DateFormat.getDateInstance(DateFormat.FULL).format(Date())
         setupDestinationButtons()
+        binding.homeSwipeRefreshLayout.setOnRefreshListener {
+            refreshHome()
+        }
+        binding.homeSwipeRefreshLayout.setColorSchemeResources(R.color.hanyang_blue)
         binding.movementDetail.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
         }
         binding.legacyShuttleButton.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
+            openQuickSettings()
+        }
+        childFragmentManager.setFragmentResultListener(
+            HomeQuickSettingsDialog.REQUEST_KEY,
+            viewLifecycleOwner,
+        ) { _, result ->
+            if (result.getBoolean(HomeQuickSettingsDialog.KEY_OPEN_LEGACY_SHUTTLE, false)) {
+                findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
+            }
+            if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_BUS50_TRANSFER)) {
+                viewModel.setShowBus50Transfer(result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_BUS50_TRANSFER))
+            }
+            if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_SUBWAY_TRANSFER)) {
+                viewModel.setShowSubwayTransfer(result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_SUBWAY_TRANSFER))
+            }
+            if (result.containsKey(HomeQuickSettingsDialog.KEY_SUBWAY_TRANSFER_DESTINATION)) {
+                viewModel.setSubwayTransferDestination(
+                    HomeSubwayTransferDestination.from(result.getString(HomeQuickSettingsDialog.KEY_SUBWAY_TRANSFER_DESTINATION)),
+                )
+            }
         }
         binding.mealDetail.setOnClickListener {
             val args = Bundle().apply {
@@ -62,16 +109,41 @@ class HomeFragment : Fragment() {
             binding.movementLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.mealLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
-        viewModel.data.observe(viewLifecycleOwner) { render(it) }
-        viewModel.queryError.observe(viewLifecycleOwner) {
-            it?.let { Toast.makeText(requireContext(), getString(R.string.shuttle_no_realtime_data), Toast.LENGTH_SHORT).show() }
+        viewModel.data.observe(viewLifecycleOwner) {
+            binding.homeSwipeRefreshLayout.isRefreshing = false
+            render(it)
         }
-        viewModel.fetchData()
+        viewModel.showBus50Transfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
+        viewModel.showSubwayTransfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
+        viewModel.subwayTransferDestination.observe(viewLifecycleOwner) { render(viewModel.data.value) }
+        viewModel.queryError.observe(viewLifecycleOwner) {
+            it?.let {
+                binding.homeSwipeRefreshLayout.isRefreshing = false
+                Toast.makeText(requireContext(), getString(R.string.shuttle_no_realtime_data), Toast.LENGTH_SHORT).show()
+            }
+        }
+        moveToNearestDeparture()
+        refreshHome()
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        refreshHandler.removeCallbacks(autoRefreshRunnable)
+        refreshHandler.postDelayed(autoRefreshRunnable, AUTO_REFRESH_INTERVAL_MILLIS)
+    }
+
+    override fun onPause() {
+        refreshHandler.removeCallbacks(autoRefreshRunnable)
+        super.onPause()
+    }
+
     private fun setupDestinationButtons() {
+        binding.destinationGroup.clearOnButtonCheckedListeners()
         binding.destinationGroup.removeAllViews()
+        val textColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_text)
+        val backgroundColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_background)
+        val strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_stroke)
         selectedDeparture.destinations.forEach { destination ->
             val button = MaterialButton(requireContext(), null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
                 id = View.generateViewId()
@@ -81,7 +153,9 @@ class HomeFragment : Fragment() {
                 insetBottom = 0
                 isCheckable = true
                 isAllCaps = false
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.hanyang_blue))
+                setTextColor(textColor)
+                backgroundTintList = backgroundColor
+                this.strokeColor = strokeColor
                 layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
                 tag = destination
             }
@@ -94,6 +168,74 @@ class HomeFragment : Fragment() {
             selectedDestination = destination
             render(viewModel.data.value)
         }
+    }
+
+    private fun moveToNearestDeparture() {
+        if (setNearestDeparture || !hasLocationPermission()) return
+        val client = LocationServices.getFusedLocationProviderClient(requireActivity())
+        client.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null && isFresh(location)) {
+                    selectNearestDeparture(location)
+                } else {
+                    requestCurrentLocation(client)
+                }
+            }
+            .addOnFailureListener {
+                requestCurrentLocation(client)
+            }
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        val context = context ?: return false
+        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun isFresh(location: Location): Boolean {
+        val ageMillis = (SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos) / 1_000_000
+        return ageMillis in 0..LOCATION_MAX_AGE_MILLIS
+    }
+
+    private fun requestCurrentLocation(client: FusedLocationProviderClient) {
+        if (!hasLocationPermission()) return
+        val tokenSource = CancellationTokenSource()
+        client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token)
+            .addOnSuccessListener { location ->
+                location?.let { selectNearestDeparture(it) }
+            }
+            .addOnFailureListener {
+                Log.e("HomeFragment", "Failed to get user location", it)
+            }
+    }
+
+    private fun selectNearestDeparture(location: Location) {
+        if (setNearestDeparture) return
+        val nearestDeparture = HomeDeparture.entries.minByOrNull { it.distanceTo(location) } ?: return
+        setNearestDeparture = true
+        if (nearestDeparture == selectedDeparture) return
+
+        selectedDeparture = nearestDeparture
+        if (selectedDestination !in selectedDeparture.destinations) {
+            selectedDestination = selectedDeparture.destinations.first()
+        }
+        setupDestinationButtons()
+        render(viewModel.data.value)
+    }
+
+    private fun openQuickSettings() {
+        if (childFragmentManager.findFragmentByTag(HOME_QUICK_SETTINGS_TAG) != null) return
+        HomeQuickSettingsDialog.newInstance(
+            showBus50Transfer = viewModel.showBus50Transfer.value ?: true,
+            showSubwayTransfer = viewModel.showSubwayTransfer.value ?: true,
+            subwayTransferDestination = viewModel.subwayTransferDestination.value ?: HomeSubwayTransferDestination.SEOUL,
+        ).show(childFragmentManager, HOME_QUICK_SETTINGS_TAG)
+    }
+
+    private fun refreshHome() {
+        binding.dateText.text = DateFormat.getDateInstance(DateFormat.FULL).format(Date())
+        moveToNearestDeparture()
+        viewModel.fetchData()
     }
 
     private fun render(data: HomePageQuery.Data?) {
@@ -111,24 +253,35 @@ class HomeFragment : Fragment() {
         binding.movementContainer.removeAllViews()
         if (data == null) return
 
-        val shuttleRows = shuttleEntries(data)
-            .take(3)
-            .map { entry ->
+        val route = selectedDeparture.routeTo(selectedDestination)
+        val shuttleCandidates = shuttleEntries(data).take(2)
+        val transferGroups = shuttleCandidates.map { transferConnections(data, route, it) }
+        val shuttleRows = shuttleCandidates.flatMapIndexed { index, entry ->
+            val routeDisplay = routeDisplay(route, entry)
+            listOf(
                 HomeRow(
-                    badge = routeBadge(entry.route.tag, entry.route.name),
+                    badge = routeDisplay.badge,
                     title = getString(R.string.home_departure_format, compactTime(entry.time)),
                     subtitle = routeSubtitle(entry),
                     trailing = minutesUntil(entry.time)?.let { getString(R.string.home_minutes, it) } ?: getString(R.string.home_check),
-                    tint = routeColor(entry.route.tag, entry.route.name),
-                )
-            }
+                    tint = routeDisplay.tint,
+                ),
+            ) + displayableConnections(index, route, transferGroups, shuttleCandidates).map { it.row }
+        }
         val busRows = busAlternatives(data).take(2)
-        val rows = shuttleRows + busRows
+        val nextShuttleMinutes = shuttleCandidates.firstOrNull()?.time?.let { minutesUntil(it) }
+        val shouldEmphasizeSupport = nextShuttleMinutes?.let { it > SUPPORT_EMPHASIS_THRESHOLD_MINUTES } ?: true
 
-        if (rows.isEmpty()) {
+        if (shuttleRows.isEmpty() && busRows.isEmpty()) {
             addEmptyRow(binding.movementContainer, R.string.home_no_data_title, R.string.home_no_data_message)
         } else {
-            rows.forEach { addHomeRow(binding.movementContainer, it) }
+            shuttleRows.forEach { addHomeRow(binding.movementContainer, it) }
+            if (busRows.isNotEmpty()) {
+                addSupportHeader(binding.movementContainer, shouldEmphasizeSupport)
+                busRows
+                    .take(if (shouldEmphasizeSupport) 4 else 2)
+                    .forEach { addHomeRow(binding.movementContainer, it) }
+            }
         }
     }
 
@@ -145,53 +298,344 @@ class HomeFragment : Fragment() {
     }
 
     private fun busAlternatives(data: HomePageQuery.Data): List<HomeRow> {
-        val routeIds = when (selectedDestination) {
-            HomeDestination.STATION -> setOf(216000068)
-            HomeDestination.TERMINAL -> setOf(216000016, 216000082, 216000102)
-            HomeDestination.JUNGANG -> setOf(216000016, 216000082, 216000102)
-            HomeDestination.DORMITORY -> setOf(216000068)
+        fun item(routeSeq: Int, stopSeq: Int): HomePageQuery.Bus? {
+            return data.bus.firstOrNull { it.route.seq == routeSeq && it.stop.seq == stopSeq }
         }
-        return data.bus
-            .filter { it.route.seq in routeIds }
-            .mapNotNull { item ->
-                val minutes = item.arrival.firstOrNull()?.minutes ?: return@mapNotNull null
-                HomeRow(
-                    badge = item.route.name,
-                    title = getString(R.string.home_bus_title_format, item.route.name),
-                    subtitle = getString(R.string.home_bus_subtitle_format, item.stop.name),
-                    trailing = getString(R.string.home_minutes, minutes),
-                    tint = ContextCompat.getColor(requireContext(), R.color.blue_bus),
+
+        fun option(item: HomePageQuery.Bus?, tint: Int): HomeRow? {
+            if (item == null) return null
+            val minutes = item.arrival.firstOrNull()?.minutes ?: return null
+            return HomeRow(
+                badge = item.route.name,
+                title = getString(R.string.home_bus_title_format, item.route.name),
+                subtitle = getString(R.string.home_bus_subtitle_format, item.stop.name),
+                trailing = getString(R.string.home_minutes, minutes),
+                tint = tint,
+            )
+        }
+
+        fun best(vararg options: HomeRow?): HomeRow? {
+            return options.filterNotNull().minByOrNull { row -> row.trailing.filter(Char::isDigit).toIntOrNull() ?: Int.MAX_VALUE }
+        }
+
+        val green = ContextCompat.getColor(requireContext(), R.color.green_bus)
+        val blue = ContextCompat.getColor(requireContext(), R.color.blue_bus)
+        val route80A = best(
+            option(item(216000081, 216000028), blue),
+            option(item(216000101, 216000028), blue),
+        )
+        val terminal80B = best(
+            option(item(216000082, 216000077), blue),
+            option(item(216000102, 216000077), blue),
+        )
+        val jungang80B = best(
+            option(item(216000082, 217000140), blue),
+            option(item(216000102, 217000140), blue),
+        )
+
+        return when (selectedDeparture to selectedDestination) {
+            HomeDeparture.DORMITORY to HomeDestination.STATION -> listOf(
+                option(item(216000068, 216000383), green),
+            )
+            HomeDeparture.DORMITORY to HomeDestination.TERMINAL -> listOf(route80A)
+            HomeDeparture.DORMITORY to HomeDestination.JUNGANG -> listOf(route80A)
+            HomeDeparture.SHUTTLECOCK to HomeDestination.TERMINAL -> listOf(
+                option(item(216000016, 216000152), green),
+            )
+            HomeDeparture.SHUTTLECOCK to HomeDestination.JUNGANG -> listOf(
+                option(item(216000016, 216000152), green),
+            )
+            HomeDeparture.STATION to HomeDestination.DORMITORY -> listOf(
+                option(item(216000068, 216000138), green),
+            )
+            HomeDeparture.TERMINAL to HomeDestination.DORMITORY -> listOf(
+                terminal80B,
+                option(item(216000016, 216000074), green),
+            )
+            HomeDeparture.JUNGANG to HomeDestination.DORMITORY -> listOf(
+                jungang80B,
+                option(item(216000016, 217000264), green),
+            )
+            else -> emptyList()
+        }
+            .filterNotNull()
+            .sortedBy { row -> row.trailing.filter(Char::isDigit).toIntOrNull() ?: Int.MAX_VALUE }
+    }
+
+    private fun transferConnections(
+        data: HomePageQuery.Data,
+        route: HomeShuttleRoute,
+        entry: HomePageQuery.Entry,
+    ): List<HomeConnection> {
+        bus50TransferConnection(data, route, entry)?.let { return listOf(it) }
+        return subwayTransferConnections(data, route, entry)
+    }
+
+    private fun displayableConnections(
+        index: Int,
+        route: HomeShuttleRoute,
+        connectionGroups: List<List<HomeConnection>>,
+        candidates: List<HomePageQuery.Entry>,
+    ): List<HomeConnection> {
+        val connections = connectionGroups.getOrNull(index).orEmpty()
+        val firstConnection = connections.firstOrNull() ?: return emptyList()
+        val laterCandidates = candidates.drop(index + 1)
+        val laterCandidateCanCatch = laterCandidates.any { candidate ->
+            val transferArrival = candidateArrivalDate(candidate, route.destination) ?: return@any false
+            Duration.between(transferArrival, firstConnection.arrivalDate).toMinutes() >= firstConnection.minimumTransferMinutes
+        }
+        return if (laterCandidateCanCatch) emptyList() else connections
+    }
+
+    private fun bus50TransferConnection(
+        data: HomePageQuery.Data,
+        route: HomeShuttleRoute,
+        entry: HomePageQuery.Entry,
+    ): HomeConnection? {
+        if (viewModel.showBus50Transfer.value != true) return null
+        if (route.destination != "TERMINAL" || route.stop !in setOf("dormitory_o", "shuttlecock_o")) return null
+        val terminalArrival = candidateArrivalDate(entry, "TERMINAL") ?: return null
+        val busArrival = data.transferBus
+            .filter { it.stop.seq == 216000759 }
+            .flatMap { it.arrival }
+            .mapNotNull { it.minutes?.let(::timeAfterMinutes) }
+            .filter { !it.isBefore(terminalArrival) }
+            .minOrNull()
+            ?: return null
+        val bufferMinutes = Duration.between(terminalArrival, busArrival).toMinutes().coerceAtLeast(0).toInt()
+        val tint = ContextCompat.getColor(
+            requireContext(),
+            if (bufferMinutes >= 3) R.color.green_bus else R.color.hanyang_orange,
+        )
+        return HomeConnection(
+            row = HomeRow(
+                badge = getString(R.string.home_transfer_bus50_badge),
+                title = getString(R.string.home_transfer_bus50_title, compactTime(busArrival.toLocalTime())),
+                subtitle = getString(R.string.home_transfer_bus50_subtitle),
+                trailing = getString(R.string.home_transfer_buffer, bufferMinutes),
+                tint = tint,
+            ),
+            arrivalDate = busArrival,
+            minimumTransferMinutes = 0,
+        )
+    }
+
+    private fun subwayTransferConnections(
+        data: HomePageQuery.Data,
+        route: HomeShuttleRoute,
+        entry: HomePageQuery.Entry,
+    ): List<HomeConnection> {
+        if (viewModel.showSubwayTransfer.value != true) return emptyList()
+        if (route.destination != "STATION" || route.stop !in setOf("dormitory_o", "shuttlecock_o")) return emptyList()
+        val stationArrival = candidateArrivalDate(entry, "STATION") ?: return emptyList()
+        return bestSubwayConnections(data, stationArrival)
+    }
+
+    private fun bestSubwayConnections(
+        data: HomePageQuery.Data,
+        stationArrival: ZonedDateTime,
+    ): List<HomeConnection> {
+        return when (viewModel.subwayTransferDestination.value ?: HomeSubwayTransferDestination.SEOUL) {
+            HomeSubwayTransferDestination.SEOUL,
+            HomeSubwayTransferDestination.SUWON_YONGIN,
+            HomeSubwayTransferDestination.OIDO -> {
+                subwayArrivalOptions(data)
+                    .filter { canTransfer(it.arrivalDate, stationArrival) }
+                    .minByOrNull { it.arrivalDate }
+                    ?.let { listOf(subwayConnection(it, stationArrival)) }
+                    .orEmpty()
+            }
+            HomeSubwayTransferDestination.INCHEON -> {
+                val direct = subwayArrivalOptions(data, HomeSubwayRouteTarget.INCHEON_DIRECT)
+                    .filter { canTransfer(it.arrivalDate, stationArrival) }
+                    .map { listOf(subwayConnection(it, stationArrival)) }
+                val transfer = oidoTransferSubwayConnections(data, stationArrival)
+                (direct + transfer)
+                    .minByOrNull { it.lastOrNull()?.arrivalDate ?: ZonedDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(1) }
+                    .orEmpty()
+            }
+        }
+    }
+
+    private fun oidoTransferSubwayConnections(
+        data: HomePageQuery.Data,
+        stationArrival: ZonedDateTime,
+    ): List<List<HomeConnection>> {
+        val firstLegs = subwayArrivalOptions(data, HomeSubwayRouteTarget.OIDO)
+            .filter { canTransfer(it.arrivalDate, stationArrival) }
+        val secondLegs = subwayArrivalOptions(data, HomeSubwayRouteTarget.INCHEON_FROM_OIDO)
+        return firstLegs.mapNotNull { firstLeg ->
+            val secondLeg = secondLegs
+                .filter { canTransfer(it.arrivalDate, firstLeg.arrivalDate) }
+                .minByOrNull { it.arrivalDate }
+                ?: return@mapNotNull null
+            listOf(
+                subwayConnection(firstLeg, stationArrival),
+                subwayConnection(secondLeg, firstLeg.arrivalDate),
+            )
+        }
+    }
+
+    private fun subwayArrivalOptions(data: HomePageQuery.Data): List<HomeSubwayArrival> {
+        return when (viewModel.subwayTransferDestination.value ?: HomeSubwayTransferDestination.SEOUL) {
+            HomeSubwayTransferDestination.SEOUL -> subwayArrivalOptions(data, HomeSubwayRouteTarget.SEOUL)
+            HomeSubwayTransferDestination.SUWON_YONGIN -> subwayArrivalOptions(data, HomeSubwayRouteTarget.SUWON_YONGIN)
+            HomeSubwayTransferDestination.INCHEON -> subwayArrivalOptions(data, HomeSubwayRouteTarget.INCHEON_DIRECT)
+            HomeSubwayTransferDestination.OIDO -> subwayArrivalOptions(data, HomeSubwayRouteTarget.OIDO)
+        }
+    }
+
+    private fun subwayArrivalOptions(
+        data: HomePageQuery.Data,
+        target: HomeSubwayRouteTarget,
+    ): List<HomeSubwayArrival> {
+        if (target == HomeSubwayRouteTarget.OIDO) {
+            return subwayArrivalOptionsFrom(
+                data = data,
+                stationId = "K449",
+                direction = "down",
+                badge = getString(R.string.subway_line4),
+                tint = ContextCompat.getColor(requireContext(), R.color.subway_line4),
+            ) { it.terminal.stationID == "K456" } + subwayArrivalOptionsFrom(
+                data = data,
+                stationId = "K251",
+                direction = "down",
+                badge = getString(R.string.home_transfer_subway_suin_bundang_badge),
+                tint = ContextCompat.getColor(requireContext(), R.color.hanyang_orange),
+            ) { it.terminal.stationID >= "K258" && it.terminal.stationID.startsWith("K2") }
+        }
+        val subway = when (target) {
+            HomeSubwayRouteTarget.SEOUL -> data.subway.firstOrNull { it.stationID == "K449" }
+            HomeSubwayRouteTarget.SUWON_YONGIN,
+            HomeSubwayRouteTarget.INCHEON_DIRECT,
+            HomeSubwayRouteTarget.INCHEON_FROM_OIDO -> data.subway.firstOrNull { it.stationID == "K258" }
+            HomeSubwayRouteTarget.OIDO -> null
+        }
+        val direction = when (target) {
+            HomeSubwayRouteTarget.SEOUL,
+            HomeSubwayRouteTarget.SUWON_YONGIN -> "up"
+            HomeSubwayRouteTarget.INCHEON_DIRECT,
+            HomeSubwayRouteTarget.INCHEON_FROM_OIDO,
+            HomeSubwayRouteTarget.OIDO -> "down"
+        }
+        val badge = when (target) {
+            HomeSubwayRouteTarget.SEOUL -> getString(R.string.subway_line4)
+            else -> getString(R.string.home_transfer_subway_suin_bundang_badge)
+        }
+        val tint = ContextCompat.getColor(
+            requireContext(),
+            when (target) {
+                HomeSubwayRouteTarget.SEOUL -> R.color.subway_line4
+                else -> R.color.hanyang_orange
+            },
+        )
+        return subwayArrivalOptionsFrom(data, subway?.stationID, direction, badge, tint) { subwayEntryEligible(target, it) }
+    }
+
+    private fun subwayArrivalOptionsFrom(
+        data: HomePageQuery.Data,
+        stationId: String?,
+        direction: String,
+        badge: String,
+        tint: Int,
+        isEligible: (HomePageQuery.Entry1) -> Boolean,
+    ): List<HomeSubwayArrival> {
+        val subway = data.subway.firstOrNull { it.stationID == stationId }
+        return subway?.arrival
+            ?.firstOrNull { it.direction == direction }
+            ?.entries
+            ?.filter(isEligible)
+            ?.map {
+                HomeSubwayArrival(
+                    lineBadge = badge,
+                    terminalName = it.terminal.name,
+                    arrivalDate = timeAfterMinutes(it.minutes),
+                    tint = tint,
                 )
             }
-            .sortedBy { row -> row.trailing.filter(Char::isDigit).toIntOrNull() ?: Int.MAX_VALUE }
+            .orEmpty()
+    }
+
+    private fun subwayEntryEligible(target: HomeSubwayRouteTarget, entry: HomePageQuery.Entry1): Boolean {
+        return when (target) {
+            HomeSubwayRouteTarget.INCHEON_DIRECT,
+            HomeSubwayRouteTarget.INCHEON_FROM_OIDO -> entry.terminal.stationID > "K258" && entry.terminal.stationID.startsWith("K2")
+            HomeSubwayRouteTarget.OIDO -> entry.terminal.stationID >= "K258" && entry.terminal.stationID.startsWith("K2")
+            else -> true
+        }
+    }
+
+    private fun subwayConnection(
+        arrival: HomeSubwayArrival,
+        transferStartDate: ZonedDateTime,
+    ): HomeConnection {
+        val bufferMinutes = Duration.between(transferStartDate, arrival.arrivalDate).toMinutes().coerceAtLeast(0).toInt()
+        return HomeConnection(
+            row = HomeRow(
+                badge = arrival.lineBadge,
+                title = getString(R.string.home_transfer_subway_title, arrival.terminalName),
+                subtitle = getString(R.string.home_transfer_subway_subtitle),
+                trailing = getString(R.string.home_transfer_buffer, bufferMinutes),
+                tint = arrival.tint,
+            ),
+            arrivalDate = arrival.arrivalDate,
+            minimumTransferMinutes = SUBWAY_MINIMUM_TRANSFER_MINUTES,
+        )
+    }
+
+    private fun canTransfer(arrivalDate: ZonedDateTime, previousArrivalDate: ZonedDateTime): Boolean {
+        return Duration.between(previousArrivalDate, arrivalDate).toMinutes() >= SUBWAY_MINIMUM_TRANSFER_MINUTES
+    }
+
+    private fun candidateArrivalDate(entry: HomePageQuery.Entry, destination: String): ZonedDateTime? {
+        val stopId = shuttleStopId(destination) ?: return null
+        return entry.stops.firstOrNull { it.stop == stopId }?.time?.let(::dateTimeFor)
+    }
+
+    private fun dateTimeFor(time: LocalTime): ZonedDateTime {
+        val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+        var target = now.withHour(time.hour).withMinute(time.minute).withSecond(0).withNano(0)
+        if (target.isBefore(now.minusMinutes(1))) target = target.plusDays(1)
+        return target
+    }
+
+    private fun timeAfterMinutes(minutes: Int): ZonedDateTime {
+        return ZonedDateTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(minutes.toLong())
     }
 
     private fun renderMeals(data: HomePageQuery.Data?) {
         binding.mealContainer.removeAllViews()
         if (data == null) return
         val period = activeMealPeriod()
-        val rows = data.cafeteria
+        val sections = data.cafeteria
             .sortedBy { it.seq }
-            .flatMap { cafeteria ->
-                cafeteria.menus
+            .mapNotNull { cafeteria ->
+                val items = cafeteria.menus
                     .filter { it.type.contains(period.marker) }
-                    .take(2)
-                    .map { menu ->
-                        HomeRow(
-                            badge = cafeteriaName(cafeteria.seq),
-                            title = representativeMenu(menu.food),
-                            subtitle = runningTime(cafeteria, period).orEmpty(),
-                            trailing = menu.price,
-                            tint = ContextCompat.getColor(requireContext(), R.color.hanyang_blue),
-                        )
+                    .mapNotNull { menu ->
+                        val text = representativeMenu(menu.food)
+                        if (text.isBlank()) {
+                            null
+                        } else {
+                            HomeMealItem(text, menu.price)
+                        }
                     }
+                if (items.isEmpty()) {
+                    null
+                } else {
+                    HomeMealSection(
+                        cafeteria = cafeteriaName(cafeteria.seq),
+                        runningTime = runningTime(cafeteria, period).orEmpty(),
+                        items = items,
+                    )
+                }
             }
             .take(5)
 
-        if (rows.isEmpty()) {
+        if (sections.isEmpty()) {
             addEmptyRow(binding.mealContainer, R.string.home_meal_empty_title, R.string.home_meal_empty_message)
         } else {
-            rows.forEach { addHomeRow(binding.mealContainer, it) }
+            sections.forEach { addMealSection(binding.mealContainer, it) }
         }
     }
 
@@ -199,11 +643,80 @@ class HomeFragment : Fragment() {
         val rowBinding = ItemHomeRowBinding.inflate(layoutInflater, container, false)
         rowBinding.badge.text = row.badge
         rowBinding.badge.backgroundTintList = ColorStateList.valueOf(row.tint)
+        rowBinding.root.backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(row.tint, ROW_BACKGROUND_ALPHA))
         rowBinding.title.text = row.title
         rowBinding.subtitle.text = row.subtitle
         rowBinding.trailing.text = row.trailing
         rowBinding.trailing.setTextColor(row.tint)
         container.addView(rowBinding.root, rowLayoutParams(container.childCount))
+    }
+
+    private fun addMealSection(container: LinearLayout, section: HomeMealSection) {
+        val sectionView = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundResource(R.drawable.bg_home_row)
+            setPadding(dp(12), dp(12), dp(12), dp(12))
+        }
+
+        sectionView.addView(TextView(requireContext()).apply {
+            text = section.cafeteria
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_text))
+            textSize = 16f
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            maxLines = 1
+            ellipsize = TextUtils.TruncateAt.END
+        })
+        if (section.runningTime.isNotBlank()) {
+            sectionView.addView(TextView(requireContext()).apply {
+                text = section.runningTime
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_text))
+                textSize = 12f
+                maxLines = 1
+                ellipsize = TextUtils.TruncateAt.END
+            }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                topMargin = dp(3)
+            })
+        }
+
+        section.items.forEachIndexed { index, item ->
+            if (index > 0) {
+                sectionView.addView(View(requireContext()).apply {
+                    setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.calendar_grid_line))
+                }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(1)).apply {
+                    topMargin = dp(8)
+                    bottomMargin = dp(8)
+                })
+            } else {
+                sectionView.addView(View(requireContext()), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(10)))
+            }
+            sectionView.addView(mealMenuRow(item))
+        }
+
+        container.addView(sectionView, rowLayoutParams(container.childCount))
+    }
+
+    private fun mealMenuRow(item: HomeMealItem): View {
+        return LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            addView(TextView(requireContext()).apply {
+                text = item.menu
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_text))
+                textSize = 14f
+                maxLines = 1
+                ellipsize = TextUtils.TruncateAt.END
+            }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            addView(TextView(requireContext()).apply {
+                text = item.price
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.hanyang_blue))
+                textSize = 14f
+                gravity = Gravity.END
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                maxLines = 1
+            }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                leftMargin = dp(8)
+            })
+        }
     }
 
     private fun addEmptyRow(container: LinearLayout, titleRes: Int, messageRes: Int) {
@@ -213,6 +726,24 @@ class HomeFragment : Fragment() {
         view.findViewById<TextView>(R.id.subtitle).text = getString(messageRes)
         view.findViewById<TextView>(R.id.trailing).visibility = View.GONE
         container.addView(view, rowLayoutParams(container.childCount))
+    }
+
+    private fun addSupportHeader(container: LinearLayout, emphasized: Boolean) {
+        val header = TextView(requireContext()).apply {
+            text = getString(if (emphasized) R.string.home_support_emphasized else R.string.home_support_default)
+            setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    if (emphasized) R.color.primary_text else R.color.secondary_text,
+                ),
+            )
+            textSize = 13f
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+        }
+        container.addView(header, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = resources.getDimensionPixelSize(R.dimen.home_row_gap)
+            bottomMargin = dp(2)
+        })
     }
 
     private fun rowLayoutParams(index: Int): LinearLayout.LayoutParams {
@@ -225,8 +756,40 @@ class HomeFragment : Fragment() {
     }
 
     private fun routeSubtitle(entry: HomePageQuery.Entry): String {
-        val stopNames = entry.stops.map { localizedStopName(it.stop) }.filter { it.isNotBlank() }
-        return if (stopNames.isEmpty()) entry.route.name else stopNames.joinToString(" · ")
+        val route = selectedDeparture.routeTo(selectedDestination)
+        val pathStopIds = shuttlePathStopIds(route.stop, route.destination, entry.stops.map { it.stop })
+        val viaStops = pathStopIds.drop(1).dropLast(1).map { localizedViaStopName(it) }.filter { it.isNotBlank() }
+        return if (viaStops.isEmpty()) {
+            getString(R.string.home_shuttle_no_via)
+        } else {
+            getString(R.string.home_shuttle_via, viaStops.joinToString(" · "))
+        }
+    }
+
+    private fun shuttlePathStopIds(stopName: String, destination: String, stopIds: List<String>): List<String> {
+        val destinationStopId = shuttleStopId(destination)
+        val startIndex = stopIds.indexOf(stopName)
+        if (startIndex < 0) return stopIds
+        val remainingStopIds = stopIds.drop(startIndex)
+        if (destinationStopId != null) {
+            val destinationIndex = remainingStopIds.indexOf(destinationStopId)
+            if (destinationIndex >= 0) {
+                return remainingStopIds.take(destinationIndex + 1)
+            }
+        }
+        return remainingStopIds
+    }
+
+    private fun shuttleStopId(destination: String): String? = when (destination) {
+        "STATION" -> "station"
+        "TERMINAL" -> "terminal"
+        "JUNGANG" -> "jungang_stn"
+        "CAMPUS" -> "dormitory_i"
+        else -> null
+    }
+
+    private fun localizedViaStopName(stop: String): String {
+        return localizedStopName(if (stop == "shuttlecock_i") "shuttlecock_o" else stop)
     }
 
     private fun localizedStopName(stop: String): String = when (stop) {
@@ -240,23 +803,51 @@ class HomeFragment : Fragment() {
         else -> stop
     }
 
-    private fun routeBadge(tag: String, name: String): String = when {
-        tag == "DH" || tag == "DY" -> getString(R.string.shuttle_type_direct)
-        tag == "DJ" -> getString(R.string.shuttle_type_jungang)
-        tag == "C" -> getString(R.string.shuttle_type_circular)
-        name.endsWith("S") -> getString(R.string.shuttle_type_shuttlecock)
-        name.endsWith("D") -> getString(R.string.shuttle_type_dormitory)
-        else -> name
-    }
+    private fun routeDisplay(route: HomeShuttleRoute, entry: HomePageQuery.Entry): HomeRouteDisplay {
+        val routeTag = entry.route.tag
+        val routeName = entry.route.name
+        val blue = ContextCompat.getColor(requireContext(), R.color.blue_bus)
+        val green = ContextCompat.getColor(requireContext(), R.color.green_bus)
+        val red = ContextCompat.getColor(requireContext(), R.color.red_bus)
+        val hanyangBlue = ContextCompat.getColor(requireContext(), R.color.hanyang_blue)
 
-    private fun routeColor(tag: String, name: String): Int = ContextCompat.getColor(
-        requireContext(),
-        when {
-            tag == "DH" || tag == "DY" || name.endsWith("S") -> R.color.red_bus
-            tag == "DJ" -> R.color.green_bus
-            else -> R.color.blue_bus
-        },
-    )
+        return when (route.stop to route.destination) {
+            "dormitory_o" to "STATION",
+            "shuttlecock_o" to "STATION" -> when {
+                routeTag == "DH" || routeTag == "DJ" -> HomeRouteDisplay(getString(R.string.shuttle_type_direct), red)
+                routeTag == "C" -> HomeRouteDisplay(getString(R.string.shuttle_type_circular), blue)
+                else -> HomeRouteDisplay(getString(R.string.home_badge_free), hanyangBlue)
+            }
+            "dormitory_o" to "TERMINAL",
+            "shuttlecock_o" to "TERMINAL" -> when {
+                routeTag == "DY" -> HomeRouteDisplay(getString(R.string.shuttle_type_direct), red)
+                routeTag == "DJ" -> HomeRouteDisplay(getString(R.string.shuttle_type_jungang), green)
+                routeTag == "C" -> HomeRouteDisplay(getString(R.string.shuttle_type_circular), blue)
+                else -> HomeRouteDisplay(getString(R.string.home_badge_free), hanyangBlue)
+            }
+            "dormitory_o" to "JUNGANG",
+            "shuttlecock_o" to "JUNGANG",
+            "station" to "JUNGANG" -> HomeRouteDisplay(getString(R.string.shuttle_type_jungang), green)
+            "station" to "CAMPUS" -> when {
+                routeTag == "DH" -> HomeRouteDisplay(getString(R.string.shuttle_type_direct), red)
+                routeTag == "DJ" -> HomeRouteDisplay(getString(R.string.shuttle_type_jungang), green)
+                routeTag == "C" -> HomeRouteDisplay(getString(R.string.shuttle_type_circular), blue)
+                else -> HomeRouteDisplay(getString(R.string.home_badge_free), hanyangBlue)
+            }
+            "station" to "TERMINAL" -> when {
+                routeTag == "C" -> HomeRouteDisplay(getString(R.string.shuttle_type_circular), blue)
+                else -> HomeRouteDisplay(getString(R.string.home_badge_free), hanyangBlue)
+            }
+            "terminal" to "CAMPUS",
+            "jungang_stn" to "CAMPUS",
+            "shuttlecock_i" to "CAMPUS" -> when {
+                routeName.endsWith("S") -> HomeRouteDisplay(getString(R.string.shuttle_type_shuttlecock), red)
+                routeName.endsWith("D") -> HomeRouteDisplay(getString(R.string.shuttle_type_dormitory), hanyangBlue)
+                else -> HomeRouteDisplay(getString(R.string.home_badge_free), hanyangBlue)
+            }
+            else -> HomeRouteDisplay(getString(R.string.home_badge_free), hanyangBlue)
+        }
+    }
 
     private fun compactTime(time: LocalTime): String = "%02d:%02d".format(time.hour, time.minute)
 
@@ -304,18 +895,37 @@ class HomeFragment : Fragment() {
     private fun representativeMenu(food: String): String {
         return food
             .replace("\"", "")
+            .replace(Regex("^\\s*\\[[^]]+]\\s*"), "")
+            .replace(Regex("^\\s*<[^>]+>\\s*"), "")
+            .replace(Regex("^\\s*[\\w가-힣]+\\)\\s*"), "")
             .split(Regex("\\s+"))
             .firstOrNull { it.isNotBlank() }
             ?: food
     }
+
+    private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+
+    companion object {
+        private const val LOCATION_MAX_AGE_MILLIS = 60_000L
+        private const val ROW_BACKGROUND_ALPHA = 24
+        private const val HOME_QUICK_SETTINGS_TAG = "HomeQuickSettingsDialog"
+        private const val SUBWAY_MINIMUM_TRANSFER_MINUTES = 5
+        private const val AUTO_REFRESH_INTERVAL_MILLIS = 60_000L
+        private const val SUPPORT_EMPHASIS_THRESHOLD_MINUTES = 20
+    }
 }
 
-private enum class HomeDeparture(val titleRes: Int, val destinations: List<HomeDestination>) {
-    DORMITORY(R.string.shuttle_tab_dormitory_out, listOf(HomeDestination.STATION, HomeDestination.TERMINAL, HomeDestination.JUNGANG)),
-    SHUTTLECOCK(R.string.shuttle_tab_shuttlecock_out, listOf(HomeDestination.STATION, HomeDestination.TERMINAL, HomeDestination.JUNGANG, HomeDestination.DORMITORY)),
-    STATION(R.string.shuttle_tab_station, listOf(HomeDestination.DORMITORY, HomeDestination.TERMINAL, HomeDestination.JUNGANG)),
-    TERMINAL(R.string.shuttle_tab_terminal, listOf(HomeDestination.DORMITORY)),
-    JUNGANG(R.string.shuttle_tab_jungang_station, listOf(HomeDestination.DORMITORY));
+private enum class HomeDeparture(
+    val titleRes: Int,
+    val latitude: Double,
+    val longitude: Double,
+    val destinations: List<HomeDestination>,
+) {
+    DORMITORY(R.string.shuttle_tab_dormitory_out, 37.29339607529377, 126.83630604103446, listOf(HomeDestination.STATION, HomeDestination.TERMINAL, HomeDestination.JUNGANG)),
+    SHUTTLECOCK(R.string.shuttle_tab_shuttlecock_out, 37.29875417910844, 126.83784054072336, listOf(HomeDestination.STATION, HomeDestination.TERMINAL, HomeDestination.JUNGANG, HomeDestination.DORMITORY)),
+    STATION(R.string.shuttle_tab_station, 37.309700971618255, 126.85207173389148, listOf(HomeDestination.DORMITORY, HomeDestination.TERMINAL, HomeDestination.JUNGANG)),
+    TERMINAL(R.string.shuttle_tab_terminal, 37.319338173415936, 126.8455263115596, listOf(HomeDestination.DORMITORY)),
+    JUNGANG(R.string.shuttle_tab_jungang_station, 37.31487247528457, 126.83963540399434, listOf(HomeDestination.DORMITORY));
 
     fun routeTo(destination: HomeDestination): HomeShuttleRoute = when (this to destination) {
         DORMITORY to HomeDestination.STATION -> HomeShuttleRoute("dormitory_o", "STATION")
@@ -331,6 +941,14 @@ private enum class HomeDeparture(val titleRes: Int, val destinations: List<HomeD
         TERMINAL to HomeDestination.DORMITORY -> HomeShuttleRoute("terminal", "CAMPUS") { it.route.name.endsWith("D") }
         JUNGANG to HomeDestination.DORMITORY -> HomeShuttleRoute("jungang_stn", "CAMPUS") { it.route.name.endsWith("D") }
         else -> HomeShuttleRoute("dormitory_o", "STATION")
+    }
+
+    fun distanceTo(location: Location): Float {
+        val departureLocation = Location("home_departure").apply {
+            latitude = this@HomeDeparture.latitude
+            longitude = this@HomeDeparture.longitude
+        }
+        return departureLocation.distanceTo(location)
     }
 }
 
@@ -355,6 +973,17 @@ private data class HomeMealPeriod(
     fun title(context: android.content.Context): String = context.getString(titleRes)
 }
 
+private data class HomeMealSection(
+    val cafeteria: String,
+    val runningTime: String,
+    val items: List<HomeMealItem>,
+)
+
+private data class HomeMealItem(
+    val menu: String,
+    val price: String,
+)
+
 private data class HomeRow(
     val badge: String,
     val title: String,
@@ -362,3 +991,29 @@ private data class HomeRow(
     val trailing: String,
     val tint: Int,
 )
+
+private data class HomeRouteDisplay(
+    val badge: String,
+    val tint: Int,
+)
+
+private data class HomeConnection(
+    val row: HomeRow,
+    val arrivalDate: ZonedDateTime,
+    val minimumTransferMinutes: Int,
+)
+
+private data class HomeSubwayArrival(
+    val lineBadge: String,
+    val terminalName: String,
+    val arrivalDate: ZonedDateTime,
+    val tint: Int,
+)
+
+private enum class HomeSubwayRouteTarget {
+    SEOUL,
+    SUWON_YONGIN,
+    INCHEON_DIRECT,
+    INCHEON_FROM_OIDO,
+    OIDO,
+}

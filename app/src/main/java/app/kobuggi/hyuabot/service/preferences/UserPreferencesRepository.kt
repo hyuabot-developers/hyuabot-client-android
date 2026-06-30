@@ -277,6 +277,72 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             }
     }
 
+    override suspend fun setShowHomeBus50Transfer(show: Boolean) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[HOME_SHOW_BUS50_TRANSFER_KEY] = show
+            }
+        }
+    }
+
+    override suspend fun getShowHomeBus50Transfer(): Flow<Boolean> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[HOME_SHOW_BUS50_TRANSFER_KEY] ?: true
+            }
+    }
+
+    override suspend fun setShowHomeSubwayTransfer(show: Boolean) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[HOME_SHOW_SUBWAY_TRANSFER_KEY] = show
+            }
+        }
+    }
+
+    override suspend fun getShowHomeSubwayTransfer(): Flow<Boolean> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[HOME_SHOW_SUBWAY_TRANSFER_KEY] ?: true
+            }
+    }
+
+    override suspend fun setHomeSubwayTransferDestination(destination: String) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[HOME_SUBWAY_TRANSFER_DESTINATION_KEY] = destination
+            }
+        }
+    }
+
+    override suspend fun getHomeSubwayTransferDestination(): Flow<String> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[HOME_SUBWAY_TRANSFER_DESTINATION_KEY] ?: "seoul"
+            }
+    }
+
     override suspend fun setAnalyticsConsent(enabled: Boolean) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
@@ -380,6 +446,9 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val CALENDAR_KEY = stringPreferencesKey("calendar_version")
         private val SHUTTLE_SHOW_DEPARTURE_TIME_KEY = booleanPreferencesKey("shuttle_show_departure_time")
         private val SHUTTLE_SHOW_BY_DESTINATION_KEY = booleanPreferencesKey("shuttle_show_by_destination")
+        private val HOME_SHOW_BUS50_TRANSFER_KEY = booleanPreferencesKey("home_show_bus50_transfer")
+        private val HOME_SHOW_SUBWAY_TRANSFER_KEY = booleanPreferencesKey("home_show_subway_transfer")
+        private val HOME_SUBWAY_TRANSFER_DESTINATION_KEY = stringPreferencesKey("home_subway_transfer_destination")
         private val ANALYTICS_CONSENT_KEY = booleanPreferencesKey("analytics_consent")
         private val LAUNCH_COUNT_KEY = intPreferencesKey("launch_count")
         private val REVIEW_REQUESTED_AT_KEY = longPreferencesKey("review_requested_at")

@@ -30,33 +30,87 @@ class HomeViewModel @Inject constructor(
     private val _isLoading = MutableLiveData(false)
     private val _data = MutableLiveData<HomePageQuery.Data?>()
     private val _queryError = MutableLiveData<QueryError?>(null)
+    private val _showBus50Transfer = MutableLiveData(true)
+    private val _showSubwayTransfer = MutableLiveData(true)
+    private val _subwayTransferDestination = MutableLiveData(HomeSubwayTransferDestination.SEOUL)
+    private var isFetching = false
 
     val isLoading: LiveData<Boolean> get() = _isLoading
     val data: LiveData<HomePageQuery.Data?> get() = _data
     val queryError: LiveData<QueryError?> get() = _queryError
+    val showBus50Transfer: LiveData<Boolean> get() = _showBus50Transfer
+    val showSubwayTransfer: LiveData<Boolean> get() = _showSubwayTransfer
+    val subwayTransferDestination: LiveData<HomeSubwayTransferDestination> get() = _subwayTransferDestination
+
+    init {
+        viewModelScope.launch {
+            userPreferencesRepository.getShowHomeBus50Transfer().collect {
+                _showBus50Transfer.value = it
+            }
+        }
+        viewModelScope.launch {
+            userPreferencesRepository.getShowHomeSubwayTransfer().collect {
+                _showSubwayTransfer.value = it
+            }
+        }
+        viewModelScope.launch {
+            userPreferencesRepository.getHomeSubwayTransferDestination().collect {
+                _subwayTransferDestination.value = HomeSubwayTransferDestination.from(it)
+            }
+        }
+    }
 
     fun fetchData() {
         viewModelScope.launch {
+            if (isFetching) return@launch
+            isFetching = true
             if (_data.value == null) _isLoading.value = true
-            val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-            val mealDate = if (now.hour >= 20) now.toLocalDate().plusDays(1) else now.toLocalDate()
-            val response = apolloClient.query(
-                HomePageQuery(
-                    after = Optional.present(LocalTime.now(ZoneId.of("Asia/Seoul"))),
-                    weekday = currentSubwayWeekday(now),
-                    date = mealDate,
-                    campusID = userPreferencesRepository.campusID.first(),
-                    busInput = homeBusInput(),
-                )
-            ).fetchPolicy(FetchPolicy.NetworkOnly).execute()
+            try {
+                val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                val mealDate = if (now.hour >= 20) now.toLocalDate().plusDays(1) else now.toLocalDate()
+                val response = apolloClient.query(
+                    HomePageQuery(
+                        after = Optional.present(LocalTime.now(ZoneId.of("Asia/Seoul"))),
+                        weekday = currentSubwayWeekday(now),
+                        date = mealDate,
+                        campusID = userPreferencesRepository.campusID.first(),
+                        busInput = homeBusInput(),
+                    )
+                ).fetchPolicy(FetchPolicy.NetworkOnly).execute()
 
-            if (response.data == null || response.exception != null) {
+                if (response.data == null || response.exception != null) {
+                    _queryError.value = QueryError.SERVER_ERROR
+                } else {
+                    _data.value = response.data
+                    _queryError.value = null
+                }
+            } catch (_: Exception) {
                 _queryError.value = QueryError.SERVER_ERROR
-            } else {
-                _data.value = response.data
-                _queryError.value = null
+            } finally {
+                _isLoading.value = false
+                isFetching = false
             }
-            _isLoading.value = false
+        }
+    }
+
+    fun setShowBus50Transfer(show: Boolean) {
+        _showBus50Transfer.value = show
+        viewModelScope.launch {
+            userPreferencesRepository.setShowHomeBus50Transfer(show)
+        }
+    }
+
+    fun setShowSubwayTransfer(show: Boolean) {
+        _showSubwayTransfer.value = show
+        viewModelScope.launch {
+            userPreferencesRepository.setShowHomeSubwayTransfer(show)
+        }
+    }
+
+    fun setSubwayTransferDestination(destination: HomeSubwayTransferDestination) {
+        _subwayTransferDestination.value = destination
+        viewModelScope.launch {
+            userPreferencesRepository.setHomeSubwayTransferDestination(destination.value)
         }
     }
 
