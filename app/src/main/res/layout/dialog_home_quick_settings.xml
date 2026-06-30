@@ -211,12 +211,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:background="@drawable/bg_rounded_hanyang_blue"
+            android:background="@drawable/bg_rounded_home_action"
+            android:drawableStart="@drawable/ic_shuttle_bus"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/hanyang_blue"
             android:gravity="center"
             android:minWidth="88dp"
             android:paddingHorizontal="14dp"
             android:text="@string/home_quick_settings_legacy_button"
-            android:textColor="@android:color/white"
+            android:textColor="@color/hanyang_blue"
             android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>

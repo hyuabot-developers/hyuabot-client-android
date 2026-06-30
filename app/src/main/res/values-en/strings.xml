@@ -28,7 +28,7 @@
     <string name="home_quick_settings_subway_destination_incheon">Incheon</string>
     <string name="home_quick_settings_subway_destination_oido">Oido</string>
     <string name="home_transfer_bus50_badge">50</string>
-    <string name="home_transfer_bus50_title">Arrives %1$s</string>
+    <string name="home_transfer_bus50_title">Expected at %1$s</string>
     <string name="home_transfer_bus50_subtitle">Transfer to Bus 50 at Terminal</string>
     <string name="home_transfer_buffer">+%1$d min</string>
     <string name="home_transfer_subway_suin_bundang_badge">Suin</string>
@@ -44,10 +44,19 @@
     <string name="home_departure_format">Departs %1$s</string>
     <string name="home_minutes">%1$d min</string>
     <string name="home_check">Check</string>
-    <string name="home_no_data_title">No immediate routes</string>
-    <string name="home_no_data_message">Check again soon or open the full shuttle screen for the timetable.</string>
+    <string name="home_no_data_title">No shuttle available now</string>
+    <string name="home_no_data_message">Check again later or use an alternative route below.</string>
     <string name="home_bus_title_format">Bus %1$s</string>
     <string name="home_bus_subtitle_format">%1$s stop</string>
+    <string name="home_alt_bus_direction">Toward %1$s</string>
+    <string name="home_alt_dormitory_nearby">Hanyang Univ. Dormitory Front</string>
+    <string name="home_alt_gyeonggi_technopark">Gyeonggi Techno Park</string>
+    <string name="home_alt_sangnoksu">Sangnoksu Station</string>
+    <string name="home_alt_seongan_entrance">Seongan-gil Entrance</string>
+    <string name="home_alt_direction_intercity_terminal">Intercity Bus Terminal</string>
+    <string name="home_alt_direction_sangnoksu">Sangnoksu Station</string>
+    <string name="home_alt_direction_shuttlecock_dormitory">Shuttlecock · Dormitory</string>
+    <string name="home_alt_intercity_terminal">Intercity Bus Terminal</string>
     <string name="home_shuttle_no_via">No stops in between</string>
     <string name="home_shuttle_via">Via %1$s</string>
     <string name="home_badge_free">Free</string>
@@ -55,8 +64,8 @@
     <string name="home_meal_lunch">Lunch</string>
     <string name="home_meal_dinner">Dinner</string>
     <string name="home_meal_tomorrow_breakfast">Tomorrow breakfast</string>
-    <string name="home_meal_empty_title">No meals to show</string>
-    <string name="home_meal_empty_message">The cafeteria may be closed or menus may not be registered.</string>
+    <string name="home_meal_empty_title">%1$s menu is unavailable</string>
+    <string name="home_meal_empty_message">Check other meal times in all menus.</string>
     <!-- 셔틀버스 도착 정보 탭 -->
     <string name="shuttle_tab_dormitory_out">Dormitory</string>
     <string name="shuttle_tab_shuttlecock_out">Shuttlecoke</string>

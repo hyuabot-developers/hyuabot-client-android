@@ -132,12 +132,12 @@ private fun subwayRow(
         context.getString(
             R.string.transfer_subway_format,
             entry.minutes,
-            localizedStationName(context, entry.terminalID, entry.terminalName),
+            localizedSubwayStationName(context, entry.terminalID, entry.terminalName),
         )
     }
     val timeline = entries.map { (direction, entry) ->
         TransitTimelineEntry(
-            destination = localizedStationName(context, entry.terminalID, entry.terminalName),
+            destination = localizedSubwayStationName(context, entry.terminalID, entry.terminalName),
             minutes = entry.minutes,
             stops = entry.stops,
             locationLabel = entry.location,
@@ -171,7 +171,7 @@ private val SUBWAY_STATION_NAMES: Map<String, Int> = mapOf(
     "K456" to R.string.subway_station_K456,
 )
 
-private fun localizedStationName(context: Context, stationID: String, fallback: String): String =
+fun localizedSubwayStationName(context: Context, stationID: String, fallback: String): String =
     SUBWAY_STATION_NAMES[stationID]?.let { context.getString(it) } ?: fallback
 
 private fun busRow(

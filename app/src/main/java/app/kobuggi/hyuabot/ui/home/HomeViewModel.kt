@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.kobuggi.hyuabot.BusDepartureLogDialogQuery
 import app.kobuggi.hyuabot.HomePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.type.BusRouteStopInput
@@ -33,6 +34,7 @@ class HomeViewModel @Inject constructor(
     private val _showBus50Transfer = MutableLiveData(true)
     private val _showSubwayTransfer = MutableLiveData(true)
     private val _subwayTransferDestination = MutableLiveData(HomeSubwayTransferDestination.SEOUL)
+    private val _bus50TerminalLogTimes = MutableLiveData<List<LocalTime>>(emptyList())
     private var isFetching = false
 
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -41,6 +43,7 @@ class HomeViewModel @Inject constructor(
     val showBus50Transfer: LiveData<Boolean> get() = _showBus50Transfer
     val showSubwayTransfer: LiveData<Boolean> get() = _showSubwayTransfer
     val subwayTransferDestination: LiveData<HomeSubwayTransferDestination> get() = _subwayTransferDestination
+    val bus50TerminalLogTimes: LiveData<List<LocalTime>> get() = _bus50TerminalLogTimes
 
     init {
         viewModelScope.launch {
@@ -82,6 +85,7 @@ class HomeViewModel @Inject constructor(
                     _queryError.value = QueryError.SERVER_ERROR
                 } else {
                     _data.value = response.data
+                    _bus50TerminalLogTimes.value = fetchBus50TerminalLogTimes(now.toLocalDate())
                     _queryError.value = null
                 }
             } catch (_: Exception) {
@@ -135,4 +139,32 @@ class HomeViewModel @Inject constructor(
         BusRouteStopInput(route = 216000102, stop = 217000140, limit = Optional.present(1)),
         BusRouteStopInput(route = 216000016, stop = 217000264, limit = Optional.present(1)),
     )
+
+    private suspend fun fetchBus50TerminalLogTimes(today: LocalDate): List<LocalTime> {
+        val dates = listOf(
+            today.minusDays(7),
+            today.minusDays(2),
+            today.minusDays(1),
+        )
+        return try {
+            val response = apolloClient.query(
+                BusDepartureLogDialogQuery(
+                    listOf(
+                        BusRouteStopInput(
+                            route = 216000075,
+                            stop = 216000759,
+                            dates = Optional.present(dates),
+                        ),
+                    ),
+                ),
+            ).fetchPolicy(FetchPolicy.NetworkOnly).execute()
+            response.data?.bus
+                ?.flatMap { it.log }
+                ?.map { it.time }
+                ?.sorted()
+                .orEmpty()
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
 }

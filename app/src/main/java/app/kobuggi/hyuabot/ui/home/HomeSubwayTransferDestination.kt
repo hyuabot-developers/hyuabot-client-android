@@ -10,7 +10,15 @@ enum class HomeSubwayTransferDestination(val value: String, val titleRes: Int) {
 
     companion object {
         fun from(value: String?): HomeSubwayTransferDestination {
-            return entries.firstOrNull { it.value == value } ?: SEOUL
+            return entries.firstOrNull { it.value == value || it.debugValue == value } ?: SEOUL
         }
     }
+
+    val debugValue: String
+        get() = when (this) {
+            SEOUL -> "seoul"
+            SUWON_YONGIN -> "suwonYongin"
+            INCHEON -> "incheon"
+            OIDO -> "oido"
+        }
 }
