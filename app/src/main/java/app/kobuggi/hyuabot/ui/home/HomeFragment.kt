@@ -121,6 +121,7 @@ class HomeFragment : Fragment() {
         viewModel.showBus50Transfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.showSubwayTransfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.subwayTransferDestination.observe(viewLifecycleOwner) { render(viewModel.data.value) }
+        viewModel.bus50TerminalLogTimes.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let {
                 binding.homeSwipeRefreshLayout.isRefreshing = false
@@ -432,6 +433,11 @@ class HomeFragment : Fragment() {
             .mapNotNull { it.minutes?.let(::timeAfterMinutes) }
             .filter { !it.isBefore(terminalArrival) }
             .minOrNull()
+            ?: viewModel.bus50TerminalLogTimes.value
+                .orEmpty()
+                .map(::dateTimeFor)
+                .filter { !it.isBefore(terminalArrival) }
+                .minOrNull()
             ?: return null
         val bufferMinutes = Duration.between(terminalArrival, busArrival).toMinutes().coerceAtLeast(0).toInt()
         val tint = ContextCompat.getColor(
@@ -637,9 +643,7 @@ class HomeFragment : Fragment() {
 
     private fun dateTimeFor(time: LocalTime): ZonedDateTime {
         val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-        var target = now.withHour(time.hour).withMinute(time.minute).withSecond(0).withNano(0)
-        if (target.isBefore(now.minusMinutes(1))) target = target.plusDays(1)
-        return target
+        return now.withHour(time.hour).withMinute(time.minute).withSecond(0).withNano(0)
     }
 
     private fun timeAfterMinutes(minutes: Int): ZonedDateTime {
@@ -958,8 +962,7 @@ class HomeFragment : Fragment() {
 
     private fun minutesUntil(time: LocalTime): Int? {
         val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-        var target = now.withHour(time.hour).withMinute(time.minute).withSecond(0).withNano(0)
-        if (target.isBefore(now)) target = target.plusDays(1)
+        val target = now.withHour(time.hour).withMinute(time.minute).withSecond(0).withNano(0)
         return ceil((target.toEpochSecond() - now.toEpochSecond()) / 60.0).toInt().coerceAtLeast(0)
     }
 
