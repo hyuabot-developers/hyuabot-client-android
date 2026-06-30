@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogBusRouteBinding
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -32,7 +33,7 @@ class BusRouteDialog @Inject constructor() : DialogFragment() {
             }
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+            binding.loadingLayout.setSkeletonLoading(it)
         }
         return binding.root
     }

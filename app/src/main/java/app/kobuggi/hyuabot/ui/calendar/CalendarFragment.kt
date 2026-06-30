@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentCalendarBinding
 import app.kobuggi.hyuabot.service.database.entity.Event
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -42,7 +43,7 @@ class CalendarFragment @Inject constructor() : Fragment() {
         viewModel.apply {
             fetchCalendarVersion()
             updating.observe(viewLifecycleOwner) { updating ->
-                binding.loadingLayout.visibility = if (updating) View.VISIBLE else View.GONE
+                binding.loadingLayout.setSkeletonLoading(updating)
             }
             queryError.observe(viewLifecycleOwner) {
                 it?.let { Toast.makeText(requireContext(), getString(R.string.calendar_error), Toast.LENGTH_SHORT).show() }

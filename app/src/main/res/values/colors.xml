@@ -18,6 +18,8 @@
     <color name="secondary_text">#757575</color>
     <!-- 배경 색상 -->
     <color name="background">#FFFFFF</color>
+    <color name="skeleton_placeholder">#E0E0E0</color>
+    <color name="skeleton_placeholder_highlight">#F5F5F5</color>
     <!-- 캘린더 -->
     <color name="calendar_grid_line">#E0E0E0</color>
     <color name="calendar_today_fill">#0E4A84</color>

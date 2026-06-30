@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentContactBinding
 import app.kobuggi.hyuabot.service.database.entity.Contact
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -40,7 +41,7 @@ class ContactFragment @Inject constructor() : Fragment() {
                 it?.let { Toast.makeText(requireContext(), getString(R.string.contact_error), Toast.LENGTH_SHORT).show() }
             }
             updating.observe(viewLifecycleOwner) {
-                binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+                binding.loadingLayout.setSkeletonLoading(it)
             }
             contacts.observe(viewLifecycleOwner) { contactList ->
                 val currentCampusID = campusID.value ?: return@observe

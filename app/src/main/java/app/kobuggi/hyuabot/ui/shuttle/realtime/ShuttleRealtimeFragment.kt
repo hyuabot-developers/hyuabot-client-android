@@ -40,6 +40,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
 import app.kobuggi.hyuabot.util.disableViewStateSaving
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
@@ -109,7 +110,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
 
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+            binding.loadingLayout.setSkeletonLoading(it)
         }
         viewModel.notices.observe(viewLifecycleOwner) { notices ->
             if (notices.isNotEmpty()) {

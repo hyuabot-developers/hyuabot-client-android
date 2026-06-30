@@ -163,44 +163,19 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.card.MaterialCardView
+    <com.faltenreich.skeletonlayout.SkeletonLayout
         android:id="@+id/loadingLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:gravity="center"
-        android:orientation="horizontal"
+        android:layout_height="0dp"
+        android:background="@color/background"
         android:visibility="visible"
-        app:cardBackgroundColor="@color/cardview_light_background"
-        app:cardElevation="3dp"
-        app:strokeColor="@color/hanyang_blue"
-        app:strokeWidth="2dp"
-        android:layout_gravity="center"
+        app:maskColor="@color/skeleton_placeholder"
+        app:maskCornerRadius="4dp"
+        app:shimmerColor="@color/skeleton_placeholder_highlight"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:indicatorSize="40dp"
-                android:indeterminate="true"
-                app:indicatorColor="@color/hanyang_blue" />
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/calendar_loading"
-                android:textColor="?colorPrimary"
-                android:textSize="18sp" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+        <include layout="@layout/view_skeleton_calendar" />
+    </com.faltenreich.skeletonlayout.SkeletonLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

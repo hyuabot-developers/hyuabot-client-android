@@ -93,7 +93,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:saveEnabled="false" />
-    <LinearLayout
+    <com.faltenreich.skeletonlayout.SkeletonLayout
         android:id="@+id/loadingLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -102,12 +102,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/background"
-        android:gravity="center"
-        android:orientation="vertical" >
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true" />
-    </LinearLayout>
+        app:maskColor="@color/skeleton_placeholder"
+        app:maskCornerRadius="4dp"
+        app:shimmerColor="@color/skeleton_placeholder_highlight">
+        <include layout="@layout/view_skeleton_route_rows" />
+    </com.faltenreich.skeletonlayout.SkeletonLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,6 +22,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkController
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkEligibility
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -153,7 +154,7 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
 
         viewModel.fetchData()
         viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+            binding.loadingLayout.setSkeletonLoading(it)
         }
         viewModel.period.observe(viewLifecycleOwner) {
             viewModel.fetchData()

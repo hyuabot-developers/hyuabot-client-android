@@ -18,6 +18,7 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,7 +71,7 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
                 fetchData(it)
             }
             isLoading.observe(viewLifecycleOwner) {
-                binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+                binding.loadingLayout.setSkeletonLoading(it)
             }
             queryError.observe(viewLifecycleOwner) {
                 it?.let { Toast.makeText(requireContext(), getString(R.string.cafeteria_error), Toast.LENGTH_SHORT).show() }

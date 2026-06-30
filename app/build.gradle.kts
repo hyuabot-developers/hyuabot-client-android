@@ -165,6 +165,8 @@ dependencies {
     implementation(libs.splashScreen)
     // SwipeRefreshLayout
     implementation(libs.swipeRefreshLayout)
+    // Skeleton loading
+    implementation(libs.skeletonLayout)
     // Play Services
     implementation(libs.playServicesLocation)
     // Android LiveData
