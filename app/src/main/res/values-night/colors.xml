@@ -5,6 +5,8 @@
     <color name="secondary_text">#757575</color>
     <!-- 배경 색상 -->
     <color name="background">#000000</color>
+    <color name="home_row_background">#1E1E1E</color>
+    <color name="home_action_button_background">#183348</color>
     <color name="skeleton_placeholder">#252525</color>
     <color name="skeleton_placeholder_highlight">#343434</color>
     <!-- 캘린더 -->

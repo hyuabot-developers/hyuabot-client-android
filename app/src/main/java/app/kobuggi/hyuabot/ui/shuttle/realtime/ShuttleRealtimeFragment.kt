@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.RecyclerView
@@ -74,18 +75,27 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         )
         viewModel.viewModelScope.launch {
             viewModel.userPreferencesRepository.getShowShuttleDepartureTime().first().let {
-                binding.showDepartureTime.isChecked = it
+                viewModel.showDepartureTime.value = it
             }
             viewModel.userPreferencesRepository.getShowShuttleByDestination().first().let {
-                binding.showByDestination.isChecked = it
+                viewModel.showByDestination.value = it
             }
         }
         binding.viewPager.adapter = viewpagerAdapter
-        binding.showByDestination.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setShowByDestination(isChecked)
-        }
-        binding.showDepartureTime.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setShowDepartureTime(isChecked)
+        binding.shuttleQuickSettingsButton.setOnClickListener { openQuickSettings() }
+        childFragmentManager.setFragmentResultListener(
+            ShuttleQuickSettingsDialog.REQUEST_KEY,
+            viewLifecycleOwner,
+        ) { _, result ->
+            if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_BY_DESTINATION)) {
+                viewModel.setShowByDestination(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_BY_DESTINATION))
+            }
+            if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_DEPARTURE_TIME)) {
+                viewModel.setShowDepartureTime(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_DEPARTURE_TIME))
+            }
+            if (result.getBoolean(ShuttleQuickSettingsDialog.KEY_OPEN_HOME, false)) {
+                findNavController().navigate(R.id.homeFragment)
+            }
         }
         binding.noticeViewPager.adapter = noticeAdapter
 
@@ -198,6 +208,14 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         binding.viewPager.adapter = null
     }
 
+    private fun openQuickSettings() {
+        if (childFragmentManager.findFragmentByTag(SHUTTLE_QUICK_SETTINGS_TAG) != null) return
+        ShuttleQuickSettingsDialog.newInstance(
+            showByDestination = viewModel.showByDestination.value ?: false,
+            showDepartureTime = viewModel.showDepartureTime.value ?: false,
+        ).show(childFragmentManager, SHUTTLE_QUICK_SETTINGS_TAG)
+    }
+
     @SuppressLint("MissingPermission")
     private fun moveToNearestStop(
         client: FusedLocationProviderClient,
@@ -270,8 +288,8 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 }
                 CoachmarkController.show(requireActivity(), buildShuttleCoachmarkSteps(), owner) {
                     if (owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
-                        binding.showByDestination.isChecked = originalByDestination
-                        binding.showDepartureTime.isChecked = originalDepartureTime
+                        viewModel.setShowByDestination(originalByDestination)
+                        viewModel.setShowDepartureTime(originalDepartureTime)
                     }
                     viewModel.setForceShowBusAlternative(false)
                     lifecycleScope.launch {
@@ -293,14 +311,14 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             R.string.coachmark_shuttle_tab_title, R.string.coachmark_shuttle_tab_desc
         ),
         CoachmarkStep(
-            { binding.showByDestination },
+            { binding.shuttleQuickSettingsButton },
             R.string.coachmark_shuttle_destination_title, R.string.coachmark_shuttle_destination_desc,
-            onShow = { binding.showByDestination.isChecked = true }
+            onShow = { viewModel.setShowByDestination(true) }
         ),
         CoachmarkStep(
-            { binding.showDepartureTime },
+            { binding.shuttleQuickSettingsButton },
             R.string.coachmark_shuttle_departure_title, R.string.coachmark_shuttle_departure_desc,
-            onShow = { binding.showDepartureTime.isChecked = true }
+            onShow = { viewModel.setShowDepartureTime(true) }
         ),
         CoachmarkStep(
             {
@@ -437,5 +455,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
         private val COACHMARK_KEY = Coachmarks.SHUTTLE
         private val REALTIME_UPDATES_COACHMARK_KEY = Coachmarks.SHUTTLE_REALTIME_UPDATES
+        private const val SHUTTLE_QUICK_SETTINGS_TAG = "ShuttleQuickSettingsDialog"
     }
 }

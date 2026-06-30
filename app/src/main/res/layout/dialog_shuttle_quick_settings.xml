@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="22dp"
+    android:paddingBottom="24dp">
+
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/shuttle_quick_settings_title"
+        android:textColor="@color/primary_text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/show_by_destination_row"
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_home_row"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/show_by_destination"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/shuttle_quick_settings_arrival_by_time_subtitle"
+                android:textColor="@color/secondary_text"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/show_by_destination_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:thumbTint="@color/shuttle_switch_thumb"
+            app:trackTint="@color/shuttle_switch_track" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/show_departure_time_row"
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_home_row"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/show_departure_time"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/shuttle_quick_settings_departure_time_subtitle"
+                android:textColor="@color/secondary_text"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/show_departure_time_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:thumbTint="@color/shuttle_switch_thumb"
+            app:trackTint="@color/shuttle_switch_track" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/open_home_button"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="14dp"
+        android:gravity="center_vertical"
+        android:text="@string/home_experience_new"
+        android:textColor="@color/hanyang_blue"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/home_action_button_background"
+        app:icon="@drawable/ic_home"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:iconTint="@color/hanyang_blue" />
+</LinearLayout>

@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             setOnItemReselectedListener(this@MainActivity)
         }
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            updatePrimaryNavigationItem(destination.id)
             screenForDestination(destination.id)?.let {
                 AnalyticsManager.logScreen(it, destination.label?.toString())
             }
@@ -88,15 +89,40 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     override fun onResume() {
         super.onResume()
-        updateBottomNavigationLabels()
+        updatePrimaryNavigationItem(navController.currentDestination?.id)
     }
 
     private fun updateBottomNavigationLabels() {
-        binding.bottomNavigation.menu.findItem(R.id.shuttleRealtimeFragment)?.title = getString(R.string.shuttle_bus)
         binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)?.title = getString(R.string.bus)
         binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)?.title = getString(R.string.subway)
         binding.bottomNavigation.menu.findItem(R.id.cafeteriaFragment)?.title = getString(R.string.cafeteria)
         binding.bottomNavigation.menu.findItem(R.id.menuFragment)?.title = getString(R.string.menu)
+    }
+
+    private fun updatePrimaryNavigationItem(destinationId: Int?) {
+        updateBottomNavigationLabels()
+        val primaryItem = binding.bottomNavigation.menu.findItem(R.id.homeFragment) ?: return
+        if (destinationId.isShuttleDestination()) {
+            primaryItem.title = getString(R.string.shuttle_bus)
+            primaryItem.setIcon(R.drawable.ic_shuttle_bus)
+            primaryItem.isChecked = true
+        } else {
+            primaryItem.title = getString(R.string.home)
+            primaryItem.setIcon(R.drawable.ic_home)
+            if (destinationId == R.id.homeFragment) {
+                primaryItem.isChecked = true
+            }
+        }
+    }
+
+    private fun Int?.isShuttleDestination(): Boolean = when (this) {
+        R.id.shuttleRealtimeFragment,
+        R.id.shuttleTimetableFragment,
+        R.id.shuttleStopDialogFragment,
+        R.id.shuttleHelpDialogFragment,
+        R.id.shuttleTimetableDialogFragment,
+        R.id.shuttleTimetableFilterDialogFragment -> true
+        else -> false
     }
 
     private fun suggestLanguageIfNeeded() {
@@ -226,6 +252,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     /** Maps a nav-graph destination id to its analytics screen (null = not tracked as a screen). */
     private fun screenForDestination(destinationId: Int): AnalyticsScreen? = when (destinationId) {
+        R.id.homeFragment -> AnalyticsScreen.SHUTTLE_REALTIME
         R.id.shuttleRealtimeFragment -> AnalyticsScreen.SHUTTLE_REALTIME
         R.id.shuttleTimetableFragment -> AnalyticsScreen.SHUTTLE_TIMETABLE
         R.id.shuttleStopDialogFragment -> AnalyticsScreen.SHUTTLE_STOP_INFO
@@ -257,7 +284,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     /** Maps a bottom-navigation item id to its analytics tab item. */
     private fun tabItemForDestination(destinationId: Int): AnalyticsItem? = when (destinationId) {
-        R.id.shuttleRealtimeFragment -> AnalyticsItem.TAB_SHUTTLE
+        R.id.homeFragment -> AnalyticsItem.TAB_SHUTTLE
         R.id.busRealtimeFragment -> AnalyticsItem.TAB_BUS
         R.id.subwayRealtimeFragment -> AnalyticsItem.TAB_SUBWAY
         R.id.cafeteriaFragment -> AnalyticsItem.TAB_CAFETERIA
