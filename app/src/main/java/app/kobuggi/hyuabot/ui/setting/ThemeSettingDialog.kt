@@ -7,8 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.fragment.app.DialogFragment
@@ -30,11 +28,6 @@ class ThemeSettingDialog : DialogFragment(){
     ): View {
         binding = DialogSettingThemeBinding.inflate(inflater, container, false)
         binding.apply {
-            vm.theme.observe(viewLifecycleOwner) { theme ->
-                markSelected(themeSystem, theme == null)
-                markSelected(themeLight, theme == "light")
-                markSelected(themeDark, theme == "dark")
-            }
             themeSystem.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_THEME, type = AnalyticsContentType.MENU, name = "system")
                 vm.setDarkModeSystem()
@@ -53,13 +46,5 @@ class ThemeSettingDialog : DialogFragment(){
         }
 
         return binding.root
-    }
-
-    private fun markSelected(view: TextView, isSelected: Boolean) {
-        view.setBackgroundColor(
-            ContextCompat.getColor(requireContext(), if (isSelected) R.color.app_selection_background else android.R.color.transparent)
-        )
-        view.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, if (isSelected) R.drawable.ic_check else 0, 0)
-        view.compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.setting_selection_check_padding)
     }
 }

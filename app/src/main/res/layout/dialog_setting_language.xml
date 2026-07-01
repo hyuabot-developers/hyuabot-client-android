@@ -4,27 +4,30 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:paddingBottom="8dp">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/language_settings"
-        android:textColor="@android:color/white"
+        android:textColor="@color/primary_text"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:background="@color/hanyang_blue"
-        android:padding="20dp"
-        android:gravity="center"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="12dp"
+        android:gravity="start"
         />
     <TextView
         android:id="@+id/language_korean"
         android:text="@string/language_korean"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="center"
-        android:gravity="center"
+        android:textAlignment="viewStart"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="56dp" />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -34,10 +37,11 @@
         android:text="@string/language_english"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="center"
-        android:gravity="center"
+        android:textAlignment="viewStart"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="56dp" />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -47,10 +51,11 @@
         android:text="@string/language_japanese"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="center"
-        android:gravity="center"
+        android:textAlignment="viewStart"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="56dp" />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -60,8 +65,9 @@
         android:text="@string/language_chinese"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="center"
-        android:gravity="center"
+        android:textAlignment="viewStart"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="56dp" />
 </LinearLayout>

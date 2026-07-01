@@ -21,16 +21,28 @@
             android:contentDescription="@string/campus_settings"
             app:tint="@color/primary_text"
             android:layout_gravity="center_vertical"/>
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="@string/campus_settings"
-            android:textColor="@color/primary_text"
-            android:textSize="18sp"
-            android:textFontWeight="700"
-            android:layout_gravity="center_vertical"/>
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/campus_settings"
+                android:textColor="@color/primary_text"
+                android:textSize="18sp"
+                android:textFontWeight="700"/>
+            <TextView
+                android:id="@+id/setting_campus_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"/>
+        </LinearLayout>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,16 +70,28 @@
             app:tint="@color/primary_text"
             android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical"/>
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="@string/language_settings"
-            android:textColor="@color/primary_text"
-            android:textSize="18sp"
-            android:textFontWeight="700"
-            android:layout_gravity="center_vertical"/>
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/language_settings"
+                android:textColor="@color/primary_text"
+                android:textSize="18sp"
+                android:textFontWeight="700"/>
+            <TextView
+                android:id="@+id/setting_language_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"/>
+        </LinearLayout>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -94,16 +118,28 @@
             android:backgroundTint="@color/app_separator"
             app:tint="@color/primary_text"
             android:layout_gravity="center_vertical"/>
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="@string/theme_settings"
-            android:textColor="@color/primary_text"
-            android:textSize="18sp"
-            android:textFontWeight="700"
-            android:layout_gravity="center_vertical"/>
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_settings"
+                android:textColor="@color/primary_text"
+                android:textSize="18sp"
+                android:textFontWeight="700"/>
+            <TextView
+                android:id="@+id/setting_theme_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"/>
+        </LinearLayout>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
