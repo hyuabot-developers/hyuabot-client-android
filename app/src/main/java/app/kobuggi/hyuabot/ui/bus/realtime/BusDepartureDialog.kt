@@ -63,13 +63,13 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
             val currentTime = LocalTime.now()
             binding.busDepartureLogRecyclerView1.scrollToPosition(timetable1.indexOfFirst {
                     log -> LocalTime.parse(log.time.toString().substring(0, 5)) > currentTime
-                })
+                }.coerceAtLeast(0))
             binding.busDepartureLogRecyclerView2.scrollToPosition(timetable2.indexOfFirst {
                     log -> LocalTime.parse(log.time.toString().substring(0, 5)) > currentTime
-                })
+                }.coerceAtLeast(0))
             binding.busDepartureLogRecyclerView3.scrollToPosition(timetable3.indexOfFirst {
                     log -> LocalTime.parse(log.time.toString().substring(0, 5)) > currentTime
-                })
+                }.coerceAtLeast(0))
             if (firstLogAdapter.itemCount == 0) {
                 binding.busDepartureLogNoData1.visibility = View.VISIBLE
             } else {
