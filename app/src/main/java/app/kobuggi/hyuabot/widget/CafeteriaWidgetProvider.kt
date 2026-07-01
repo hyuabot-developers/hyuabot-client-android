@@ -13,6 +13,7 @@ import androidx.core.widget.RemoteViewsCompat
 import androidx.core.widget.RemoteViewsCompat.RemoteCollectionItems
 import app.kobuggi.hyuabot.CafeteriaPageQuery
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.util.localizedContext
 import dagger.hilt.android.EntryPointAccessors
@@ -235,10 +236,12 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
 
     private fun formatPrice(price: String): String = price.removeSuffix("원").trim()
 
-    private fun localizedFood(context: Context, food: String): String {
+    private suspend fun localizedFood(context: Context, food: String): String {
         val cleaned = food.replace("\"", "").trim()
         val appLanguage = context.resources.configuration.locales[0]?.language ?: Locale.KOREAN.language
-        if (!appLanguage.startsWith(Locale.KOREAN.language)) return cleaned
+        if (!appLanguage.startsWith(Locale.KOREAN.language)) {
+            return DynamicTextTranslator.translateForResources(context.resources, cleaned)
+        }
 
         val koreanTokens = cleaned
             .split(Regex("\\s+"))

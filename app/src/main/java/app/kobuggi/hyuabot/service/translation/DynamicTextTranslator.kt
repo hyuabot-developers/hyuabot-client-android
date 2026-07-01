@@ -106,6 +106,20 @@ object DynamicTextTranslator {
             .getOrDefault(text)
     }
 
+    suspend fun translateForResources(resources: Resources, text: String): String {
+        val targetLanguage = targetLanguage(resources) ?: return text
+        val sourceLanguage = sourceLanguage(text) ?: return text
+        if (sourceLanguage == targetLanguage) return text
+
+        val cacheKey = CacheKey(sourceLanguage, targetLanguage, text)
+        translatedTextCache[cacheKey]?.let { return it }
+
+        return runCatching { translate(text, sourceLanguage, targetLanguage) }
+            .onSuccess { translatedTextCache[cacheKey] = it }
+            .onFailure { Log.w(TAG, "Failed to translate text from $sourceLanguage to $targetLanguage", it) }
+            .getOrDefault(text)
+    }
+
     fun currentAppLanguageTag(): String {
         val appLocale = AppCompatDelegate.getApplicationLocales().get(0)
         return appLocale?.toLanguageTag() ?: Locale.getDefault().toLanguageTag()

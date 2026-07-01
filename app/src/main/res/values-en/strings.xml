@@ -71,11 +71,11 @@
     <string name="home_meal_empty_message">Check other meal times in all menus.</string>
     <!-- 셔틀버스 도착 정보 탭 -->
     <string name="shuttle_tab_dormitory_out">Dormitory</string>
-    <string name="shuttle_tab_shuttlecock_out">Shuttlecoke</string>
+    <string name="shuttle_tab_shuttlecock_out">Shuttlecock</string>
     <string name="shuttle_tab_station">Station</string>
     <string name="shuttle_tab_terminal">Terminal</string>
     <string name="shuttle_tab_jungang_station">Jungang Stn.</string>
-    <string name="shuttle_tab_shuttlecock_in">Shuttlecoke (Oppo.)</string>
+    <string name="shuttle_tab_shuttlecock_in">Shuttlecock (Oppo.)</string>
     <!-- 셔틀버스 도착 정보 헤더 -->
     <string name="shuttle_header_bound_for_station">To Station</string>
     <string name="shuttle_header_bound_for_dormitory">To Dormitory</string>
@@ -83,10 +83,10 @@
     <string name="shuttle_header_bound_for_jungang_station">To Jungang Stn.</string>
     <!-- 셔틀버스 도착 정보 푸터 -->
     <string name="shuttle_footer_entire_timetable">Entire Timetable</string>
-    <string name="shuttle_footer_entire_timetable_dormitory">Entire Timetable(Campus)</string>
-    <string name="shuttle_footer_entire_timetable_station">Entire Timetable(Station)</string>
-    <string name="shuttle_footer_entire_timetable_terminal">Entire Timetable(Terminal)</string>
-    <string name="shuttle_footer_entire_timetable_jungang_station">Entire Timetable(Jungang Stn.)</string>
+    <string name="shuttle_footer_entire_timetable_dormitory">Entire Timetable (Campus)</string>
+    <string name="shuttle_footer_entire_timetable_station">Entire Timetable (Station)</string>
+    <string name="shuttle_footer_entire_timetable_terminal">Entire Timetable (Terminal)</string>
+    <string name="shuttle_footer_entire_timetable_jungang_station">Entire Timetable (Jungang Stn.)</string>
     <string name="shuttle_footer_stop_info">Stop Detail</string>
     <string name="shuttle_footer_help">Shuttle Help</string>
     <string name="shuttle_action_bar_title">Shuttle display options</string>
@@ -112,7 +112,7 @@
     <string name="shuttle_bus_alternative_route">10-1 (from Sangnoksu Stn.)</string>
     <string name="shuttle_bus_alternative_route_campus">10-1 (to Sangnoksu Stn.)</string>
     <string name="shuttle_bus_alternative_route_62_terminal">62 (Seong-an-gil)</string>
-    <string name="shuttle_bus_alternative_route_62_dormitory">62 (to Shuttlecoke)</string>
+    <string name="shuttle_bus_alternative_route_62_dormitory">62 (to Shuttlecock)</string>
     <string name="shuttle_bus_alternative_route_80a">80A (Gyeonggi Technopark)</string>
     <string name="shuttle_bus_alternative_route_n80a">N80A (Gyeonggi Technopark)</string>
     <string name="shuttle_bus_alternative_route_80b">80B (to Dormitory)</string>
@@ -123,14 +123,14 @@
     <string name="shuttle_type_direct">Direct</string>
     <string name="shuttle_type_circular">Cycle</string>
     <string name="shuttle_type_jungang">Jungang Stn.</string>
-    <string name="shuttle_type_shuttlecock">Shuttlecoke</string>
+    <string name="shuttle_type_shuttlecock">Shuttlecock</string>
     <string name="shuttle_type_dormitory">Dormitory</string>
-    <string name="shuttle_type_shuttlecock_direct">Shuttlecoke (Direct)</string>
+    <string name="shuttle_type_shuttlecock_direct">Shuttlecock (Direct)</string>
     <string name="shuttle_type_dormitory_direct">Dormitory (Direct)</string>
-    <string name="shuttle_type_shuttlecock_circular">Shuttlecoke (Circular)</string>
+    <string name="shuttle_type_shuttlecock_circular">Shuttlecock (Circular)</string>
     <string name="shuttle_type_dormitory_circular">Dormitory (Circular)</string>
     <string name="shuttle_type_jungang_circular">Dormitory (Jungang Stn.)</string>
-    <string name="shuttle_type_shuttlecock_finishing">Shuttlecoke</string>
+    <string name="shuttle_type_shuttlecock_finishing">Shuttlecock</string>
     <!-- 셔틀버스 첫막차 시간 -->
     <string name="shuttle_first_last_time_title">First/Last Shuttle</string>
     <string name="shuttle_first_last_time_no_data_weekdays">--:--\n(Weekdays)</string>
@@ -170,7 +170,7 @@
     <string name="confirm">Apply</string>
     <string name="location_permission_nearest_stop">Location permission is required to find the nearest stop.</string>
     <!-- 셔틀버스 등하교 팝업 -->
-    <string name="shuttle_realtime_toast">During peak school commute hours, some shuttle may not depart from Shuttlecoke.</string>
+    <string name="shuttle_realtime_toast">During peak school commute hours, some shuttle may not depart from Shuttlecock.</string>
     <!-- 셔틀버스 소요 시간 -->
     <string name="shuttle_realtime_duration_format">%1$dm</string>
     <!-- 노선버스 도착 정보 탭 -->
@@ -455,7 +455,7 @@
     <string name="next_day">Next</string>
     <string name="show_by_destination">By Destination/Time</string>
     <string name="show_departure_time">Departure Time</string>
-    <string name="shuttle_type_station_circular_shuttlecock">Terminal/Shuttlecoke</string>
+    <string name="shuttle_type_station_circular_shuttlecock">Terminal/Shuttlecock</string>
     <string name="shuttle_type_station_circular_dormitory">Terminal/Dormitory</string>
     <string name="shuttle_type_station_jungang_station">Jungang Stn./Dormitory</string>
     <string name="shuttle_type_school_circular">Station/Terminal</string>
