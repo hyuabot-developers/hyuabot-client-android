@@ -56,7 +56,7 @@ class HomeFragment : Fragment() {
     private val homeTypeface by lazy { ResourcesCompat.getFont(requireContext(), R.font.godo) }
     private var selectedDeparture = HomeDeparture.DORMITORY
     private var selectedDestination = HomeDestination.STATION
-    private var setNearestDeparture = false
+    private var lockDepartureSelection = false
     private var debugSubwayTransferDestination: HomeSubwayTransferDestination? = null
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val autoRefreshRunnable = object : Runnable {
@@ -192,23 +192,23 @@ class HomeFragment : Fragment() {
             ?: departure.destinations.first()
         selectedDeparture = departure
         selectedDestination = destination
-        setNearestDeparture = true
+        lockDepartureSelection = true
         debugSubwayTransferDestination = intent.getStringExtra(DEBUG_SUBWAY_DESTINATION_EXTRA)?.let(HomeSubwayTransferDestination::from)
     }
 
     private fun moveToNearestDeparture() {
-        if (setNearestDeparture || !hasLocationPermission()) return
+        if (lockDepartureSelection || !hasLocationPermission()) return
         val client = LocationServices.getFusedLocationProviderClient(requireActivity())
+        requestCurrentLocation(client)
+    }
+
+    private fun selectLastKnownLocation(client: FusedLocationProviderClient) {
         client.lastLocation
             .addOnSuccessListener { location ->
-                if (location != null && isFresh(location)) {
-                    selectNearestDeparture(location)
-                } else {
-                    requestCurrentLocation(client)
-                }
+                if (location != null && isFresh(location)) selectNearestDeparture(location)
             }
             .addOnFailureListener {
-                requestCurrentLocation(client)
+                Log.e("HomeFragment", "Failed to get last known location", it)
             }
     }
 
@@ -226,19 +226,23 @@ class HomeFragment : Fragment() {
     private fun requestCurrentLocation(client: FusedLocationProviderClient) {
         if (!hasLocationPermission()) return
         val tokenSource = CancellationTokenSource()
-        client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token)
+        client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
             .addOnSuccessListener { location ->
-                location?.let { selectNearestDeparture(it) }
+                if (location != null) {
+                    selectNearestDeparture(location)
+                } else {
+                    selectLastKnownLocation(client)
+                }
             }
             .addOnFailureListener {
                 Log.e("HomeFragment", "Failed to get user location", it)
+                selectLastKnownLocation(client)
             }
     }
 
     private fun selectNearestDeparture(location: Location) {
-        if (setNearestDeparture) return
+        if (lockDepartureSelection) return
         val nearestDeparture = HomeDeparture.entries.minByOrNull { it.distanceTo(location) } ?: return
-        setNearestDeparture = true
         if (nearestDeparture == selectedDeparture) return
 
         selectedDeparture = nearestDeparture
