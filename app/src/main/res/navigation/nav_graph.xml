@@ -210,6 +210,9 @@
         <action
             android:id="@+id/action_menuFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_noticeWebViewFragment"
+            app:destination="@id/noticeWebViewFragment" />
     </fragment>
     <dialog
         android:id="@+id/shuttleStopDialogFragment"

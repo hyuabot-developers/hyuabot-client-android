@@ -14,6 +14,7 @@
         <item name="colorOnError">@color/hanyang_orange</item>
         <item name="colorOnBackground">@color/hanyang_silver</item>
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
         <!-- Bottom Navigation -->
         <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
         <!-- Prevent Material3 bottom sheet dialogs from calling deprecated
@@ -53,48 +54,63 @@
     </style>
     <style name="TextAppearance.App.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.BodySmall" parent="TextAppearance.Material3.BodySmall">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
         <item name="fontFamily">@font/godo</item>
+        <item name="android:fontFamily">@font/godo</item>
     </style>
     <style name="TextAppearance.App.Tab" parent="TextAppearance.App.TitleSmall">
         <item name="android:textSize">18sp</item>
@@ -107,6 +123,44 @@
     </style>
     <style name="Widget.App.Switch.Shuttle" parent="Widget.Material3.CompoundButton.MaterialSwitch">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.Switch</item>
+    </style>
+
+    <style name="Widget.App.SegmentedButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:fontFamily">@font/godo</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/home_destination_button_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="backgroundTint">@color/home_destination_button_background</item>
+        <item name="cornerRadius">22dp</item>
+        <item name="strokeColor">@color/home_destination_button_stroke</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="Widget.App.HomeSegmentButton" parent="Widget.App.SegmentedButton" />
+
+    <style name="Widget.App.FilledActionButton" parent="Widget.Material3.Button">
+        <item name="android:fontFamily">@font/godo</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="backgroundTint">@color/hanyang_blue</item>
+    </style>
+
+    <style name="Widget.App.PlainFooterButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:fontFamily">@font/godo</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/plain_button_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="iconTint">@color/plain_button_text</item>
     </style>
 
     <style name="ThemeOverlay.App.Switch" parent="">

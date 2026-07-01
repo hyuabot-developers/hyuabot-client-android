@@ -122,7 +122,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/subway_destination_seoul"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.App.SegmentedButton"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
@@ -130,11 +130,7 @@
                 android:autoSizeMinTextSize="8sp"
                 android:autoSizeStepGranularity="1sp"
                 android:autoSizeTextType="uniform"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
                 android:maxLines="1"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
                 android:text="@string/home_quick_settings_subway_destination_seoul"
                 android:textColor="@color/home_destination_button_text"
                 android:textSize="12sp"
@@ -143,7 +139,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/subway_destination_suwon_yongin"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.App.SegmentedButton"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
@@ -151,11 +147,7 @@
                 android:autoSizeMinTextSize="8sp"
                 android:autoSizeStepGranularity="1sp"
                 android:autoSizeTextType="uniform"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
                 android:maxLines="1"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
                 android:text="@string/home_quick_settings_subway_destination_suwon_yongin"
                 android:textColor="@color/home_destination_button_text"
                 android:textSize="12sp"
@@ -164,7 +156,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/subway_destination_incheon"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.App.SegmentedButton"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
@@ -172,11 +164,7 @@
                 android:autoSizeMinTextSize="8sp"
                 android:autoSizeStepGranularity="1sp"
                 android:autoSizeTextType="uniform"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
                 android:maxLines="1"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
                 android:text="@string/home_quick_settings_subway_destination_incheon"
                 android:textColor="@color/home_destination_button_text"
                 android:textSize="12sp"
@@ -185,7 +173,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/subway_destination_oido"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.App.SegmentedButton"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
@@ -193,11 +181,7 @@
                 android:autoSizeMinTextSize="8sp"
                 android:autoSizeStepGranularity="1sp"
                 android:autoSizeTextType="uniform"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
                 android:maxLines="1"
-                android:minWidth="0dp"
-                android:paddingHorizontal="0dp"
                 android:text="@string/home_quick_settings_subway_destination_oido"
                 android:textColor="@color/home_destination_button_text"
                 android:textSize="12sp"

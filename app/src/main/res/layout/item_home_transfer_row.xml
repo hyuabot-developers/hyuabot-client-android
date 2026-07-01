@@ -3,25 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_home_row"
-    android:minHeight="58dp"
+    android:minHeight="50dp"
     android:paddingHorizontal="12dp"
-    android:paddingVertical="10dp">
+    android:paddingVertical="7dp">
 
     <TextView
         android:id="@+id/badge"
-        android:layout_width="82dp"
+        android:layout_width="64dp"
         android:layout_height="24dp"
         android:background="@drawable/bg_home_badge"
-        android:gravity="center"
         android:fontFamily="@font/godo"
+        android:gravity="center"
         android:includeFontPadding="false"
         android:maxLines="1"
         android:textColor="@android:color/white"
         android:textSize="12sp"
         android:textStyle="bold"
-        app:autoSizeMinTextSize="9sp"
         app:autoSizeMaxTextSize="12sp"
+        app:autoSizeMinTextSize="8sp"
         app:autoSizeStepGranularity="1sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -49,20 +48,20 @@
             android:includeFontPadding="false"
             android:maxLines="1"
             android:textColor="@color/primary_text"
-            android:textSize="17sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:fontFamily="@font/godo"
             android:includeFontPadding="false"
             android:maxLines="2"
             android:textColor="@color/secondary_text"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
     </LinearLayout>
 
     <TextView
@@ -74,7 +73,7 @@
         android:includeFontPadding="false"
         android:maxLines="1"
         android:textColor="@color/hanyang_blue"
-        android:textSize="22sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

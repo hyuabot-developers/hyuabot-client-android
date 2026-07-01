@@ -1,11 +1,9 @@
 package app.kobuggi.hyuabot.ui.menu
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -98,13 +96,15 @@ class MenuFragment @Inject constructor() : Fragment() {
             }
             R.string.menu_chat -> {
                 val url = "https://open.kakao.com/o/sW2kAinb"
-                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                startActivity(intent)
+                MenuFragmentDirections.actionMenuFragmentToNoticeWebViewFragment(url).also {
+                    findNavController().safeNavigate(it)
+                }
             }
             R.string.menu_donate -> {
                 val url = "https://qr.kakaopay.com/FWxVPo8iO"
-                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                startActivity(intent)
+                MenuFragmentDirections.actionMenuFragmentToNoticeWebViewFragment(url).also {
+                    findNavController().safeNavigate(it)
+                }
             }
             R.string.menu_review -> {
                 viewLifecycleOwner.lifecycleScope.launch {

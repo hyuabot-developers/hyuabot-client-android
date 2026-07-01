@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,6 +20,7 @@
         android:id="@+id/language_korean"
         android:text="@string/language_korean"
         android:textSize="18sp"
+        android:textColor="@color/primary_text"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_width="match_parent"
@@ -26,11 +28,12 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/app_separator"/>
     <TextView
         android:id="@+id/language_english"
         android:text="@string/language_english"
         android:textSize="18sp"
+        android:textColor="@color/primary_text"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_width="match_parent"
@@ -38,11 +41,12 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/app_separator"/>
     <TextView
         android:id="@+id/language_japanese"
         android:text="@string/language_japanese"
         android:textSize="18sp"
+        android:textColor="@color/primary_text"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_width="match_parent"
@@ -50,11 +54,12 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/app_separator"/>
     <TextView
         android:id="@+id/language_chinese"
         android:text="@string/language_chinese"
         android:textSize="18sp"
+        android:textColor="@color/primary_text"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_width="match_parent"

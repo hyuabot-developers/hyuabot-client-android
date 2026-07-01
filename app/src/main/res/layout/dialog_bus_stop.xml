@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:paddingBottom="16dp">
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -38,8 +39,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/bus_stop_title"
+            android:textColor="@color/primary_text"
+            android:textColorHint="@color/secondary_text"
             app:dropDownBackgroundTint="@color/background"
-            app:simpleItemSelectedColor="@android:color/darker_gray"
+            app:simpleItemSelectedColor="@color/app_selection_background"
             android:inputType="none"
             android:importantForAccessibility="no"
             app:simpleItems="@array/bus_stop_list" />

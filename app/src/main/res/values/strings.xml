@@ -29,13 +29,14 @@
     <string name="home_quick_settings_subway_destination_suwon_yongin">수원·용인</string>
     <string name="home_quick_settings_subway_destination_incheon">인천</string>
     <string name="home_quick_settings_subway_destination_oido">오이도</string>
-    <string name="home_transfer_bus50_badge">50</string>
+    <string name="home_transfer_bus50_badge">50번</string>
     <string name="home_transfer_bus50_title">%1$s 도착 예정</string>
-    <string name="home_transfer_bus50_subtitle">예술인에서 50번 환승</string>
+    <string name="home_transfer_bus50_subtitle">예술인에서 버스 환승</string>
     <string name="home_transfer_buffer">+%1$d분</string>
     <string name="home_transfer_subway_suin_bundang_badge">수인분당</string>
     <string name="home_transfer_subway_title">%1$s 행</string>
     <string name="home_transfer_subway_subtitle">한대앞에서 전철 환승</string>
+    <string name="home_transfer_subway_oido_subtitle">오이도역에서 전철 환승</string>
     <string name="home_support_default">급할 때만 확인</string>
     <string name="home_support_emphasized">대체/환승 확인</string>
     <string name="home_destination_station">한대앞</string>
@@ -93,6 +94,14 @@
     <string name="shuttle_quick_settings_title">셔틀 빠른 설정</string>
     <string name="shuttle_quick_settings_arrival_by_time_subtitle">셔틀 도착 정보를 남은 시간 기준으로 보여줘요.</string>
     <string name="shuttle_quick_settings_departure_time_subtitle">셔틀 시간을 출발 시각 기준으로 보여줘요.</string>
+    <string name="shuttle_display_order_title">표시 순서</string>
+    <string name="shuttle_display_order_subtitle">셔틀 도착 정보를 시간순 또는 행선지별로 정리해요.</string>
+    <string name="shuttle_display_time_order">시간순</string>
+    <string name="shuttle_display_destination_order">행선지별</string>
+    <string name="shuttle_time_display_title">시간 표시</string>
+    <string name="shuttle_time_display_subtitle">셔틀 시간을 남은 시간 또는 출발 시각으로 보여줘요.</string>
+    <string name="shuttle_time_remaining">남은 시간</string>
+    <string name="shuttle_time_departure">출발 시각</string>
     <string name="home_experience_new">새 홈 체험하기</string>
     <!-- 셔틀버스 도착 정보 없음 -->
     <string name="shuttle_bus_alternative_route">10-1 (상록수역 출발)</string>

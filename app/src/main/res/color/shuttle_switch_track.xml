@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="true" android:color="@color/home_action_button_background" />
-    <item android:color="@color/hanyang_blue_variant" />
+    <item android:state_checked="true" android:color="@color/app_selection_background" />
+    <item android:color="@color/app_separator" />
 </selector>

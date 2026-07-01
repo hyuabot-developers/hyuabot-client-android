@@ -21,24 +21,22 @@
     <LinearLayout
         android:id="@+id/show_by_destination_row"
         android:layout_width="match_parent"
-        android:layout_height="76dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:background="@drawable/bg_home_row"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:paddingHorizontal="14dp"
         android:paddingVertical="12dp">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/show_by_destination"
+                android:text="@string/shuttle_display_order_title"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -47,40 +45,58 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/shuttle_quick_settings_arrival_by_time_subtitle"
+                android:text="@string/shuttle_display_order_subtitle"
                 android:textColor="@color/secondary_text"
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/show_by_destination_switch"
-            android:layout_width="wrap_content"
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/show_by_destination_group"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:thumbTint="@color/shuttle_switch_thumb"
-            app:trackTint="@color/shuttle_switch_track" />
+            android:layout_marginTop="10dp"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/show_by_time_button"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:text="@string/shuttle_display_time_order" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/show_by_destination_button"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:text="@string/shuttle_display_destination_order" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/show_departure_time_row"
         android:layout_width="match_parent"
-        android:layout_height="76dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:background="@drawable/bg_home_row"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:paddingHorizontal="14dp"
         android:paddingVertical="12dp">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/show_departure_time"
+                android:text="@string/shuttle_time_display_title"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -89,17 +105,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/shuttle_quick_settings_departure_time_subtitle"
+                android:text="@string/shuttle_time_display_subtitle"
                 android:textColor="@color/secondary_text"
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/show_departure_time_switch"
-            android:layout_width="wrap_content"
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/show_departure_time_group"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:thumbTint="@color/shuttle_switch_thumb"
-            app:trackTint="@color/shuttle_switch_track" />
+            android:layout_marginTop="10dp"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/show_remaining_time_button"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:text="@string/shuttle_time_remaining" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/show_departure_time_button"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:text="@string/shuttle_time_departure" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton

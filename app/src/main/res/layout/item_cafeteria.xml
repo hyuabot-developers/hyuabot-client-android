@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:paddingVertical="6dp"
         android:gravity="center"
+        android:textColor="@color/primary_text"
         android:textSize="14sp"
         android:textFontWeight="700"
         app:layout_constraintTop_toBottomOf="@id/header_cafeteria" />
@@ -28,7 +29,7 @@
         android:id="@+id/divider_cafeteria"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
+        android:background="@color/app_separator"
         app:layout_constraintTop_toBottomOf="@id/subheader_cafeteria" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/menu_list"

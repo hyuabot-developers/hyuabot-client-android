@@ -3,6 +3,7 @@ package app.kobuggi.hyuabot.ui.home
 import android.Manifest
 import android.content.res.ColorStateList
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +11,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.text.TextUtils
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +22,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,6 +32,7 @@ import app.kobuggi.hyuabot.HomePageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentHomeBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
+import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
 import app.kobuggi.hyuabot.util.localizedSubwayStationName
 import app.kobuggi.hyuabot.util.setSkeletonLoading
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -49,6 +53,7 @@ import kotlin.math.ceil
 class HomeFragment : Fragment() {
     private val binding by lazy { FragmentHomeBinding.inflate(layoutInflater) }
     private val viewModel: HomeViewModel by viewModels()
+    private val homeTypeface by lazy { ResourcesCompat.getFont(requireContext(), R.font.godo) }
     private var selectedDeparture = HomeDeparture.DORMITORY
     private var selectedDestination = HomeDestination.STATION
     private var setNearestDeparture = false
@@ -93,6 +98,7 @@ class HomeFragment : Fragment() {
                 viewModel.setShowSubwayTransfer(result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_SUBWAY_TRANSFER))
             }
             if (result.containsKey(HomeQuickSettingsDialog.KEY_SUBWAY_TRANSFER_DESTINATION)) {
+                debugSubwayTransferDestination = null
                 viewModel.setSubwayTransferDestination(
                     HomeSubwayTransferDestination.from(result.getString(HomeQuickSettingsDialog.KEY_SUBWAY_TRANSFER_DESTINATION)),
                 )
@@ -147,11 +153,12 @@ class HomeFragment : Fragment() {
     private fun setupDestinationButtons() {
         binding.destinationGroup.clearOnButtonCheckedListeners()
         binding.destinationGroup.removeAllViews()
+        val buttonContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_SegmentedButton)
         val textColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_text)
         val backgroundColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_background)
         val strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_stroke)
         selectedDeparture.destinations.forEach { destination ->
-            val button = MaterialButton(requireContext(), null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
+            val button = MaterialButton(buttonContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
                 id = View.generateViewId()
                 text = getString(destination.titleRes)
                 minHeight = resources.getDimensionPixelSize(R.dimen.home_destination_button_min_height)
@@ -247,7 +254,7 @@ class HomeFragment : Fragment() {
         HomeQuickSettingsDialog.newInstance(
             showBus50Transfer = viewModel.showBus50Transfer.value ?: true,
             showSubwayTransfer = viewModel.showSubwayTransfer.value ?: true,
-            subwayTransferDestination = viewModel.subwayTransferDestination.value ?: HomeSubwayTransferDestination.SEOUL,
+            subwayTransferDestination = selectedSubwayTransferDestination(),
         ).show(childFragmentManager, HOME_QUICK_SETTINGS_TAG)
     }
 
@@ -508,7 +515,7 @@ class HomeFragment : Fragment() {
                 ?: return@mapNotNull null
             listOf(
                 subwayConnection(firstLeg, stationArrival),
-                subwayConnection(secondLeg, firstLeg.arrivalDate),
+                subwayConnection(secondLeg, firstLeg.arrivalDate, R.string.home_transfer_subway_oido_subtitle),
             )
         }
     }
@@ -538,7 +545,7 @@ class HomeFragment : Fragment() {
                 stationId = "K251",
                 direction = "down",
                 badge = getString(R.string.home_transfer_subway_suin_bundang_badge),
-                tint = ContextCompat.getColor(requireContext(), R.color.hanyang_orange),
+                tint = ContextCompat.getColor(requireContext(), R.color.home_subway_yellow),
             ) { it.terminal.stationID >= "K258" && it.terminal.stationID.startsWith("K2") }
         }
         val subway = when (target) {
@@ -563,7 +570,7 @@ class HomeFragment : Fragment() {
             requireContext(),
             when (target) {
                 HomeSubwayRouteTarget.SEOUL -> R.color.subway_line4
-                else -> R.color.hanyang_orange
+                else -> R.color.home_subway_yellow
             },
         )
         return subwayArrivalOptionsFrom(data, subway?.stationID, direction, badge, tint) { subwayEntryEligible(target, it) }
@@ -606,6 +613,7 @@ class HomeFragment : Fragment() {
     private fun subwayConnection(
         arrival: HomeSubwayArrival,
         transferStartDate: ZonedDateTime,
+        subtitleRes: Int = R.string.home_transfer_subway_subtitle,
     ): HomeConnection {
         val bufferMinutes = Duration.between(transferStartDate, arrival.arrivalDate).toMinutes().coerceAtLeast(0).toInt()
         return HomeConnection(
@@ -615,7 +623,7 @@ class HomeFragment : Fragment() {
                     R.string.home_transfer_subway_title,
                     localizedSubwayStationName(requireContext(), arrival.terminalStationID, arrival.terminalName),
                 ),
-                subtitle = getString(R.string.home_transfer_subway_subtitle),
+                subtitle = getString(subtitleRes),
                 trailing = getString(R.string.home_transfer_buffer, bufferMinutes),
                 tint = arrival.tint,
             ),
@@ -703,11 +711,11 @@ class HomeFragment : Fragment() {
         val shuttleView = createHomeRowView(movement.row)
         pair.addView(shuttleView)
         movement.connections.forEach { connection ->
-            pair.addView(createLinkBadge(connection.row.tint), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(18)).apply {
-                topMargin = -dp(1)
-                bottomMargin = -dp(1)
+            pair.addView(createLinkBadge(connection.row.tint), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(22)).apply {
+                topMargin = -dp(7)
+                bottomMargin = -dp(7)
             })
-            pair.addView(createHomeRowView(connection.row, compact = true), LinearLayout.LayoutParams(
+            pair.addView(createHomeTransferRowView(connection.row), LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
             ))
@@ -719,8 +727,12 @@ class HomeFragment : Fragment() {
         container.addView(createHomeRowView(row), rowLayoutParams(container.childCount))
     }
 
-    private fun createHomeRowView(row: HomeRow, compact: Boolean = false): View {
+    private fun createHomeRowView(row: HomeRow): View {
         val rowBinding = ItemHomeRowBinding.inflate(layoutInflater)
+        rowBinding.badge.applyHomeTypeface(Typeface.BOLD)
+        rowBinding.title.applyHomeTypeface(Typeface.BOLD)
+        rowBinding.subtitle.applyHomeTypeface(Typeface.NORMAL)
+        rowBinding.trailing.applyHomeTypeface(Typeface.BOLD)
         rowBinding.badge.text = row.badge
         rowBinding.badge.backgroundTintList = ColorStateList.valueOf(row.tint)
         rowBinding.root.backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(row.tint, ROW_BACKGROUND_ALPHA))
@@ -728,25 +740,39 @@ class HomeFragment : Fragment() {
         rowBinding.subtitle.text = row.subtitle
         rowBinding.trailing.text = row.trailing
         rowBinding.trailing.setTextColor(row.tint)
-        if (compact) {
-            rowBinding.badge.layoutParams = rowBinding.badge.layoutParams.apply {
-                width = dp(64)
-            }
-            rowBinding.subtitle.visibility = View.GONE
-            rowBinding.title.textSize = 15f
-            rowBinding.trailing.textSize = 16f
-            rowBinding.root.setPadding(dp(12), dp(8), dp(12), dp(8))
+        return rowBinding.root
+    }
+
+    private fun createHomeTransferRowView(row: HomeRow): View {
+        val rowBinding = ItemHomeTransferRowBinding.inflate(layoutInflater)
+        rowBinding.badge.applyHomeTypeface(Typeface.BOLD)
+        rowBinding.title.applyHomeTypeface(Typeface.BOLD)
+        rowBinding.subtitle.applyHomeTypeface(Typeface.NORMAL)
+        rowBinding.trailing.applyHomeTypeface(Typeface.BOLD)
+        rowBinding.badge.text = row.badge
+        rowBinding.badge.backgroundTintList = ColorStateList.valueOf(row.tint)
+        rowBinding.root.background = android.graphics.drawable.GradientDrawable().apply {
+            cornerRadius = dp(8).toFloat()
+            setColor(ColorUtils.setAlphaComponent(row.tint, TRANSFER_ROW_BACKGROUND_ALPHA))
+            setStroke(dp(1), ColorUtils.setAlphaComponent(row.tint, TRANSFER_ROW_STROKE_ALPHA))
         }
+        rowBinding.title.text = row.title
+        rowBinding.subtitle.text = row.subtitle
+        rowBinding.trailing.text = row.trailing
+        rowBinding.trailing.setTextColor(row.tint)
         return rowBinding.root
     }
 
     private fun createLinkBadge(tint: Int): View {
         return LinearLayout(requireContext()).apply {
+            clipChildren = false
+            clipToPadding = false
             gravity = Gravity.CENTER
             addView(ImageView(requireContext()).apply {
                 setImageResource(R.drawable.ic_home_link)
                 imageTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(tint, 184))
-                scaleType = ImageView.ScaleType.CENTER
+                scaleType = ImageView.ScaleType.CENTER_INSIDE
+                setPadding(dp(5), dp(5), dp(5), dp(5))
                 background = android.graphics.drawable.GradientDrawable().apply {
                     shape = android.graphics.drawable.GradientDrawable.OVAL
                     setColor(ContextCompat.getColor(requireContext(), R.color.background))
@@ -764,15 +790,16 @@ class HomeFragment : Fragment() {
         }
 
         sectionView.addView(TextView(requireContext()).apply {
+            applyHomeTypeface(Typeface.BOLD)
             text = section.cafeteria
             setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_text))
             textSize = 16f
-            setTypeface(typeface, android.graphics.Typeface.BOLD)
             maxLines = 1
             ellipsize = TextUtils.TruncateAt.END
         })
         if (section.runningTime.isNotBlank()) {
             sectionView.addView(TextView(requireContext()).apply {
+                applyHomeTypeface(Typeface.NORMAL)
                 text = section.runningTime
                 setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_text))
                 textSize = 12f
@@ -805,6 +832,7 @@ class HomeFragment : Fragment() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
             addView(TextView(requireContext()).apply {
+                applyHomeTypeface(Typeface.NORMAL)
                 text = item.menu
                 setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary_text))
                 textSize = 14f
@@ -812,11 +840,11 @@ class HomeFragment : Fragment() {
                 ellipsize = TextUtils.TruncateAt.END
             }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
             addView(TextView(requireContext()).apply {
+                applyHomeTypeface(Typeface.BOLD)
                 text = item.price
                 setTextColor(ContextCompat.getColor(requireContext(), R.color.hanyang_blue))
                 textSize = 14f
                 gravity = Gravity.END
-                setTypeface(typeface, android.graphics.Typeface.BOLD)
                 maxLines = 1
             }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
                 leftMargin = dp(8)
@@ -831,14 +859,21 @@ class HomeFragment : Fragment() {
     private fun addEmptyRow(container: LinearLayout, title: String, message: String) {
         val view = layoutInflater.inflate(R.layout.item_home_row, container, false)
         view.findViewById<TextView>(R.id.badge).visibility = View.GONE
-        view.findViewById<TextView>(R.id.title).text = title
-        view.findViewById<TextView>(R.id.subtitle).text = message
+        view.findViewById<TextView>(R.id.title).apply {
+            applyHomeTypeface(Typeface.BOLD)
+            text = title
+        }
+        view.findViewById<TextView>(R.id.subtitle).apply {
+            applyHomeTypeface(Typeface.NORMAL)
+            text = message
+        }
         view.findViewById<TextView>(R.id.trailing).visibility = View.GONE
         container.addView(view, rowLayoutParams(container.childCount))
     }
 
     private fun addSupportHeader(container: LinearLayout, emphasized: Boolean) {
         val header = TextView(requireContext()).apply {
+            applyHomeTypeface(Typeface.BOLD)
             text = getString(if (emphasized) R.string.home_support_emphasized else R.string.home_support_default)
             setTextColor(
                 ContextCompat.getColor(
@@ -847,7 +882,6 @@ class HomeFragment : Fragment() {
                 ),
             )
             textSize = 13f
-            setTypeface(typeface, android.graphics.Typeface.BOLD)
         }
         container.addView(header, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
             topMargin = resources.getDimensionPixelSize(R.dimen.home_row_gap)
@@ -862,6 +896,10 @@ class HomeFragment : Fragment() {
         ).apply {
             if (index > 0) topMargin = resources.getDimensionPixelSize(R.dimen.home_row_gap)
         }
+    }
+
+    private fun TextView.applyHomeTypeface(style: Int) {
+        typeface = Typeface.create(homeTypeface, style)
     }
 
     private fun routeSubtitle(entry: HomePageQuery.Entry): String {
@@ -1016,6 +1054,8 @@ class HomeFragment : Fragment() {
     companion object {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
         private const val ROW_BACKGROUND_ALPHA = 24
+        private const val TRANSFER_ROW_BACKGROUND_ALPHA = 20
+        private const val TRANSFER_ROW_STROKE_ALPHA = 31
         private const val HOME_QUICK_SETTINGS_TAG = "HomeQuickSettingsDialog"
         private const val SUBWAY_MINIMUM_TRANSFER_MINUTES = 5
         private const val AUTO_REFRESH_INTERVAL_MILLIS = 60_000L

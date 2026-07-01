@@ -31,11 +31,12 @@
     <string name="home_quick_settings_subway_destination_oido">Oido</string>
     <string name="home_transfer_bus50_badge">50</string>
     <string name="home_transfer_bus50_title">Expected at %1$s</string>
-    <string name="home_transfer_bus50_subtitle">Transfer to Bus 50 at Terminal</string>
+    <string name="home_transfer_bus50_subtitle">Transfer to bus at Yesulin</string>
     <string name="home_transfer_buffer">+%1$d min</string>
     <string name="home_transfer_subway_suin_bundang_badge">Suin</string>
     <string name="home_transfer_subway_title">To %1$s</string>
-    <string name="home_transfer_subway_subtitle">Transfer to subway at Station</string>
+    <string name="home_transfer_subway_subtitle">Transfer at Hanyang Univ. at Ansan</string>
+    <string name="home_transfer_subway_oido_subtitle">Transfer at Oido Station</string>
     <string name="home_support_default">Only if urgent</string>
     <string name="home_support_emphasized">Alternatives / transfers</string>
     <string name="home_destination_station">Station</string>
@@ -93,6 +94,14 @@
     <string name="shuttle_quick_settings_title">Shuttle quick settings</string>
     <string name="shuttle_quick_settings_arrival_by_time_subtitle">Show shuttle arrivals by remaining time.</string>
     <string name="shuttle_quick_settings_departure_time_subtitle">Show shuttle times by departure time.</string>
+    <string name="shuttle_display_order_title">Display order</string>
+    <string name="shuttle_display_order_subtitle">Organize shuttle arrivals by time or destination.</string>
+    <string name="shuttle_display_time_order">By time</string>
+    <string name="shuttle_display_destination_order">By destination</string>
+    <string name="shuttle_time_display_title">Time display</string>
+    <string name="shuttle_time_display_subtitle">Show shuttle times as remaining time or departure time.</string>
+    <string name="shuttle_time_remaining">Remaining</string>
+    <string name="shuttle_time_departure">Departure</string>
     <string name="home_experience_new">Try the new home</string>
     <!-- 셔틀버스 도착 정보 없음 -->
     <string name="shuttle_no_realtime_data">No arrival information.</string>

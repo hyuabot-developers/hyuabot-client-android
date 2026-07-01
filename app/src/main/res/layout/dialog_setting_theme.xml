@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="@color/background"
     >
     <TextView
         android:layout_width="match_parent"
@@ -20,6 +21,7 @@
         android:id="@+id/theme_system"
         android:text="@string/theme_system"
         android:textSize="18sp"
+        android:textColor="@color/primary_text"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_width="match_parent"
@@ -27,11 +29,12 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/app_separator"/>
     <TextView
         android:id="@+id/theme_light"
         android:text="@string/theme_light"
         android:textSize="18sp"
+        android:textColor="@color/primary_text"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_width="match_parent"
@@ -39,11 +42,12 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/app_separator"/>
     <TextView
         android:id="@+id/theme_dark"
         android:text="@string/theme_dark"
         android:textSize="18sp"
+        android:textColor="@color/primary_text"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_width="match_parent"

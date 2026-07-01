@@ -25,28 +25,30 @@ class ShuttleQuickSettingsDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.showByDestinationSwitch.isChecked = requireArguments().getBoolean(ARG_SHOW_BY_DESTINATION)
-        binding.showDepartureTimeSwitch.isChecked = requireArguments().getBoolean(ARG_SHOW_DEPARTURE_TIME)
+        val showByDestination = requireArguments().getBoolean(ARG_SHOW_BY_DESTINATION)
+        val showDepartureTime = requireArguments().getBoolean(ARG_SHOW_DEPARTURE_TIME)
+        binding.showByDestinationGroup.check(
+            if (showByDestination) binding.showByDestinationButton.id else binding.showByTimeButton.id,
+        )
+        binding.showDepartureTimeGroup.check(
+            if (showDepartureTime) binding.showDepartureTimeButton.id else binding.showRemainingTimeButton.id,
+        )
 
-        binding.showByDestinationRow.setOnClickListener {
-            binding.showByDestinationSwitch.toggle()
-        }
-        binding.showDepartureTimeRow.setOnClickListener {
-            binding.showDepartureTimeSwitch.toggle()
-        }
-        binding.showByDestinationSwitch.setOnCheckedChangeListener { _, isChecked ->
+        binding.showByDestinationGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
                 Bundle().apply {
-                    putBoolean(KEY_SHOW_BY_DESTINATION, isChecked)
+                    putBoolean(KEY_SHOW_BY_DESTINATION, checkedId == binding.showByDestinationButton.id)
                 },
             )
         }
-        binding.showDepartureTimeSwitch.setOnCheckedChangeListener { _, isChecked ->
+        binding.showDepartureTimeGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
                 Bundle().apply {
-                    putBoolean(KEY_SHOW_DEPARTURE_TIME, isChecked)
+                    putBoolean(KEY_SHOW_DEPARTURE_TIME, checkedId == binding.showDepartureTimeButton.id)
                 },
             )
         }
