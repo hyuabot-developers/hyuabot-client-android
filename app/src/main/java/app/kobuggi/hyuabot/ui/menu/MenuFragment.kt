@@ -32,12 +32,12 @@ class MenuFragment @Inject constructor() : Fragment() {
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
     private val menuList = listOf(
-        MenuItem(R.drawable.ic_book, R.string.menu_book),
+        MenuItem(R.drawable.ic_book, R.string.menu_book, R.string.menu_section_school_life),
         MenuItem(R.drawable.ic_map, R.string.menu_map),
         MenuItem(R.drawable.ic_contact, R.string.menu_contact),
         MenuItem(R.drawable.ic_calendar, R.string.menu_calendar),
-        MenuItem(R.drawable.ic_settings, R.string.menu_settings),
-        MenuItem(R.drawable.ic_chat, R.string.menu_chat),
+        MenuItem(R.drawable.ic_settings, R.string.menu_settings, R.string.menu_section_support),
+        MenuItem(R.drawable.ic_chat, R.string.menu_chat, R.string.menu_section_external),
         MenuItem(R.drawable.ic_donate, R.string.menu_donate),
         MenuItem(R.drawable.ic_star, R.string.menu_review),
     )

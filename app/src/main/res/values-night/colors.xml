@@ -23,4 +23,6 @@
     <color name="calendar_event_text">#FFFFFF</color>
     <color name="calendar_sunday">#FF5252</color>
     <color name="calendar_saturday">#29B6F6</color>
+    <color name="cafeteria_price_background">#0B1F33</color>
+    <color name="cafeteria_price_text">#EAF6FF</color>
 </resources>

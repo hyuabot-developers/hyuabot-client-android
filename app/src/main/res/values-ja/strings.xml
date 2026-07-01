@@ -340,6 +340,9 @@
     <string name="menu_chat">お問い合わせ</string>
     <string name="menu_donate">寄付する</string>
     <string name="menu_review">アプリ評価</string>
+    <string name="menu_section_school_life">学校生活</string>
+    <string name="menu_section_support">サポート・設定</string>
+    <string name="menu_section_external">外部リンク</string>
     <string name="menu_map">キャンパスマップ</string>
     <string name="map_search_guide">検索する講義室を入力してください</string>
     <string name="map_external_error">地図を開けるアプリがありません。</string>
@@ -354,6 +357,8 @@
     <string name="reading_room_alarm_4_hour">4時間（平常時）</string>
     <string name="reading_room_alarm_cancel">キャンセル</string>
     <string name="reading_room_seat_format">%1$d/%2$d 席</string>
+    <string name="reading_room_available_seat_format">残り %1$d 席 · 全 %2$d 席</string>
+    <string name="reading_room_full_seat_format">満席 · 全 %1$d 席</string>
     <string name="default_notification_channel_id">HYUabot notification channel ID</string>
     <string name="reading_room_noti_allowed">通知権限が許可されました。</string>
     <string name="reading_room_noti_denied">通知権限が拒否されました。</string>
@@ -394,6 +399,7 @@
     <string name="event_date_format">%1$d月%2$d日</string>
     <string name="event_date_range_format">%1$d月%2$d日 〜 %3$d月%4$d日</string>
     <string name="calendar_select_date_hint">日付を選択すると予定を確認できます</string>
+    <string name="calendar_upcoming_empty">今後の予定はありません</string>
     <string name="calendar_previous_month">前の月</string>
     <string name="calendar_next_month">次の月</string>
     <string name="calendar_event_ongoing">進行中</string>

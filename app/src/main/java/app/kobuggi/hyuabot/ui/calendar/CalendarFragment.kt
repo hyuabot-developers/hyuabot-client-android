@@ -113,7 +113,11 @@ class CalendarFragment @Inject constructor() : Fragment() {
     private fun updateSelectedDateEvents(eventListAdapter: CalendarEventAdapter) {
         val date = selectedDate
         val selectedEvents = if (date == null) {
-            emptyList()
+            val today = LocalDate.now()
+            events.filter { event ->
+                val endDate = LocalDate.parse(event.endDate)
+                endDate >= today
+            }.sortedBy { it.startDate }.take(5)
         } else {
             events.filter { event ->
                 val startDate = LocalDate.parse(event.startDate)
@@ -123,9 +127,14 @@ class CalendarFragment @Inject constructor() : Fragment() {
         }
 
         binding.calendarSelectDateHint.visibility =
-            if (date == null || selectedEvents.isEmpty()) View.VISIBLE else View.GONE
+            if (selectedEvents.isEmpty()) View.VISIBLE else View.GONE
+        binding.calendarSelectDateHint.text = if (date == null) {
+            getString(R.string.calendar_upcoming_empty)
+        } else {
+            getString(R.string.calendar_select_date_hint)
+        }
         binding.eventListOfMonth.visibility =
-            if (date != null && selectedEvents.isNotEmpty()) View.VISIBLE else View.GONE
+            if (selectedEvents.isNotEmpty()) View.VISIBLE else View.GONE
         eventListAdapter.setEvents(selectedEvents)
     }
 

@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.setting
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,6 +12,8 @@ import javax.inject.Inject
 class ThemeSettingDialogViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+    val theme = userPreferencesRepository.theme.asLiveData()
+
     fun setDarkMode(theme: Boolean) {
         if (theme) {
             viewModelScope.launch { userPreferencesRepository.setTheme("dark") }

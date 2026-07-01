@@ -415,6 +415,9 @@
     <string name="menu_chat">문의하기</string>
     <string name="menu_donate">기부하기</string>
     <string name="menu_review">앱 평가하기</string>
+    <string name="menu_section_school_life">학교생활</string>
+    <string name="menu_section_support">지원 및 설정</string>
+    <string name="menu_section_external">외부 링크</string>
     <string name="menu_map">캠퍼스 지도</string>
     <string name="map_search_guide">검색할 강의실을 입력하세요</string>
     <string name="map_external_error">지도를 열 수 있는 앱이 없습니다.</string>
@@ -429,6 +432,8 @@
     <string name="reading_room_alarm_4_hour">4시간 (평시)</string>
     <string name="reading_room_alarm_cancel">취소</string>
     <string name="reading_room_seat_format">%1$d/%2$d 석</string>
+    <string name="reading_room_available_seat_format">잔여 %1$d석 · 전체 %2$d석</string>
+    <string name="reading_room_full_seat_format">만석 · 전체 %1$d석</string>
     <string name="default_notification_channel_id">HYUabot notification channel ID</string>
     <string name="reading_room_noti_allowed">알림 권한이 허용되었습니다.</string>
     <string name="reading_room_noti_denied">알림 권한이 거부되었습니다.</string>
@@ -473,6 +478,7 @@
     <string name="event_date_format">%1$d월 %2$d일</string>
     <string name="event_date_range_format">%1$d월 %2$d일 - %3$d월 %4$d일</string>
     <string name="calendar_select_date_hint">날짜를 선택하면 일정을 볼 수 있습니다</string>
+    <string name="calendar_upcoming_empty">다가오는 일정이 없습니다</string>
     <string name="calendar_previous_month">이전 달</string>
     <string name="calendar_next_month">다음 달</string>
     <string name="calendar_event_ongoing">진행 중</string>

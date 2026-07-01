@@ -6,21 +6,37 @@
     android:id="@+id/menu_item_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp" >
-    <ImageView
-        android:id="@+id/menu_icon_view"
-        android:layout_width="wrap_content"
+    android:minHeight="56dp"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp" >
+    <TextView
+        android:id="@+id/menu_section_text_view"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:contentDescription="menu icon"
+        android:paddingTop="8dp"
+        android:paddingBottom="12dp"
+        android:textColor="@color/secondary_text"
+        android:textFontWeight="700"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:text="학교생활" />
+    <ImageView
+        android:id="@+id/menu_icon_view"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="menu icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/menu_section_text_view"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:tint="@color/primary_text"
         tools:ignore="HardcodedText" />
     <TextView
         android:id="@+id/menu_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textColor="@color/primary_text"
         android:textFontWeight="700"
         android:layout_marginStart="16dp"
@@ -35,7 +51,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="menu arrow"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/menu_icon_view"
         app:layout_constraintBottom_toBottomOf="parent"
         android:src="@drawable/ic_arrow_right"
         app:tint="@color/secondary_text"

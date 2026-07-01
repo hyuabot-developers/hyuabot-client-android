@@ -37,4 +37,6 @@
     <color name="calendar_event_text">#FFFFFF</color>
     <color name="calendar_sunday">#D32F2F</color>
     <color name="calendar_saturday">#0277BD</color>
+    <color name="cafeteria_price_background">#EAF3FB</color>
+    <color name="cafeteria_price_text">#0E4A84</color>
 </resources>

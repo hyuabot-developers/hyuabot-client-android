@@ -340,6 +340,9 @@
     <string name="menu_chat">联系我们</string>
     <string name="menu_donate">捐赠</string>
     <string name="menu_review">评价应用</string>
+    <string name="menu_section_school_life">校园生活</string>
+    <string name="menu_section_support">支持与设置</string>
+    <string name="menu_section_external">外部链接</string>
     <string name="menu_map">校园地图</string>
     <string name="map_search_guide">请输入要搜索的教室</string>
     <string name="map_external_error">没有可打开地图的应用。</string>
@@ -354,6 +357,8 @@
     <string name="reading_room_alarm_4_hour">4小时（平时）</string>
     <string name="reading_room_alarm_cancel">取消</string>
     <string name="reading_room_seat_format">%1$d/%2$d 席</string>
+    <string name="reading_room_available_seat_format">剩余 %1$d 座 · 共 %2$d 座</string>
+    <string name="reading_room_full_seat_format">已满 · 共 %1$d 座</string>
     <string name="default_notification_channel_id">HYUabot notification channel ID</string>
     <string name="reading_room_noti_allowed">通知权限已允许。</string>
     <string name="reading_room_noti_denied">通知权限已拒绝。</string>
@@ -394,6 +399,7 @@
     <string name="event_date_format">%1$d月%2$d日</string>
     <string name="event_date_range_format">%1$d月%2$d日 - %3$d月%4$d日</string>
     <string name="calendar_select_date_hint">选择日期即可查看日程</string>
+    <string name="calendar_upcoming_empty">暂无即将到来的日程</string>
     <string name="calendar_previous_month">上个月</string>
     <string name="calendar_next_month">下个月</string>
     <string name="calendar_event_ongoing">进行中</string>

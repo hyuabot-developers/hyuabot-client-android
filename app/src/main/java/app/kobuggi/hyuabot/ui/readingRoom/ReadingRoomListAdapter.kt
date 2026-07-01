@@ -23,8 +23,11 @@ class ReadingRoomListAdapter(
         fun bind(room: ReadingRoomPageQuery.ReadingRoom) {
             binding.apply {
                 DynamicTextTranslator.bind(readingRoomName, room.name)
-                readingRoomSeatCount.text =
-                    context.getString(R.string.reading_room_seat_format, room.seats.available, room.seats.active)
+                readingRoomSeatCount.text = if (room.seats.available <= 0) {
+                    context.getString(R.string.reading_room_full_seat_format, room.seats.active)
+                } else {
+                    context.getString(R.string.reading_room_available_seat_format, room.seats.available, room.seats.active)
+                }
                 readingRoomAlarmButton.apply {
                     isSelected = notifications.contains(room.seq)
                     setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM); onClick(room, !isSelected) }

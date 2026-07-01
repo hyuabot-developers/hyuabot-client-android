@@ -363,6 +363,9 @@
     <string name="menu_chat">Inquiries</string>
     <string name="menu_donate">Donate</string>
     <string name="menu_review">Rate this App</string>
+    <string name="menu_section_school_life">School life</string>
+    <string name="menu_section_support">Support and settings</string>
+    <string name="menu_section_external">External links</string>
     <string name="menu_map">Campus Map</string>
     <string name="map_search_guide">Enter a room to search</string>
     <string name="map_external_error">No app is available to open the map.</string>
@@ -377,6 +380,8 @@
     <string name="reading_room_alarm_4_hour">4 Hours\n(Normal Period)</string>
     <string name="reading_room_alarm_cancel">Cancel</string>
     <string name="reading_room_seat_format">%1$d/%2$d</string>
+    <string name="reading_room_available_seat_format">%1$d seats available · %2$d total</string>
+    <string name="reading_room_full_seat_format">Full · %1$d total seats</string>
     <string name="default_notification_channel_id">HYUabot Notification Channel ID</string>
     <string name="reading_room_noti_allowed">Notifications enabled.</string>
     <string name="reading_room_noti_denied">Notifications disabled.</string>
@@ -415,6 +420,7 @@
     <string name="event_date_format">%1$d/%2$d</string>
     <string name="event_date_range_format">%1$d/%2$d - %3$d/%4$d</string>
     <string name="calendar_select_date_hint">Tap a date to see events</string>
+    <string name="calendar_upcoming_empty">No upcoming events</string>
     <string name="calendar_previous_month">Previous month</string>
     <string name="calendar_next_month">Next month</string>
     <string name="calendar_event_ongoing">Ongoing</string>

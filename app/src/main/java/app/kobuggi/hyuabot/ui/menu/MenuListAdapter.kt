@@ -5,6 +5,7 @@ import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
@@ -21,6 +22,12 @@ class MenuListAdapter(
                 menuItemView.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.MENU_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM); onClickListener(menuItem) }
                 menuIconView.setImageResource(menuItem.iconResource)
                 menuTextView.text = context.getString(menuItem.titleResource)
+                if (menuItem.sectionTitleResource == null) {
+                    menuSectionTextView.visibility = View.GONE
+                } else {
+                    menuSectionTextView.visibility = View.VISIBLE
+                    menuSectionTextView.text = context.getString(menuItem.sectionTitleResource)
+                }
             }
         }
     }
