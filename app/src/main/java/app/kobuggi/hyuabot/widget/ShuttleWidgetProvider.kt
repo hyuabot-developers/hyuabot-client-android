@@ -14,6 +14,7 @@ import androidx.core.widget.RemoteViewsCompat.RemoteCollectionItems
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleWidgetQuery
 import app.kobuggi.hyuabot.ui.MainActivity
+import app.kobuggi.hyuabot.util.localizedContext
 import com.apollographql.apollo.api.Optional
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
@@ -57,7 +58,8 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
             try {
                 withTimeout(WIDGET_TIMEOUT_MS) {
                     val appContext = context.applicationContext
-                    val data = loadData(appContext)
+                    val localizedAppContext = localizedContext(appContext)
+                    val data = loadData(appContext, localizedAppContext)
                     val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
                     appWidgetIds.forEach {
                         appWidgetManager.updateAppWidget(it, buildWidget(appContext, it, now, data))
@@ -86,9 +88,10 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
         now: ZonedDateTime,
         data: ShuttleWidgetData,
     ): RemoteViews {
+        val textContext = localizedContext(context)
         val views = RemoteViews(context.packageName, R.layout.widget_shuttle)
         views.setTextViewText(R.id.widget_shuttle_date, now.format(ShuttleWidgetSupport.TIME_FORMAT))
-        applyHeader(context, views, data)
+        applyHeader(textContext, views, data)
 
         if (data.groups.isEmpty()) {
             views.setViewVisibility(R.id.widget_shuttle_list, View.GONE)
@@ -134,8 +137,9 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
         context: Context,
         data: ShuttleWidgetData,
     ): RemoteViews {
+        val textContext = localizedContext(context)
         val views = RemoteViews(context.packageName, R.layout.widget_shuttle_small)
-        applyHeader(context, views, data)
+        applyHeader(textContext, views, data)
 
         views.removeAllViews(R.id.widget_shuttle_small_container)
         val compact = data.groups.take(MAX_COMPACT_GROUPS)
@@ -160,6 +164,7 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
     }
 
     private fun applyHeader(context: Context, views: RemoteViews, data: ShuttleWidgetData) {
+        views.setTextViewText(R.id.widget_shuttle_title, context.getString(R.string.shuttle_bus))
         views.setTextViewText(
             R.id.widget_shuttle_stop,
             data.stopName?.let { "· $it" } ?: ""
@@ -221,7 +226,7 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
         )
     }
 
-    private suspend fun loadData(context: Context): ShuttleWidgetData {
+    private suspend fun loadData(context: Context, textContext: Context): ShuttleWidgetData {
         if (!ShuttleWidgetSupport.hasLocationPermission(context)) {
             return ShuttleWidgetData(ShuttleError.NO_PERMISSION, null, null, emptyList())
         }
@@ -244,14 +249,14 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
             val nearest = stops.minByOrNull { ShuttleWidgetSupport.distanceTo(it, location) }
                 ?: return ShuttleWidgetData(ShuttleError.NO_DATA, null, null, emptyList())
 
-            var groups = ShuttleWidgetSupport.makeGroups(context, nearest.timetable)
-            var stopName = ShuttleWidgetSupport.stopDisplayName(context, nearest.name)
+            var groups = ShuttleWidgetSupport.makeGroups(textContext, nearest.timetable)
+            var stopName = ShuttleWidgetSupport.stopDisplayName(textContext, nearest.name)
             if (nearest.name == "shuttlecock_o" || nearest.name == "shuttlecock_i") {
                 val companion = if (nearest.name == "shuttlecock_o") "shuttlecock_i" else "shuttlecock_o"
                 stops.firstOrNull { it.name == companion }?.let {
-                    groups = groups + ShuttleWidgetSupport.makeGroups(context, it.timetable)
+                    groups = groups + ShuttleWidgetSupport.makeGroups(textContext, it.timetable)
                 }
-                stopName = context.getString(R.string.shuttle_tab_shuttlecock_out)
+                stopName = textContext.getString(R.string.shuttle_tab_shuttlecock_out)
             }
 
             if (groups.isEmpty()) {
