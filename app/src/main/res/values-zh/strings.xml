@@ -522,6 +522,7 @@
     <string name="cafeteria_share_title">分享学食菜单</string>
     <string name="cafeteria_share_format">%1$s %2$s\n%3$s</string>
     <string name="cafeteria_action_bar_title">可分享当前菜单</string>
+    <string name="cafeteria_menu_translating">正在翻译菜单…</string>
     <string name="shortcut_shuttle_short">校车</string>
     <string name="shortcut_shuttle_long">校车到达信息</string>
     <string name="shortcut_cafeteria_short">学食</string>

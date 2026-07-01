@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
+import app.kobuggi.hyuabot.R
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.TranslateLanguage
@@ -28,7 +29,8 @@ object DynamicTextTranslator {
     private val translators = ConcurrentHashMap<TranslatorKey, Translator>()
     private val downloadConditions = DownloadConditions.Builder().build()
 
-    fun bind(textView: TextView, text: String) {
+    fun bind(textView: TextView, text: String, loadingText: String? = null) {
+        textView.setTag(R.id.dynamic_translation_source_text, text)
         textView.text = text
         val targetLanguage = targetLanguage(textView.resources) ?: return
         val sourceLanguage = sourceLanguage(text) ?: return
@@ -36,19 +38,34 @@ object DynamicTextTranslator {
 
         val cacheKey = CacheKey(sourceLanguage, targetLanguage, text)
         translatedTextCache[cacheKey]?.let {
-            textView.text = it
+            if (textView.getTag(R.id.dynamic_translation_source_text) == text) {
+                textView.text = it
+            }
             return
+        }
+
+        val pendingText = loadingText ?: text
+        if (loadingText != null) {
+            textView.text = pendingText
         }
 
         scope.launch {
             runCatching { translate(text, sourceLanguage, targetLanguage) }
                 .onSuccess { translated ->
                     translatedTextCache[cacheKey] = translated
-                    if (textView.text.toString() == text) {
+                    if (textView.getTag(R.id.dynamic_translation_source_text) == text) {
                         textView.text = translated
                     }
                 }
-                .onFailure { Log.w(TAG, "Failed to translate text from $sourceLanguage to $targetLanguage", it) }
+                .onFailure {
+                    Log.w(TAG, "Failed to translate text from $sourceLanguage to $targetLanguage", it)
+                    if (
+                        textView.getTag(R.id.dynamic_translation_source_text) == text &&
+                        textView.text.toString() == pendingText
+                    ) {
+                        textView.text = text
+                    }
+                }
         }
     }
 

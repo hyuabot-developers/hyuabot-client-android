@@ -522,6 +522,7 @@
     <string name="cafeteria_share_title">学食メニューを共有</string>
     <string name="cafeteria_share_format">%1$s %2$s\n%3$s</string>
     <string name="cafeteria_action_bar_title">現在のメニューを共有できます</string>
+    <string name="cafeteria_menu_translating">メニューを翻訳中…</string>
     <string name="shortcut_shuttle_short">シャトル</string>
     <string name="shortcut_shuttle_long">シャトル到着情報</string>
     <string name="shortcut_cafeteria_short">学食</string>

@@ -543,6 +543,7 @@
     <string name="cafeteria_share_title">Share cafeteria menu</string>
     <string name="cafeteria_share_format">%1$s %2$s\n%3$s</string>
     <string name="cafeteria_action_bar_title">Share the current menu</string>
+    <string name="cafeteria_menu_translating">Translating menu…</string>
     <string name="shortcut_shuttle_short">Shuttle</string>
     <string name="shortcut_shuttle_long">Shuttle arrivals</string>
     <string name="shortcut_cafeteria_short">Dining</string>
