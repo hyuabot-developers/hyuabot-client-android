@@ -11,9 +11,10 @@ tags:
       visible: "Skip"
     commands:
       - tapOn: "Skip"
-- assertVisible: "Shuttle"
-- assertVisible: "Dormitory"
-- tapOn: "Bus"
+- assertVisible:
+    id: "app.kobuggi.hyuabot:id/home_swipe_refresh_layout"
+- tapOn:
+    id: "app.kobuggi.hyuabot:id/busRealtimeFragment"
 - runFlow:
     when:
       visible: "Skip"
@@ -21,7 +22,8 @@ tags:
       - tapOn: "Skip"
 - assertVisible: "Sangnoksu"
 - assertVisible: "Gangnam"
-- tapOn: "Subway"
+- tapOn:
+    id: "app.kobuggi.hyuabot:id/subwayRealtimeFragment"
 - runFlow:
     when:
       visible: "Skip"
@@ -29,7 +31,8 @@ tags:
       - tapOn: "Skip"
 - assertVisible: "Line 4"
 - assertVisible: "Suin-Bundang Line"
-- tapOn: "Cafeteria"
+- tapOn:
+    id: "app.kobuggi.hyuabot:id/cafeteriaFragment"
 - runFlow:
     when:
       visible: "Skip"
@@ -37,7 +40,8 @@ tags:
       - tapOn: "Skip"
 - assertVisible: "Breakfast"
 - assertVisible: "Lunch"
-- tapOn: "Menu"
+- tapOn:
+    id: "app.kobuggi.hyuabot:id/menuFragment"
 - runFlow:
     when:
       visible: "Skip"

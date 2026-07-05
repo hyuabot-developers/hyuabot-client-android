@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui
 
 import android.Manifest
 import android.content.Context
+import android.view.View
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
@@ -9,10 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -20,7 +24,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.service.preferences.userDataStore
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.Matcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -69,8 +75,8 @@ class AppNavigationSmokeTest {
         ActivityScenario.launch(MainActivity::class.java).use {
             onView(withId(R.id.bottom_navigation)).check(matches(isDisplayed()))
 
-            selectBottomTab(R.id.shuttleRealtimeFragment)
-            onView(withId(R.id.viewPager)).check(matches(isDisplayed()))
+            selectBottomTab(R.id.homeFragment)
+            onView(withId(R.id.home_swipe_refresh_layout)).check(matches(isDisplayed()))
 
             selectBottomTab(R.id.busRealtimeFragment)
             onView(withId(R.id.viewPager)).check(matches(isDisplayed()))
@@ -98,7 +104,7 @@ class AppNavigationSmokeTest {
 
             selectBottomTab(R.id.menuFragment)
             openMenuDestination(R.string.menu_calendar)
-            onView(withId(R.id.calendar_view)).check(matches(isDisplayed()))
+            onView(withId(R.id.calendar_timeline_view)).check(matches(isDisplayed()))
 
             selectBottomTab(R.id.menuFragment)
             openMenuDestination(R.string.menu_settings)
@@ -109,7 +115,18 @@ class AppNavigationSmokeTest {
     }
 
     private fun selectBottomTab(itemId: Int) {
-        onView(withId(itemId)).perform(click())
+        onView(withId(R.id.bottom_navigation)).perform(selectNavigationItem(itemId))
+    }
+
+    private fun selectNavigationItem(itemId: Int): ViewAction = object : ViewAction {
+        override fun getConstraints(): Matcher<View> = isAssignableFrom(BottomNavigationView::class.java)
+
+        override fun getDescription(): String = "Select bottom navigation item"
+
+        override fun perform(uiController: UiController, view: View) {
+            (view as BottomNavigationView).selectedItemId = itemId
+            uiController.loopMainThreadUntilIdle()
+        }
     }
 
     private fun openMenuDestination(titleRes: Int) {
