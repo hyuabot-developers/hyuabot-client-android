@@ -2,6 +2,8 @@ package app.kobuggi.hyuabot.ui.map
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +13,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.net.toUri
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.SheetBuildingWebviewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -36,7 +39,12 @@ class BuildingWebViewSheet : BottomSheetDialogFragment() {
             settings.domStorageEnabled = true
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                    return false
+                    val uri = request?.url ?: return false
+                    if (uri.scheme == "http" || uri.scheme == "https") {
+                        return false
+                    }
+
+                    return openExternalUrl(uri.toString(), view)
                 }
 
                 override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -80,6 +88,28 @@ class BuildingWebViewSheet : BottomSheetDialogFragment() {
             destroy()
         }
         super.onDestroyView()
+    }
+
+    private fun openExternalUrl(url: String, view: WebView?): Boolean {
+        val intent = runCatching {
+            if (url.startsWith("intent://")) {
+                Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
+            } else {
+                Intent(Intent.ACTION_VIEW, url.toUri())
+            }
+        }.getOrNull() ?: return true
+
+        runCatching {
+            startActivity(intent)
+        }.onFailure { error ->
+            if (error is ActivityNotFoundException) {
+                intent.getStringExtra("browser_fallback_url")?.let { fallbackUrl ->
+                    view?.loadUrl(fallbackUrl)
+                }
+            }
+        }
+
+        return true
     }
 
     companion object {
