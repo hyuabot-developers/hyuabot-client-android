@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     private fun updatePrimaryNavigationItem(destinationId: Int?) {
         updateBottomNavigationLabels()
         val primaryItem = binding.bottomNavigation.menu.findItem(R.id.homeFragment) ?: return
+        val moreItem = binding.bottomNavigation.menu.findItem(R.id.menuFragment)
         if (destinationId.isShuttleDestination()) {
             primaryItem.title = getString(R.string.shuttle_bus)
             primaryItem.setIcon(R.drawable.ic_shuttle_bus)
@@ -109,8 +110,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         } else {
             primaryItem.title = getString(R.string.home)
             primaryItem.setIcon(R.drawable.ic_home)
-            if (destinationId == R.id.homeFragment) {
-                primaryItem.isChecked = true
+            when {
+                destinationId == R.id.homeFragment -> primaryItem.isChecked = true
+                destinationId.isMoreDestination() -> moreItem?.isChecked = true
             }
         }
     }
@@ -122,6 +124,20 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.shuttleHelpDialogFragment,
         R.id.shuttleTimetableDialogFragment,
         R.id.shuttleTimetableFilterDialogFragment -> true
+        else -> false
+    }
+
+    private fun Int?.isMoreDestination(): Boolean = when (this) {
+        R.id.menuFragment,
+        R.id.readingRoomFragment,
+        R.id.contactFragment,
+        R.id.calendarFragment,
+        R.id.mapFragment,
+        R.id.settingFragment,
+        R.id.languageSettingDialogFragment,
+        R.id.campusSettingDialogFragment,
+        R.id.themeSettingDialogFragment,
+        R.id.settingDeveloperDialogFragment -> true
         else -> false
     }
 
