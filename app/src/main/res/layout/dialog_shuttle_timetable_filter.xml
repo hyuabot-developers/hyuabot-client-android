@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/background"
     android:paddingBottom="16dp">
     <com.google.android.material.appbar.AppBarLayout
@@ -49,6 +49,8 @@
             android:layout_weight="1"
             android:layout_height="42dp"
             android:id="@+id/semester_button"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@string/shuttle_period_semester"
         />
         <com.google.android.material.button.MaterialButton
@@ -57,6 +59,8 @@
             android:layout_weight="1"
             android:layout_height="42dp"
             android:id="@+id/vacation_session_button"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@string/shuttle_period_vacation_session"
         />
         <com.google.android.material.button.MaterialButton
@@ -65,6 +69,8 @@
             android:layout_weight="1"
             android:layout_height="42dp"
             android:id="@+id/vacation_button"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@string/shuttle_period_vacation"
         />
     </com.google.android.material.button.MaterialButtonToggleGroup>

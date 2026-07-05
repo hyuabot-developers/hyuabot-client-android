@@ -14,9 +14,7 @@ class SubwayTransferListAdapter(
     private var arrivals: List<SubwayTransferItem> = emptyList(),
 ) : RecyclerView.Adapter<SubwayTransferListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemSubwayTransferBinding) : RecyclerView.ViewHolder(binding.root) {
-        @SuppressLint("ClickableViewAccessibility")
         fun bind(transfer: SubwayTransferItem) {
-            binding.transferTargetText.isSelected = true
             if (transfer.transfer == null) {
                 if (heading == "up") {
                     binding.transferTargetText.text = context.getString(

@@ -14,18 +14,22 @@
 
         <TextView
             android:id="@+id/widget_item_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/primary_text" />
 
         <TextView
             android:id="@+id/widget_item_running_time"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginStart="6dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textSize="11sp"
             android:textColor="@color/secondary_text" />
     </LinearLayout>
