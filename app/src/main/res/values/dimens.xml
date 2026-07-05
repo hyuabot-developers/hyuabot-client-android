@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="home_destination_button_min_height">44dp</dimen>
-    <dimen name="home_row_gap">8dp</dimen>
+    <dimen name="home_row_gap">10dp</dimen>
     <dimen name="setting_selection_check_padding">12dp</dimen>
 </resources>

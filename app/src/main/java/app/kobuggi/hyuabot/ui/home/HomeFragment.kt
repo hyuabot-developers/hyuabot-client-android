@@ -20,6 +20,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -162,6 +163,10 @@ class HomeFragment : Fragment() {
                 id = View.generateViewId()
                 text = getString(destination.titleRes)
                 minHeight = resources.getDimensionPixelSize(R.dimen.home_destination_button_min_height)
+                minWidth = 0
+                minimumWidth = 0
+                maxLines = 1
+                ellipsize = TextUtils.TruncateAt.END
                 insetTop = 0
                 insetBottom = 0
                 isCheckable = true
@@ -305,16 +310,16 @@ class HomeFragment : Fragment() {
         val nextShuttleMinutes = shuttleCandidates.firstOrNull()?.time?.let { minutesUntil(it) }
         val shouldEmphasizeSupport = nextShuttleMinutes?.let { it > SUPPORT_EMPHASIS_THRESHOLD_MINUTES } ?: true
 
-        if (shuttleRows.isEmpty() && busRows.isEmpty()) {
+        if (shuttleRows.isEmpty()) {
             addEmptyRow(binding.movementContainer, R.string.home_no_data_title, R.string.home_no_data_message)
         } else {
             shuttleRows.forEach { addShuttleMovement(binding.movementContainer, it) }
-            if (busRows.isNotEmpty()) {
-                addSupportHeader(binding.movementContainer, shouldEmphasizeSupport)
-                busRows
-                    .take(if (shouldEmphasizeSupport) 4 else 2)
-                    .forEach { addHomeRow(binding.movementContainer, it) }
-            }
+        }
+        if (busRows.isNotEmpty()) {
+            addSupportHeader(binding.movementContainer, shouldEmphasizeSupport)
+            busRows
+                .take(if (shouldEmphasizeSupport) 4 else 2)
+                .forEach { addHomeRow(binding.movementContainer, it) }
         }
     }
 
@@ -863,6 +868,15 @@ class HomeFragment : Fragment() {
     private fun addEmptyRow(container: LinearLayout, title: String, message: String) {
         val view = layoutInflater.inflate(R.layout.item_home_row, container, false)
         view.findViewById<TextView>(R.id.badge).visibility = View.GONE
+        view.findViewById<View>(R.id.text_container).layoutParams =
+            (view.findViewById<View>(R.id.text_container).layoutParams as ConstraintLayout.LayoutParams).apply {
+                startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+                startToEnd = ConstraintLayout.LayoutParams.UNSET
+                endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+                endToStart = ConstraintLayout.LayoutParams.UNSET
+                marginStart = 0
+                marginEnd = 0
+            }
         view.findViewById<TextView>(R.id.title).apply {
             applyHomeTypeface(Typeface.BOLD)
             text = title
