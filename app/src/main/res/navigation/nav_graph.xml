@@ -10,6 +10,7 @@
         android:label="홈"
         tools:layout="@layout/fragment_home">
         <deepLink app:uri="hyuabot://home" />
+        <deepLink app:uri="https://hyuabot.app/home" />
         <action
             android:id="@+id/action_homeFragment_to_shuttleRealtimeFragment"
             app:destination="@id/shuttleRealtimeFragment" />
@@ -26,8 +27,16 @@
             android:name="stop"
             app:argType="string"
             android:defaultValue="" />
+        <argument
+            android:name="to"
+            app:argType="string"
+            android:defaultValue="" />
         <deepLink app:uri="hyuabot://shuttle" />
         <deepLink app:uri="hyuabot://shuttle?stop={stop}" />
+        <deepLink app:uri="hyuabot://shuttle?stop={stop}&amp;to={to}" />
+        <deepLink app:uri="https://hyuabot.app/shuttle" />
+        <deepLink app:uri="https://hyuabot.app/shuttle?stop={stop}" />
+        <deepLink app:uri="https://hyuabot.app/shuttle?stop={stop}&amp;to={to}" />
         <action
             android:id="@+id/action_shuttleRealtimeFragment_to_shuttleStopDialogFragment"
             app:destination="@id/shuttleStopDialogFragment" />
@@ -63,6 +72,8 @@
         android:name="app.kobuggi.hyuabot.ui.bus.realtime.BusRealtimeFragment"
         android:label="버스 도착 정보"
         tools:layout="@layout/fragment_bus_realtime">
+        <deepLink app:uri="hyuabot://bus" />
+        <deepLink app:uri="https://hyuabot.app/bus" />
         <action
             android:id="@+id/action_busRealtimeFragment_to_busHelpDialogFragment"
             app:destination="@id/busHelpDialogFragment" />
@@ -109,6 +120,8 @@
         android:name="app.kobuggi.hyuabot.ui.subway.realtime.SubwayRealtimeFragment"
         android:label="지하철 도착 정보"
         tools:layout="@layout/fragment_subway_realtime">
+        <deepLink app:uri="hyuabot://subway" />
+        <deepLink app:uri="https://hyuabot.app/subway" />
         <action
             android:id="@+id/action_subwayRealtimeFragment_to_subwayTimetableFragment"
             app:destination="@id/subwayTimetableFragment" />
@@ -136,7 +149,10 @@
             android:name="tab"
             app:argType="string"
             android:defaultValue="" />
+        <deepLink app:uri="hyuabot://cafeteria" />
         <deepLink app:uri="hyuabot://cafeteria?tab={tab}" />
+        <deepLink app:uri="https://hyuabot.app/cafeteria" />
+        <deepLink app:uri="https://hyuabot.app/cafeteria?tab={tab}" />
     </fragment>
     <fragment
         android:id="@+id/readingRoomFragment"
@@ -144,6 +160,7 @@
         android:label="열람실 정보"
         tools:layout="@layout/fragment_reading_room">
         <deepLink app:uri="hyuabot://reading-room" />
+        <deepLink app:uri="https://hyuabot.app/reading-room" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
@@ -151,12 +168,15 @@
         android:label="지도"
         tools:layout="@layout/fragment_map">
         <deepLink app:uri="hyuabot://map" />
+        <deepLink app:uri="https://hyuabot.app/map" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="app.kobuggi.hyuabot.ui.setting.SettingFragment"
         android:label="설정"
         tools:layout="@layout/fragment_setting">
+        <deepLink app:uri="hyuabot://setting" />
+        <deepLink app:uri="https://hyuabot.app/setting" />
         <action
             android:id="@+id/action_settingFragment_to_languageSettingDialogFragment"
             app:destination="@id/languageSettingDialogFragment" />
@@ -184,12 +204,18 @@
         android:id="@+id/contactFragment"
         android:name="app.kobuggi.hyuabot.ui.contact.ContactFragment"
         android:label="전화부"
-        tools:layout="@layout/fragment_contact" />
+        tools:layout="@layout/fragment_contact">
+        <deepLink app:uri="hyuabot://contact" />
+        <deepLink app:uri="https://hyuabot.app/contact" />
+    </fragment>
     <fragment
         android:id="@+id/calendarFragment"
         android:name="app.kobuggi.hyuabot.ui.calendar.CalendarFragment"
         android:label="학사일정"
-        tools:layout="@layout/fragment_calendar" />
+        tools:layout="@layout/fragment_calendar">
+        <deepLink app:uri="hyuabot://calendar" />
+        <deepLink app:uri="https://hyuabot.app/calendar" />
+    </fragment>
     <fragment
         android:id="@+id/menuFragment"
         android:name="app.kobuggi.hyuabot.ui.menu.MenuFragment"
