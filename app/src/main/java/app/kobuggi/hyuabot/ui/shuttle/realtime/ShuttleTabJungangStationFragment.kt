@@ -203,7 +203,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
         val allStops = parentViewModel.result.value ?: return
         val destStops = buildShuttleAlarmDestinationStopIds(routeStops, boardingStopId).mapNotNull { name ->
             allStops.firstOrNull { it.name == shuttleAlarmLocationStopId(name) }?.let {
-                Triple(ShuttleWidgetSupport.stopDisplayName(requireContext(), it.name), it.latitude, it.longitude)
+                ShuttleAlarmDestinationStop(name, ShuttleWidgetSupport.stopDisplayName(requireContext(), it.name), it.latitude, it.longitude)
             }
         }
         val alarmKey = app.kobuggi.hyuabot.service.alarm.ShuttleAlarmService.buildAlarmKey(boardingStopId, timetableSeq)
@@ -211,7 +211,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
         val checkpointNames = buildShuttleAlarmCheckpointStopIds(routeStops, boardingStopId).map { ShuttleWidgetSupport.stopDisplayName(requireContext(), it) }.toTypedArray()
         val destTimes = buildShuttleAlarmDestinationTimes(routeStops, boardingStopId, departureTimeMillis)
         ShuttleAlarmDialogFragment.newInstance(
-            getString(boardingLabelRes), boardingStop.latitude, boardingStop.longitude,
+            boardingStopId, getString(boardingLabelRes), boardingStop.latitude, boardingStop.longitude,
             minutes, departureTimeMillis, alarmKey, checkpointNames, checkpointTimes, destTimes, destStops
         ).show(childFragmentManager, "shuttle_alarm")
     }

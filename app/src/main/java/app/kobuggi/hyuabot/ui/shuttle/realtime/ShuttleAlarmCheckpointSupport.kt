@@ -4,6 +4,13 @@ import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
 
+data class ShuttleAlarmDestinationStop(
+    val id: String,
+    val name: String,
+    val latitude: Double,
+    val longitude: Double
+)
+
 fun buildShuttleAlarmCheckpointTimes(
     routeStops: List<Pair<String, LocalTime>>,
     boardingStopId: String,
