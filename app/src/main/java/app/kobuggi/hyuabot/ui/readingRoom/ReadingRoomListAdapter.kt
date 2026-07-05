@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ReadingRoomPageQuery
 import app.kobuggi.hyuabot.databinding.ItemReadingRoomBinding
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 
 class ReadingRoomListAdapter(
     private val context: Context,
@@ -21,9 +22,12 @@ class ReadingRoomListAdapter(
     inner class ViewHolder (private val binding: ItemReadingRoomBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(room: ReadingRoomPageQuery.ReadingRoom) {
             binding.apply {
-                readingRoomName.text = room.name
-                readingRoomSeatCount.text =
-                    context.getString(R.string.reading_room_seat_format, room.seats.available, room.seats.active)
+                DynamicTextTranslator.bind(readingRoomName, room.name)
+                readingRoomSeatCount.text = if (room.seats.available <= 0) {
+                    context.getString(R.string.reading_room_full_seat_format, room.seats.active)
+                } else {
+                    context.getString(R.string.reading_room_available_seat_format, room.seats.available, room.seats.active)
+                }
                 readingRoomAlarmButton.apply {
                     isSelected = notifications.contains(room.seq)
                     setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM); onClick(room, !isSelected) }

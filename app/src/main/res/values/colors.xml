@@ -13,9 +13,32 @@
     <!-- 지하철 노선 색상 -->
     <color name="subway_line4">#00A0E9</color>
     <color name="subway_suin">#FABE00</color>
+    <color name="home_subway_yellow">#B87A00</color>
     <!-- 글자 색상 -->
     <color name="primary_text">#000000</color>
     <color name="secondary_text">#757575</color>
     <!-- 배경 색상 -->
     <color name="background">#FFFFFF</color>
+    <color name="dialog_background">#FFFFFF</color>
+    <color name="home_row_background">#F6F7F9</color>
+    <color name="home_action_button_background">#DBEDF9</color>
+    <color name="home_detail_button_text">#0E4A84</color>
+    <color name="home_segmented_track">#E7E7EC</color>
+    <color name="home_segmented_selected">#FFFFFF</color>
+    <color name="bottom_navigation_indicator">#E6E7EB</color>
+    <color name="bottom_navigation_unselected">#202124</color>
+    <color name="plain_button_text">#0E4A84</color>
+    <color name="app_separator">#C6C6C8</color>
+    <color name="app_selection_background">#E5E5EA</color>
+    <color name="skeleton_placeholder">#E0E0E0</color>
+    <color name="skeleton_placeholder_highlight">#F5F5F5</color>
+    <!-- 캘린더 -->
+    <color name="calendar_grid_line">#E0E0E0</color>
+    <color name="calendar_today_fill">#0E4A84</color>
+    <color name="calendar_selected_fill">#DCEBFA</color>
+    <color name="calendar_event_text">#FFFFFF</color>
+    <color name="calendar_sunday">#D32F2F</color>
+    <color name="calendar_saturday">#0277BD</color>
+    <color name="cafeteria_price_background">#EAF3FB</color>
+    <color name="cafeteria_price_text">#0E4A84</color>
 </resources>

@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
     <FrameLayout
         android:id="@+id/bottomSheetNavHost"
         android:layout_width="match_parent"
@@ -18,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:paddingBottom="24dp">
+            android:paddingBottom="160dp">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_station"
                 android:layout_width="match_parent"
@@ -40,8 +41,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/info_button_bound_for_station"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/info_button_shuttle"
@@ -88,6 +89,7 @@
                 android:padding="16dp"
                 android:gravity="center"
                 android:text="@string/shuttle_no_realtime_data"
+                android:textColor="@color/secondary_text"
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_station" />
@@ -120,8 +122,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/bus_alternative_station_info"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -136,19 +138,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
+                    android:textColor="@color/primary_text"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toStartOf="@id/bus_alternative_station_info"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/entire_timetable_bound_for_station"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="@string/shuttle_footer_entire_timetable"
-                android:textSize="18sp"
-                android:textFontWeight="700"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.App.PlainFooterButton"
                 app:layout_constraintTop_toBottomOf="@id/bus_alternative_station" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_dormitory"
@@ -172,8 +173,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/info_button_bound_for_dormitory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/info_button_shuttle"
@@ -220,6 +221,7 @@
                 android:padding="16dp"
                 android:gravity="center"
                 android:text="@string/shuttle_no_realtime_data"
+                android:textColor="@color/secondary_text"
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_dormitory" />
@@ -252,8 +254,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/bus_alternative_dormitory_info"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -268,6 +270,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
+                    android:textColor="@color/primary_text"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toStartOf="@id/bus_alternative_dormitory_info"
                     app:layout_constraintTop_toTopOf="parent"
@@ -301,8 +304,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/bus_alternative_dormitory_2_info"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -317,19 +320,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
+                    android:textColor="@color/primary_text"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toStartOf="@id/bus_alternative_dormitory_2_info"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/entire_timetable_bound_for_dormitory"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="@string/shuttle_footer_entire_timetable"
-                android:textSize="18sp"
-                android:textFontWeight="700"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.App.PlainFooterButton"
                 app:layout_constraintTop_toBottomOf="@id/bus_alternative_dormitory_2" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_terminal"
@@ -353,8 +355,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/info_button_bound_for_terminal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/info_button_shuttle"
@@ -401,6 +403,7 @@
                 android:padding="16dp"
                 android:gravity="center"
                 android:text="@string/shuttle_no_realtime_data"
+                android:textColor="@color/secondary_text"
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_terminal" />
@@ -432,8 +435,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/bus_alternative_terminal_info"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -448,19 +451,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
+                    android:textColor="@color/primary_text"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toStartOf="@id/bus_alternative_terminal_info"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/entire_timetable_bound_for_terminal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="@string/shuttle_footer_entire_timetable"
-                android:textSize="18sp"
-                android:textFontWeight="700"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.App.PlainFooterButton"
                 app:layout_constraintTop_toBottomOf="@id/bus_alternative_terminal" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_jungang_station"
@@ -484,8 +486,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/info_button_bound_for_jungang_station"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/info_button_shuttle"
@@ -532,6 +534,7 @@
                 android:padding="16dp"
                 android:gravity="center"
                 android:text="@string/shuttle_no_realtime_data"
+                android:textColor="@color/secondary_text"
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_jungang_station" />
@@ -563,8 +566,8 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
                 <ImageButton
                     android:id="@+id/bus_alternative_jungang_station_info"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -579,19 +582,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
+                    android:textColor="@color/primary_text"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toStartOf="@id/bus_alternative_jungang_station_info"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/entire_timetable_bound_for_jungang_station"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="@string/shuttle_footer_entire_timetable"
-                android:textSize="18sp"
-                android:textFontWeight="700"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.App.PlainFooterButton"
                 app:layout_constraintTop_toBottomOf="@id/bus_alternative_jungang_station" />
             <LinearLayout
                 android:id="@+id/transfer_section"
@@ -622,29 +624,25 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@id/transfer_section">
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/stop_info"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:text="@string/shuttle_footer_stop_info"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton" />
+                    style="@style/Widget.App.PlainFooterButton" />
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="10dp"
-                    android:background="@color/hanyang_blue_variant" />
-                <Button
+                    android:background="@color/app_separator" />
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/help_button"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:text="@string/shuttle_footer_help"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton" />
+                    style="@style/Widget.App.PlainFooterButton" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
@@ -658,7 +656,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:paddingBottom="24dp">
+            android:paddingBottom="160dp">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/realtime_view"
                 android:layout_width="match_parent"
@@ -673,44 +671,37 @@
                 android:padding="16dp"
                 android:gravity="center"
                 android:text="@string/shuttle_no_realtime_data"
+                android:textColor="@color/secondary_text"
                 android:textSize="18sp"
                 android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view" />
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/entire_timetable_station"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="@string/shuttle_footer_entire_timetable_station"
-                android:textSize="18sp"
-                android:textFontWeight="700"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.App.PlainFooterButton"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data" />
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/entire_timetable_dormitory"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="@string/shuttle_footer_entire_timetable_dormitory"
-                android:textSize="18sp"
-                android:textFontWeight="700"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.App.PlainFooterButton"
                 app:layout_constraintTop_toBottomOf="@id/entire_timetable_station" />
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/entire_timetable_terminal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="@string/shuttle_footer_entire_timetable_terminal"
-                android:textSize="18sp"
-                android:textFontWeight="700"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.App.PlainFooterButton"
                 app:layout_constraintTop_toBottomOf="@id/entire_timetable_dormitory" />
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/entire_timetable_jungang_station"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="@string/shuttle_footer_entire_timetable_jungang_station"
-                android:textSize="18sp"
-                android:textFontWeight="700"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.App.PlainFooterButton"
                 app:layout_constraintTop_toBottomOf="@id/entire_timetable_terminal" />
             <LinearLayout
                 android:id="@+id/footer_actions_2"
@@ -718,29 +709,25 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@id/entire_timetable_jungang_station">
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/stop_info_2"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:text="@string/shuttle_footer_stop_info"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton" />
+                    style="@style/Widget.App.PlainFooterButton" />
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="10dp"
-                    android:background="@color/hanyang_blue_variant" />
-                <Button
+                    android:background="@color/app_separator" />
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/help_button_2"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:text="@string/shuttle_footer_help"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    style="@style/Widget.Material3.Button.TextButton" />
+                    style="@style/Widget.App.PlainFooterButton" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

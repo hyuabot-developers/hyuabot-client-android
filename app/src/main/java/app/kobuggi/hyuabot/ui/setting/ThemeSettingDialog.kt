@@ -9,14 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogSettingThemeBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ThemeSettingDialog : DialogFragment(){
+class ThemeSettingDialog : SettingChoiceDialogFragment(){
     private lateinit var binding: DialogSettingThemeBinding
     private val vm by viewModels<ThemeSettingDialogViewModel>()
     @Inject lateinit var dataStore: DataStore<Preferences>

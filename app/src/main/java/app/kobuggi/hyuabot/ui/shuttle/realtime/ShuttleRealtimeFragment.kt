@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.RecyclerView
@@ -40,6 +41,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
 import app.kobuggi.hyuabot.util.disableViewStateSaving
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
@@ -49,7 +51,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private val args: ShuttleRealtimeFragmentArgs by navArgs()
     private var currentPosition = 0
     private var manuallyScrolled = false
-    private var setClosestStop = false
     private var honorDeepLinkStop = false
     private var coachmarkShown = false
     private val scrollHandler = Handler(Looper.getMainLooper())
@@ -73,18 +74,27 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         )
         viewModel.viewModelScope.launch {
             viewModel.userPreferencesRepository.getShowShuttleDepartureTime().first().let {
-                binding.showDepartureTime.isChecked = it
+                viewModel.showDepartureTime.value = it
             }
             viewModel.userPreferencesRepository.getShowShuttleByDestination().first().let {
-                binding.showByDestination.isChecked = it
+                viewModel.showByDestination.value = it
             }
         }
         binding.viewPager.adapter = viewpagerAdapter
-        binding.showByDestination.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setShowByDestination(isChecked)
-        }
-        binding.showDepartureTime.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setShowDepartureTime(isChecked)
+        binding.shuttleQuickSettingsButton.setOnClickListener { openQuickSettings() }
+        childFragmentManager.setFragmentResultListener(
+            ShuttleQuickSettingsDialog.REQUEST_KEY,
+            viewLifecycleOwner,
+        ) { _, result ->
+            if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_BY_DESTINATION)) {
+                viewModel.setShowByDestination(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_BY_DESTINATION))
+            }
+            if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_DEPARTURE_TIME)) {
+                viewModel.setShowDepartureTime(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_DEPARTURE_TIME))
+            }
+            if (result.getBoolean(ShuttleQuickSettingsDialog.KEY_OPEN_HOME, false)) {
+                findNavController().navigate(R.id.homeFragment)
+            }
         }
         binding.noticeViewPager.adapter = noticeAdapter
 
@@ -93,7 +103,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         }.attach()
         stopNameToTabIndex(args.stop)?.let { index ->
             binding.viewPager.setCurrentItem(index, false)
-            setClosestStop = true
             honorDeepLinkStop = true
         }
         // If weekdays is from monday to friday and time is before 10:00, it is true and else false
@@ -109,7 +118,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
 
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+            binding.loadingLayout.setSkeletonLoading(it)
         }
         viewModel.notices.observe(viewLifecycleOwner) { notices ->
             if (notices.isNotEmpty()) {
@@ -142,7 +151,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
         })
         viewModel.result.observe(viewLifecycleOwner) { stops ->
-            if (setClosestStop) {
+            if (honorDeepLinkStop) {
                 return@observe
             }
             if (stops.isNotEmpty()) {
@@ -180,9 +189,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.start()
-        if (!honorDeepLinkStop) {
-            setClosestStop = false
-        }
         manuallyScrolled = false
         if (::autoScrollRunnable.isInitialized) {
             scrollHandler.postDelayed(autoScrollRunnable, 5000)
@@ -197,21 +203,33 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         binding.viewPager.adapter = null
     }
 
+    private fun openQuickSettings() {
+        if (childFragmentManager.findFragmentByTag(SHUTTLE_QUICK_SETTINGS_TAG) != null) return
+        ShuttleQuickSettingsDialog.newInstance(
+            showByDestination = viewModel.showByDestination.value ?: false,
+            showDepartureTime = viewModel.showDepartureTime.value ?: false,
+        ).show(childFragmentManager, SHUTTLE_QUICK_SETTINGS_TAG)
+    }
+
     @SuppressLint("MissingPermission")
     private fun moveToNearestStop(
         client: FusedLocationProviderClient,
         stops: List<ShuttleRealtimePageQuery.Stop>,
     ) {
+        requestCurrentLocation(client, stops)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun selectLastKnownLocation(
+        client: FusedLocationProviderClient,
+        stops: List<ShuttleRealtimePageQuery.Stop>,
+    ) {
         client.lastLocation
             .addOnSuccessListener { location ->
-                if (location != null && isFresh(location)) {
-                    selectNearestStop(stops, location)
-                } else {
-                    requestCurrentLocation(client, stops)
-                }
+                if (location != null && isFresh(location)) selectNearestStop(stops, location)
             }
             .addOnFailureListener {
-                requestCurrentLocation(client, stops)
+                Log.e("ShuttleRealtimeFragment", "Failed to get last known location", it)
             }
     }
 
@@ -226,23 +244,27 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         stops: List<ShuttleRealtimePageQuery.Stop>,
     ) {
         val tokenSource = CancellationTokenSource()
-        client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token)
+        client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
             .addOnSuccessListener { location ->
-                location?.let { selectNearestStop(stops, it) }
+                if (location != null) {
+                    selectNearestStop(stops, location)
+                } else {
+                    selectLastKnownLocation(client, stops)
+                }
             }
             .addOnFailureListener {
                 Log.e("ShuttleRealtimeFragment", "Failed to get user location", it)
+                selectLastKnownLocation(client, stops)
             }
     }
 
     private fun selectNearestStop(stops: List<ShuttleRealtimePageQuery.Stop>, location: Location) {
-        if (setClosestStop) {
+        if (honorDeepLinkStop) {
             return
         }
         val nearestStop = stops.map { stopItem ->
             Pair(stopItem, calculateDistance(stopItem, location))
         }.minByOrNull { it.second }?.first
-        setClosestStop = true
         Log.d("ShuttleRealtimeFragment", "Nearest stop: ${nearestStop?.name}, distance: ${nearestStop?.let { calculateDistance(it, location) }}")
         binding.viewPager.setCurrentItem(stopNameToTabIndex(nearestStop?.name) ?: 0, false)
     }
@@ -260,7 +282,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
 
             val originalByDestination = viewModel.userPreferencesRepository.getShowShuttleByDestination().first()
             val originalDepartureTime = viewModel.userPreferencesRepository.getShowShuttleDepartureTime().first()
-            setClosestStop = true
             binding.viewPager.setCurrentItem(0, false)
             val rootView = view ?: return@launch
             rootView.post {
@@ -269,8 +290,8 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 }
                 CoachmarkController.show(requireActivity(), buildShuttleCoachmarkSteps(), owner) {
                     if (owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
-                        binding.showByDestination.isChecked = originalByDestination
-                        binding.showDepartureTime.isChecked = originalDepartureTime
+                        viewModel.setShowByDestination(originalByDestination)
+                        viewModel.setShowDepartureTime(originalDepartureTime)
                     }
                     viewModel.setForceShowBusAlternative(false)
                     lifecycleScope.launch {
@@ -292,14 +313,14 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             R.string.coachmark_shuttle_tab_title, R.string.coachmark_shuttle_tab_desc
         ),
         CoachmarkStep(
-            { binding.showByDestination },
+            { binding.shuttleQuickSettingsButton },
             R.string.coachmark_shuttle_destination_title, R.string.coachmark_shuttle_destination_desc,
-            onShow = { binding.showByDestination.isChecked = true }
+            onShow = { viewModel.setShowByDestination(true) }
         ),
         CoachmarkStep(
-            { binding.showDepartureTime },
+            { binding.shuttleQuickSettingsButton },
             R.string.coachmark_shuttle_departure_title, R.string.coachmark_shuttle_departure_desc,
-            onShow = { binding.showDepartureTime.isChecked = true }
+            onShow = { viewModel.setShowDepartureTime(true) }
         ),
         CoachmarkStep(
             {
@@ -436,5 +457,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
         private val COACHMARK_KEY = Coachmarks.SHUTTLE
         private val REALTIME_UPDATES_COACHMARK_KEY = Coachmarks.SHUTTLE_REALTIME_UPDATES
+        private const val SHUTTLE_QUICK_SETTINGS_TAG = "ShuttleQuickSettingsDialog"
     }
 }

@@ -2,5 +2,6 @@ package app.kobuggi.hyuabot.ui.menu
 
 data class MenuItem(
     val iconResource: Int,
-    val titleResource: Int
+    val titleResource: Int,
+    val sectionTitleResource: Int? = null
 )

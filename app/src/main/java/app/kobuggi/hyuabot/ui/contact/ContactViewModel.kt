@@ -9,6 +9,7 @@ import app.kobuggi.hyuabot.ContactPageVersionQuery
 import app.kobuggi.hyuabot.service.database.AppDatabase
 import app.kobuggi.hyuabot.service.database.entity.Contact
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.FetchPolicy
@@ -42,7 +43,9 @@ class ContactViewModel @Inject constructor(
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.phonebook != null) {
                 val localVersion = userPreferencesRepository.contactVersion.first()
-                if (localVersion != response.data?.phonebook?.version) {
+                val serverVersion = response.data?.phonebook?.version
+                val localizedVersion = localizedVersion(serverVersion)
+                if (localVersion != localizedVersion || database.contactDao().count() == 0) {
                     fetchContacts()
                 }
                 _queryError.value = null
@@ -62,8 +65,7 @@ class ContactViewModel @Inject constructor(
             } else if (response.data?.phonebook != null) {
                 dao.deleteAll()
                 response.data?.phonebook?.let { phonebook ->
-                    userPreferencesRepository.setContactVersion(phonebook.version)
-                    phonebook.categories.flatMap { category ->
+                    val contacts = phonebook.categories.flatMap { category ->
                         category.entries.map {
                             Contact(
                                 contactID = it.seq,
@@ -72,7 +74,10 @@ class ContactViewModel @Inject constructor(
                                 phone = it.phone
                             )
                         }
-                    }.let { dao.insertAll(*it.toTypedArray()) }
+                    }
+                    dao.insertAll(*contacts.toTypedArray())
+                    translateContactsInCache(contacts)
+                    userPreferencesRepository.setContactVersion(localizedVersion(phonebook.version))
                 }
                 _queryError.value = null
             } else {
@@ -80,6 +85,17 @@ class ContactViewModel @Inject constructor(
             }
             _updating.postValue(false)
         }
+    }
+
+    private suspend fun translateContactsInCache(contacts: List<Contact>) {
+        val translatedContacts = contacts.map {
+            it.copy(name = DynamicTextTranslator.translateForCurrentAppLocale(it.name))
+        }
+        database.contactDao().insertAll(*translatedContacts.toTypedArray())
+    }
+
+    private fun localizedVersion(version: String?): String {
+        return "${version.orEmpty()}:${DynamicTextTranslator.currentAppLanguageTag()}"
     }
 
     fun searchContacts(query: String, campusID: Int) {

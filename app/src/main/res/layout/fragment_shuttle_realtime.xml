@@ -26,11 +26,14 @@
         app:layout_constraintTop_toBottomOf="@id/tabLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/hanyang_blue" >
+        android:background="@color/background" >
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:minHeight="40dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="4dp"
             android:clickable="true"
             android:focusable="true"
             app:cardBackgroundColor="@color/background"
@@ -38,75 +41,85 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/notice_view_pager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="4dp"
+                android:layout_height="40dp"
+                android:minHeight="40dp"
                 android:saveEnabled="false" />
         </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/option_switch_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="50dp"
-        android:background="@color/hanyang_blue"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toBottomOf="@id/notice_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/show_by_destination"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="6dp"
-            android:maxLines="2"
-            android:theme="@style/Widget.App.Switch.Shuttle"
-            android:text="@string/show_by_destination"
-            android:textColor="@android:color/white"
-            app:thumbTint="@color/shuttle_switch_thumb"
-            app:trackTint="@color/shuttle_switch_track" />
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/show_departure_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="6dp"
-            android:maxLines="2"
-            android:theme="@style/Widget.App.Switch.Shuttle"
-            android:text="@string/show_departure_time"
-            android:textColor="@android:color/white"
-            app:thumbTint="@color/shuttle_switch_thumb"
-            app:trackTint="@color/shuttle_switch_track" />
     </LinearLayout>
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/option_switch_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notice_layout"
+        app:layout_constraintBottom_toTopOf="@id/shuttle_action_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:saveEnabled="false" />
+
+    <View
+        android:id="@+id/shuttle_action_bar_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/calendar_grid_line"
+        app:layout_constraintBottom_toTopOf="@id/shuttle_action_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <LinearLayout
+        android:id="@+id/shuttle_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:background="@color/background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/shuttle_action_bar_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="@string/shuttle_action_bar_title"
+            android:textColor="@color/secondary_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/shuttle_quick_settings_button"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:contentDescription="@string/shuttle_quick_settings_title"
+            android:minHeight="36dp"
+            android:paddingHorizontal="12dp"
+            android:text="@string/shuttle_quick_settings_button"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/hanyang_blue"
+            app:icon="@drawable/ic_settings"
+            app:iconGravity="textStart"
+            app:iconPadding="6dp"
+            app:iconTint="@android:color/white" />
+    </LinearLayout>
+
+    <com.faltenreich.skeletonlayout.SkeletonLayout
         android:id="@+id/loadingLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/option_switch_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notice_layout"
+        app:layout_constraintBottom_toTopOf="@id/shuttle_action_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/background"
-        android:gravity="center"
-        android:orientation="vertical" >
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true" />
-    </LinearLayout>
+        app:maskColor="@color/skeleton_placeholder"
+        app:maskCornerRadius="4dp"
+        app:shimmerColor="@color/skeleton_placeholder_highlight">
+        <include layout="@layout/view_skeleton_route_rows" />
+    </com.faltenreich.skeletonlayout.SkeletonLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

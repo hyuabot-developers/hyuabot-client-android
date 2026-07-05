@@ -13,7 +13,9 @@ import androidx.core.widget.RemoteViewsCompat
 import androidx.core.widget.RemoteViewsCompat.RemoteCollectionItems
 import app.kobuggi.hyuabot.CafeteriaPageQuery
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.ui.MainActivity
+import app.kobuggi.hyuabot.util.localizedContext
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +27,7 @@ import kotlinx.coroutines.withTimeout
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 private const val ACTION_REFRESH_CAFETERIA = "app.kobuggi.hyuabot.widget.ACTION_REFRESH_CAFETERIA"
 private const val CAFETERIA_WIDGET_TIMEOUT_MS = 8_000L
@@ -61,9 +64,10 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
             try {
                 withTimeout(CAFETERIA_WIDGET_TIMEOUT_MS) {
                     val appContext = context.applicationContext
+                    val textContext = localizedContext(appContext)
                     val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
                     val meal = WidgetMeal.current(now.toLocalTime())
-                    val items = loadItems(appContext, meal, now.toLocalDate())
+                    val items = loadItems(appContext, textContext, meal, now.toLocalDate())
                     appWidgetIds.forEach {
                         appWidgetManager.updateAppWidget(it, buildWidget(appContext, it, meal, now, items))
                     }
@@ -82,9 +86,10 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
         now: ZonedDateTime,
         items: List<CafeteriaWidgetItem>,
     ): RemoteViews {
+        val textContext = localizedContext(context)
         val views = RemoteViews(context.packageName, R.layout.widget_cafeteria)
         views.setImageViewResource(R.id.widget_meal_icon, meal.iconRes)
-        views.setTextViewText(R.id.widget_meal_title, context.getString(meal.titleRes))
+        views.setTextViewText(R.id.widget_meal_title, textContext.getString(meal.titleRes))
         views.setTextViewText(
             R.id.widget_date,
             now.format(DateTimeFormatter.ofPattern("M/d HH:mm"))
@@ -101,7 +106,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
                 .setHasStableIds(true)
                 .apply {
                     items.forEachIndexed { index, item ->
-                        addItem(index.toLong(), buildItemView(context, item))
+                        addItem(index.toLong(), buildItemView(context, textContext, item))
                     }
                 }
                 .build()
@@ -156,7 +161,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
         return views
     }
 
-    private fun buildItemView(context: Context, item: CafeteriaWidgetItem): RemoteViews {
+    private fun buildItemView(context: Context, textContext: Context, item: CafeteriaWidgetItem): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_cafeteria_item)
         views.setTextViewText(R.id.widget_item_name, item.name)
         if (item.runningTime.isNullOrBlank()) {
@@ -165,7 +170,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
             views.setViewVisibility(R.id.widget_item_running_time, View.VISIBLE)
             views.setTextViewText(
                 R.id.widget_item_running_time,
-                context.getString(R.string.cafeteria_running_time_format, item.runningTime)
+                textContext.getString(R.string.cafeteria_running_time_format, item.runningTime)
             )
         }
 
@@ -179,7 +184,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
                 row.setViewVisibility(R.id.widget_menu_price, View.VISIBLE)
                 row.setTextViewText(
                     R.id.widget_menu_price,
-                    context.getString(R.string.cafeteria_price_format, menu.price)
+                    textContext.getString(R.string.cafeteria_price_format, menu.price)
                 )
             }
             views.addView(R.id.widget_menu_container, row)
@@ -191,6 +196,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
 
     private suspend fun loadItems(
         context: Context,
+        textContext: Context,
         meal: WidgetMeal,
         date: java.time.LocalDate,
     ): List<CafeteriaWidgetItem> {
@@ -218,9 +224,9 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
                         WidgetMeal.DINNER -> c.runningTime.dinner
                     }
                     CafeteriaWidgetItem(
-                        name = cafeteriaName(context, c.seq),
+                        name = cafeteriaName(textContext, c.seq),
                         runningTime = runningTime,
-                        menus = menus.map { CafeteriaWidgetMenu(it.food, formatPrice(it.price)) },
+                        menus = menus.map { CafeteriaWidgetMenu(localizedFood(textContext, it.food), formatPrice(it.price)) },
                     )
                 }
         } catch (_: Exception) {
@@ -229,6 +235,27 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
     }
 
     private fun formatPrice(price: String): String = price.removeSuffix("원").trim()
+
+    private suspend fun localizedFood(context: Context, food: String): String {
+        val cleaned = food.replace("\"", "").trim()
+        val appLanguage = context.resources.configuration.locales[0]?.language ?: Locale.KOREAN.language
+        if (!appLanguage.startsWith(Locale.KOREAN.language)) {
+            return DynamicTextTranslator.translateForResources(context.resources, cleaned)
+        }
+
+        val koreanTokens = cleaned
+            .split(Regex("\\s+"))
+            .filter { token -> token.any(::isHangul) }
+            .joinToString(" ")
+
+        return koreanTokens.ifBlank { cleaned }
+    }
+
+    private fun isHangul(char: Char): Boolean {
+        return char in '\u1100'..'\u11FF' ||
+            char in '\u3130'..'\u318F' ||
+            char in '\uAC00'..'\uD7A3'
+    }
 
     private fun cafeteriaName(context: Context, seq: Int): String = context.getString(
         when (seq) {

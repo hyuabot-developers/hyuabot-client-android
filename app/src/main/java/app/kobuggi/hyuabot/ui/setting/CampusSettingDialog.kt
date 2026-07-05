@@ -7,14 +7,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
+import app.kobuggi.hyuabot.R
+import androidx.lifecycle.lifecycleScope
 import androidx.fragment.app.viewModels
 import app.kobuggi.hyuabot.databinding.DialogSettingCampusBinding
+import app.kobuggi.hyuabot.widget.refreshHyuabotWidgets
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CampusSettingDialog @Inject constructor() : DialogFragment() {
+class CampusSettingDialog @Inject constructor() : SettingChoiceDialogFragment() {
     private val binding by lazy { DialogSettingCampusBinding.inflate(layoutInflater) }
     private val vm by viewModels<CampusSettingDialogViewModel>()
 
@@ -26,13 +29,19 @@ class CampusSettingDialog @Inject constructor() : DialogFragment() {
         binding.apply {
             campusSeoul.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_CAMPUS, type = AnalyticsContentType.MENU, name = "seoul")
-                vm.setCampusID(1)
-                dismiss()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    vm.setCampusID(1)
+                    refreshHyuabotWidgets(requireContext())
+                    dismiss()
+                }
             }
             campusErica.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_CAMPUS, type = AnalyticsContentType.MENU, name = "erica")
-                vm.setCampusID(2)
-                dismiss()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    vm.setCampusID(2)
+                    refreshHyuabotWidgets(requireContext())
+                    dismiss()
+                }
             }
         }
         return binding.root

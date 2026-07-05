@@ -23,6 +23,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
+            android:textColor="@color/primary_text"
             android:textFontWeight="700"
             android:textSize="18sp" />
         <com.google.android.material.card.MaterialCardView

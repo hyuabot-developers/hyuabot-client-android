@@ -51,12 +51,16 @@
                     android:textSize="14sp"
                     android:textColor="@color/secondary_text"
                     android:paddingBottom="8dp" />
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/boarding_start_button"
+                    style="@style/Widget.Material3.Button"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_marginTop="4dp"
-                    android:text="@string/shuttle_alarm_start" />
+                    android:text="@string/shuttle_alarm_start"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/hanyang_blue" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
@@ -93,19 +97,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/alighting_start_button"
+                    style="@style/Widget.Material3.Button"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:text="@string/shuttle_alarm_start"
-                    android:layout_marginTop="8dp" />
-                <Button
-                    android:id="@+id/share_journey_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/shuttle_share_journey"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
                     android:layout_marginTop="8dp"
-                    style="@style/Widget.Material3.Button.TextButton" />
+                    app:backgroundTint="@color/hanyang_blue" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/share_journey_button"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="@string/shuttle_share_journey"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp"
+                    app:backgroundTint="@color/hanyang_blue" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

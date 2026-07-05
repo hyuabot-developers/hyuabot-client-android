@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -63,13 +64,13 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
             val currentTime = LocalTime.now()
             binding.busDepartureLogRecyclerView1.scrollToPosition(timetable1.indexOfFirst {
                     log -> LocalTime.parse(log.time.toString().substring(0, 5)) > currentTime
-                })
+                }.coerceAtLeast(0))
             binding.busDepartureLogRecyclerView2.scrollToPosition(timetable2.indexOfFirst {
                     log -> LocalTime.parse(log.time.toString().substring(0, 5)) > currentTime
-                })
+                }.coerceAtLeast(0))
             binding.busDepartureLogRecyclerView3.scrollToPosition(timetable3.indexOfFirst {
                     log -> LocalTime.parse(log.time.toString().substring(0, 5)) > currentTime
-                })
+                }.coerceAtLeast(0))
             if (firstLogAdapter.itemCount == 0) {
                 binding.busDepartureLogNoData1.visibility = View.VISIBLE
             } else {
@@ -115,9 +116,19 @@ class BusDepartureDialog @Inject constructor() : BottomSheetDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = BottomSheetDialog(requireContext(), theme).apply {
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
-             behavior.isDraggable = false
+            behavior.isDraggable = false
         }
         return dialog
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val bottomSheet = dialog?.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+        bottomSheet?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
+        val behavior = bottomSheet?.let { BottomSheetBehavior.from(it) } ?: return
+        behavior.skipCollapsed = true
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior.isDraggable = false
     }
 
     private fun getWeekdaysString(date: LocalDate): String {

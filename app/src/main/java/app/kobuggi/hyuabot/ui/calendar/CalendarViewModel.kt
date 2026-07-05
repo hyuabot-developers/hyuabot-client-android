@@ -9,6 +9,7 @@ import app.kobuggi.hyuabot.CalendarPageVersionQuery
 import app.kobuggi.hyuabot.service.database.AppDatabase
 import app.kobuggi.hyuabot.service.database.entity.Event
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.FetchPolicy
@@ -40,7 +41,9 @@ class CalendarViewModel @Inject constructor(
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.calendar != null) {
                 val localVersion = userPreferencesRepository.calendarVersion.first()
-                if (localVersion != response.data?.calendar?.version || database.calendarDao().count() == 0) {
+                val serverVersion = response.data?.calendar?.version
+                val localizedVersion = localizedVersion(serverVersion)
+                if (localVersion != localizedVersion || database.calendarDao().count() == 0) {
                     fetchEvents()
                 }
                 _queryError.value = null
@@ -60,8 +63,7 @@ class CalendarViewModel @Inject constructor(
             } else if (response.data?.calendar != null) {
                 dao.deleteAll()
                 response.data?.calendar?.let { calendar ->
-                    calendar.version.let { version -> userPreferencesRepository.setCalendarVersion(version) }
-                    calendar.categories.flatMap { category ->
+                    val events = calendar.categories.flatMap { category ->
                         category.events.map {
                             Event(
                                 eventID = it.seq,
@@ -72,9 +74,10 @@ class CalendarViewModel @Inject constructor(
                                 category = category.name
                             )
                         }
-                    }.let {
-                        dao.insertAll(*it.toTypedArray())
                     }
+                    dao.insertAll(*events.toTypedArray())
+                    translateEventsInCache(events)
+                    calendar.version.let { version -> userPreferencesRepository.setCalendarVersion(localizedVersion(version)) }
                 }
                 _queryError.value = null
             } else {
@@ -82,5 +85,19 @@ class CalendarViewModel @Inject constructor(
             }
             _updating.postValue(false)
         }
+    }
+
+    private suspend fun translateEventsInCache(events: List<Event>) {
+        val translatedEvents = events.map {
+            it.copy(
+                title = DynamicTextTranslator.translateForCurrentAppLocale(it.title),
+                description = DynamicTextTranslator.translateForCurrentAppLocale(it.description),
+            )
+        }
+        database.calendarDao().insertAll(*translatedEvents.toTypedArray())
+    }
+
+    private fun localizedVersion(version: String?): String {
+        return "${version.orEmpty()}:${DynamicTextTranslator.currentAppLanguageTag()}"
     }
 }

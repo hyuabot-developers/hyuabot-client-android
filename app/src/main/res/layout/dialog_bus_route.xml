@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/background"
     android:paddingBottom="16dp">
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -24,35 +25,50 @@
     </com.google.android.material.appbar.AppBarLayout>
     <TextView
         android:id="@+id/bus_route_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="2"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
         android:text="@string/bus_info_route"
+        android:textColor="@color/primary_text"
         android:textFontWeight="700"
         android:textSize="18sp" />
     <TextView
         android:id="@+id/bus_route_start_stop"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="2"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bus_route_name"
         android:text="@string/bus_info_start_stop"
+        android:textColor="@color/primary_text"
         android:textSize="18sp" />
     <TextView
         android:id="@+id/bus_route_time_from_start_stop"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="2"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bus_route_start_stop"
+        android:textColor="@color/primary_text"
         android:textSize="18sp" />
-    <LinearLayout
+    <com.faltenreich.skeletonlayout.SkeletonLayout
         android:id="@+id/loadingLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -61,12 +77,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/background"
-        android:gravity="center"
-        android:orientation="vertical" >
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true" />
-    </LinearLayout>
+        app:maskColor="@color/skeleton_placeholder"
+        app:maskCornerRadius="4dp"
+        app:shimmerColor="@color/skeleton_placeholder_highlight">
+        <include layout="@layout/view_skeleton_route_rows" />
+    </com.faltenreich.skeletonlayout.SkeletonLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

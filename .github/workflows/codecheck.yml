@@ -284,6 +284,8 @@ jobs:
           disable-linux-hw-accel: false
           script: |
             ./gradlew app:installDevDebug
+            i=0; until [ "$(adb get-state 2>/dev/null)" = "device" ] && [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; do i=$((i + 1)); if [ "$i" -ge 30 ]; then adb devices; exit 1; fi; sleep 2; done
+            adb shell pm path app.kobuggi.hyuabot
             maestro test .maestro
 
       - name: Upload Maestro artifacts

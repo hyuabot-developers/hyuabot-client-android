@@ -98,6 +98,7 @@ enum class AnalyticsItem(val id: String) {
     SHUTTLE_FILTER_CONFIRM("shuttle_filter_confirm"),
 
     // Bus
+    BUS_OPEN_HELP("bus_open_help"),
     BUS_STOP_BUTTON("bus_stop_button"),
     BUS_SHOW_ENTIRE_TIMETABLE("bus_show_entire_timetable"),
     BUS_SHOW_DEPARTURE_LOG("bus_show_departure_log"),
@@ -110,6 +111,7 @@ enum class AnalyticsItem(val id: String) {
     CAFETERIA_PREVIOUS_DATE("cafeteria_previous_date"),
     CAFETERIA_NEXT_DATE("cafeteria_next_date"),
     CAFETERIA_DATE_CHANGED("cafeteria_date_changed"),
+    CAFETERIA_SHARE_BUTTON("cafeteria_share_button"),
 
     // Reading room
     READING_ROOM_SELECT_ROW("reading_room_select_row"),

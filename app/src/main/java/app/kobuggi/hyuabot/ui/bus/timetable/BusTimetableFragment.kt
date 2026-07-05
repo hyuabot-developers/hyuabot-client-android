@@ -15,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusTimetableBinding
 import app.kobuggi.hyuabot.service.safeNavigate
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -40,7 +41,7 @@ class BusTimetableFragment @Inject constructor() : Fragment() {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_timetable_error), Toast.LENGTH_SHORT).show() }
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+            binding.loadingLayout.setSkeletonLoading(it)
         }
 
         val viewpagerAdapter = BusTimetableViewPagerAdapter(childFragmentManager, lifecycle)

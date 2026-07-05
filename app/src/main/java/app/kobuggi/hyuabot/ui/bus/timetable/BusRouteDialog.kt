@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogBusRouteBinding
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -20,6 +21,10 @@ class BusRouteDialog @Inject constructor() : DialogFragment() {
     private val args: BusRouteDialogArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding.toolbar.setOnMenuItemClickListener {
+            dismiss()
+            true
+        }
         viewModel.fetchData(args.stopID, args.routeID)
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_route_info_error), Toast.LENGTH_SHORT).show() }
@@ -32,7 +37,7 @@ class BusRouteDialog @Inject constructor() : DialogFragment() {
             }
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+            binding.loadingLayout.setSkeletonLoading(it)
         }
         return binding.root
     }

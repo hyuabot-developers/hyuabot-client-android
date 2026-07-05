@@ -1,11 +1,9 @@
 package app.kobuggi.hyuabot.ui.menu
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -34,12 +32,12 @@ class MenuFragment @Inject constructor() : Fragment() {
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
     private val menuList = listOf(
-        MenuItem(R.drawable.ic_book, R.string.menu_book),
+        MenuItem(R.drawable.ic_book, R.string.menu_book, R.string.menu_section_school_life),
         MenuItem(R.drawable.ic_map, R.string.menu_map),
         MenuItem(R.drawable.ic_contact, R.string.menu_contact),
         MenuItem(R.drawable.ic_calendar, R.string.menu_calendar),
-        MenuItem(R.drawable.ic_settings, R.string.menu_settings),
-        MenuItem(R.drawable.ic_chat, R.string.menu_chat),
+        MenuItem(R.drawable.ic_settings, R.string.menu_settings, R.string.menu_section_support),
+        MenuItem(R.drawable.ic_chat, R.string.menu_chat, R.string.menu_section_external),
         MenuItem(R.drawable.ic_donate, R.string.menu_donate),
         MenuItem(R.drawable.ic_star, R.string.menu_review),
     )
@@ -98,13 +96,15 @@ class MenuFragment @Inject constructor() : Fragment() {
             }
             R.string.menu_chat -> {
                 val url = "https://open.kakao.com/o/sW2kAinb"
-                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                startActivity(intent)
+                MenuFragmentDirections.actionMenuFragmentToNoticeWebViewFragment(url).also {
+                    findNavController().safeNavigate(it)
+                }
             }
             R.string.menu_donate -> {
                 val url = "https://qr.kakaopay.com/FWxVPo8iO"
-                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                startActivity(intent)
+                MenuFragmentDirections.actionMenuFragmentToNoticeWebViewFragment(url).also {
+                    findNavController().safeNavigate(it)
+                }
             }
             R.string.menu_review -> {
                 viewLifecycleOwner.lifecycleScope.launch {

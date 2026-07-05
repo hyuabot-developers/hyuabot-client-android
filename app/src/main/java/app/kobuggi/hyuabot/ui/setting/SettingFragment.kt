@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -76,13 +77,34 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                userPreferencesRepository.analyticsConsent.collect { enabled ->
-                    updatingSwitch = true
-                    binding.settingAnalyticsSwitch.isChecked = enabled
-                    updatingSwitch = false
+                launch {
+                    userPreferencesRepository.analyticsConsent.collect { enabled ->
+                        updatingSwitch = true
+                        binding.settingAnalyticsSwitch.isChecked = enabled
+                        updatingSwitch = false
+                    }
+                }
+                launch {
+                    userPreferencesRepository.campusID.collect { campusID ->
+                        binding.settingCampusValue.text = getString(
+                            if (campusID == 1) R.string.campus_seoul else R.string.campus_erica
+                        )
+                    }
+                }
+                launch {
+                    userPreferencesRepository.theme.collect { theme ->
+                        binding.settingThemeValue.text = getString(
+                            when (theme) {
+                                "light" -> R.string.theme_light
+                                "dark" -> R.string.theme_dark
+                                else -> R.string.theme_system
+                            }
+                        )
+                    }
                 }
             }
         }
+        updateLanguageValue()
         showCoachmarkOnce(userPreferencesRepository, Coachmarks.SETTING) {
             listOf(
                 CoachmarkStep(
@@ -95,6 +117,24 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
                 ),
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateLanguageValue()
+    }
+
+    private fun updateLanguageValue() {
+        val appLanguage = AppCompatDelegate.getApplicationLocales()[0]?.language
+            ?: resources.configuration.locales[0].language
+        binding.settingLanguageValue.text = getString(
+            when (appLanguage) {
+                "en" -> R.string.language_english
+                "ja" -> R.string.language_japanese
+                "zh" -> R.string.language_chinese
+                else -> R.string.language_korean
+            }
+        )
     }
 
     private fun openThemeDialog() {

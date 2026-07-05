@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:orientation="vertical"
     android:paddingHorizontal="16dp">
     <LinearLayout
@@ -16,24 +17,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_campus"
-            android:backgroundTint="@android:color/darker_gray"
+            android:backgroundTint="@color/app_separator"
             android:contentDescription="@string/campus_settings"
             app:tint="@color/primary_text"
             android:layout_gravity="center_vertical"/>
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="@string/campus_settings"
-            android:textSize="18sp"
-            android:textFontWeight="700"
-            android:layout_gravity="center_vertical"/>
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/campus_settings"
+                android:textColor="@color/primary_text"
+                android:textSize="18sp"
+                android:textFontWeight="700"/>
+            <TextView
+                android:id="@+id/setting_campus_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"/>
+        </LinearLayout>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_right"
-            android:backgroundTint="@android:color/darker_gray"
+            android:backgroundTint="@color/app_separator"
             app:tint="@color/primary_text"
             android:contentDescription="@string/campus_settings"
             android:layout_gravity="center_vertical" />
@@ -41,7 +55,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/app_separator"/>
     <LinearLayout
         android:id="@+id/setting_language"
         android:layout_width="match_parent"
@@ -54,17 +68,30 @@
             android:src="@drawable/ic_language"
             android:contentDescription="@string/language_settings"
             app:tint="@color/primary_text"
-            android:backgroundTint="@android:color/darker_gray"
+            android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical"/>
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="@string/language_settings"
-            android:textSize="18sp"
-            android:textFontWeight="700"
-            android:layout_gravity="center_vertical"/>
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/language_settings"
+                android:textColor="@color/primary_text"
+                android:textSize="18sp"
+                android:textFontWeight="700"/>
+            <TextView
+                android:id="@+id/setting_language_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"/>
+        </LinearLayout>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,7 +103,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/app_separator"/>
     <LinearLayout
         android:id="@+id/setting_theme"
         android:layout_width="match_parent"
@@ -88,18 +115,31 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_theme"
             android:contentDescription="@string/theme_settings"
-            android:backgroundTint="@android:color/darker_gray"
+            android:backgroundTint="@color/app_separator"
             app:tint="@color/primary_text"
             android:layout_gravity="center_vertical"/>
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="@string/theme_settings"
-            android:textSize="18sp"
-            android:textFontWeight="700"
-            android:layout_gravity="center_vertical"/>
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_settings"
+                android:textColor="@color/primary_text"
+                android:textSize="18sp"
+                android:textFontWeight="700"/>
+            <TextView
+                android:id="@+id/setting_theme_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"/>
+        </LinearLayout>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -111,7 +151,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/app_separator"/>
     <LinearLayout
         android:id="@+id/app_info"
         android:layout_width="match_parent"
@@ -124,7 +164,7 @@
             android:src="@drawable/ic_info_black"
             android:contentDescription="@string/about"
             app:tint="@color/primary_text"
-            android:backgroundTint="@android:color/darker_gray"
+            android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical"/>
         <TextView
             android:layout_width="0dp"
@@ -132,6 +172,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/about"
+            android:textColor="@color/primary_text"
             android:textSize="18sp"
             android:textFontWeight="700"
             android:layout_gravity="center_vertical"/>
@@ -141,13 +182,13 @@
             android:src="@drawable/ic_arrow_right"
             android:contentDescription="@string/about"
             app:tint="@color/primary_text"
-            android:backgroundTint="@android:color/darker_gray"
+            android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/app_separator"/>
     <LinearLayout
         android:id="@+id/setting_coachmark_reset"
         android:layout_width="match_parent"
@@ -160,7 +201,7 @@
             android:src="@drawable/ic_info_black"
             android:contentDescription="@string/coachmark_reset_settings"
             app:tint="@color/primary_text"
-            android:backgroundTint="@android:color/darker_gray"
+            android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical"/>
         <LinearLayout
             android:layout_width="0dp"
@@ -173,12 +214,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/coachmark_reset_settings"
+                android:textColor="@color/primary_text"
                 android:textSize="18sp"
                 android:textFontWeight="700"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/coachmark_reset_settings_description"
+                android:textColor="@color/secondary_text"
                 android:textSize="12sp"
                 android:layout_marginTop="4dp"/>
         </LinearLayout>
@@ -186,7 +229,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/app_separator"/>
     <LinearLayout
         android:id="@+id/setting_analytics"
         android:layout_width="match_parent"
@@ -199,7 +242,7 @@
             android:src="@drawable/ic_alarm"
             android:contentDescription="@string/analytics_settings"
             app:tint="@color/primary_text"
-            android:backgroundTint="@android:color/darker_gray"
+            android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical"/>
         <LinearLayout
             android:layout_width="0dp"
@@ -212,12 +255,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/analytics_settings"
+                android:textColor="@color/primary_text"
                 android:textSize="18sp"
                 android:textFontWeight="700"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/analytics_settings_description"
+                android:textColor="@color/secondary_text"
                 android:textSize="12sp"
                 android:layout_marginTop="4dp"/>
         </LinearLayout>

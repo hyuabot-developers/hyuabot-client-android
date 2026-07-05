@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="@color/background"
     >
     <TextView
         android:layout_width="match_parent"
@@ -19,6 +20,7 @@
     <TextView
         android:text="@string/developer_name"
         android:textSize="18sp"
+        android:textColor="@color/primary_text"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_width="match_parent"
@@ -26,10 +28,11 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray" />
+        android:background="@color/app_separator" />
     <TextView
         android:text="@string/developer_belong"
         android:textSize="18sp"
+        android:textColor="@color/primary_text"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_width="match_parent"

@@ -17,6 +17,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import app.kobuggi.hyuabot.util.disableViewStateSaving
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 
 @AndroidEntryPoint
 class SubwayRealtimeFragment @Inject constructor() : Fragment() {
@@ -32,7 +33,7 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+            binding.loadingLayout.setSkeletonLoading(it)
         }
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.subway_realtime_error), Toast.LENGTH_SHORT).show() }

@@ -6,7 +6,8 @@ tags:
 - launchApp:
     permissions:
       all: allow
-- tapOn: "Menu"
+- tapOn:
+    id: "app.kobuggi.hyuabot:id/menuFragment"
 - runFlow:
     when:
       visible: "Skip"
@@ -20,7 +21,8 @@ tags:
       - tapOn: "Skip"
 - assertVisible: "Reading Room Extension Reminder"
 - back
-- tapOn: "Menu"
+- tapOn:
+    id: "app.kobuggi.hyuabot:id/menuFragment"
 - tapOn: "Campus Map"
 - runFlow:
     when:
@@ -29,16 +31,19 @@ tags:
       - tapOn: "Skip"
 - assertVisible: "Enter a room to search"
 - back
-- tapOn: "Menu"
+- tapOn:
+    id: "app.kobuggi.hyuabot:id/menuFragment"
 - tapOn: "Campus Contacts"
 - assertVisible: "Enter a contact to search"
 - back
-- tapOn: "Menu"
+- tapOn:
+    id: "app.kobuggi.hyuabot:id/menuFragment"
 - tapOn: "Academic Calendar"
 - assertVisible:
-    id: "app.kobuggi.hyuabot:id/calendar_view"
+    id: "app.kobuggi.hyuabot:id/calendar_timeline_view"
 - back
-- tapOn: "Menu"
+- tapOn:
+    id: "app.kobuggi.hyuabot:id/menuFragment"
 - tapOn: "Settings"
 - runFlow:
     when:

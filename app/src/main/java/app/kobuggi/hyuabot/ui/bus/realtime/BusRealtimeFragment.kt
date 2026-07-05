@@ -26,6 +26,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -60,7 +61,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_realtime_error), Toast.LENGTH_SHORT).show() }
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+            binding.loadingLayout.setSkeletonLoading(it)
         }
         viewModel.notices.observe(viewLifecycleOwner) { notices ->
             if (notices.isNotEmpty()) {
@@ -95,8 +96,8 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             R.string.bus_tab_other
         )
         binding.viewPager.adapter = viewpagerAdapter
-        binding.stopFab.setOnClickListener {
-            AnalyticsManager.logSelect(AnalyticsItem.BUS_STOP_BUTTON)
+        binding.helpButton.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.BUS_OPEN_HELP)
             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusHelpDialogFragment().also {
                 findNavController().safeNavigate(it)
             }
@@ -123,9 +124,9 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                     R.string.coachmark_bus_tab_title, R.string.coachmark_bus_tab_desc
                 ),
                 CoachmarkStep(
-                    { binding.stopFab },
+                    { binding.helpButton },
                     R.string.coachmark_bus_stop_title, R.string.coachmark_bus_stop_desc,
-                    shape = CoachmarkShape.CIRCLE
+                    shape = CoachmarkShape.ROUNDED_RECT
                 ),
                 CoachmarkStep(
                     {

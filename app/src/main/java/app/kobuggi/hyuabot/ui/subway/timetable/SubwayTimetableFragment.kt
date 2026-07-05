@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentSubwayTimetableBinding
+import app.kobuggi.hyuabot.util.setSkeletonLoading
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -33,7 +34,7 @@ class SubwayTimetableFragment @Inject constructor() : Fragment() {
         viewModel.apply {
             fetchData(args.stationID, args.heading)
             isLoading.observe(viewLifecycleOwner) {
-                binding.loadingLayout.visibility = if (it) View.VISIBLE else View.GONE
+                binding.loadingLayout.setSkeletonLoading(it)
             }
             queryError.observe(viewLifecycleOwner) {
                 it?.let { Toast.makeText(requireContext(), getString(R.string.subway_timetable_error), Toast.LENGTH_SHORT).show() }

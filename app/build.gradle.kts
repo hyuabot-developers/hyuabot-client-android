@@ -47,8 +47,8 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 29
         targetSdk = 37
-        versionCode = 515000000
-        versionName = "5.1.5"
+        versionCode = 516000000
+        versionName = "5.1.6"
         signingConfig = signingConfigs.getByName("config")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAP_CLIENT_ID"] = props["MAP_CLIENT_ID"]?.toString() ?: ""
@@ -165,6 +165,8 @@ dependencies {
     implementation(libs.splashScreen)
     // SwipeRefreshLayout
     implementation(libs.swipeRefreshLayout)
+    // Skeleton loading
+    implementation(libs.skeletonLayout)
     // Play Services
     implementation(libs.playServicesLocation)
     // Android LiveData
@@ -175,6 +177,8 @@ dependencies {
     implementation(libs.playReviewKtx)
     // App Widget
     implementation(libs.coreRemoteViews)
+    // ML Kit
+    implementation(libs.mlkit.translate)
 }
 
 hilt {

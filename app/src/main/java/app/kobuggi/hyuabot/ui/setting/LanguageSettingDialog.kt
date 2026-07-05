@@ -9,14 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogSettingLanguageBinding
+import app.kobuggi.hyuabot.widget.refreshHyuabotWidgets
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LanguageSettingDialog @Inject constructor() : DialogFragment() {
+class LanguageSettingDialog @Inject constructor() : SettingChoiceDialogFragment() {
     private val binding by lazy { DialogSettingLanguageBinding.inflate(layoutInflater) }
     private val vm by viewModels<LanguageSettingDialogViewModel>()
 
@@ -50,7 +51,10 @@ class LanguageSettingDialog @Inject constructor() : DialogFragment() {
                 "ja" -> AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ja-JP"))
                 "zh" -> AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("zh-CN"))
             }
+            val hostActivity = activity
             dismiss()
+            refreshHyuabotWidgets(requireContext())
+            hostActivity?.recreate()
         }
         return binding.root
     }

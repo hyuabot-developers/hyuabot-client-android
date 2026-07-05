@@ -3,6 +3,7 @@ package app.kobuggi.hyuabot.ui.shuttle.realtime
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -35,7 +36,10 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
         }
 
     companion object {
-        private const val SHUTTLE_DEEP_LINK = "hyuabot://shuttle"
+        private const val SHUTTLE_SHARE_SCHEME = "https"
+        private const val SHUTTLE_SHARE_HOST = "hyuabot.app"
+        private const val SHUTTLE_SHARE_PATH = "shuttle"
+        private const val ARG_BOARDING_ID = "boarding_id"
         private const val ARG_BOARDING_NAME = "boarding_name"
         private const val ARG_BOARDING_LAT = "boarding_lat"
         private const val ARG_BOARDING_LNG = "boarding_lng"
@@ -45,11 +49,13 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_CHECKPOINT_NAMES = "checkpoint_names"
         private const val ARG_CHECKPOINT_TIMES = "checkpoint_times"
         private const val ARG_DEST_NAMES = "dest_names"
+        private const val ARG_DEST_IDS = "dest_ids"
         private const val ARG_DEST_LATS = "dest_lats"
         private const val ARG_DEST_LNGS = "dest_lngs"
         private const val ARG_DEST_TIMES = "dest_times"
 
         fun newInstance(
+            boardingStopId: String,
             boardingStopName: String,
             boardingStopLat: Double,
             boardingStopLng: Double,
@@ -59,10 +65,11 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
             checkpointNames: Array<String>,
             checkpointTimes: LongArray,
             destTimes: LongArray,
-            destStops: List<Triple<String, Double, Double>>
+            destStops: List<ShuttleAlarmDestinationStop>
         ): ShuttleAlarmDialogFragment {
             return ShuttleAlarmDialogFragment().apply {
                 arguments = Bundle().apply {
+                    putString(ARG_BOARDING_ID, boardingStopId)
                     putString(ARG_BOARDING_NAME, boardingStopName)
                     putDouble(ARG_BOARDING_LAT, boardingStopLat)
                     putDouble(ARG_BOARDING_LNG, boardingStopLng)
@@ -71,9 +78,10 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
                     putString(ARG_ALARM_KEY, alarmKey)
                     putStringArray(ARG_CHECKPOINT_NAMES, checkpointNames)
                     putLongArray(ARG_CHECKPOINT_TIMES, checkpointTimes)
-                    putStringArray(ARG_DEST_NAMES, destStops.map { it.first }.toTypedArray())
-                    putDoubleArray(ARG_DEST_LATS, destStops.map { it.second }.toDoubleArray())
-                    putDoubleArray(ARG_DEST_LNGS, destStops.map { it.third }.toDoubleArray())
+                    putStringArray(ARG_DEST_NAMES, destStops.map { it.name }.toTypedArray())
+                    putStringArray(ARG_DEST_IDS, destStops.map { it.id }.toTypedArray())
+                    putDoubleArray(ARG_DEST_LATS, destStops.map { it.latitude }.toDoubleArray())
+                    putDoubleArray(ARG_DEST_LNGS, destStops.map { it.longitude }.toDoubleArray())
                     putLongArray(ARG_DEST_TIMES, destTimes)
                 }
             }
@@ -82,6 +90,7 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val args = requireArguments()
+        val boardingId = args.getString(ARG_BOARDING_ID, "")
         val boardingName = args.getString(ARG_BOARDING_NAME, "")
         val boardingLat = args.getDouble(ARG_BOARDING_LAT)
         val boardingLng = args.getDouble(ARG_BOARDING_LNG)
@@ -91,6 +100,7 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
         val checkpointNames = args.getStringArray(ARG_CHECKPOINT_NAMES) ?: emptyArray()
         val checkpointTimes = args.getLongArray(ARG_CHECKPOINT_TIMES) ?: LongArray(0)
         val destNames = args.getStringArray(ARG_DEST_NAMES) ?: emptyArray()
+        val destIds = args.getStringArray(ARG_DEST_IDS) ?: emptyArray()
         val destLats = args.getDoubleArray(ARG_DEST_LATS) ?: DoubleArray(0)
         val destLngs = args.getDoubleArray(ARG_DEST_LNGS) ?: DoubleArray(0)
         val destTimes = args.getLongArray(ARG_DEST_TIMES) ?: LongArray(0)
@@ -160,8 +170,10 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
                 val selectedIndex = selectedDestinationIndex() ?: return@setOnClickListener
                 if (selectedIndex < destNames.size && selectedIndex < destTimes.size) {
                     shareJourney(
+                        boardingId,
                         boardingName,
                         departureTimeMillis,
+                        destIds.getOrNull(selectedIndex).orEmpty(),
                         destNames[selectedIndex],
                         destTimes[selectedIndex],
                     )
@@ -180,11 +192,21 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun shareJourney(
+        boardingId: String,
         boardingName: String,
         departureTimeMillis: Long,
+        destinationId: String,
         destinationName: String,
         arrivalTimeMillis: Long,
     ) {
+        val shareUrl = Uri.Builder()
+            .scheme(SHUTTLE_SHARE_SCHEME)
+            .authority(SHUTTLE_SHARE_HOST)
+            .appendPath(SHUTTLE_SHARE_PATH)
+            .appendQueryParameter("stop", boardingId)
+            .appendQueryParameter("to", destinationId)
+            .build()
+            .toString()
         val formatter = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.of("Asia/Seoul"))
         val text = getString(
             R.string.shuttle_share_journey_format,
@@ -192,7 +214,7 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
             formatter.format(Instant.ofEpochMilli(departureTimeMillis)),
             destinationName,
             formatter.format(Instant.ofEpochMilli(arrivalTimeMillis)),
-            SHUTTLE_DEEP_LINK,
+            shareUrl,
         )
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"

@@ -17,6 +17,12 @@ interface UserPreferencesRepositoryImpl {
     suspend fun getShowShuttleDepartureTime(): Flow<Boolean>
     suspend fun setShowShuttleByDestination(show: Boolean)
     suspend fun getShowShuttleByDestination(): Flow<Boolean>
+    suspend fun setShowHomeBus50Transfer(show: Boolean)
+    suspend fun getShowHomeBus50Transfer(): Flow<Boolean>
+    suspend fun setShowHomeSubwayTransfer(show: Boolean)
+    suspend fun getShowHomeSubwayTransfer(): Flow<Boolean>
+    suspend fun setHomeSubwayTransferDestination(destination: String)
+    suspend fun getHomeSubwayTransferDestination(): Flow<String>
     suspend fun setAnalyticsConsent(enabled: Boolean)
     suspend fun incrementLaunchCount(): Int
     suspend fun resetLaunchCount()

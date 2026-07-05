@@ -2,7 +2,16 @@
     <!-- Base application theme. -->
     <style name="Theme.HYUabot" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowSplashScreenBackground" tools:targetApi="s">@android:color/background_dark</item>
+        <item name="colorPrimary">@color/hanyang_blue</item>
+        <item name="colorPrimaryVariant">@color/hanyang_blue</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/hanyang_green</item>
+        <item name="colorSecondaryVariant">@color/hanyang_green</item>
+        <item name="colorOnSecondary">@android:color/white</item>
         <item name="android:colorBackground">@android:color/background_dark</item>
+        <item name="android:colorError">@color/hanyang_orange</item>
+        <item name="colorOnError">@color/hanyang_orange</item>
+        <item name="colorOnBackground">@color/hanyang_silver</item>
         <!-- Bottom Navigation -->
         <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
     </style>
@@ -10,10 +19,10 @@
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
     </style>
     <style name="ThemeOverlay.App.BottomNavigationView" parent="">
-        <item name="colorSurfaceContainer">@color/hanyang_blue</item>
-        <item name="colorOnSurfaceVariant">@android:color/white</item>
-        <item name="colorOnSecondaryContainer">@android:color/black</item>
-        <item name="colorOnSurface">@android:color/white</item>
-        <item name="colorSecondaryContainer">@color/hanyang_blue_variant</item>
+        <item name="colorSurfaceContainer">@color/background</item>
+        <item name="colorOnSurfaceVariant">@color/bottom_navigation_unselected</item>
+        <item name="colorOnSecondaryContainer">@color/hanyang_blue</item>
+        <item name="colorOnSurface">@color/hanyang_blue</item>
+        <item name="colorSecondaryContainer">@color/bottom_navigation_indicator</item>
     </style>
 </resources>

@@ -9,6 +9,7 @@
         android:id="@+id/subway_destination_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/primary_text"
         android:textFontWeight="700"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
