@@ -21,6 +21,10 @@ class BusRouteDialog @Inject constructor() : DialogFragment() {
     private val args: BusRouteDialogArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding.toolbar.setOnMenuItemClickListener {
+            dismiss()
+            true
+        }
         viewModel.fetchData(args.stopID, args.routeID)
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_route_info_error), Toast.LENGTH_SHORT).show() }
