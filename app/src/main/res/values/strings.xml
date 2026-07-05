@@ -362,6 +362,9 @@
     <!-- 학식 가격 -->
     <string name="cafeteria_running_time_format">운영 시간: %1$s</string>
     <string name="cafeteria_running_time_status_format">운영 시간: %1$s · %2$s</string>
+    <string name="cafeteria_info">식당 정보</string>
+    <string name="cafeteria_running_time_title">운영 시간</string>
+    <string name="cafeteria_running_time_item_format">%1$s: %2$s</string>
     <string name="cafeteria_status_open">운영 중</string>
     <string name="cafeteria_status_soon">운영 전</string>
     <string name="cafeteria_status_closed">운영 종료</string>

@@ -1,6 +1,9 @@
 query CafeteriaPageQuery($date: Date!, $campusID: Int!) {
     cafeteria (input: { date: $date, campus: $campusID }) {
         seq
+        name
+        latitude
+        longitude
         runningTime {
             breakfast, lunch, dinner
         }

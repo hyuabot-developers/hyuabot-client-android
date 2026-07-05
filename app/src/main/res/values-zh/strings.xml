@@ -287,6 +287,9 @@
     <string name="cafeteria_15">创业孵化中心</string>
     <string name="cafeteria_running_time_format">营业时间: %1$s</string>
     <string name="cafeteria_running_time_status_format">营业时间: %1$s · %2$s</string>
+    <string name="cafeteria_info">食堂信息</string>
+    <string name="cafeteria_running_time_title">营业时间</string>
+    <string name="cafeteria_running_time_item_format">%1$s: %2$s</string>
     <string name="cafeteria_status_open">营业中</string>
     <string name="cafeteria_status_soon">未开始</string>
     <string name="cafeteria_status_closed">已结束</string>

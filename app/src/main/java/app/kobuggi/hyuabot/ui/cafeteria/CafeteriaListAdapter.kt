@@ -16,8 +16,14 @@ class CafeteriaListAdapter(
     private val context: Context,
     private val type: String,
     private var cafeteriaList: List<CafeteriaPageQuery.Cafeterium>,
+    private val onInfoClick: (CafeteriaPageQuery.Cafeterium, String) -> Unit,
 ) : RecyclerView.Adapter<CafeteriaListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemCafeteriaBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            val decoration = DividerItemWithoutLastDecoration(context, DividerItemDecoration.VERTICAL)
+            binding.menuList.addItemDecoration(decoration)
+        }
+
         fun bind(cafeteriaItem: CafeteriaPageQuery.Cafeterium) {
             val menuAdapter = MenuListAdapter(context, listOf())
             val runningTime = when (type) {
@@ -35,17 +41,19 @@ class CafeteriaListAdapter(
             val menus = cafeteriaItem.menus.filter { it.type.contains(mealTypeQuery(type)) }
                 .distinctBy { it.food }
             menuAdapter.updateList(menus)
-            val decoration = DividerItemWithoutLastDecoration(context, DividerItemDecoration.VERTICAL)
             binding.apply {
-                headerCafeteria.text = getCafeteriaString(cafeteriaItem.seq)
+                val displayName = getCafeteriaString(cafeteriaItem.seq)
+                headerCafeteria.text = displayName
                 subheaderCafeteria.text = context.getString(
                     R.string.cafeteria_running_time_status_format,
                     runningTime,
                     statusText(runningTime, menus.isNotEmpty())
                 )
+                cafeteriaInfoButton.setOnClickListener {
+                    onInfoClick(cafeteriaItem, displayName)
+                }
                 menuList.apply {
                     adapter = menuAdapter
-                    addItemDecoration(decoration)
                 }
             }
         }

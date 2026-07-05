@@ -19,8 +19,9 @@
         android:id="@+id/header_cafeteria"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
+        android:paddingStart="16dp"
         android:paddingTop="14dp"
+        android:paddingEnd="8dp"
         android:paddingBottom="4dp"
         android:gravity="start"
         android:textColor="@color/primary_text"
@@ -29,8 +30,22 @@
         android:maxLines="2"
         android:ellipsize="end"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cafeteria_info_button"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/cafeteria_info_button"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cafeteria_info"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_info"
+        app:tint="@color/hanyang_blue" />
     <TextView
         android:id="@+id/subheader_cafeteria"
         android:layout_width="0dp"

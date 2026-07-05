@@ -287,6 +287,9 @@
     <string name="cafeteria_15">創業保育センター</string>
     <string name="cafeteria_running_time_format">営業時間: %1$s</string>
     <string name="cafeteria_running_time_status_format">営業時間: %1$s · %2$s</string>
+    <string name="cafeteria_info">食堂情報</string>
+    <string name="cafeteria_running_time_title">営業時間</string>
+    <string name="cafeteria_running_time_item_format">%1$s: %2$s</string>
     <string name="cafeteria_status_open">営業中</string>
     <string name="cafeteria_status_soon">営業前</string>
     <string name="cafeteria_status_closed">営業終了</string>

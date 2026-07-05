@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import app.kobuggi.hyuabot.databinding.FragmentCafeteriaTabBinding
-import app.kobuggi.hyuabot.util.DividerItemWithoutLastDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,8 +15,9 @@ class CafeteriaTabBreakfastFragment : Fragment() {
     private val parentViewModel: CafeteriaViewModel by viewModels({ requireParentFragment() })
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val cafeteriaAdapter = CafeteriaListAdapter(requireContext(), "breakfast", listOf())
-        val decoration = DividerItemWithoutLastDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        val cafeteriaAdapter = CafeteriaListAdapter(requireContext(), "breakfast", listOf()) { cafeteria, displayName ->
+            CafeteriaInfoSheet.newInstance(cafeteria, displayName).show(parentFragmentManager, "CafeteriaInfoSheet")
+        }
         parentViewModel.apply {
             breakfast.observe(viewLifecycleOwner) {
                 cafeteriaAdapter.updateList(it)
@@ -28,7 +27,6 @@ class CafeteriaTabBreakfastFragment : Fragment() {
         binding.apply {
             cafeteriaView.apply {
                 adapter = cafeteriaAdapter
-                addItemDecoration(decoration)
             }
         }
         return binding.root

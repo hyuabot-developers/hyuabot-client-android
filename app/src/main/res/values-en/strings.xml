@@ -310,6 +310,9 @@
     <string name="cafeteria_15">Business Incubator</string>
     <string name="cafeteria_running_time_format">Operating Hours: %1$s</string>
     <string name="cafeteria_running_time_status_format">Hours: %1$s · %2$s</string>
+    <string name="cafeteria_info">Cafeteria Info</string>
+    <string name="cafeteria_running_time_title">Operating Hours</string>
+    <string name="cafeteria_running_time_item_format">%1$s: %2$s</string>
     <string name="cafeteria_status_open">Open now</string>
     <string name="cafeteria_status_soon">Not open yet</string>
     <string name="cafeteria_status_closed">Closed</string>
