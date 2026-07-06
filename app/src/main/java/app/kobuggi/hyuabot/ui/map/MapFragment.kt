@@ -27,7 +27,6 @@ import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.MapPageQuery
 import app.kobuggi.hyuabot.R
@@ -85,7 +84,6 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             setHasFixedSize(true)
             adapter = searchResultAdapter
             layoutManager = LinearLayoutManager(context)
-            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         }
         binding.searchView
             .editText
