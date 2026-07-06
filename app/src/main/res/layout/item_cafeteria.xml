@@ -6,6 +6,16 @@
     android:layout_height="wrap_content"
     android:background="@color/background">
 
+    <View
+        android:id="@+id/cafeteria_header_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/hanyang_blue"
+        app:layout_constraintBottom_toTopOf="@id/divider_cafeteria"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/header_cafeteria"
         android:layout_width="0dp"
@@ -15,7 +25,7 @@
         android:paddingEnd="8dp"
         android:paddingBottom="4dp"
         android:gravity="start"
-        android:textColor="@color/primary_text"
+        android:textColor="@android:color/white"
         android:textSize="17sp"
         android:textFontWeight="700"
         android:maxLines="2"
@@ -37,7 +47,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/divider_cafeteria"
         app:srcCompat="@drawable/ic_info"
-        app:tint="@color/cafeteria_info_button_tint" />
+        app:tint="@android:color/white" />
     <TextView
         android:id="@+id/subheader_cafeteria"
         android:layout_width="0dp"
@@ -45,7 +55,7 @@
         android:paddingHorizontal="16dp"
         android:paddingBottom="10dp"
         android:gravity="start"
-        android:textColor="@color/secondary_text"
+        android:textColor="@android:color/white"
         android:textSize="13sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
