@@ -248,7 +248,7 @@
     <string name="subway">Subway</string>
     <string name="subway_tab_blue">Line 4</string>
     <string name="subway_tab_yellow">Suin-Bundang Line</string>
-    <string name="subway_tab_transfer">Destinations</string>
+    <string name="subway_tab_transfer">Fast Transfers</string>
     <string name="subway_blue_up">Northbound (Danggogae·Sadang)</string>
     <string name="subway_blue_down">Southbound (Oido·Ansan)</string>
     <string name="subway_yellow_up">Northbound (Wangsimni·Suwon)</string>

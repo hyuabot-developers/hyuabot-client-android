@@ -225,7 +225,7 @@
     <string name="subway">地下鉄</string>
     <string name="subway_tab_blue">4号線</string>
     <string name="subway_tab_yellow">水仁盆唐線</string>
-    <string name="subway_tab_transfer">目的地乗換</string>
+    <string name="subway_tab_transfer">快速乗換</string>
     <string name="subway_blue_up">上り（堂高介・舎堂）</string>
     <string name="subway_blue_down">下り（五耳島・安山）</string>
     <string name="subway_yellow_up">上り（往十里・水原）</string>

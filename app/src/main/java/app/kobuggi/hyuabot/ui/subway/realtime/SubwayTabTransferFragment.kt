@@ -62,7 +62,7 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
                 )
             }
             val oidoToIncheon = (it.oidoYellow.arrival.firstOrNull { arrival -> arrival.direction == "down" }?.entries ?: emptyList()).filter {
-                    entry -> entry.origin?.stationID == "K258"
+                    entry -> entry.origin?.stationID == "K258" && entry.terminal.stationID == "K272"
             }
             val incheonViaOido = (it.campusBlue.arrival.firstOrNull { arrival -> arrival.direction == "down" }?.entries ?: emptyList()).filter {
                 entry -> entry.terminal.stationID == "K456"
@@ -98,8 +98,8 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
                     } ?: return@mapNotNull null
                 )
             }
-            val incheonEntries = (incheonDirect + incheonViaOido).sortedBy { entry -> entry.take.minutes }
-            val chojiEntries = chojiTransfers.sortedBy { entry -> entry.take.minutes }.take(2)
+            val incheonEntries = (incheonDirect + incheonViaOido).sortedBy { entry -> entry.take.minutes }.take(MAX_TRANSFER_ITEMS_PER_SECTION)
+            val chojiEntries = chojiTransfers.sortedBy { entry -> entry.take.minutes }.take(MAX_TRANSFER_ITEMS_PER_SECTION)
             if (incheonEntries.isEmpty()) {
                 binding.noRealtimeDataUp.visibility = View.VISIBLE
             } else {
@@ -121,6 +121,7 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
 
     companion object {
         private const val CHOJI_TRANSFER_BUFFER_MINUTES = 16
+        private const val MAX_TRANSFER_ITEMS_PER_SECTION = 2
     }
 
     private fun RecyclerView.configureTransferList() {

@@ -292,7 +292,7 @@
     <string name="subway">전철</string>
     <string name="subway_tab_blue">4호선</string>
     <string name="subway_tab_yellow">수인분당선</string>
-    <string name="subway_tab_transfer">목적지 환승</string>
+    <string name="subway_tab_transfer">빠른 환승</string>
     <string name="subway_blue_up">상행 (당고개·사당)</string>
     <string name="subway_blue_down">하행 (오이도·안산)</string>
     <string name="subway_yellow_up">상행 (왕십리·수원)</string>
