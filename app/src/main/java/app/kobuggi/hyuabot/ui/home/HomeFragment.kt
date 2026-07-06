@@ -954,7 +954,7 @@ class HomeFragment : Fragment() {
             addView(TextView(requireContext()).apply {
                 applyHomeTypeface(Typeface.BOLD)
                 text = item.price
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.hanyang_blue))
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_text))
                 textSize = 14f
                 gravity = Gravity.END
                 maxLines = 1
