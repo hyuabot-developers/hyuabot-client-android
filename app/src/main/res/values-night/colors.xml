@@ -28,4 +28,5 @@
     <color name="calendar_saturday">#29B6F6</color>
     <color name="cafeteria_price_background">#0B1F33</color>
     <color name="cafeteria_price_text">#EAF6FF</color>
+    <color name="cafeteria_info_button_tint">#FFFFFF</color>
 </resources>

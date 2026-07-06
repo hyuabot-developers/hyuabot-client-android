@@ -44,8 +44,9 @@
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/divider_cafeteria"
         app:srcCompat="@drawable/ic_info"
-        app:tint="@color/hanyang_blue" />
+        app:tint="@color/cafeteria_info_button_tint" />
     <TextView
         android:id="@+id/subheader_cafeteria"
         android:layout_width="0dp"
