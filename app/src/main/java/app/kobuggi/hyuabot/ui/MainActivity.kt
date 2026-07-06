@@ -10,15 +10,21 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.CheckBox
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -58,9 +64,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     lateinit var inAppReviewManager: InAppReviewManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        applyStatusBarStyle()
         firebaseAnalytics = Firebase.analytics
         binding.bottomNavigation.apply {
             setupWithNavController(navController)
@@ -86,6 +92,35 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         openBirthDayDialog()
         requestInAppReview()
         navController.handleDeepLink(intent)
+    }
+
+    private fun applyStatusBarStyle() {
+        val statusBarColor = ContextCompat.getColor(this, R.color.hanyang_blue)
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(statusBarColor))
+
+        val decorView = window.decorView as? ViewGroup ?: return
+        val statusBarBackground = decorView.findViewWithTag<View>(STATUS_BAR_BACKGROUND_TAG)
+            ?: View(this).apply {
+                tag = STATUS_BAR_BACKGROUND_TAG
+                setBackgroundColor(statusBarColor)
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                decorView.addView(
+                    this,
+                    FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        statusBarHeight(),
+                        Gravity.TOP
+                    )
+                )
+            }
+        statusBarBackground.layoutParams = statusBarBackground.layoutParams.apply {
+            height = statusBarHeight()
+        }
+    }
+
+    private fun statusBarHeight(): Int {
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return if (resourceId > 0) resources.getDimensionPixelSize(resourceId) else 0
     }
 
     override fun onResume() {
@@ -351,6 +386,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     companion object {
+        private const val STATUS_BAR_BACKGROUND_TAG = "status_bar_background"
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 2
     }
