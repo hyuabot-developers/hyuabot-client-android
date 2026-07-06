@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import androidx.lifecycle.lifecycleScope
@@ -48,13 +47,11 @@ class MenuFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val menuAdapter = MenuListAdapter(requireContext(), menuList, ::onClickMenu)
-        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
 
         binding.menuRecyclerView.apply {
             adapter = menuAdapter
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            addItemDecoration(decoration)
         }
         showCoachmarkOnce(userPreferencesRepository, Coachmarks.MENU) {
             listOf(
