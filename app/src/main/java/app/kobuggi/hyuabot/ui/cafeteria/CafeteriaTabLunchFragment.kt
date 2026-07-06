@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.databinding.FragmentCafeteriaTabBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,6 +29,7 @@ class CafeteriaTabLunchFragment : Fragment() {
         binding.apply {
             cafeteriaView.apply {
                 adapter = cafeteriaAdapter
+                addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
             }
         }
         return binding.root
