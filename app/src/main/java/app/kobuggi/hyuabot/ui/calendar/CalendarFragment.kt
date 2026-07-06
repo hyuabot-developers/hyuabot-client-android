@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentCalendarBinding
@@ -90,7 +89,6 @@ class CalendarFragment @Inject constructor() : Fragment() {
             eventListOfMonth.apply {
                 adapter = eventListAdapter
                 layoutManager = LinearLayoutManager(requireContext())
-                addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
         }
         return binding.root
