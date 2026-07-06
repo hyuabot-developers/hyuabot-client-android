@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
@@ -26,11 +27,13 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
     ): View {
         val incheonAdapter = SubwayTransferListAdapter(requireContext(), "down")
         val chojiAdapter = SubwayTransferListAdapter(requireContext(), "choji")
+        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         binding.apply {
             headerUp.text = getString(R.string.subway_transfer_incheon_oido)
             realtimeViewUp.apply {
                 adapter = incheonAdapter
                 layoutManager = LinearLayoutManager(requireContext())
+                addItemDecoration(decoration)
                 configureTransferList()
             }
             entireTimetableUp.visibility = View.GONE
@@ -38,6 +41,7 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
             realtimeViewDown.apply {
                 adapter = chojiAdapter
                 layoutManager = LinearLayoutManager(requireContext())
+                addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
                 configureTransferList()
             }
             entireTimetableDown.visibility = View.GONE
