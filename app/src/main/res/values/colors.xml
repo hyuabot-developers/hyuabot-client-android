@@ -13,6 +13,7 @@
     <!-- 지하철 노선 색상 -->
     <color name="subway_line4">#00A0E9</color>
     <color name="subway_suin">#FABE00</color>
+    <color name="subway_seohae">#8FC31F</color>
     <color name="home_subway_yellow">#B87A00</color>
     <!-- 글자 색상 -->
     <color name="primary_text">#000000</color>

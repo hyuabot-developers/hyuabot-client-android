@@ -28,14 +28,17 @@
     <string name="home_quick_settings_subway_destination_suwon_yongin">水原・龍仁</string>
     <string name="home_quick_settings_subway_destination_incheon">仁川</string>
     <string name="home_quick_settings_subway_destination_oido">烏耳島</string>
+    <string name="home_quick_settings_subway_destination_sosa">一山·富川</string>
     <string name="home_transfer_bus50_badge">50番</string>
     <string name="home_transfer_bus50_title">%1$s 到着予定</string>
     <string name="home_transfer_bus50_subtitle">芸術人でバスに乗り換え</string>
     <string name="home_transfer_buffer">+%1$d分</string>
     <string name="home_transfer_subway_suin_bundang_badge">水仁</string>
+    <string name="home_transfer_subway_seohae_badge">西海線</string>
     <string name="home_transfer_subway_title">%1$s 行き</string>
     <string name="home_transfer_subway_subtitle">韓大前で地下鉄に乗り換え</string>
     <string name="home_transfer_subway_oido_subtitle">烏耳島駅で地下鉄に乗り換え</string>
+    <string name="home_transfer_subway_choji_subtitle">草芝駅で地下鉄に乗り換え</string>
     <string name="home_support_default">急ぐ時だけ確認</string>
     <string name="home_support_emphasized">代替/乗換</string>
     <string name="home_destination_station">韓大前駅</string>

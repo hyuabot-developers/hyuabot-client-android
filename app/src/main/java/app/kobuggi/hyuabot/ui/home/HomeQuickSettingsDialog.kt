@@ -28,6 +28,7 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
         binding.subwayDestinationSuwonYongin.tag = HomeSubwayTransferDestination.SUWON_YONGIN
         binding.subwayDestinationIncheon.tag = HomeSubwayTransferDestination.INCHEON
         binding.subwayDestinationOido.tag = HomeSubwayTransferDestination.OIDO
+        binding.subwayDestinationSosa.tag = HomeSubwayTransferDestination.SOSA
         binding.showBus50TransferSwitch.isChecked = requireArguments().getBoolean(ARG_SHOW_BUS50_TRANSFER, true)
         binding.showSubwayTransferSwitch.isChecked = requireArguments().getBoolean(ARG_SHOW_SUBWAY_TRANSFER, true)
         val subwayDestination = HomeSubwayTransferDestination.from(requireArguments().getString(ARG_SUBWAY_TRANSFER_DESTINATION))
