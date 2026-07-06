@@ -6,5 +6,6 @@ data class SubwayRealtimeCombinedData(
     val campusYellow: SubwayRealtimePageQuery.Subway?,
     val campusBlue: SubwayRealtimePageQuery.Subway?,
     val oidoYellow: SubwayRealtimePageQuery.Subway?,
-    val oidoBlue: SubwayRealtimePageQuery.Subway?
+    val oidoBlue: SubwayRealtimePageQuery.Subway?,
+    val chojiSeohae: SubwayRealtimePageQuery.Subway?
 )

@@ -292,25 +292,43 @@
     <string name="subway">전철</string>
     <string name="subway_tab_blue">4호선</string>
     <string name="subway_tab_yellow">수인분당선</string>
-    <string name="subway_tab_transfer">인천↔한대앞</string>
+    <string name="subway_tab_transfer">목적지 환승</string>
     <string name="subway_blue_up">상행 (당고개·사당)</string>
     <string name="subway_blue_down">하행 (오이도·안산)</string>
     <string name="subway_yellow_up">상행 (왕십리·수원)</string>
     <string name="subway_yellow_down">하행 (인천·오이도)</string>
     <string name="subway_transfer_up">인천→한대앞</string>
     <string name="subway_transfer_down">한대앞→인천</string>
+    <string name="subway_transfer_incheon_oido">인천·오이도</string>
+    <string name="subway_transfer_ilsan_bucheon">일산·부천</string>
     <plurals name="subway_transfer_up_item_format">
-        <item quantity="one">[%1$s행] %2$s → [%3$s행] %4$d분 후 출발 (오이도 환승)</item>
-        <item quantity="other">[%1$s행] %2$s → [%3$s행] %4$d분 후 출발 (오이도 환승)</item>
+        <item quantity="one">[%1$s행] %2$s\n→ [%3$s행] %4$d분 후 (오이도)</item>
+        <item quantity="other">[%1$s행] %2$s\n→ [%3$s행] %4$d분 후 (오이도)</item>
     </plurals>
     <string name="subway_transfer_up_item_format_no_transfer">[%1$s행] %2$s</string>
     <plurals name="subway_transfer_down_item_format">
-        <item quantity="one">[%1$s행] %2$d분 후 도착 (%3$s) → [%4$s행] %5$d분 후 출발 (오이도 환승)</item>
-        <item quantity="other">[%1$s행] %2$d분 후 도착 (%3$s) → [%4$s행] %5$d분 후 출발 (오이도 환승)</item>
+        <item quantity="one">[%1$s행] %2$d분 후 (%3$s)\n→ [%4$s행] %5$d분 후 (오이도)</item>
+        <item quantity="other">[%1$s행] %2$d분 후 (%3$s)\n→ [%4$s행] %5$d분 후 (오이도)</item>
     </plurals>
     <plurals name="subway_transfer_down_item_format_no_transfer">
-        <item quantity="one">[%1$s행] %2$d분 후 도착 (%3$s)</item>
-        <item quantity="other">[%1$s행] %2$d분 후 도착 (%3$s)</item>
+        <item quantity="one">[%1$s행] %2$d분 후 (%3$s)</item>
+        <item quantity="other">[%1$s행] %2$d분 후 (%3$s)</item>
+    </plurals>
+    <plurals name="subway_transfer_choji_item_format">
+        <item quantity="one">[%1$s행] %2$d분 후\n→ [%3$s행] %4$d분 후 (초지)</item>
+        <item quantity="other">[%1$s행] %2$d분 후\n→ [%3$s행] %4$d분 후 (초지)</item>
+    </plurals>
+    <string name="subway_transfer_destination_format">%1$s행</string>
+    <string name="subway_transfer_board_at_hanyang">한대앞 탑승</string>
+    <string name="subway_transfer_station_format">%1$s 환승</string>
+    <string name="subway_transfer_current_location_format">%1$s 부근</string>
+    <plurals name="subway_transfer_minutes_after_format">
+        <item quantity="one">%1$d분 후</item>
+        <item quantity="other">%1$d분 후</item>
+    </plurals>
+    <plurals name="subway_transfer_wait_time_format">
+        <item quantity="one">%1$d분 대기</item>
+        <item quantity="other">%1$d분 대기</item>
     </plurals>
     <!-- 전철 도착 정보 없음 -->
     <string name="subway_no_realtime_data">도착 정보가 없습니다.</string>
@@ -341,6 +359,10 @@
     <string name="subway_station_K444">산본</string>
     <string name="subway_station_K453">안산</string>
     <string name="subway_station_K456">오이도</string>
+    <string name="subway_station_S07">일산</string>
+    <string name="subway_station_S11">대곡</string>
+    <string name="subway_station_S16">소사</string>
+    <string name="subway_station_choji">초지</string>
     <!-- 전철 시간표 탭 -->
     <string name="subway_timetable_tab_weekdays">평일</string>
     <string name="subway_timetable_tab_weekends">주말</string>

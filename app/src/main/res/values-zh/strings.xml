@@ -225,25 +225,43 @@
     <string name="subway">地铁</string>
     <string name="subway_tab_blue">4号线</string>
     <string name="subway_tab_yellow">水仁盆唐线</string>
-    <string name="subway_tab_transfer">仁川↔汉大前</string>
+    <string name="subway_tab_transfer">目的地换乘</string>
     <string name="subway_blue_up">上行（堂高介·舍堂）</string>
     <string name="subway_blue_down">下行（五耳岛·安山）</string>
     <string name="subway_yellow_up">上行（往十里·水原）</string>
     <string name="subway_yellow_down">下行（仁川·五耳岛）</string>
     <string name="subway_transfer_up">仁川→汉大前</string>
     <string name="subway_transfer_down">汉大前→仁川</string>
+    <string name="subway_transfer_incheon_oido">仁川·五耳岛</string>
+    <string name="subway_transfer_ilsan_bucheon">一山·富川</string>
     <plurals name="subway_transfer_up_item_format">
-        <item quantity="one">[%1$s行] %2$s → [%3$s行] %4$d分钟后出发（五耳岛换乘）</item>
-        <item quantity="other">[%1$s行] %2$s → [%3$s行] %4$d分钟后出发（五耳岛换乘）</item>
+        <item quantity="one">[%1$s行] %2$s\n→ [%3$s行] %4$d分钟后（五耳岛）</item>
+        <item quantity="other">[%1$s行] %2$s\n→ [%3$s行] %4$d分钟后（五耳岛）</item>
     </plurals>
     <string name="subway_transfer_up_item_format_no_transfer">[%1$s行] %2$s</string>
     <plurals name="subway_transfer_down_item_format">
-        <item quantity="one">[%1$s行] %2$d分钟后到达（%3$s）→ [%4$s行] %5$d分钟后出发（五耳岛换乘）</item>
-        <item quantity="other">[%1$s行] %2$d分钟后到达（%3$s）→ [%4$s行] %5$d分钟后出发（五耳岛换乘）</item>
+        <item quantity="one">[%1$s行] %2$d分钟后（%3$s）\n→ [%4$s行] %5$d分钟后（五耳岛）</item>
+        <item quantity="other">[%1$s行] %2$d分钟后（%3$s）\n→ [%4$s行] %5$d分钟后（五耳岛）</item>
     </plurals>
     <plurals name="subway_transfer_down_item_format_no_transfer">
-        <item quantity="one">[%1$s行] %2$d分钟后到达（%3$s）</item>
-        <item quantity="other">[%1$s行] %2$d分钟后到达（%3$s）</item>
+        <item quantity="one">[%1$s行] %2$d分钟后（%3$s）</item>
+        <item quantity="other">[%1$s行] %2$d分钟后（%3$s）</item>
+    </plurals>
+    <plurals name="subway_transfer_choji_item_format">
+        <item quantity="one">[%1$s行] %2$d分钟后\n→ [%3$s行] %4$d分钟后（草芝）</item>
+        <item quantity="other">[%1$s行] %2$d分钟后\n→ [%3$s行] %4$d分钟后（草芝）</item>
+    </plurals>
+    <string name="subway_transfer_destination_format">开往%1$s</string>
+    <string name="subway_transfer_board_at_hanyang">在汉大前上车</string>
+    <string name="subway_transfer_station_format">在%1$s换乘</string>
+    <string name="subway_transfer_current_location_format">%1$s附近</string>
+    <plurals name="subway_transfer_minutes_after_format">
+        <item quantity="one">%1$d分钟后</item>
+        <item quantity="other">%1$d分钟后</item>
+    </plurals>
+    <plurals name="subway_transfer_wait_time_format">
+        <item quantity="one">等候%1$d分钟</item>
+        <item quantity="other">等候%1$d分钟</item>
     </plurals>
     <string name="subway_no_realtime_data">暂无到达信息。</string>
     <string name="subway_realtime_destination_format">%1$s方向</string>
@@ -270,6 +288,10 @@
     <string name="subway_station_K444">山本</string>
     <string name="subway_station_K453">安山</string>
     <string name="subway_station_K456">五耳岛</string>
+    <string name="subway_station_S07">一山</string>
+    <string name="subway_station_S11">大谷</string>
+    <string name="subway_station_S16">素砂</string>
+    <string name="subway_station_choji">草芝</string>
     <string name="subway_timetable_tab_weekdays">工作日</string>
     <string name="subway_timetable_tab_weekends">周末</string>
     <string name="subway_timetable_time_format">%1$s时%2$s分</string>
