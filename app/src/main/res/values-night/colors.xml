@@ -12,6 +12,7 @@
     <color name="home_segmented_track">#2C2C2E</color>
     <color name="home_segmented_selected">#4A4A4C</color>
     <color name="bottom_navigation_indicator">#2C2C2E</color>
+    <color name="bottom_navigation_selected">#FFFFFF</color>
     <color name="bottom_navigation_unselected">#D0D0D0</color>
     <color name="plain_button_text">#FFFFFF</color>
     <color name="app_separator">#38383A</color>

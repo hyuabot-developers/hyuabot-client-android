@@ -27,6 +27,7 @@
     <color name="home_segmented_track">#E7E7EC</color>
     <color name="home_segmented_selected">#FFFFFF</color>
     <color name="bottom_navigation_indicator">#E6E7EB</color>
+    <color name="bottom_navigation_selected">#005BAA</color>
     <color name="bottom_navigation_unselected">#202124</color>
     <color name="plain_button_text">#0E4A84</color>
     <color name="app_separator">#C6C6C8</color>

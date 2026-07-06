@@ -21,8 +21,8 @@
     <style name="ThemeOverlay.App.BottomNavigationView" parent="">
         <item name="colorSurfaceContainer">@color/background</item>
         <item name="colorOnSurfaceVariant">@color/bottom_navigation_unselected</item>
-        <item name="colorOnSecondaryContainer">@color/hanyang_blue</item>
-        <item name="colorOnSurface">@color/hanyang_blue</item>
+        <item name="colorOnSecondaryContainer">@color/bottom_navigation_selected</item>
+        <item name="colorOnSurface">@color/bottom_navigation_selected</item>
         <item name="colorSecondaryContainer">@color/bottom_navigation_indicator</item>
     </style>
 </resources>
