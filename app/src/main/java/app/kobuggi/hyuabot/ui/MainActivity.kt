@@ -31,6 +31,7 @@ import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.AnalyticsScreen
 import app.kobuggi.hyuabot.util.InAppReviewManager
+import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import app.kobuggi.hyuabot.widget.ShuttleWidgetProvider
 import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
@@ -163,6 +164,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 }
                 .setNegativeButton(getString(R.string.language_suggestion_keep_english), null)
                 .show()
+                .applyGodoTypography()
         } else if (appLang != "ja" && appLang != "zh") {
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
         }
@@ -231,6 +233,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 dialog.dismiss()
             }
             .show()
+            .applyGodoTypography()
     }
 
     override fun onRequestPermissionsResult(
@@ -340,7 +343,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 dialogInterface.dismiss()
             }
             AnalyticsManager.logScreen(AnalyticsScreen.BIRTHDAY)
-            dialogBuilder.create().show()
+            dialogBuilder.create().apply {
+                show()
+                applyGodoTypography()
+            }
         }
     }
 

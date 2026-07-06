@@ -8,6 +8,7 @@
 
     <TextView
         android:id="@+id/widget_transfer_name"
+        android:fontFamily="@font/godo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -23,6 +24,7 @@
 
     <TextView
         android:id="@+id/widget_transfer_detail"
+        android:fontFamily="@font/godo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

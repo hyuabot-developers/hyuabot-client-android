@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentContactBinding
 import app.kobuggi.hyuabot.service.database.entity.Contact
+import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import app.kobuggi.hyuabot.util.setSkeletonLoading
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -102,6 +103,7 @@ class ContactFragment @Inject constructor() : Fragment() {
                 }
             }
             .show()
+            .applyGodoTypography()
     }
 
     private fun copyContactPhone(contact: Contact) {

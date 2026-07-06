@@ -22,6 +22,7 @@
 
         <TextView
             android:id="@+id/widget_shuttle_title"
+            android:fontFamily="@font/godo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -32,6 +33,7 @@
 
         <TextView
             android:id="@+id/widget_shuttle_stop"
+            android:fontFamily="@font/godo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -71,6 +73,7 @@
 
         <TextView
             android:id="@+id/widget_shuttle_empty"
+            android:fontFamily="@font/godo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
