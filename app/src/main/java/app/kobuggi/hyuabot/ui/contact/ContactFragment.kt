@@ -14,7 +14,6 @@ import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentContactBinding
@@ -60,7 +59,6 @@ class ContactFragment @Inject constructor() : Fragment() {
             contactListView.apply {
                 adapter = listAdapter
                 layoutManager = LinearLayoutManager(requireContext())
-                addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
             }
             searchView
                 .editText
@@ -77,7 +75,6 @@ class ContactFragment @Inject constructor() : Fragment() {
             contactSearchView.apply {
                 adapter = searchListAdapter
                 layoutManager = LinearLayoutManager(requireContext())
-                addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
             }
         }
         return binding.root
