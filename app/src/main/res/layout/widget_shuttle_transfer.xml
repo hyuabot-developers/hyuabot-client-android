@@ -17,6 +17,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_widget_shuttle"
+            android:tint="@color/widget_accent"
             android:contentDescription="@string/shuttle_bus" />
 
         <TextView
@@ -27,7 +28,7 @@
             android:layout_marginStart="6dp"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@color/hanyang_blue"
+            android:textColor="@color/widget_accent"
             android:text="@string/widget_shuttle_transfer_name" />
 
         <TextView
@@ -40,7 +41,7 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:textSize="14sp"
-            android:textColor="@color/secondary_text" />
+            android:textColor="@color/widget_secondary_text" />
 
         <ImageView
             android:id="@+id/widget_transfer_refresh"
@@ -49,6 +50,7 @@
             android:layout_marginEnd="-8dp"
             android:padding="8dp"
             android:src="@drawable/ic_widget_refresh"
+            android:tint="@color/widget_accent"
             android:contentDescription="@string/widget_cafeteria_refresh" />
     </LinearLayout>
 
@@ -58,7 +60,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp"
         android:importantForAccessibility="no"
-        android:background="@color/hanyang_blue_variant" />
+        android:background="@color/widget_divider" />
 
     <TextView
         android:id="@+id/widget_transfer_empty"
@@ -68,7 +70,7 @@
         android:layout_marginTop="12dp"
         android:gravity="center"
         android:textSize="14sp"
-        android:textColor="@color/secondary_text"
+        android:textColor="@color/widget_secondary_text"
         android:visibility="gone"
         android:text="@string/widget_shuttle_no_data" />
 
@@ -84,7 +86,7 @@
         android:layout_height="1dp"
         android:layout_marginVertical="6dp"
         android:importantForAccessibility="no"
-        android:background="@color/hanyang_blue_variant" />
+        android:background="@color/widget_divider" />
 
     <TextView
         android:id="@+id/widget_transfer_section_title"
@@ -94,7 +96,7 @@
         android:layout_marginBottom="2dp"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:textColor="@color/hanyang_blue"
+        android:textColor="@color/widget_accent"
         android:text="@string/shuttle_transfer_section_title" />
 
     <LinearLayout

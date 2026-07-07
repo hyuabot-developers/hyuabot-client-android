@@ -153,7 +153,7 @@ class ShuttleTransferWidgetProvider : AppWidgetProvider() {
                 R.id.widget_transfer_shuttle_container,
                 if (hasShuttle) View.VISIBLE else View.GONE
             )
-            val shuttleGroups = data.groups.take(MAX_SHUTTLE_GROUPS)
+            val shuttleGroups = data.groups
             shuttleGroups.forEachIndexed { index, group ->
                 views.addView(
                     R.id.widget_transfer_shuttle_container,
@@ -161,7 +161,7 @@ class ShuttleTransferWidgetProvider : AppWidgetProvider() {
                 )
             }
             setSectionVisibility(views, dividerVisible = hasShuttle && hasTransit, transitVisible = hasTransit)
-            data.transit.forEach { row ->
+            data.transit.take(MAX_TRANSIT_ROWS).forEach { row ->
                 views.addView(R.id.widget_transfer_transit_container, transitItemView(context, row))
             }
         }
@@ -230,8 +230,8 @@ class ShuttleTransferWidgetProvider : AppWidgetProvider() {
 
     companion object {
         const val ACTION_REFRESH = "app.kobuggi.hyuabot.widget.ACTION_REFRESH_SHUTTLE_TRANSFER"
-        private const val MAX_SHUTTLE_GROUPS = 4
-        private const val MAX_SHUTTLE_TIMES = 4
+        private const val MAX_SHUTTLE_TIMES = 3
+        private const val MAX_TRANSIT_ROWS = 2
     }
 }
 

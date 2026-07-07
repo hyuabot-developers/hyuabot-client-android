@@ -3,8 +3,11 @@
     android:id="@+id/widget_shuttle_item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp"
+    android:background="@drawable/bg_widget_surface"
     android:orientation="vertical"
-    android:paddingVertical="5dp">
+    android:paddingHorizontal="9dp"
+    android:paddingVertical="7dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,13 +20,17 @@
             android:fontFamily="@font/godo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_widget_badge"
             android:ellipsize="end"
             android:maxLines="1"
             android:maxWidth="96dp"
             android:minWidth="56dp"
+            android:gravity="center"
+            android:paddingHorizontal="7dp"
+            android:paddingVertical="2dp"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:textColor="@color/primary_text" />
+            android:textColor="@color/widget_accent" />
 
         <TextView
             android:id="@+id/widget_shuttle_times"
@@ -37,7 +44,7 @@
             android:ellipsize="end"
             android:fontFeatureSettings="tnum"
             android:textSize="13sp"
-            android:textColor="@color/hanyang_blue" />
+            android:textColor="@color/widget_primary_text" />
     </LinearLayout>
 
     <ImageView
@@ -46,5 +53,5 @@
         android:layout_height="1dp"
         android:layout_marginTop="5dp"
         android:importantForAccessibility="no"
-        android:background="@color/hanyang_blue_variant" />
+        android:background="@color/widget_divider" />
 </LinearLayout>

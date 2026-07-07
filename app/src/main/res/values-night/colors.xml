@@ -29,4 +29,14 @@
     <color name="cafeteria_price_background">#0B1F33</color>
     <color name="cafeteria_price_text">#EAF6FF</color>
     <color name="cafeteria_info_button_tint">#FFFFFF</color>
+    <!-- 위젯 -->
+    <color name="widget_background">#101418</color>
+    <color name="widget_surface">#1B2229</color>
+    <color name="widget_surface_secondary">#102A44</color>
+    <color name="widget_outline">#26313B</color>
+    <color name="widget_primary_text">#F7FAFC</color>
+    <color name="widget_secondary_text">#B9C3CF</color>
+    <color name="widget_accent">#8CCBFF</color>
+    <color name="widget_accent_on">#061A2D</color>
+    <color name="widget_divider">#26313B</color>
 </resources>

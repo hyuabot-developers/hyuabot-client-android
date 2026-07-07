@@ -14,7 +14,7 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:textSize="12sp"
-        android:textColor="@color/secondary_text" />
+        android:textColor="@color/widget_secondary_text" />
 
     <TextView
         android:id="@+id/widget_menu_price"
@@ -22,6 +22,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:background="@drawable/bg_widget_badge"
+        android:paddingHorizontal="7dp"
+        android:paddingVertical="2dp"
         android:textSize="12sp"
-        android:textColor="@color/hanyang_blue" />
+        android:textColor="@color/widget_accent" />
 </LinearLayout>
