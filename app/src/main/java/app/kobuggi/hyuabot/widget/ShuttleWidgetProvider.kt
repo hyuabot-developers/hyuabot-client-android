@@ -86,7 +86,7 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
     ): RemoteViews {
         val textContext = localizedContext(context)
         val views = RemoteViews(context.packageName, R.layout.widget_shuttle)
-        views.setTextViewText(R.id.widget_shuttle_date, now.format(ShuttleWidgetSupport.TIME_FORMAT))
+        views.setTextViewText(R.id.widget_shuttle_date, now.format(ShuttleWidgetSupport.UPDATED_AT_FORMAT))
         applyHeader(textContext, views, data)
 
         if (data.groups.isEmpty()) {

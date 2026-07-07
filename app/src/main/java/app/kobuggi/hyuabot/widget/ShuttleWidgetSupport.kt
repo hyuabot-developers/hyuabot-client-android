@@ -26,6 +26,7 @@ internal data class ShuttleGroup(val destination: String, val times: List<String
 
 internal object ShuttleWidgetSupport {
     val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    val UPDATED_AT_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("M/d HH:mm")
     private const val LOCATION_MAX_AGE_MILLIS = 60_000L
 
     fun hasLocationPermission(context: Context): Boolean {

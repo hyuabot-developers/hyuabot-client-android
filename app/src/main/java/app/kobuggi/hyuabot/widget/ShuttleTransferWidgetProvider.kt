@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.RemoteViews
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleTransferQuery
@@ -154,10 +153,10 @@ class ShuttleTransferWidgetProvider : AppWidgetProvider() {
                 if (hasShuttle) View.VISIBLE else View.GONE
             )
             val shuttleGroups = data.groups
-            shuttleGroups.forEachIndexed { index, group ->
+            shuttleGroups.forEach { group ->
                 views.addView(
                     R.id.widget_transfer_shuttle_container,
-                    shuttleItemView(context, group, isLast = index == shuttleGroups.lastIndex)
+                    shuttleItemView(context, group)
                 )
             }
             setSectionVisibility(views, dividerVisible = hasShuttle && hasTransit, transitVisible = hasTransit)
@@ -202,16 +201,12 @@ class ShuttleTransferWidgetProvider : AppWidgetProvider() {
         views.setViewVisibility(R.id.widget_transfer_transit_container, transit)
     }
 
-    private fun shuttleItemView(context: Context, group: ShuttleGroup, isLast: Boolean): RemoteViews {
+    private fun shuttleItemView(context: Context, group: ShuttleGroup): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_shuttle_item)
         views.setTextViewText(R.id.widget_shuttle_destination, group.destination)
         views.setTextViewText(
             R.id.widget_shuttle_times,
             group.times.take(MAX_SHUTTLE_TIMES).joinToString("  ")
-        )
-        views.setViewVisibility(
-            R.id.widget_shuttle_item_divider,
-            if (isLast) View.GONE else View.VISIBLE
         )
         return views
     }
@@ -221,11 +216,20 @@ class ShuttleTransferWidgetProvider : AppWidgetProvider() {
         views.setTextViewText(R.id.widget_transfer_name, row.name)
         views.setInt(
             R.id.widget_transfer_name,
-            "setBackgroundColor",
-            ContextCompat.getColor(context, row.colorRes)
+            "setBackgroundResource",
+            transferBadgeBackground(row.colorRes)
         )
         views.setTextViewText(R.id.widget_transfer_detail, row.detail)
         return views
+    }
+
+    private fun transferBadgeBackground(colorRes: Int): Int = when (colorRes) {
+        R.color.subway_line4 -> R.drawable.bg_widget_badge_subway_line4
+        R.color.subway_suin -> R.drawable.bg_widget_badge_subway_suin
+        R.color.home_subway_yellow -> R.drawable.bg_widget_badge_subway_suin
+        R.color.subway_seohae -> R.drawable.bg_widget_badge_subway_seohae
+        R.color.green_bus -> R.drawable.bg_widget_badge_bus_green
+        else -> R.drawable.bg_widget_accent_badge
     }
 
     companion object {
