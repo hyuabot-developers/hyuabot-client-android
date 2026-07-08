@@ -18,38 +18,46 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_widget_shuttle"
+            android:tint="@color/widget_accent"
             android:contentDescription="@string/shuttle_bus" />
 
         <TextView
+            android:fontFamily="@font/godo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@color/hanyang_blue"
+            android:textColor="@color/widget_accent"
             android:text="@string/shuttle_bus" />
 
         <TextView
+            android:fontFamily="@font/godo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="6dp"
             android:textSize="14sp"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/widget_secondary_text"
             android:text="@string/widget_preview_shuttle_stop_station" />
 
         <TextView
+            android:fontFamily="@font/godo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_widget_badge"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
             android:textSize="11sp"
-            android:textColor="@color/secondary_text"
-            android:text="12:30" />
+            android:textColor="@color/widget_secondary_text"
+            android:text="7/7 12:30" />
 
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_widget_refresh"
+            android:tint="@color/widget_accent"
             android:contentDescription="@string/widget_cafeteria_refresh" />
     </LinearLayout>
 
@@ -59,7 +67,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:importantForAccessibility="no"
-        android:background="@color/hanyang_blue_variant" />
+        android:background="@color/widget_divider" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -68,20 +76,22 @@
         android:gravity="center_vertical"
         android:paddingVertical="5dp">
         <TextView
+            android:fontFamily="@font/godo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="56dp"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/widget_primary_text"
             android:text="@string/shuttle_bound_for_station" />
         <TextView
+            android:fontFamily="@font/godo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
             android:textSize="13sp"
-            android:textColor="@color/hanyang_blue"
+            android:textColor="@color/widget_accent"
             android:text="12:35  12:50  13:05" />
     </LinearLayout>
 
@@ -92,20 +102,22 @@
         android:gravity="center_vertical"
         android:paddingVertical="5dp">
         <TextView
+            android:fontFamily="@font/godo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="56dp"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/widget_primary_text"
             android:text="@string/shuttle_bound_for_terminal" />
         <TextView
+            android:fontFamily="@font/godo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
             android:textSize="13sp"
-            android:textColor="@color/hanyang_blue"
+            android:textColor="@color/widget_accent"
             android:text="12:40  13:10" />
     </LinearLayout>
 
@@ -116,20 +128,22 @@
         android:gravity="center_vertical"
         android:paddingVertical="5dp">
         <TextView
+            android:fontFamily="@font/godo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="56dp"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/widget_primary_text"
             android:text="@string/shuttle_bound_for_jungang_station" />
         <TextView
+            android:fontFamily="@font/godo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
             android:textSize="13sp"
-            android:textColor="@color/hanyang_blue"
+            android:textColor="@color/widget_accent"
             android:text="12:45" />
     </LinearLayout>
 </LinearLayout>

@@ -28,6 +28,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     private val _campusBlue = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _oidoYellow = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _oidoBlue = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
+    private val _chojiSeohae = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _queryError = MutableLiveData<QueryError?>(null)
     private val _disposable = CompositeDisposable()
 
@@ -37,14 +38,16 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     val campusBlue get() = _campusBlue
     val oidoYellow get() = _oidoYellow
     val oidoBlue get() = _oidoBlue
+    val chojiSeohae get() = _chojiSeohae
     val combinedData get() = combine(
         campusYellow.asFlow(),
         campusBlue.asFlow(),
         oidoYellow.asFlow(),
-        oidoBlue.asFlow()
-    ) { campusYellow, campusBlue, oidoYellow, oidoBlue ->
-        SubwayRealtimeCombinedData(campusYellow, campusBlue, oidoYellow, oidoBlue)
-    }.onStart { emit(SubwayRealtimeCombinedData(null, null, null, null)) }.asLiveData()
+        oidoBlue.asFlow(),
+        chojiSeohae.asFlow()
+    ) { campusYellow, campusBlue, oidoYellow, oidoBlue, chojiSeohae ->
+        SubwayRealtimeCombinedData(campusYellow, campusBlue, oidoYellow, oidoBlue, chojiSeohae)
+    }.onStart { emit(SubwayRealtimeCombinedData(null, null, null, null, null)) }.asLiveData()
 
     fun fetchData() {
         val localDate = LocalDate.now()
@@ -59,6 +62,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
                 _campusBlue.value = response.data?.subway?.firstOrNull { it.stationID == "K449" }
                 _oidoYellow.value = response.data?.subway?.firstOrNull { it.stationID == "K258" }
                 _oidoBlue.value = response.data?.subway?.firstOrNull { it.stationID == "K456" }
+                _chojiSeohae.value = response.data?.subway?.firstOrNull { it.stationID == "S26" }
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR

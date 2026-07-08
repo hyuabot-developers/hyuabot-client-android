@@ -364,6 +364,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                 else -> 28f
             }
             isFakeBoldText = true
+            typeface = ResourcesCompat.getFont(requireContext(), R.font.godo)
         }
         canvas.drawCircle(center, center, center, outerPaint)
         canvas.drawCircle(center, center, center - 5f, innerPaint)
@@ -390,6 +391,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                 textAlign = Paint.Align.CENTER
                 textSize = 20f
                 isFakeBoldText = true
+                typeface = ResourcesCompat.getFont(requireContext(), R.font.godo)
             }
             val displayLabel = translatedLabel.ellipsize(textPaint, maxLabelWidth - labelHorizontalPadding * 2)
             val textWidth = textPaint.measureText(displayLabel)

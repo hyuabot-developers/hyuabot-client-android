@@ -187,6 +187,23 @@
                 android:textSize="12sp"
                 app:backgroundTint="@color/home_destination_button_background"
                 app:strokeColor="@color/home_destination_button_stroke" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/subway_destination_sosa"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="12sp"
+                android:autoSizeMinTextSize="8sp"
+                android:autoSizeStepGranularity="1sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:text="@string/home_quick_settings_subway_destination_sosa"
+                android:textColor="@color/home_destination_button_text"
+                android:textSize="12sp"
+                app:backgroundTint="@color/home_destination_button_background"
+                app:strokeColor="@color/home_destination_button_stroke" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
     </LinearLayout>
 

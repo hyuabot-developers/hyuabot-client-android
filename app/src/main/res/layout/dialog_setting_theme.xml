@@ -24,8 +24,7 @@
         android:text="@string/theme_system"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="viewStart"
-        android:gravity="center_vertical"
+        android:gravity="start|center_vertical"
         android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
         android:layout_height="56dp" />
@@ -38,8 +37,7 @@
         android:text="@string/theme_light"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="viewStart"
-        android:gravity="center_vertical"
+        android:gravity="start|center_vertical"
         android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
         android:layout_height="56dp" />
@@ -52,8 +50,7 @@
         android:text="@string/theme_dark"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="viewStart"
-        android:gravity="center_vertical"
+        android:gravity="start|center_vertical"
         android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
         android:layout_height="56dp" />

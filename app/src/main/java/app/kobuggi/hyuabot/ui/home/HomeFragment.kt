@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.home
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.content.pm.PackageManager
 import android.graphics.Typeface
@@ -28,6 +29,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.HomePageQuery
 import app.kobuggi.hyuabot.R
@@ -59,7 +61,11 @@ class HomeFragment : Fragment() {
     private var selectedDestination = HomeDestination.STATION
     private var lockDepartureSelection = false
     private var debugSubwayTransferDestination: HomeSubwayTransferDestination? = null
+    private var noticePosition = 0
+    private var noticeManuallyScrolled = false
+    private lateinit var noticeAutoScrollRunnable: Runnable
     private val refreshHandler = Handler(Looper.getMainLooper())
+    private val noticeScrollHandler = Handler(Looper.getMainLooper())
     private val autoRefreshRunnable = object : Runnable {
         override fun run() {
             refreshHome()
@@ -85,6 +91,7 @@ class HomeFragment : Fragment() {
         binding.legacyShuttleButton.setOnClickListener {
             openQuickSettings()
         }
+        setupNotices()
         childFragmentManager.setFragmentResultListener(
             HomeQuickSettingsDialog.REQUEST_KEY,
             viewLifecycleOwner,
@@ -123,6 +130,7 @@ class HomeFragment : Fragment() {
         }
         viewModel.data.observe(viewLifecycleOwner) {
             binding.homeSwipeRefreshLayout.isRefreshing = false
+            renderNotices(it)
             render(it)
         }
         viewModel.showBus50Transfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
@@ -144,11 +152,65 @@ class HomeFragment : Fragment() {
         super.onResume()
         refreshHandler.removeCallbacks(autoRefreshRunnable)
         refreshHandler.postDelayed(autoRefreshRunnable, AUTO_REFRESH_INTERVAL_MILLIS)
+        if (::noticeAutoScrollRunnable.isInitialized) {
+            noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
+        }
     }
 
     override fun onPause() {
         refreshHandler.removeCallbacks(autoRefreshRunnable)
+        if (::noticeAutoScrollRunnable.isInitialized) {
+            noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+        }
         super.onPause()
+    }
+
+    override fun onDestroyView() {
+        binding.noticeViewPager.adapter = null
+        super.onDestroyView()
+    }
+
+    private fun setupNotices() {
+        binding.noticeViewPager.adapter = HomeNoticeAdapter(emptyList())
+        binding.noticeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                    noticeManuallyScrolled = true
+                    if (::noticeAutoScrollRunnable.isInitialized) {
+                        noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+                    }
+                }
+                if (state == ViewPager2.SCROLL_STATE_IDLE && noticeManuallyScrolled) {
+                    noticePosition = binding.noticeViewPager.currentItem
+                }
+            }
+        })
+    }
+
+    private fun renderNotices(data: HomePageQuery.Data?) {
+        val notices = data?.notices?.flatMap { it.notices }.orEmpty()
+        if (notices.isEmpty()) {
+            binding.noticeLayout.visibility = View.GONE
+            if (::noticeAutoScrollRunnable.isInitialized) {
+                noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+            }
+            return
+        }
+
+        binding.noticeLayout.visibility = View.VISIBLE
+        (binding.noticeViewPager.adapter as HomeNoticeAdapter).updateList(notices)
+        noticeAutoScrollRunnable = Runnable {
+            val adapter = binding.noticeViewPager.adapter
+            if (adapter != null && adapter.itemCount > 0 && !noticeManuallyScrolled) {
+                noticePosition = (noticePosition + 1) % adapter.itemCount
+                binding.noticeViewPager.setCurrentItem(noticePosition, true)
+                noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
+            }
+        }
+        if (!noticeManuallyScrolled) {
+            noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+            noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
+        }
     }
 
     private fun setupDestinationButtons() {
@@ -207,6 +269,7 @@ class HomeFragment : Fragment() {
         requestCurrentLocation(client)
     }
 
+    @SuppressLint("MissingPermission")
     private fun selectLastKnownLocation(client: FusedLocationProviderClient) {
         client.lastLocation
             .addOnSuccessListener { location ->
@@ -228,6 +291,7 @@ class HomeFragment : Fragment() {
         return ageMillis in 0..LOCATION_MAX_AGE_MILLIS
     }
 
+    @SuppressLint("MissingPermission")
     private fun requestCurrentLocation(client: FusedLocationProviderClient) {
         if (!hasLocationPermission()) return
         val tokenSource = CancellationTokenSource()
@@ -291,9 +355,10 @@ class HomeFragment : Fragment() {
         if (data == null) return
 
         val route = selectedDeparture.routeTo(selectedDestination)
-        val shuttleCandidates = shuttleEntries(data).take(2)
+        val shuttleCandidates = shuttleEntries(data).take(SHUTTLE_TRANSFER_LOOKAHEAD_COUNT)
+        val displayCandidates = shuttleCandidates.take(SHUTTLE_DISPLAY_COUNT)
         val transferGroups = shuttleCandidates.map { transferConnections(data, route, it) }
-        val shuttleRows = shuttleCandidates.mapIndexed { index, entry ->
+        val shuttleRows = displayCandidates.mapIndexed { index, entry ->
             val routeDisplay = routeDisplay(route, entry)
             HomeShuttleMovement(
                 HomeRow(
@@ -507,6 +572,11 @@ class HomeFragment : Fragment() {
                     .minByOrNull { it.lastOrNull()?.arrivalDate ?: ZonedDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(1) }
                     .orEmpty()
             }
+            HomeSubwayTransferDestination.SOSA -> {
+                chojiTransferSubwayConnections(data, stationArrival)
+                    .minByOrNull { it.lastOrNull()?.arrivalDate ?: ZonedDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(1) }
+                    .orEmpty()
+            }
         }
     }
 
@@ -529,12 +599,37 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun chojiTransferSubwayConnections(
+        data: HomePageQuery.Data,
+        stationArrival: ZonedDateTime,
+    ): List<List<HomeConnection>> {
+        val firstLegs = subwayArrivalOptions(data, HomeSubwayRouteTarget.CHOJI)
+            .filter { canTransfer(it.arrivalDate, stationArrival) }
+        val secondLegs = subwayArrivalOptions(data, HomeSubwayRouteTarget.SOSA_FROM_CHOJI)
+        return firstLegs.mapNotNull { firstLeg ->
+            val secondLeg = secondLegs
+                .filter { canTransfer(it.arrivalDate, firstLeg.arrivalDate, CHOJI_MINIMUM_TRANSFER_MINUTES) }
+                .minByOrNull { it.arrivalDate }
+                ?: return@mapNotNull null
+            listOf(
+                subwayConnection(firstLeg, stationArrival),
+                subwayConnection(
+                    secondLeg,
+                    firstLeg.arrivalDate,
+                    R.string.home_transfer_subway_choji_subtitle,
+                    CHOJI_MINIMUM_TRANSFER_MINUTES,
+                ),
+            )
+        }
+    }
+
     private fun subwayArrivalOptions(data: HomePageQuery.Data): List<HomeSubwayArrival> {
         return when (selectedSubwayTransferDestination()) {
             HomeSubwayTransferDestination.SEOUL -> subwayArrivalOptions(data, HomeSubwayRouteTarget.SEOUL)
             HomeSubwayTransferDestination.SUWON_YONGIN -> subwayArrivalOptions(data, HomeSubwayRouteTarget.SUWON_YONGIN)
             HomeSubwayTransferDestination.INCHEON -> subwayArrivalOptions(data, HomeSubwayRouteTarget.INCHEON_DIRECT)
             HomeSubwayTransferDestination.OIDO -> subwayArrivalOptions(data, HomeSubwayRouteTarget.OIDO)
+            HomeSubwayTransferDestination.SOSA -> subwayArrivalOptions(data, HomeSubwayRouteTarget.SOSA_FROM_CHOJI)
         }
     }
 
@@ -557,28 +652,58 @@ class HomeFragment : Fragment() {
                 tint = ContextCompat.getColor(requireContext(), R.color.home_subway_yellow),
             ) { it.terminal.stationID >= "K258" && it.terminal.stationID.startsWith("K2") }
         }
+        if (target == HomeSubwayRouteTarget.CHOJI) {
+            return subwayArrivalOptionsFrom(
+                data = data,
+                stationId = "K449",
+                direction = "down",
+                badge = getString(R.string.subway_line4),
+                tint = ContextCompat.getColor(requireContext(), R.color.subway_line4),
+            ) { it.terminal.stationID >= "K452" && it.terminal.stationID.startsWith("K4") } + subwayArrivalOptionsFrom(
+                data = data,
+                stationId = "K251",
+                direction = "down",
+                badge = getString(R.string.home_transfer_subway_suin_bundang_badge),
+                tint = ContextCompat.getColor(requireContext(), R.color.home_subway_yellow),
+            ) { it.terminal.stationID >= "K254" && it.terminal.stationID.startsWith("K2") }
+        }
+        if (target == HomeSubwayRouteTarget.SOSA_FROM_CHOJI) {
+            return subwayTimetableOptionsFrom(
+                data = data,
+                stationId = "S26",
+                direction = "up",
+                badge = getString(R.string.home_transfer_subway_seohae_badge),
+                tint = ContextCompat.getColor(requireContext(), R.color.subway_seohae),
+            ) { it.terminal.stationID <= "S16" && it.terminal.stationID.startsWith("S") }
+        }
         val subway = when (target) {
             HomeSubwayRouteTarget.SEOUL -> data.subway.firstOrNull { it.stationID == "K449" }
             HomeSubwayRouteTarget.SUWON_YONGIN,
             HomeSubwayRouteTarget.INCHEON_DIRECT -> data.subway.firstOrNull { it.stationID == "K251" }
             HomeSubwayRouteTarget.INCHEON_FROM_OIDO -> data.subway.firstOrNull { it.stationID == "K258" }
-            HomeSubwayRouteTarget.OIDO -> null
+            HomeSubwayRouteTarget.SOSA_FROM_CHOJI -> data.subway.firstOrNull { it.stationID == "S26" }
+            HomeSubwayRouteTarget.OIDO,
+            HomeSubwayRouteTarget.CHOJI -> null
         }
         val direction = when (target) {
             HomeSubwayRouteTarget.SEOUL,
-            HomeSubwayRouteTarget.SUWON_YONGIN -> "up"
+            HomeSubwayRouteTarget.SUWON_YONGIN,
+            HomeSubwayRouteTarget.SOSA_FROM_CHOJI -> "up"
             HomeSubwayRouteTarget.INCHEON_DIRECT,
             HomeSubwayRouteTarget.INCHEON_FROM_OIDO,
-            HomeSubwayRouteTarget.OIDO -> "down"
+            HomeSubwayRouteTarget.OIDO,
+            HomeSubwayRouteTarget.CHOJI -> "down"
         }
         val badge = when (target) {
             HomeSubwayRouteTarget.SEOUL -> getString(R.string.subway_line4)
+            HomeSubwayRouteTarget.SOSA_FROM_CHOJI -> getString(R.string.home_transfer_subway_seohae_badge)
             else -> getString(R.string.home_transfer_subway_suin_bundang_badge)
         }
         val tint = ContextCompat.getColor(
             requireContext(),
             when (target) {
                 HomeSubwayRouteTarget.SEOUL -> R.color.subway_line4
+                HomeSubwayRouteTarget.SOSA_FROM_CHOJI -> R.color.subway_seohae
                 else -> R.color.home_subway_yellow
             },
         )
@@ -610,11 +735,36 @@ class HomeFragment : Fragment() {
             .orEmpty()
     }
 
+    private fun subwayTimetableOptionsFrom(
+        data: HomePageQuery.Data,
+        stationId: String,
+        direction: String,
+        badge: String,
+        tint: Int,
+        isEligible: (HomePageQuery.Timetable1) -> Boolean,
+    ): List<HomeSubwayArrival> {
+        val subway = data.subway.firstOrNull { it.stationID == stationId }
+        return subway?.timetable
+            ?.filter { it.direction == direction }
+            ?.filter(isEligible)
+            ?.map {
+                HomeSubwayArrival(
+                    lineBadge = badge,
+                    terminalStationID = it.terminal.stationID,
+                    terminalName = it.terminal.name,
+                    arrivalDate = upcomingDateTimeFor(it.time),
+                    tint = tint,
+                )
+            }
+            .orEmpty()
+    }
+
     private fun subwayEntryEligible(target: HomeSubwayRouteTarget, entry: HomePageQuery.Entry1): Boolean {
         return when (target) {
             HomeSubwayRouteTarget.INCHEON_DIRECT,
             HomeSubwayRouteTarget.INCHEON_FROM_OIDO -> entry.terminal.stationID > "K258" && entry.terminal.stationID.startsWith("K2")
             HomeSubwayRouteTarget.OIDO -> entry.terminal.stationID >= "K258" && entry.terminal.stationID.startsWith("K2")
+            HomeSubwayRouteTarget.SOSA_FROM_CHOJI -> entry.terminal.stationID <= "S16" && entry.terminal.stationID.startsWith("S")
             else -> true
         }
     }
@@ -623,6 +773,7 @@ class HomeFragment : Fragment() {
         arrival: HomeSubwayArrival,
         transferStartDate: ZonedDateTime,
         subtitleRes: Int = R.string.home_transfer_subway_subtitle,
+        minimumTransferMinutes: Int = SUBWAY_MINIMUM_TRANSFER_MINUTES,
     ): HomeConnection {
         val bufferMinutes = Duration.between(transferStartDate, arrival.arrivalDate).toMinutes().coerceAtLeast(0).toInt()
         return HomeConnection(
@@ -637,12 +788,16 @@ class HomeFragment : Fragment() {
                 tint = arrival.tint,
             ),
             arrivalDate = arrival.arrivalDate,
-            minimumTransferMinutes = SUBWAY_MINIMUM_TRANSFER_MINUTES,
+            minimumTransferMinutes = minimumTransferMinutes,
         )
     }
 
-    private fun canTransfer(arrivalDate: ZonedDateTime, previousArrivalDate: ZonedDateTime): Boolean {
-        return Duration.between(previousArrivalDate, arrivalDate).toMinutes() >= SUBWAY_MINIMUM_TRANSFER_MINUTES
+    private fun canTransfer(
+        arrivalDate: ZonedDateTime,
+        previousArrivalDate: ZonedDateTime,
+        minimumTransferMinutes: Int = SUBWAY_MINIMUM_TRANSFER_MINUTES,
+    ): Boolean {
+        return Duration.between(previousArrivalDate, arrivalDate).toMinutes() >= minimumTransferMinutes
     }
 
     private fun showSubwayTransferEnabled(): Boolean {
@@ -661,6 +816,15 @@ class HomeFragment : Fragment() {
     private fun dateTimeFor(time: LocalTime): ZonedDateTime {
         val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
         return now.withHour(time.hour).withMinute(time.minute).withSecond(0).withNano(0)
+    }
+
+    private fun upcomingDateTimeFor(time: LocalTime): ZonedDateTime {
+        val dateTime = dateTimeFor(time)
+        return if (dateTime.isBefore(ZonedDateTime.now(ZoneId.of("Asia/Seoul")))) {
+            dateTime.plusDays(1)
+        } else {
+            dateTime
+        }
     }
 
     private fun timeAfterMinutes(minutes: Int): ZonedDateTime {
@@ -851,7 +1015,7 @@ class HomeFragment : Fragment() {
             addView(TextView(requireContext()).apply {
                 applyHomeTypeface(Typeface.BOLD)
                 text = item.price
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.hanyang_blue))
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_text))
                 textSize = 14f
                 gravity = Gravity.END
                 maxLines = 1
@@ -1076,7 +1240,11 @@ class HomeFragment : Fragment() {
         private const val TRANSFER_ROW_STROKE_ALPHA = 31
         private const val HOME_QUICK_SETTINGS_TAG = "HomeQuickSettingsDialog"
         private const val SUBWAY_MINIMUM_TRANSFER_MINUTES = 5
+        private const val CHOJI_MINIMUM_TRANSFER_MINUTES = 8
+        private const val SHUTTLE_DISPLAY_COUNT = 2
+        private const val SHUTTLE_TRANSFER_LOOKAHEAD_COUNT = 3
         private const val AUTO_REFRESH_INTERVAL_MILLIS = 60_000L
+        private const val NOTICE_AUTO_SCROLL_INTERVAL_MILLIS = 5_000L
         private const val SUPPORT_EMPHASIS_THRESHOLD_MINUTES = 20
         private const val DEBUG_DEPARTURE_EXTRA = "homeDebugDeparture"
         private const val DEBUG_DESTINATION_EXTRA = "homeDebugDestination"
@@ -1216,5 +1384,7 @@ private enum class HomeSubwayRouteTarget {
     SUWON_YONGIN,
     INCHEON_DIRECT,
     INCHEON_FROM_OIDO,
+    SOSA_FROM_CHOJI,
+    CHOJI,
     OIDO,
 }

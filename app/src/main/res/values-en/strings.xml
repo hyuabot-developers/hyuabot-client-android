@@ -29,14 +29,17 @@
     <string name="home_quick_settings_subway_destination_suwon_yongin">Suwon/Yongin</string>
     <string name="home_quick_settings_subway_destination_incheon">Incheon</string>
     <string name="home_quick_settings_subway_destination_oido">Oido</string>
+    <string name="home_quick_settings_subway_destination_sosa">Ilsan·Bucheon</string>
     <string name="home_transfer_bus50_badge">50</string>
     <string name="home_transfer_bus50_title">Expected at %1$s</string>
     <string name="home_transfer_bus50_subtitle">Transfer to bus at Yesulin</string>
     <string name="home_transfer_buffer">+%1$d min</string>
     <string name="home_transfer_subway_suin_bundang_badge">Suin</string>
+    <string name="home_transfer_subway_seohae_badge">Seohae</string>
     <string name="home_transfer_subway_title">To %1$s</string>
     <string name="home_transfer_subway_subtitle">Transfer at Hanyang Univ. at Ansan</string>
     <string name="home_transfer_subway_oido_subtitle">Transfer at Oido Station</string>
+    <string name="home_transfer_subway_choji_subtitle">Transfer at Choji Station</string>
     <string name="home_support_default">Only if urgent</string>
     <string name="home_support_emphasized">Alternatives / transfers</string>
     <string name="home_destination_station">Station</string>
@@ -245,25 +248,43 @@
     <string name="subway">Subway</string>
     <string name="subway_tab_blue">Line 4</string>
     <string name="subway_tab_yellow">Suin-Bundang Line</string>
-    <string name="subway_tab_transfer">Incheon↔Campus</string>
+    <string name="subway_tab_transfer">Fast Transfers</string>
     <string name="subway_blue_up">Northbound (Danggogae·Sadang)</string>
     <string name="subway_blue_down">Southbound (Oido·Ansan)</string>
     <string name="subway_yellow_up">Northbound (Wangsimni·Suwon)</string>
     <string name="subway_yellow_down">Southbound (Incheon·Oido)</string>
     <string name="subway_transfer_up">To Incheon</string>
     <string name="subway_transfer_down">To Campus</string>
+    <string name="subway_transfer_incheon_oido">Incheon·Oido</string>
+    <string name="subway_transfer_ilsan_bucheon">Ilsan·Bucheon</string>
     <plurals name="subway_transfer_up_item_format">
-        <item quantity="one">[%1$s] %2$s → [%3$s] %4$d min left (Oido Transfer)</item>
-        <item quantity="other">[%1$s] %2$s → [%3$s] %4$d mins left (Oido Transfer)</item>
+        <item quantity="one">[%1$s] %2$s\n→ [%3$s] %4$d min (Oido)</item>
+        <item quantity="other">[%1$s] %2$s\n→ [%3$s] %4$d mins (Oido)</item>
     </plurals>
     <string name="subway_transfer_up_item_format_no_transfer">[%1$s] %2$s</string>
     <plurals name="subway_transfer_down_item_format">
-        <item quantity="one">[%1$s] %2$d min left (%3$s) → [%4$s] %5$d min left (Oido Transfer)</item>
-        <item quantity="other">[%1$s] %2$d mins left (%3$s) → [%4$s] %5$d mins left (Oido Transfer)</item>
+        <item quantity="one">[%1$s] %2$d min (%3$s)\n→ [%4$s] %5$d min (Oido)</item>
+        <item quantity="other">[%1$s] %2$d mins (%3$s)\n→ [%4$s] %5$d mins (Oido)</item>
     </plurals>
     <plurals name="subway_transfer_down_item_format_no_transfer">
-        <item quantity="one">[%1$s] %2$d min left (%3$s)</item>
-        <item quantity="other">[%1$s] %2$d mins left (%3$s)</item>
+        <item quantity="one">[%1$s] %2$d min (%3$s)</item>
+        <item quantity="other">[%1$s] %2$d mins (%3$s)</item>
+    </plurals>
+    <plurals name="subway_transfer_choji_item_format">
+        <item quantity="one">[%1$s] %2$d min\n→ [%3$s] %4$d min (Choji)</item>
+        <item quantity="other">[%1$s] %2$d mins\n→ [%3$s] %4$d mins (Choji)</item>
+    </plurals>
+    <string name="subway_transfer_destination_format">To %1$s</string>
+    <string name="subway_transfer_board_at_hanyang">Board at Hanyang Univ. at Ansan</string>
+    <string name="subway_transfer_station_format">Transfer at %1$s</string>
+    <string name="subway_transfer_current_location_format">Near %1$s</string>
+    <plurals name="subway_transfer_minutes_after_format">
+        <item quantity="one">in %1$d min</item>
+        <item quantity="other">in %1$d mins</item>
+    </plurals>
+    <plurals name="subway_transfer_wait_time_format">
+        <item quantity="one">%1$d min wait</item>
+        <item quantity="other">%1$d mins wait</item>
     </plurals>
     <string name="subway_no_realtime_data">No arrival information available.</string>
     <string name="subway_realtime_destination_format">To %1$s</string>
@@ -290,6 +311,10 @@
     <string name="subway_station_K444">Sanbon</string>
     <string name="subway_station_K453">Ansan</string>
     <string name="subway_station_K456">Oido</string>
+    <string name="subway_station_S07">Ilsan</string>
+    <string name="subway_station_S11">Daegok</string>
+    <string name="subway_station_S16">Sosa</string>
+    <string name="subway_station_choji">Choji</string>
     <string name="subway_timetable_tab_weekdays">Weekdays</string>
     <string name="subway_timetable_tab_weekends">Weekends</string>
     <string name="subway_timetable_time_format">%1$s:%2$s</string>

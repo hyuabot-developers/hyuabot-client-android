@@ -9,8 +9,6 @@ import android.content.Intent
 import android.view.View
 import android.widget.RemoteViews
 import androidx.core.net.toUri
-import androidx.core.widget.RemoteViewsCompat
-import androidx.core.widget.RemoteViewsCompat.RemoteCollectionItems
 import app.kobuggi.hyuabot.CafeteriaPageQuery
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
@@ -31,6 +29,8 @@ import java.util.Locale
 
 private const val ACTION_REFRESH_CAFETERIA = "app.kobuggi.hyuabot.widget.ACTION_REFRESH_CAFETERIA"
 private const val CAFETERIA_WIDGET_TIMEOUT_MS = 8_000L
+private const val MAX_CAFETERIA_ITEMS = 2
+private const val MAX_MENU_ROWS = 2
 
 class CafeteriaWidgetProvider : AppWidgetProvider() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -69,7 +69,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
                     val meal = WidgetMeal.current(now.toLocalTime())
                     val items = loadItems(appContext, textContext, meal, now.toLocalDate())
                     appWidgetIds.forEach {
-                        appWidgetManager.updateAppWidget(it, buildWidget(appContext, it, meal, now, items))
+                        appWidgetManager.updateAppWidget(it, buildWidget(appContext, meal, now, items))
                     }
                 }
             } catch (_: TimeoutCancellationException) {
@@ -81,7 +81,6 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
 
     private fun buildWidget(
         context: Context,
-        appWidgetId: Int,
         meal: WidgetMeal,
         now: ZonedDateTime,
         items: List<CafeteriaWidgetItem>,
@@ -101,22 +100,13 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
         } else {
             views.setViewVisibility(R.id.widget_empty, View.GONE)
             views.setViewVisibility(R.id.widget_cafeteria_list, View.VISIBLE)
-            val collection = RemoteCollectionItems.Builder()
-                .setViewTypeCount(1)
-                .setHasStableIds(true)
-                .apply {
-                    items.forEachIndexed { index, item ->
-                        addItem(index.toLong(), buildItemView(context, textContext, item))
-                    }
-                }
-                .build()
-            RemoteViewsCompat.setRemoteAdapter(
-                context,
-                views,
-                appWidgetId,
-                R.id.widget_cafeteria_list,
-                collection
-            )
+            views.removeAllViews(R.id.widget_cafeteria_list)
+            items.take(MAX_CAFETERIA_ITEMS).forEach { item ->
+                views.addView(
+                    R.id.widget_cafeteria_list,
+                    buildItemView(context, textContext, item)
+                )
+            }
         }
 
         val launchIntent = Intent(
@@ -127,23 +117,16 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
         ).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
+        val openAppIntent = PendingIntent.getActivity(
+            context,
+            0,
+            launchIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        views.setOnClickPendingIntent(R.id.widget_root, openAppIntent)
         views.setOnClickPendingIntent(
             R.id.widget_meal_title,
-            PendingIntent.getActivity(
-                context,
-                0,
-                launchIntent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        )
-        views.setPendingIntentTemplate(
-            R.id.widget_cafeteria_list,
-            PendingIntent.getActivity(
-                context,
-                1,
-                launchIntent,
-                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
+            openAppIntent
         )
 
         val refreshIntent = Intent(context, CafeteriaWidgetProvider::class.java).apply {
@@ -175,7 +158,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
         }
 
         views.removeAllViews(R.id.widget_menu_container)
-        item.menus.forEach { menu ->
+        item.menus.take(MAX_MENU_ROWS).forEach { menu ->
             val row = RemoteViews(context.packageName, R.layout.widget_cafeteria_menu_row)
             row.setTextViewText(R.id.widget_menu_food, menu.food)
             if (menu.price.isBlank()) {
@@ -189,8 +172,6 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
             }
             views.addView(R.id.widget_menu_container, row)
         }
-
-        views.setOnClickFillInIntent(R.id.widget_item_root, Intent())
         return views
     }
 

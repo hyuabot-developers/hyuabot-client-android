@@ -23,8 +23,7 @@
         android:text="@string/language_korean"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="viewStart"
-        android:gravity="center_vertical"
+        android:gravity="start|center_vertical"
         android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
         android:layout_height="56dp" />
@@ -37,8 +36,7 @@
         android:text="@string/language_english"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="viewStart"
-        android:gravity="center_vertical"
+        android:gravity="start|center_vertical"
         android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
         android:layout_height="56dp" />
@@ -51,8 +49,7 @@
         android:text="@string/language_japanese"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="viewStart"
-        android:gravity="center_vertical"
+        android:gravity="start|center_vertical"
         android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
         android:layout_height="56dp" />
@@ -65,8 +62,7 @@
         android:text="@string/language_chinese"
         android:textSize="18sp"
         android:textColor="@color/primary_text"
-        android:textAlignment="viewStart"
-        android:gravity="center_vertical"
+        android:gravity="start|center_vertical"
         android:paddingHorizontal="24dp"
         android:layout_width="match_parent"
         android:layout_height="56dp" />

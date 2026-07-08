@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="0dp"
-    app:strokeColor="@color/app_separator"
-    app:strokeWidth="1dp">
+    android:background="@color/background">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <View
+        android:id="@+id/cafeteria_header_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/hanyang_blue"
+        app:layout_constraintBottom_toTopOf="@id/divider_cafeteria"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/header_cafeteria"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
+        android:paddingStart="64dp"
         android:paddingTop="14dp"
-        android:paddingEnd="8dp"
+        android:paddingEnd="64dp"
         android:paddingBottom="4dp"
-        android:gravity="start"
-        android:textColor="@color/primary_text"
+        android:gravity="center"
+        android:textColor="@android:color/white"
         android:textSize="17sp"
         android:textFontWeight="700"
         android:maxLines="2"
         android:ellipsize="end"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cafeteria_info_button"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
@@ -44,16 +45,17 @@
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/divider_cafeteria"
         app:srcCompat="@drawable/ic_info"
-        app:tint="@color/hanyang_blue" />
+        app:tint="@android:color/white" />
     <TextView
         android:id="@+id/subheader_cafeteria"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
+        android:paddingHorizontal="64dp"
         android:paddingBottom="10dp"
-        android:gravity="start"
-        android:textColor="@color/secondary_text"
+        android:gravity="center"
+        android:textColor="@android:color/white"
         android:textSize="13sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,5 +74,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider_cafeteria" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -18,26 +19,32 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_meal_lunch"
+            android:tint="@color/widget_accent"
             android:contentDescription="@string/widget_cafeteria_name" />
 
         <TextView
             android:id="@+id/widget_meal_title"
+            android:fontFamily="@font/godo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="6dp"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@color/hanyang_blue"
+            android:textColor="@color/widget_accent"
             android:text="@string/cafeteria_tab_lunch" />
 
         <TextView
             android:id="@+id/widget_date"
+            android:fontFamily="@font/godo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_widget_badge"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
             android:textSize="11sp"
-            android:textColor="@color/secondary_text" />
+            android:textColor="@color/widget_secondary_text" />
 
         <ImageView
             android:id="@+id/widget_refresh"
@@ -46,6 +53,7 @@
             android:layout_marginEnd="-8dp"
             android:padding="8dp"
             android:src="@drawable/ic_widget_refresh"
+            android:tint="@color/widget_accent"
             android:contentDescription="@string/widget_cafeteria_refresh" />
     </LinearLayout>
 
@@ -55,26 +63,26 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp"
         android:importantForAccessibility="no"
-        android:background="@color/hanyang_blue_variant" />
+        android:background="@color/widget_divider" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ListView
+        <LinearLayout
             android:id="@+id/widget_cafeteria_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
+            android:orientation="vertical" />
 
         <TextView
             android:id="@+id/widget_empty"
+            android:fontFamily="@font/godo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:textSize="14sp"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/widget_secondary_text"
             android:text="@string/widget_cafeteria_no_data" />
     </FrameLayout>
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.service.database.entity.Event
 import java.time.DayOfWeek
@@ -50,11 +51,13 @@ class CalendarTimelineView @JvmOverloads constructor(
         color = color(R.color.primary_text)
         textAlign = Paint.Align.CENTER
         textSize = sp(16f)
+        typeface = ResourcesCompat.getFont(context, R.font.godo)
     }
     private val eventTextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
         color = color(R.color.calendar_event_text)
         textSize = sp(11f)
         isFakeBoldText = true
+        typeface = ResourcesCompat.getFont(context, R.font.godo)
     }
 
     fun setMonth(month: YearMonth) {

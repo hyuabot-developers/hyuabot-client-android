@@ -9,9 +9,12 @@
     <color name="home_row_background">#1E1E1E</color>
     <color name="home_action_button_background">#DBEDF9</color>
     <color name="home_detail_button_text">#FFFFFF</color>
+    <color name="home_notice_background">#0E4A84</color>
+    <color name="home_notice_text">#FFFFFF</color>
     <color name="home_segmented_track">#2C2C2E</color>
     <color name="home_segmented_selected">#4A4A4C</color>
     <color name="bottom_navigation_indicator">#2C2C2E</color>
+    <color name="bottom_navigation_selected">#FFFFFF</color>
     <color name="bottom_navigation_unselected">#D0D0D0</color>
     <color name="plain_button_text">#FFFFFF</color>
     <color name="app_separator">#38383A</color>
@@ -27,4 +30,15 @@
     <color name="calendar_saturday">#29B6F6</color>
     <color name="cafeteria_price_background">#0B1F33</color>
     <color name="cafeteria_price_text">#EAF6FF</color>
+    <color name="cafeteria_info_button_tint">#FFFFFF</color>
+    <!-- 위젯 -->
+    <color name="widget_background">#101418</color>
+    <color name="widget_surface">#1B2229</color>
+    <color name="widget_surface_secondary">#102A44</color>
+    <color name="widget_outline">#26313B</color>
+    <color name="widget_primary_text">#F7FAFC</color>
+    <color name="widget_secondary_text">#B9C3CF</color>
+    <color name="widget_accent">#8CCBFF</color>
+    <color name="widget_accent_on">#061A2D</color>
+    <color name="widget_divider">#26313B</color>
 </resources>

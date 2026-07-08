@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
 import app.kobuggi.hyuabot.R
 
 class ShuttleRouteItemView @JvmOverloads constructor(
@@ -44,6 +45,7 @@ class ShuttleRouteItemView @JvmOverloads constructor(
         textSize = 28f
         color = Color.WHITE
         textAlign = Paint.Align.CENTER
+        typeface = ResourcesCompat.getFont(context, R.font.godo)
     }
     private var colWidth = 0f
     private var centerY = 0f

@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
 
 import android.annotation.SuppressLint
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -19,6 +20,9 @@ class BusRealtimeListAdapter(
     inner class ViewHolder(private val binding: ItemBusRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         private val hourFormatter = DateTimeFormatter.ofPattern("HH")
         private val minuteFormatter = DateTimeFormatter.ofPattern("mm")
+        private val godoTypeface by lazy {
+            ResourcesCompat.getFont(binding.root.context, R.font.godo)
+        }
 
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: BusArrivalItem, position: Int) {
@@ -36,13 +40,13 @@ class BusRealtimeListAdapter(
                         binding.busTimeText.apply {
                             text = binding.root.context.resources.getQuantityString(R.plurals.bus_realtime_format_seats_last, item.minutes!!, item.minutes, item.stops, item.seats)
                             setTextColor(binding.root.context.getColor(R.color.red_bus))
-                            setTypeface(typeface, android.graphics.Typeface.BOLD)
+                            setTypeface(godoTypeface, Typeface.BOLD)
                         }
                     } else {
                         binding.busTimeText.apply {
                             text = binding.root.context.resources.getQuantityString(R.plurals.bus_realtime_format_no_seats_last, item.minutes!!, item.minutes, item.stops)
                             setTextColor(binding.root.context.getColor(R.color.red_bus))
-                            setTypeface(typeface, android.graphics.Typeface.BOLD)
+                            setTypeface(godoTypeface, Typeface.BOLD)
                         }
                     }
                 } else {
@@ -54,7 +58,7 @@ class BusRealtimeListAdapter(
                             } else {
                                 binding.root.context.getColor(android.R.color.black)
                             })
-                            setTypeface(typeface, android.graphics.Typeface.NORMAL)
+                            setTypeface(godoTypeface, Typeface.NORMAL)
                         }
                     } else {
                         binding.busTimeText.apply {
@@ -64,7 +68,7 @@ class BusRealtimeListAdapter(
                             } else {
                                 binding.root.context.getColor(android.R.color.black)
                             })
-                            setTypeface(typeface, android.graphics.Typeface.NORMAL)
+                            setTypeface(godoTypeface, Typeface.NORMAL)
                         }
                     }
                 }
@@ -85,7 +89,7 @@ class BusRealtimeListAdapter(
                         text = binding.root.context.getString(R.string.bus_arrival_estimated_format, remainingMinutes)
                     }
                     setTextColor(binding.root.context.getColor(R.color.secondary_text))
-                    setTypeface(typeface, android.graphics.Typeface.NORMAL)
+                    setTypeface(godoTypeface, Typeface.NORMAL)
                 }
             }
         }

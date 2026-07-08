@@ -13,6 +13,7 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogShuttleAlarmBinding
 import app.kobuggi.hyuabot.service.alarm.ShuttleAlarmService
@@ -130,6 +131,7 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
                 val radio = RadioButton(requireContext()).apply {
                     id = View.generateViewId()
                     text = name
+                    typeface = ResourcesCompat.getFont(requireContext(), R.font.godo)
                 }
                 binding.destinationRadioGroup.addView(radio)
                 if (index == 0) binding.destinationRadioGroup.check(radio.id)

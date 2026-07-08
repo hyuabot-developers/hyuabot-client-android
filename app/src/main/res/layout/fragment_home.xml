@@ -52,6 +52,35 @@
                     android:textColor="@color/secondary_text"
                     android:textSize="14sp" />
 
+                <LinearLayout
+                    android:id="@+id/notice_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:minHeight="40dp"
+                        app:cardBackgroundColor="@color/home_notice_background"
+                        app:cardCornerRadius="25dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/calendar_grid_line"
+                        app:strokeWidth="1dp">
+
+                        <androidx.viewpager2.widget.ViewPager2
+                            android:id="@+id/notice_view_pager"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:minHeight="40dp"
+                            android:saveEnabled="false" />
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
                 <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/destination_group"
                     android:layout_width="match_parent"
