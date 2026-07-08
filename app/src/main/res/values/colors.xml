@@ -24,6 +24,8 @@
     <color name="home_row_background">#F6F7F9</color>
     <color name="home_action_button_background">#DBEDF9</color>
     <color name="home_detail_button_text">#0E4A84</color>
+    <color name="home_notice_background">#FFFFFF</color>
+    <color name="home_notice_text">#0E4A84</color>
     <color name="home_segmented_track">#E7E7EC</color>
     <color name="home_segmented_selected">#FFFFFF</color>
     <color name="bottom_navigation_indicator">#E6E7EB</color>

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.appcompat.app.AppCompatDelegate
 import app.kobuggi.hyuabot.BusDepartureLogDialogQuery
 import app.kobuggi.hyuabot.HomePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
@@ -73,6 +74,7 @@ class HomeViewModel @Inject constructor(
                 val mealDate = if (now.hour >= 20) now.toLocalDate().plusDays(1) else now.toLocalDate()
                 val response = apolloClient.query(
                     HomePageQuery(
+                        language = currentNoticeLanguage(),
                         after = Optional.present(LocalTime.now(ZoneId.of("Asia/Seoul"))),
                         weekday = currentSubwayWeekday(now),
                         date = mealDate,
@@ -123,6 +125,15 @@ class HomeViewModel @Inject constructor(
             "weekends"
         } else {
             "weekdays"
+        }
+    }
+
+    private fun currentNoticeLanguage(): String {
+        val locale = AppCompatDelegate.getApplicationLocales().get(0)
+        return when (locale?.language) {
+            "ko" -> "KOREAN"
+            "en", "ja", "zh" -> "ENGLISH"
+            else -> "KOREAN"
         }
     }
 

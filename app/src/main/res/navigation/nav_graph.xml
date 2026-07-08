@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_homeFragment_to_cafeteriaFragment"
             app:destination="@id/cafeteriaFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_noticeWebViewFragment"
+            app:destination="@id/noticeWebViewFragment" />
     </fragment>
     <fragment
         android:id="@+id/shuttleRealtimeFragment"

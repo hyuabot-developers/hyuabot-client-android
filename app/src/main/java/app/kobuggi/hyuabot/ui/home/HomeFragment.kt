@@ -29,6 +29,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.HomePageQuery
 import app.kobuggi.hyuabot.R
@@ -60,7 +61,11 @@ class HomeFragment : Fragment() {
     private var selectedDestination = HomeDestination.STATION
     private var lockDepartureSelection = false
     private var debugSubwayTransferDestination: HomeSubwayTransferDestination? = null
+    private var noticePosition = 0
+    private var noticeManuallyScrolled = false
+    private lateinit var noticeAutoScrollRunnable: Runnable
     private val refreshHandler = Handler(Looper.getMainLooper())
+    private val noticeScrollHandler = Handler(Looper.getMainLooper())
     private val autoRefreshRunnable = object : Runnable {
         override fun run() {
             refreshHome()
@@ -86,6 +91,7 @@ class HomeFragment : Fragment() {
         binding.legacyShuttleButton.setOnClickListener {
             openQuickSettings()
         }
+        setupNotices()
         childFragmentManager.setFragmentResultListener(
             HomeQuickSettingsDialog.REQUEST_KEY,
             viewLifecycleOwner,
@@ -124,6 +130,7 @@ class HomeFragment : Fragment() {
         }
         viewModel.data.observe(viewLifecycleOwner) {
             binding.homeSwipeRefreshLayout.isRefreshing = false
+            renderNotices(it)
             render(it)
         }
         viewModel.showBus50Transfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
@@ -145,11 +152,65 @@ class HomeFragment : Fragment() {
         super.onResume()
         refreshHandler.removeCallbacks(autoRefreshRunnable)
         refreshHandler.postDelayed(autoRefreshRunnable, AUTO_REFRESH_INTERVAL_MILLIS)
+        if (::noticeAutoScrollRunnable.isInitialized) {
+            noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
+        }
     }
 
     override fun onPause() {
         refreshHandler.removeCallbacks(autoRefreshRunnable)
+        if (::noticeAutoScrollRunnable.isInitialized) {
+            noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+        }
         super.onPause()
+    }
+
+    override fun onDestroyView() {
+        binding.noticeViewPager.adapter = null
+        super.onDestroyView()
+    }
+
+    private fun setupNotices() {
+        binding.noticeViewPager.adapter = HomeNoticeAdapter(emptyList())
+        binding.noticeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                    noticeManuallyScrolled = true
+                    if (::noticeAutoScrollRunnable.isInitialized) {
+                        noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+                    }
+                }
+                if (state == ViewPager2.SCROLL_STATE_IDLE && noticeManuallyScrolled) {
+                    noticePosition = binding.noticeViewPager.currentItem
+                }
+            }
+        })
+    }
+
+    private fun renderNotices(data: HomePageQuery.Data?) {
+        val notices = data?.notices?.flatMap { it.notices }.orEmpty()
+        if (notices.isEmpty()) {
+            binding.noticeLayout.visibility = View.GONE
+            if (::noticeAutoScrollRunnable.isInitialized) {
+                noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+            }
+            return
+        }
+
+        binding.noticeLayout.visibility = View.VISIBLE
+        (binding.noticeViewPager.adapter as HomeNoticeAdapter).updateList(notices)
+        noticeAutoScrollRunnable = Runnable {
+            val adapter = binding.noticeViewPager.adapter
+            if (adapter != null && adapter.itemCount > 0 && !noticeManuallyScrolled) {
+                noticePosition = (noticePosition + 1) % adapter.itemCount
+                binding.noticeViewPager.setCurrentItem(noticePosition, true)
+                noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
+            }
+        }
+        if (!noticeManuallyScrolled) {
+            noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+            noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
+        }
     }
 
     private fun setupDestinationButtons() {
@@ -1183,6 +1244,7 @@ class HomeFragment : Fragment() {
         private const val SHUTTLE_DISPLAY_COUNT = 2
         private const val SHUTTLE_TRANSFER_LOOKAHEAD_COUNT = 3
         private const val AUTO_REFRESH_INTERVAL_MILLIS = 60_000L
+        private const val NOTICE_AUTO_SCROLL_INTERVAL_MILLIS = 5_000L
         private const val SUPPORT_EMPHASIS_THRESHOLD_MINUTES = 20
         private const val DEBUG_DEPARTURE_EXTRA = "homeDebugDeparture"
         private const val DEBUG_DESTINATION_EXTRA = "homeDebugDestination"
