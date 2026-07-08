@@ -8,9 +8,18 @@ tags:
       all: allow
 - runFlow:
     when:
+      visible: "Pixel Launcher isn't responding"
+    commands:
+      - tapOn: "Close app"
+- runFlow:
+    when:
       visible: "Skip"
     commands:
       - tapOn: "Skip"
+- extendedWaitUntil:
+    visible:
+      id: "app.kobuggi.hyuabot:id/home_swipe_refresh_layout"
+    timeout: 10000
 - assertVisible:
     id: "app.kobuggi.hyuabot:id/home_swipe_refresh_layout"
 - tapOn:

@@ -6,6 +6,15 @@ tags:
 - launchApp:
     permissions:
       all: allow
+- runFlow:
+    when:
+      visible: "Pixel Launcher isn't responding"
+    commands:
+      - tapOn: "Close app"
+- extendedWaitUntil:
+    visible:
+      id: "app.kobuggi.hyuabot:id/home_swipe_refresh_layout"
+    timeout: 10000
 - tapOn:
     id: "app.kobuggi.hyuabot:id/menuFragment"
 - runFlow:
