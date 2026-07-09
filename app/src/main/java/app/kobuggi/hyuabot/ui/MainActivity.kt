@@ -32,6 +32,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
+import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
@@ -63,6 +64,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager
 
+    @Inject
+    lateinit var shuttleServiceNoticeScheduler: ShuttleServiceNoticeScheduler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -91,6 +95,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         checkLocationPermission()
         openBirthDayDialog()
         requestInAppReview()
+        syncShuttleServiceNotices()
         navController.handleDeepLink(intent)
     }
 
@@ -208,6 +213,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     private fun requestInAppReview() {
         lifecycleScope.launch {
             inAppReviewManager.maybeRequestReview(this@MainActivity)
+        }
+    }
+
+    private fun syncShuttleServiceNotices() {
+        lifecycleScope.launch {
+            shuttleServiceNoticeScheduler.sync()
         }
     }
 

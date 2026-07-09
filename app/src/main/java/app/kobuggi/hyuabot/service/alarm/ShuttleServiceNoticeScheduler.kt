@@ -1,10 +1,10 @@
 package app.kobuggi.hyuabot.service.alarm
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleServiceNoticeQuery
 import com.apollographql.apollo.ApolloClient
@@ -49,7 +49,6 @@ class ShuttleServiceNoticeScheduler @Inject constructor(
         prefs.edit().putStringSet(KEY_NOTICE_IDS, notices.map { it.id }.toSet()).apply()
     }
 
-    @SuppressLint("ScheduleExactAlarm")
     private fun schedule(notice: ShuttleServiceNoticeQuery.ServiceNotice) {
         val triggerAt = triggerTime(notice.date) ?: return
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -58,11 +57,13 @@ class ShuttleServiceNoticeScheduler @Inject constructor(
             putExtra(ShuttleServiceNoticeReceiver.EXTRA_TITLE, context.getString(R.string.shuttle_service_notice_title))
             putExtra(ShuttleServiceNoticeReceiver.EXTRA_BODY, notice.bodyText())
         }
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            triggerAt.toInstant().toEpochMilli(),
-            pendingIntent(notice.id, intent),
-        )
+        val pendingIntent = pendingIntent(notice.id, intent)
+        val triggerAtMillis = triggerAt.toInstant().toEpochMilli()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+        } else {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+        }
     }
 
     private fun cancel(noticeId: String) {
