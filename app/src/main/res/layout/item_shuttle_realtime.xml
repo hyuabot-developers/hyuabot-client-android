@@ -5,12 +5,22 @@
     android:id="@+id/shuttle_item"
     android:layout_width="match_parent"
     android:layout_height="50dp" >
+    <View
+        android:id="@+id/last_run_view"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:background="@color/hanyang_blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <LinearLayout
         android:id="@+id/shuttle_label_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:layout_marginStart="20dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/shuttle_time_text"
@@ -45,25 +55,6 @@
                 android:paddingVertical="4dp"
                 android:text="@string/shuttle_warning_text"
             />
-        </com.google.android.material.card.MaterialCardView>
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/last_run_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:visibility="gone"
-            app:cardCornerRadius="4dp"
-            app:strokeColor="@color/hanyang_blue"
-            app:strokeWidth="1dp">
-            <TextView
-                android:id="@+id/last_run_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:text="@string/shuttle_last_run"
-                android:textColor="@color/hanyang_blue"
-                android:textSize="14sp" />
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
     <TextView
