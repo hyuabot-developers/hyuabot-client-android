@@ -27,10 +27,13 @@ class ShuttleRealtimeByDestinationListAdapter(
     private var shuttleList: List<ShuttleRealtimePageQuery.Entry>,
     private val onAlarmClick: ((ShuttleRealtimePageQuery.Entry) -> Unit)? = null,
 ) : RecyclerView.Adapter<ShuttleRealtimeByDestinationListAdapter.ViewHolder>() {
+    private var lastRunSeqs: Set<Int> = emptySet()
+
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         val darkMode = context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleRealtimePageQuery.Entry) {
+            binding.lastRunView.visibility = if (item.seq in lastRunSeqs) ViewGroup.VISIBLE else ViewGroup.GONE
             if ((stopID == R.string.shuttle_tab_dormitory_out || stopID == R.string.shuttle_tab_shuttlecock_out)) {
                 if (headerID == R.string.shuttle_header_bound_for_station || headerID == R.string.shuttle_header_bound_for_jungang_station) {
                     when (item.route.tag) {
@@ -209,7 +212,11 @@ class ShuttleRealtimeByDestinationListAdapter(
 
     override fun getItemCount(): Int = shuttleList.size
 
-    fun updateData(newData: List<ShuttleRealtimePageQuery.Entry>) {
+    fun updateData(
+        newData: List<ShuttleRealtimePageQuery.Entry>,
+        lastRunSeqs: Set<Int> = emptySet(),
+    ) {
+        this.lastRunSeqs = lastRunSeqs
         if (shuttleList.size > newData.size) {
             shuttleList = newData
             notifyItemRangeChanged(0, shuttleList.size)

@@ -719,7 +719,21 @@ type Shuttle {
 
   holiday: ShuttleHoliday
 
+  serviceNotices(end: Date!, start: Date!): [ShuttleServiceNotice!]!
+
   stops: [ShuttleStop!]!
+}
+
+type ShuttleServiceNotice {
+  id: String!
+
+  kind: String!
+
+  date: Date!
+
+  period: ShuttlePeriod
+
+  holiday: ShuttleHoliday
 }
 
 type ShuttleArrival {

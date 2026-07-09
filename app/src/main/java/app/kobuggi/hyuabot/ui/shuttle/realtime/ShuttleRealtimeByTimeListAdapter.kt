@@ -29,10 +29,13 @@ class ShuttleRealtimeByTimeListAdapter(
     private var shuttleList: List<ShuttleRealtimePageQuery.Order>,
     private val onAlarmClick: ((ShuttleRealtimePageQuery.Order) -> Unit)? = null,
 ) : RecyclerView.Adapter<ShuttleRealtimeByTimeListAdapter.ViewHolder>() {
+    private var lastRunSeqs: Set<Int> = emptySet()
+
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleRealtimePageQuery.Order) {
             setStopText(context, binding.shuttleTypeText, binding.warningView, stopID, item)
+            binding.lastRunView.visibility = if (item.seq in lastRunSeqs) View.VISIBLE else View.GONE
             val now = LocalTime.now()
             shuttleRealtimeViewModel.showDepartureTime.observe(lifecycleOwner) {
                 if (!it) {
@@ -87,7 +90,11 @@ class ShuttleRealtimeByTimeListAdapter(
 
     override fun getItemCount(): Int = shuttleList.size
 
-    fun updateData(newData: List<ShuttleRealtimePageQuery.Order>) {
+    fun updateData(
+        newData: List<ShuttleRealtimePageQuery.Order>,
+        lastRunSeqs: Set<Int> = emptySet(),
+    ) {
+        this.lastRunSeqs = lastRunSeqs
         if (shuttleList.size > newData.size) {
             shuttleList = newData
             notifyItemRangeChanged(0, shuttleList.size)

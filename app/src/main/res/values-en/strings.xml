@@ -50,6 +50,7 @@
     <string name="home_departure_format">Departs %1$s</string>
     <string name="home_minutes">%1$d min</string>
     <string name="home_check">Check</string>
+    <string name="home_shuttle_last_run_subtitle">Last run · %1$s</string>
     <string name="home_no_data_title">No shuttle available now</string>
     <string name="home_no_data_message">Check again later or use an alternative route below.</string>
     <string name="home_bus_title_format">Bus %1$s</string>
@@ -491,6 +492,16 @@
     <string name="shuttle_type_school_terminal">Terminal</string>
     <string name="shuttle_type_school_station">Station</string>
     <string name="shuttle_warning_text">Check Destination</string>
+    <string name="shuttle_last_run">Last</string>
+    <string name="shuttle_service_notice_title">Shuttle service notice</string>
+    <string name="shuttle_service_notice_period_body">From %1$s, shuttle service changes to %2$s.</string>
+    <string name="shuttle_service_notice_halt_body">Shuttle service will be suspended on %1$s.</string>
+    <string name="shuttle_service_notice_holiday_body">Shuttles will run on the weekend/holiday schedule on %1$s.</string>
+    <string name="shuttle_service_notice_generic_body">Check shuttle service information for %1$s.</string>
+    <string name="shuttle_service_notice_period_semester">semester</string>
+    <string name="shuttle_service_notice_period_vacation">vacation</string>
+    <string name="shuttle_service_notice_period_session">session</string>
+    <string name="shuttle_service_notice_period_unknown">a new period</string>
     <string name="info_button_shuttle">Information button for shuttle</string>
     <string name="analytics_settings">App Analytics</string>
     <string name="analytics_settings_description">We collect anonymous usage data and your Advertising ID (AD ID) to improve the app. You can disable this at any time.</string>

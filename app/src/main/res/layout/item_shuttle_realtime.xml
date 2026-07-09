@@ -46,6 +46,25 @@
                 android:text="@string/shuttle_warning_text"
             />
         </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/last_run_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:visibility="gone"
+            app:cardCornerRadius="4dp"
+            app:strokeColor="@color/hanyang_blue"
+            app:strokeWidth="1dp">
+            <TextView
+                android:id="@+id/last_run_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="@string/shuttle_last_run"
+                android:textColor="@color/hanyang_blue"
+                android:textSize="14sp" />
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
     <TextView
         android:id="@+id/shuttle_time_text"

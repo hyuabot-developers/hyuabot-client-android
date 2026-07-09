@@ -360,11 +360,18 @@ class HomeFragment : Fragment() {
         val transferGroups = shuttleCandidates.map { transferConnections(data, route, it) }
         val shuttleRows = displayCandidates.mapIndexed { index, entry ->
             val routeDisplay = routeDisplay(route, entry)
+            val subtitle = routeSubtitle(entry).let {
+                if (entry.seq == shuttleCandidates.lastOrNull()?.seq) {
+                    getString(R.string.home_shuttle_last_run_subtitle, it)
+                } else {
+                    it
+                }
+            }
             HomeShuttleMovement(
                 HomeRow(
                     badge = routeDisplay.badge,
                     title = getString(R.string.home_departure_format, compactTime(entry.time)),
-                    subtitle = routeSubtitle(entry),
+                    subtitle = subtitle,
                     trailing = minutesUntil(entry.time)?.let { getString(R.string.home_minutes, it) } ?: getString(R.string.home_check),
                     tint = routeDisplay.tint,
                 ),

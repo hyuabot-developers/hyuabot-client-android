@@ -44,6 +44,10 @@
             android:enabled="true"
             android:exported="false" />
         <receiver
+            android:name=".service.alarm.ShuttleServiceNoticeReceiver"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
             android:name=".widget.CafeteriaWidgetProvider"
             android:exported="false">
             <intent-filter>
