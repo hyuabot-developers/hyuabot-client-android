@@ -33,7 +33,7 @@ class ShuttleRealtimeByDestinationListAdapter(
         val darkMode = context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleRealtimePageQuery.Entry) {
-            binding.lastRunView.visibility = if (item.seq in lastRunSeqs) ViewGroup.VISIBLE else ViewGroup.GONE
+            val isLastRun = item.seq in lastRunSeqs
             if ((stopID == R.string.shuttle_tab_dormitory_out || stopID == R.string.shuttle_tab_shuttlecock_out)) {
                 if (headerID == R.string.shuttle_header_bound_for_station || headerID == R.string.shuttle_header_bound_for_jungang_station) {
                     when (item.route.tag) {
@@ -162,12 +162,18 @@ class ShuttleRealtimeByDestinationListAdapter(
             shuttleRealtimeViewModel.showDepartureTime.observe(lifecycleOwner) {
                 if (!it) {
                     val remainingTime = item.time.minusHours(now.hour.toLong()).minusMinutes(now.minute.toLong() + 1)
-                    binding.shuttleTimeText.text = context.getString(R.string.shuttle_time_type_2, (remainingTime.hour * 60 + remainingTime.minute).toString())
+                    binding.shuttleTimeText.text = formatTimeText(
+                        context.getString(R.string.shuttle_time_type_2, (remainingTime.hour * 60 + remainingTime.minute).toString()),
+                        isLastRun
+                    )
                 } else {
-                    binding.shuttleTimeText.text = context.getString(
-                        R.string.shuttle_time_type_1,
-                        item.time.hour.toString().padStart(2, '0'),
-                        item.time.minute.toString().padStart(2, '0')
+                    binding.shuttleTimeText.text = formatTimeText(
+                        context.getString(
+                            R.string.shuttle_time_type_1,
+                            item.time.hour.toString().padStart(2, '0'),
+                            item.time.minute.toString().padStart(2, '0')
+                        ),
+                        isLastRun
                     )
                 }
             }
@@ -230,4 +236,7 @@ class ShuttleRealtimeByDestinationListAdapter(
             notifyItemRangeChanged(0, shuttleList.size)
         }
     }
+
+    private fun formatTimeText(timeText: String, isLastRun: Boolean): String =
+        if (isLastRun) "$timeText · ${context.getString(R.string.shuttle_last_run)}" else timeText
 }
