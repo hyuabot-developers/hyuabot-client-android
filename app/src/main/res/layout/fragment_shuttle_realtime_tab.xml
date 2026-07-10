@@ -79,7 +79,6 @@
                 android:id="@+id/realtime_view_bound_for_station"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/help_bound_for_station" />
             <TextView
@@ -97,7 +96,6 @@
                 android:id="@+id/bus_alternative_station"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginEnd="16dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_station">
                 <View
@@ -211,7 +209,6 @@
                 android:id="@+id/realtime_view_bound_for_dormitory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/help_bound_for_dormitory" />
             <TextView
@@ -229,7 +226,6 @@
                 android:id="@+id/bus_alternative_dormitory"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginEnd="16dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_dormitory">
                 <View
@@ -280,7 +276,6 @@
                 android:id="@+id/bus_alternative_dormitory_2"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginEnd="16dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/bus_alternative_dormitory">
                 <View
@@ -393,7 +388,6 @@
                 android:id="@+id/realtime_view_bound_for_terminal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/help_bound_for_terminal" />
             <TextView
@@ -411,7 +405,6 @@
                 android:id="@+id/bus_alternative_terminal"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginEnd="16dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_terminal">
                 <View
@@ -524,7 +517,6 @@
                 android:id="@+id/realtime_view_bound_for_jungang_station"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/help_bound_for_jungang_station" />
             <TextView
@@ -542,7 +534,6 @@
                 android:id="@+id/bus_alternative_jungang_station"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginEnd="16dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_jungang_station">
                 <View
@@ -661,7 +652,6 @@
                 android:id="@+id/realtime_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toTopOf="parent"/>
             <TextView
