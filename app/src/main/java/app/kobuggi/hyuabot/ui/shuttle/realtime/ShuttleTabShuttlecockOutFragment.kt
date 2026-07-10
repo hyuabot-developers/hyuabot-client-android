@@ -326,7 +326,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeData.visibility = View.GONE
                 binding.realtimeView.visibility = View.VISIBLE
-                shuttleAdapter.updateData(shuttleByOrder.subList(0, min(8, shuttleByOrder.size)))
+                shuttleAdapter.updateData(shuttleByOrder.subList(0, min(8, shuttleByOrder.size)), setOfNotNull(shuttleByOrder.lastOrNull()?.seq))
             }
             if (shuttleForStation.isEmpty()) {
                 binding.noRealtimeDataBoundForStation.visibility = View.VISIBLE
@@ -334,7 +334,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForStation.visibility = View.GONE
                 binding.realtimeViewBoundForStation.visibility = View.VISIBLE
-                shuttleStationAdapter.updateData(shuttleForStation.subList(0, min(3, shuttleForStation.size)))
+                shuttleStationAdapter.updateData(shuttleForStation.subList(0, min(3, shuttleForStation.size)), setOfNotNull(shuttleForStation.lastOrNull()?.seq))
             }
             if (shuttleForTerminal.isEmpty()) {
                 binding.noRealtimeDataBoundForTerminal.visibility = View.VISIBLE
@@ -342,7 +342,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForTerminal.visibility = View.GONE
                 binding.realtimeViewBoundForTerminal.visibility = View.VISIBLE
-                shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(3, shuttleForTerminal.size)))
+                shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(3, shuttleForTerminal.size)), setOfNotNull(shuttleForTerminal.lastOrNull()?.seq))
             }
             if (shuttleForJungangStation.isEmpty()) {
                 binding.noRealtimeDataBoundForJungangStation.visibility = View.VISIBLE
@@ -350,7 +350,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForJungangStation.visibility = View.GONE
                 binding.realtimeViewBoundForJungangStation.visibility = View.VISIBLE
-                shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)))
+                shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)), setOfNotNull(shuttleForJungangStation.lastOrNull()?.seq))
             }
         }
         parentViewModel.busAlternativeShuttlecock.observe(viewLifecycleOwner) { busMinutes ->

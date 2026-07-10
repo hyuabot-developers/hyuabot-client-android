@@ -63,6 +63,7 @@ class HomeFragment : Fragment() {
     private var debugSubwayTransferDestination: HomeSubwayTransferDestination? = null
     private var noticePosition = 0
     private var noticeManuallyScrolled = false
+    private var locationCancellationTokenSource: CancellationTokenSource? = null
     private lateinit var noticeAutoScrollRunnable: Runnable
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
@@ -166,6 +167,8 @@ class HomeFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        locationCancellationTokenSource?.cancel()
+        locationCancellationTokenSource = null
         binding.noticeViewPager.adapter = null
         super.onDestroyView()
     }
@@ -222,7 +225,7 @@ class HomeFragment : Fragment() {
         val strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_stroke)
         selectedDeparture.destinations.forEach { destination ->
             val button = MaterialButton(buttonContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
-                id = View.generateViewId()
+                id = destination.buttonIdRes
                 text = getString(destination.titleRes)
                 minHeight = resources.getDimensionPixelSize(R.dimen.home_destination_button_min_height)
                 minWidth = 0
@@ -273,9 +276,11 @@ class HomeFragment : Fragment() {
     private fun selectLastKnownLocation(client: FusedLocationProviderClient) {
         client.lastLocation
             .addOnSuccessListener { location ->
+                if (!isAdded || view == null) return@addOnSuccessListener
                 if (location != null && isFresh(location)) selectNearestDeparture(location)
             }
             .addOnFailureListener {
+                if (!isAdded || view == null) return@addOnFailureListener
                 Log.e("HomeFragment", "Failed to get last known location", it)
             }
     }
@@ -294,9 +299,15 @@ class HomeFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private fun requestCurrentLocation(client: FusedLocationProviderClient) {
         if (!hasLocationPermission()) return
+        locationCancellationTokenSource?.cancel()
         val tokenSource = CancellationTokenSource()
+        locationCancellationTokenSource = tokenSource
         client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
             .addOnSuccessListener { location ->
+                if (locationCancellationTokenSource === tokenSource) {
+                    locationCancellationTokenSource = null
+                }
+                if (!isAdded || view == null) return@addOnSuccessListener
                 if (location != null) {
                     selectNearestDeparture(location)
                 } else {
@@ -304,12 +315,17 @@ class HomeFragment : Fragment() {
                 }
             }
             .addOnFailureListener {
+                if (locationCancellationTokenSource === tokenSource) {
+                    locationCancellationTokenSource = null
+                }
+                if (!isAdded || view == null) return@addOnFailureListener
                 Log.e("HomeFragment", "Failed to get user location", it)
                 selectLastKnownLocation(client)
             }
     }
 
     private fun selectNearestDeparture(location: Location) {
+        if (!isAdded || view == null) return
         if (lockDepartureSelection) return
         val nearestDeparture = HomeDeparture.entries.minByOrNull { it.distanceTo(location) } ?: return
         if (nearestDeparture == selectedDeparture) return
@@ -360,11 +376,18 @@ class HomeFragment : Fragment() {
         val transferGroups = shuttleCandidates.map { transferConnections(data, route, it) }
         val shuttleRows = displayCandidates.mapIndexed { index, entry ->
             val routeDisplay = routeDisplay(route, entry)
+            val subtitle = routeSubtitle(entry).let {
+                if (entry.seq == shuttleCandidates.lastOrNull()?.seq) {
+                    getString(R.string.home_shuttle_last_run_subtitle, it)
+                } else {
+                    it
+                }
+            }
             HomeShuttleMovement(
                 HomeRow(
                     badge = routeDisplay.badge,
                     title = getString(R.string.home_departure_format, compactTime(entry.time)),
-                    subtitle = routeSubtitle(entry),
+                    subtitle = subtitle,
                     trailing = minutesUntil(entry.time)?.let { getString(R.string.home_minutes, it) } ?: getString(R.string.home_check),
                     tint = routeDisplay.tint,
                 ),
@@ -1302,11 +1325,14 @@ private enum class HomeDeparture(
     }
 }
 
-private enum class HomeDestination(val titleRes: Int) {
-    STATION(R.string.home_destination_station),
-    TERMINAL(R.string.home_destination_terminal),
-    JUNGANG(R.string.home_destination_jungang),
-    DORMITORY(R.string.home_destination_dormitory);
+private enum class HomeDestination(
+    val titleRes: Int,
+    val buttonIdRes: Int,
+) {
+    STATION(R.string.home_destination_station, R.id.home_destination_station),
+    TERMINAL(R.string.home_destination_terminal, R.id.home_destination_terminal),
+    JUNGANG(R.string.home_destination_jungang, R.id.home_destination_jungang),
+    DORMITORY(R.string.home_destination_dormitory, R.id.home_destination_dormitory);
 
     val debugValue: String
         get() = when (this) {

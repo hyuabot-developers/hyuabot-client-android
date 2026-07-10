@@ -32,6 +32,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
+import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
@@ -63,12 +64,16 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager
 
+    @Inject
+    lateinit var shuttleServiceNoticeScheduler: ShuttleServiceNoticeScheduler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         applyStatusBarStyle()
         firebaseAnalytics = Firebase.analytics
         binding.bottomNavigation.apply {
+            populateBottomNavigationMenu()
             setupWithNavController(navController)
             updateBottomNavigationLabels()
             setOnItemSelectedListener(this@MainActivity)
@@ -91,7 +96,17 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         checkLocationPermission()
         openBirthDayDialog()
         requestInAppReview()
+        syncShuttleServiceNotices()
         navController.handleDeepLink(intent)
+    }
+
+    private fun NavigationBarView.populateBottomNavigationMenu() {
+        if (menu.size() > 0) return
+        menu.add(0, R.id.homeFragment, 0, R.string.home).setIcon(R.drawable.ic_home)
+        menu.add(0, R.id.busRealtimeFragment, 1, R.string.bus).setIcon(R.drawable.ic_bus)
+        menu.add(0, R.id.subwayRealtimeFragment, 2, R.string.subway).setIcon(R.drawable.ic_subway)
+        menu.add(0, R.id.cafeteriaFragment, 3, R.string.cafeteria).setIcon(R.drawable.ic_cafeteria)
+        menu.add(0, R.id.menuFragment, 4, R.string.menu).setIcon(R.drawable.ic_more)
     }
 
     private fun applyStatusBarStyle() {
@@ -208,6 +223,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     private fun requestInAppReview() {
         lifecycleScope.launch {
             inAppReviewManager.maybeRequestReview(this@MainActivity)
+        }
+    }
+
+    private fun syncShuttleServiceNotices() {
+        lifecycleScope.launch {
+            shuttleServiceNoticeScheduler.sync()
         }
     }
 

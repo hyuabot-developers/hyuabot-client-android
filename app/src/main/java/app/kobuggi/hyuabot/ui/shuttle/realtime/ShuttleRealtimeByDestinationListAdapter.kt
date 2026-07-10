@@ -7,6 +7,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
@@ -27,10 +28,14 @@ class ShuttleRealtimeByDestinationListAdapter(
     private var shuttleList: List<ShuttleRealtimePageQuery.Entry>,
     private val onAlarmClick: ((ShuttleRealtimePageQuery.Entry) -> Unit)? = null,
 ) : RecyclerView.Adapter<ShuttleRealtimeByDestinationListAdapter.ViewHolder>() {
+    private var lastRunSeqs: Set<Int> = emptySet()
+
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         val darkMode = context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleRealtimePageQuery.Entry) {
+            val isLastRun = item.seq in lastRunSeqs
+            binding.lastRunBadge.visibility = if (isLastRun) View.VISIBLE else View.GONE
             if ((stopID == R.string.shuttle_tab_dormitory_out || stopID == R.string.shuttle_tab_shuttlecock_out)) {
                 if (headerID == R.string.shuttle_header_bound_for_station || headerID == R.string.shuttle_header_bound_for_jungang_station) {
                     when (item.route.tag) {
@@ -159,7 +164,10 @@ class ShuttleRealtimeByDestinationListAdapter(
             shuttleRealtimeViewModel.showDepartureTime.observe(lifecycleOwner) {
                 if (!it) {
                     val remainingTime = item.time.minusHours(now.hour.toLong()).minusMinutes(now.minute.toLong() + 1)
-                    binding.shuttleTimeText.text = context.getString(R.string.shuttle_time_type_2, (remainingTime.hour * 60 + remainingTime.minute).toString())
+                    binding.shuttleTimeText.text = context.getString(
+                        R.string.shuttle_time_type_2,
+                        (remainingTime.hour * 60 + remainingTime.minute).toString()
+                    )
                 } else {
                     binding.shuttleTimeText.text = context.getString(
                         R.string.shuttle_time_type_1,
@@ -209,7 +217,11 @@ class ShuttleRealtimeByDestinationListAdapter(
 
     override fun getItemCount(): Int = shuttleList.size
 
-    fun updateData(newData: List<ShuttleRealtimePageQuery.Entry>) {
+    fun updateData(
+        newData: List<ShuttleRealtimePageQuery.Entry>,
+        lastRunSeqs: Set<Int> = emptySet(),
+    ) {
+        this.lastRunSeqs = lastRunSeqs
         if (shuttleList.size > newData.size) {
             shuttleList = newData
             notifyItemRangeChanged(0, shuttleList.size)
@@ -223,4 +235,5 @@ class ShuttleRealtimeByDestinationListAdapter(
             notifyItemRangeChanged(0, shuttleList.size)
         }
     }
+
 }

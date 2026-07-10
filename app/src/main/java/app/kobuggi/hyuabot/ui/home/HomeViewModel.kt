@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.appcompat.app.AppCompatDelegate
 import app.kobuggi.hyuabot.BusDepartureLogDialogQuery
 import app.kobuggi.hyuabot.HomePageQuery
+import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.type.BusRouteStopInput
 import app.kobuggi.hyuabot.util.QueryError
@@ -22,12 +23,14 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val apolloClient: ApolloClient,
     private val userPreferencesRepository: UserPreferencesRepository,
+    private val shuttleServiceNoticeScheduler: ShuttleServiceNoticeScheduler,
 ) : ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _data = MutableLiveData<HomePageQuery.Data?>()
@@ -88,6 +91,7 @@ class HomeViewModel @Inject constructor(
                 } else {
                     _data.value = response.data
                     _bus50TerminalLogTimes.value = fetchBus50TerminalLogTimes(now.toLocalDate())
+                    shuttleServiceNoticeScheduler.sync()
                     _queryError.value = null
                 }
             } catch (_: Exception) {
@@ -130,11 +134,8 @@ class HomeViewModel @Inject constructor(
 
     private fun currentNoticeLanguage(): String {
         val locale = AppCompatDelegate.getApplicationLocales().get(0)
-        return when (locale?.language) {
-            "ko" -> "KOREAN"
-            "en", "ja", "zh" -> "ENGLISH"
-            else -> "KOREAN"
-        }
+        val language = locale?.language ?: Locale.getDefault().language
+        return if (language == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
     }
 
     private fun homeBusInput(): List<BusRouteStopInput> = listOf(

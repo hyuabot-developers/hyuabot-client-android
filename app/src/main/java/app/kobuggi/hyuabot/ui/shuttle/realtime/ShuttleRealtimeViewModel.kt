@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.time.LocalTime
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -80,15 +81,8 @@ class ShuttleRealtimeViewModel @Inject constructor(
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
         val locale = AppCompatDelegate.getApplicationLocales().get(0)
-        val language = if (locale == null) {
-            "KOREAN"
-        } else {
-            when (locale.language) {
-                "ko" -> "KOREAN"
-                "en", "ja", "zh" -> "ENGLISH"
-                else -> "KOREAN"
-            }
-        }
+        val appLanguage = locale?.language ?: Locale.getDefault().language
+        val language = if (appLanguage == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
         viewModelScope.launch {
             val response = apolloClient.query(ShuttleRealtimePageQuery(
                 language,

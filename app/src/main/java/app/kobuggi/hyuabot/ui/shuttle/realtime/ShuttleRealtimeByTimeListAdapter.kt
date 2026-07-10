@@ -29,15 +29,22 @@ class ShuttleRealtimeByTimeListAdapter(
     private var shuttleList: List<ShuttleRealtimePageQuery.Order>,
     private val onAlarmClick: ((ShuttleRealtimePageQuery.Order) -> Unit)? = null,
 ) : RecyclerView.Adapter<ShuttleRealtimeByTimeListAdapter.ViewHolder>() {
+    private var lastRunSeqs: Set<Int> = emptySet()
+
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleRealtimePageQuery.Order) {
             setStopText(context, binding.shuttleTypeText, binding.warningView, stopID, item)
+            val isLastRun = item.seq in lastRunSeqs
+            binding.lastRunBadge.visibility = if (isLastRun) View.VISIBLE else View.GONE
             val now = LocalTime.now()
             shuttleRealtimeViewModel.showDepartureTime.observe(lifecycleOwner) {
                 if (!it) {
                     val remainingTime = item.time.minusHours(now.hour.toLong()).minusMinutes(now.minute.toLong() + 1)
-                    binding.shuttleTimeText.text = context.getString(R.string.shuttle_time_type_2, (remainingTime.hour * 60 + remainingTime.minute).toString())
+                    binding.shuttleTimeText.text = context.getString(
+                        R.string.shuttle_time_type_2,
+                        (remainingTime.hour * 60 + remainingTime.minute).toString()
+                    )
                 } else {
                     binding.shuttleTimeText.text = context.getString(
                         R.string.shuttle_time_type_1,
@@ -87,7 +94,11 @@ class ShuttleRealtimeByTimeListAdapter(
 
     override fun getItemCount(): Int = shuttleList.size
 
-    fun updateData(newData: List<ShuttleRealtimePageQuery.Order>) {
+    fun updateData(
+        newData: List<ShuttleRealtimePageQuery.Order>,
+        lastRunSeqs: Set<Int> = emptySet(),
+    ) {
+        this.lastRunSeqs = lastRunSeqs
         if (shuttleList.size > newData.size) {
             shuttleList = newData
             notifyItemRangeChanged(0, shuttleList.size)

@@ -49,6 +49,7 @@
     <string name="home_departure_format">%1$s 発</string>
     <string name="home_minutes">%1$d分</string>
     <string name="home_check">確認</string>
+    <string name="home_shuttle_last_run_subtitle">終車 · %1$s</string>
     <string name="home_no_data_title">今乗れるシャトルがありません</string>
     <string name="home_no_data_message">しばらくしてから再確認するか、下の代替ルートを確認してください。</string>
     <string name="home_bus_title_format">%1$s番バス</string>
@@ -157,7 +158,7 @@
     <string name="shuttle_period">運行期間</string>
     <string name="shuttle_period_semester">学期中</string>
     <string name="shuttle_period_vacation">休暇中</string>
-    <string name="shuttle_period_vacation_session">集中講義期間中</string>
+    <string name="shuttle_period_vacation_session">季節学期中</string>
     <string name="confirm">確認</string>
     <string name="location_permission_nearest_stop">最寄りのバス停を探すには位置情報の権限が必要です。</string>
     <string name="shuttle_realtime_toast">通学ラッシュ時は、シャトルコックから一部シャトルが運行しない場合があります。</string>
@@ -470,6 +471,16 @@
     <string name="shuttle_type_school_terminal">芸術人村直行</string>
     <string name="shuttle_type_school_station">韓大前駅直行</string>
     <string name="shuttle_warning_text">乗車位置確認</string>
+    <string name="shuttle_last_run">終車</string>
+    <string name="shuttle_service_notice_title">シャトルバス運行案内</string>
+    <string name="shuttle_service_notice_period_body">%1$sからシャトルバスの運行期間が%2$sに変わります。</string>
+    <string name="shuttle_service_notice_halt_body">%1$sはシャトルバスを運休します。</string>
+    <string name="shuttle_service_notice_holiday_body">%1$sは週末/祝日ダイヤで運行します。</string>
+    <string name="shuttle_service_notice_generic_body">%1$sのシャトルバス運行情報を確認してください。</string>
+    <string name="shuttle_service_notice_period_semester">学期</string>
+    <string name="shuttle_service_notice_period_vacation">休暇</string>
+    <string name="shuttle_service_notice_period_session">季節学期</string>
+    <string name="shuttle_service_notice_period_unknown">新しい期間</string>
     <string name="info_button_shuttle">シャトル情報ボタン</string>
     <string name="analytics_settings">アプリ分析データの収集</string>
     <string name="analytics_settings_description">アプリ改善のため、匿名の使用データおよび広告識別子（AD ID）を収集します。いつでも無効にできます。</string>

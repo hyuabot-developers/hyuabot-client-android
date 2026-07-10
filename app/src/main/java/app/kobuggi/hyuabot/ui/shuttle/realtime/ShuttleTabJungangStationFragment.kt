@@ -154,7 +154,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeData.visibility = View.GONE
                 binding.realtimeView.visibility = View.VISIBLE
-                shuttleAdapter.updateData(shuttleByOrder.subList(0, min(8, shuttleByOrder.size)))
+                shuttleAdapter.updateData(shuttleByOrder.subList(0, min(8, shuttleByOrder.size)), setOfNotNull(shuttleByOrder.lastOrNull()?.seq))
             }
             if (shuttleForCampus.isEmpty()) {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.VISIBLE
@@ -162,7 +162,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
                 binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
-                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)))
+                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)), setOfNotNull(shuttleForCampus.lastOrNull()?.seq))
             }
         }
 
