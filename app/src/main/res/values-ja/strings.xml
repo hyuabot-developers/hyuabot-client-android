@@ -158,7 +158,7 @@
     <string name="shuttle_period">運行期間</string>
     <string name="shuttle_period_semester">学期中</string>
     <string name="shuttle_period_vacation">休暇中</string>
-    <string name="shuttle_period_vacation_session">集中講義期間中</string>
+    <string name="shuttle_period_vacation_session">季節学期中</string>
     <string name="confirm">確認</string>
     <string name="location_permission_nearest_stop">最寄りのバス停を探すには位置情報の権限が必要です。</string>
     <string name="shuttle_realtime_toast">通学ラッシュ時は、シャトルコックから一部シャトルが運行しない場合があります。</string>

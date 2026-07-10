@@ -158,7 +158,7 @@
     <string name="shuttle_period">运行期间</string>
     <string name="shuttle_period_semester">学期中</string>
     <string name="shuttle_period_vacation">假期中</string>
-    <string name="shuttle_period_vacation_session">暑期课程期间</string>
+    <string name="shuttle_period_vacation_session">季节学期中</string>
     <string name="confirm">确认</string>
     <string name="location_permission_nearest_stop">需要位置权限才能查找最近的站点。</string>
     <string name="shuttle_realtime_toast">上下学高峰时段，部分校车可能不从羽毛球场出发。</string>
