@@ -23,6 +23,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -133,11 +134,8 @@ class HomeViewModel @Inject constructor(
 
     private fun currentNoticeLanguage(): String {
         val locale = AppCompatDelegate.getApplicationLocales().get(0)
-        return when (locale?.language) {
-            "ko" -> "KOREAN"
-            "en", "ja", "zh" -> "ENGLISH"
-            else -> "KOREAN"
-        }
+        val language = locale?.language ?: Locale.getDefault().language
+        return if (language == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
     }
 
     private fun homeBusInput(): List<BusRouteStopInput> = listOf(

@@ -15,6 +15,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -52,15 +53,8 @@ class BusRealtimeViewModel @Inject constructor(
     fun fetchData() {
         if (_result.value == null) _isLoading.value = true
         val locale = AppCompatDelegate.getApplicationLocales().get(0)
-        val language = if (locale == null) {
-            "KOREAN"
-        } else {
-            when (locale.language) {
-                "ko" -> "KOREAN"
-                "en", "ja", "zh" -> "ENGLISH"
-                else -> "KOREAN"
-            }
-        }
+        val appLanguage = locale?.language ?: Locale.getDefault().language
+        val language = if (appLanguage == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
         viewModelScope.launch {
             val response = apolloClient.query(BusRealtimePageQuery(language)).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
