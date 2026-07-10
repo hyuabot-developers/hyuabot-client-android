@@ -63,6 +63,7 @@ class HomeFragment : Fragment() {
     private var debugSubwayTransferDestination: HomeSubwayTransferDestination? = null
     private var noticePosition = 0
     private var noticeManuallyScrolled = false
+    private var locationCancellationTokenSource: CancellationTokenSource? = null
     private lateinit var noticeAutoScrollRunnable: Runnable
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
@@ -166,6 +167,8 @@ class HomeFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        locationCancellationTokenSource?.cancel()
+        locationCancellationTokenSource = null
         binding.noticeViewPager.adapter = null
         super.onDestroyView()
     }
@@ -273,9 +276,11 @@ class HomeFragment : Fragment() {
     private fun selectLastKnownLocation(client: FusedLocationProviderClient) {
         client.lastLocation
             .addOnSuccessListener { location ->
+                if (!isAdded || view == null) return@addOnSuccessListener
                 if (location != null && isFresh(location)) selectNearestDeparture(location)
             }
             .addOnFailureListener {
+                if (!isAdded || view == null) return@addOnFailureListener
                 Log.e("HomeFragment", "Failed to get last known location", it)
             }
     }
@@ -294,9 +299,15 @@ class HomeFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private fun requestCurrentLocation(client: FusedLocationProviderClient) {
         if (!hasLocationPermission()) return
+        locationCancellationTokenSource?.cancel()
         val tokenSource = CancellationTokenSource()
+        locationCancellationTokenSource = tokenSource
         client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
             .addOnSuccessListener { location ->
+                if (locationCancellationTokenSource === tokenSource) {
+                    locationCancellationTokenSource = null
+                }
+                if (!isAdded || view == null) return@addOnSuccessListener
                 if (location != null) {
                     selectNearestDeparture(location)
                 } else {
@@ -304,12 +315,17 @@ class HomeFragment : Fragment() {
                 }
             }
             .addOnFailureListener {
+                if (locationCancellationTokenSource === tokenSource) {
+                    locationCancellationTokenSource = null
+                }
+                if (!isAdded || view == null) return@addOnFailureListener
                 Log.e("HomeFragment", "Failed to get user location", it)
                 selectLastKnownLocation(client)
             }
     }
 
     private fun selectNearestDeparture(location: Location) {
+        if (!isAdded || view == null) return
         if (lockDepartureSelection) return
         val nearestDeparture = HomeDeparture.entries.minByOrNull { it.distanceTo(location) } ?: return
         if (nearestDeparture == selectedDeparture) return
