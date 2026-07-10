@@ -36,22 +36,20 @@ class ShuttleRealtimeByTimeListAdapter(
         fun bind(item: ShuttleRealtimePageQuery.Order) {
             setStopText(context, binding.shuttleTypeText, binding.warningView, stopID, item)
             val isLastRun = item.seq in lastRunSeqs
+            binding.lastRunBadge.visibility = if (isLastRun) View.VISIBLE else View.GONE
             val now = LocalTime.now()
             shuttleRealtimeViewModel.showDepartureTime.observe(lifecycleOwner) {
                 if (!it) {
                     val remainingTime = item.time.minusHours(now.hour.toLong()).minusMinutes(now.minute.toLong() + 1)
-                    binding.shuttleTimeText.text = formatTimeText(
-                        context.getString(R.string.shuttle_time_type_2, (remainingTime.hour * 60 + remainingTime.minute).toString()),
-                        isLastRun
+                    binding.shuttleTimeText.text = context.getString(
+                        R.string.shuttle_time_type_2,
+                        (remainingTime.hour * 60 + remainingTime.minute).toString()
                     )
                 } else {
-                    binding.shuttleTimeText.text = formatTimeText(
-                        context.getString(
-                            R.string.shuttle_time_type_1,
-                            item.time.hour.toString().padStart(2, '0'),
-                            item.time.minute.toString().padStart(2, '0')
-                        ),
-                        isLastRun
+                    binding.shuttleTimeText.text = context.getString(
+                        R.string.shuttle_time_type_1,
+                        item.time.hour.toString().padStart(2, '0'),
+                        item.time.minute.toString().padStart(2, '0')
                     )
                 }
             }
@@ -114,9 +112,6 @@ class ShuttleRealtimeByTimeListAdapter(
             notifyItemRangeChanged(0, shuttleList.size)
         }
     }
-
-    private fun formatTimeText(timeText: String, isLastRun: Boolean): String =
-        if (isLastRun) "$timeText · ${context.getString(R.string.shuttle_last_run)}" else timeText
 
     private fun setStopText(context: Context, textView: TextView, warningView: MaterialCardView, stopID: Int, item: ShuttleRealtimePageQuery.Order) {
         val darkMode = context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
