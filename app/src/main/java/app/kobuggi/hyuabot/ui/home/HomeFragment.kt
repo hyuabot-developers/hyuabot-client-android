@@ -225,7 +225,7 @@ class HomeFragment : Fragment() {
         val strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_stroke)
         selectedDeparture.destinations.forEach { destination ->
             val button = MaterialButton(buttonContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
-                id = View.generateViewId()
+                id = destination.buttonIdRes
                 text = getString(destination.titleRes)
                 minHeight = resources.getDimensionPixelSize(R.dimen.home_destination_button_min_height)
                 minWidth = 0
@@ -1325,11 +1325,14 @@ private enum class HomeDeparture(
     }
 }
 
-private enum class HomeDestination(val titleRes: Int) {
-    STATION(R.string.home_destination_station),
-    TERMINAL(R.string.home_destination_terminal),
-    JUNGANG(R.string.home_destination_jungang),
-    DORMITORY(R.string.home_destination_dormitory);
+private enum class HomeDestination(
+    val titleRes: Int,
+    val buttonIdRes: Int,
+) {
+    STATION(R.string.home_destination_station, R.id.home_destination_station),
+    TERMINAL(R.string.home_destination_terminal, R.id.home_destination_terminal),
+    JUNGANG(R.string.home_destination_jungang, R.id.home_destination_jungang),
+    DORMITORY(R.string.home_destination_dormitory, R.id.home_destination_dormitory);
 
     val debugValue: String
         get() = when (this) {
