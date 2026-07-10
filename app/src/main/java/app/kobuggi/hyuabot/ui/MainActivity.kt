@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         applyStatusBarStyle()
         firebaseAnalytics = Firebase.analytics
         binding.bottomNavigation.apply {
+            populateBottomNavigationMenu()
             setupWithNavController(navController)
             updateBottomNavigationLabels()
             setOnItemSelectedListener(this@MainActivity)
@@ -97,6 +98,15 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         requestInAppReview()
         syncShuttleServiceNotices()
         navController.handleDeepLink(intent)
+    }
+
+    private fun NavigationBarView.populateBottomNavigationMenu() {
+        if (menu.size() > 0) return
+        menu.add(0, R.id.homeFragment, 0, R.string.home).setIcon(R.drawable.ic_home)
+        menu.add(0, R.id.busRealtimeFragment, 1, R.string.bus).setIcon(R.drawable.ic_bus)
+        menu.add(0, R.id.subwayRealtimeFragment, 2, R.string.subway).setIcon(R.drawable.ic_subway)
+        menu.add(0, R.id.cafeteriaFragment, 3, R.string.cafeteria).setIcon(R.drawable.ic_cafeteria)
+        menu.add(0, R.id.menuFragment, 4, R.string.menu).setIcon(R.drawable.ic_more)
     }
 
     private fun applyStatusBarStyle() {
