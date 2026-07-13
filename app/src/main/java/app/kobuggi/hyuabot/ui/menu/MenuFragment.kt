@@ -118,6 +118,7 @@ class MenuFragment @Inject constructor() : Fragment() {
                 AnalyticsItem.CAMPUS_SELECT_TOOL,
                 type = AnalyticsContentType.LIST_ITEM,
                 name = analyticsName,
+                destinationId = analyticsName,
             )
             onClick()
         }

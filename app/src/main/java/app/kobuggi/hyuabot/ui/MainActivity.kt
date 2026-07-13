@@ -37,6 +37,7 @@ import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.AnalyticsScreen
+import app.kobuggi.hyuabot.util.AnalyticsScreenDispatcher
 import app.kobuggi.hyuabot.util.InAppReviewManager
 import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import app.kobuggi.hyuabot.widget.ShuttleWidgetProvider
@@ -47,9 +48,6 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import androidx.core.content.edit
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.analytics
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedListener, NavigationBarView.OnItemSelectedListener, DialogInterface.OnDismissListener {
@@ -59,7 +57,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragment.id)!! as NavHostFragment
         navHostFragment.navController
     }
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private val analyticsScreenDispatcher = AnalyticsScreenDispatcher {
+        AnalyticsManager.logScreen(it, it.id)
+    }
 
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager
@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         applyStatusBarStyle()
-        firebaseAnalytics = Firebase.analytics
         binding.bottomNavigation.apply {
             populateBottomNavigationMenu()
             setupWithNavController(navController)
@@ -82,7 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         navController.addOnDestinationChangedListener { _, destination, _ ->
             updatePrimaryNavigationItem(destination.id)
             screenForDestination(destination.id)?.let {
-                AnalyticsManager.logScreen(it, it.id)
+                analyticsScreenDispatcher.onDestinationChanged(it)
             }
         }
         viewModel.theme.observe(this) {
@@ -98,6 +97,16 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         requestInAppReview()
         syncShuttleServiceNotices()
         navController.handleDeepLink(intent)
+    }
+
+    override fun onPostResume() {
+        super.onPostResume()
+        analyticsScreenDispatcher.onResumed()
+    }
+
+    override fun onPause() {
+        analyticsScreenDispatcher.onPaused()
+        super.onPause()
     }
 
     private fun NavigationBarView.populateBottomNavigationMenu() {

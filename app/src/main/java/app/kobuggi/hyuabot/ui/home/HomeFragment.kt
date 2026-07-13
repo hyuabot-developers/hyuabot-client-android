@@ -239,6 +239,7 @@ class HomeFragment : Fragment() {
                 AnalyticsItem.HOME_SELECT_DESTINATION,
                 type = AnalyticsContentType.TAB,
                 name = destination.debugValue,
+                destinationId = destination.debugValue,
             )
             render(viewModel.data.value)
         }

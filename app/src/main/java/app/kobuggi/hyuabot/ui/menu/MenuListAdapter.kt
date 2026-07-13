@@ -24,6 +24,7 @@ class MenuListAdapter(
                         AnalyticsItem.CAMPUS_SELECT_TOOL,
                         type = AnalyticsContentType.LIST_ITEM,
                         name = menuItem.analyticsName,
+                        destinationId = menuItem.analyticsName,
                     )
                     onClickListener(menuItem)
                 }

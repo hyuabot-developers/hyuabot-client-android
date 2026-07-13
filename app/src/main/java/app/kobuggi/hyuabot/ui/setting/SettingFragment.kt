@@ -23,7 +23,6 @@ import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -70,7 +69,7 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
             if (!updatingSwitch) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     userPreferencesRepository.setAnalyticsConsent(isChecked)
-                    FirebaseAnalytics.getInstance(requireContext()).setAnalyticsCollectionEnabled(isChecked)
+                    AnalyticsManager.setCollectionEnabled(isChecked)
                     FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = isChecked
                 }
             }

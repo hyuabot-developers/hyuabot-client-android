@@ -41,6 +41,40 @@ class AnalyticsConfigurationTest {
         assertEquals("home_select_destination", AnalyticsItem.HOME_SELECT_DESTINATION.id)
     }
 
+    @Test
+    fun `selection parameters include reportable dimensions`() {
+        val parameters = selectionParameters(
+            AnalyticsItem.CAMPUS_SELECT_TOOL,
+            AnalyticsContentType.LIST_ITEM,
+            name = "map",
+            destinationId = "map",
+        )
+
+        assertEquals(ANALYTICS_SCHEMA_VERSION, parameters[AnalyticsParameter.SCHEMA_VERSION])
+        assertEquals("campus_select_tool", parameters[AnalyticsParameter.ELEMENT_ID])
+        assertEquals("list_item", parameters[AnalyticsParameter.ELEMENT_TYPE])
+        assertEquals("map", parameters[AnalyticsParameter.DESTINATION_ID])
+    }
+
+    @Test
+    fun `collection gate flushes startup events only after consent`() {
+        val gate = AnalyticsCollectionGate()
+        var eventCount = 0
+
+        gate.runWhenEnabled { eventCount++ }
+        assertEquals(0, eventCount)
+
+        gate.setEnabled(true)
+        assertEquals(1, eventCount)
+
+        gate.runWhenEnabled { eventCount++ }
+        assertEquals(2, eventCount)
+
+        gate.setEnabled(false)
+        gate.runWhenEnabled { eventCount++ }
+        assertEquals(2, eventCount)
+    }
+
     private fun isReportable(id: String): Boolean =
         id.isNotEmpty() && id.length <= 40 && id.first().isLetter() && id.all { it.isLowerCase() || it.isDigit() || it == '_' }
 }
