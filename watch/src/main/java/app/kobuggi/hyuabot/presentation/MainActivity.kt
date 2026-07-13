@@ -32,20 +32,39 @@ import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.analytics.WatchAnalyticsTracker
 import app.kobuggi.hyuabot.presentation.NavigationUtils.Companion.NavigationStack
 import app.kobuggi.hyuabot.presentation.theme.HYUabotTheme
 import app.kobuggi.hyuabot.service.GraphQLModule
 import java.time.LocalTime
 
 class MainActivity : ComponentActivity() {
+    private lateinit var watchAnalyticsTracker: WatchAnalyticsTracker
+    private var appOpenEntryPoint = WatchAnalyticsTracker.EntryPoint.APP
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setTheme(android.R.style.Theme_DeviceDefault)
         val stopID = intent.getStringExtra("stopID")
-        setContent {
-            NavHostScreen(stopID)
+        watchAnalyticsTracker = WatchAnalyticsTracker(applicationContext)
+        if (stopID != null) {
+            appOpenEntryPoint = WatchAnalyticsTracker.EntryPoint.TILE
+            if (savedInstanceState == null) {
+                watchAnalyticsTracker.trackStopSelected(normalizeStopId(stopID), WatchAnalyticsTracker.EntryPoint.TILE)
+            }
         }
+        setContent {
+            NavHostScreen(stopID) { selectedStopID ->
+                watchAnalyticsTracker.trackStopSelected(selectedStopID, WatchAnalyticsTracker.EntryPoint.APP)
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        watchAnalyticsTracker.trackAppOpen(appOpenEntryPoint)
+        appOpenEntryPoint = WatchAnalyticsTracker.EntryPoint.APP
     }
 
     companion object {
@@ -59,7 +78,10 @@ class MainActivity : ComponentActivity() {
         )
 
         @Composable
-        fun NavHostScreen(stopID: String?) {
+        fun NavHostScreen(
+            stopID: String?,
+            onStopSelected: (String) -> Unit = {},
+        ) {
             HYUabotTheme {
                 Box(
                     modifier = Modifier
@@ -67,13 +89,19 @@ class MainActivity : ComponentActivity() {
                         .background(Color(0xFF000000)),
                     contentAlignment = Alignment.Center
                 ) {
-                    NavigationStack(if (stopID != null) "detail/${normalizeStopId(stopID)}" else Screen.Main.route)
+                    NavigationStack(
+                        startRoute = if (stopID != null) "detail/${normalizeStopId(stopID)}" else Screen.Main.route,
+                        onStopSelected = onStopSelected,
+                    )
                 }
             }
         }
 
         @Composable
-        fun MainScreen(navController: NavHostController) {
+        fun MainScreen(
+            navController: NavHostController,
+            onStopSelected: (String) -> Unit = {},
+        ) {
             val scrollState = rememberScalingLazyListState()
             Scaffold (
                 positionIndicator = { PositionIndicator(scalingLazyListState = scrollState) }
@@ -88,7 +116,10 @@ class MainActivity : ComponentActivity() {
                     stops.forEach { stop ->
                         item {
                             Button(
-                                onClick = { navController.navigate("detail/${stop.id}") },
+                                onClick = {
+                                    onStopSelected(stop.id)
+                                    navController.navigate("detail/${stop.id}")
+                                },
                                 colors = ButtonDefaults.buttonColors(
                                     contentColor = Color.White,
                                     disabledContentColor = Color.White,

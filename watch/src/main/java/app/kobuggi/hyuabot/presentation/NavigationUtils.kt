@@ -10,11 +10,14 @@ import androidx.navigation.navArgument
 class NavigationUtils {
     companion object {
         @Composable
-        fun NavigationStack(startRoute: String = Screen.Main.route) {
+        fun NavigationStack(
+            startRoute: String = Screen.Main.route,
+            onStopSelected: (String) -> Unit = {},
+        ) {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = startRoute) {
                 composable(Screen.Main.route) {
-                    MainActivity.MainScreen(navController)
+                    MainActivity.MainScreen(navController, onStopSelected)
                 }
                 composable(
                     route = Screen.Detail.route + "/{stopID}",

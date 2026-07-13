@@ -116,6 +116,7 @@ dependencies {
     implementation(libs.rxJava)
     implementation(libs.rxAndroid)
     implementation(libs.androidx.runtime.livedata)
+    testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.rules)
