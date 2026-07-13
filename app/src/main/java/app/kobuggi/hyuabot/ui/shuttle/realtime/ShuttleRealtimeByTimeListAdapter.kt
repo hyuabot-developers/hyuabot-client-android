@@ -126,7 +126,7 @@ class ShuttleRealtimeByTimeListAdapter(
                         }
                     }
                     "DY" -> {
-                        warningView.visibility = View.VISIBLE
+                        warningView.visibility = if (stopID == R.string.shuttle_tab_shuttlecock_out) View.VISIBLE else View.GONE
                         textView.apply {
                             text = context.getString(R.string.shuttle_type_school_terminal)
                             setTextColor(context.getColor(R.color.hanyang_orange))

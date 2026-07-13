@@ -36,6 +36,9 @@ class ShuttleRealtimeByDestinationListAdapter(
         fun bind(item: ShuttleRealtimePageQuery.Entry) {
             val isLastRun = item.seq in lastRunSeqs
             binding.lastRunBadge.visibility = if (isLastRun) View.VISIBLE else View.GONE
+            binding.warningView.visibility = if (
+                stopID == R.string.shuttle_tab_shuttlecock_out && item.route.tag == "DY"
+            ) View.VISIBLE else View.GONE
             if ((stopID == R.string.shuttle_tab_dormitory_out || stopID == R.string.shuttle_tab_shuttlecock_out)) {
                 if (headerID == R.string.shuttle_header_bound_for_station || headerID == R.string.shuttle_header_bound_for_jungang_station) {
                     when (item.route.tag) {
