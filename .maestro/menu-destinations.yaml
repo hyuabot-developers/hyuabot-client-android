@@ -22,7 +22,7 @@ tags:
       visible: "Skip"
     commands:
       - tapOn: "Skip"
-- tapOn: "Reading Room Seat Lookup"
+- tapOn: "Reading Room"
 - runFlow:
     when:
       visible: "Skip"

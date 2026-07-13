@@ -56,7 +56,7 @@ tags:
       visible: "Skip"
     commands:
       - tapOn: "Skip"
-- assertVisible: "Reading Room Seat Lookup"
+- assertVisible: "Reading Room"
 - assertVisible: "Campus Map"
 - assertVisible: "Campus Contacts"
 - assertVisible: "Academic Calendar"
