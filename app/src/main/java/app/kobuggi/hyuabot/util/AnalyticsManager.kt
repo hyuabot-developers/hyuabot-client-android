@@ -25,6 +25,9 @@ import com.google.firebase.analytics.logEvent
 
 /** Every user-visible screen. [id] == GA4 `screen_name` (shared with iOS). */
 enum class AnalyticsScreen(val id: String) {
+    // Home
+    HOME("home"),
+
     // Shuttle
     SHUTTLE_REALTIME("shuttle_realtime"),
     SHUTTLE_TIMETABLE("shuttle_timetable"),
@@ -82,11 +85,21 @@ enum class AnalyticsContentType(val id: String) {
 /** Every tappable element. [id] == GA4 `item_id` (shared with iOS). */
 enum class AnalyticsItem(val id: String) {
     // Tab bar (bottom navigation)
+    TAB_HOME("tab_home"),
     TAB_SHUTTLE("tab_shuttle"),
     TAB_BUS("tab_bus"),
     TAB_SUBWAY("tab_subway"),
     TAB_CAFETERIA("tab_cafeteria"),
     TAB_MENU("tab_menu"), // Android 5th tab
+
+    // Home
+    HOME_TRY("home_try"),
+    HOME_DISMISS_PROMPT("home_dismiss_prompt"),
+    HOME_OPEN_LEGACY_SHUTTLE("home_open_legacy_shuttle"),
+    HOME_OPEN_SHUTTLE_DETAIL("home_open_shuttle_detail"),
+    HOME_OPEN_CAFETERIA("home_open_cafeteria"),
+    HOME_REFRESH("home_refresh"),
+    HOME_SELECT_DESTINATION("home_select_destination"),
 
     // Shuttle
     SHUTTLE_OPEN_HELP("shuttle_open_help"),

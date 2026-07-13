@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         navController.addOnDestinationChangedListener { _, destination, _ ->
             updatePrimaryNavigationItem(destination.id)
             screenForDestination(destination.id)?.let {
-                AnalyticsManager.logScreen(it, destination.label?.toString())
+                AnalyticsManager.logScreen(it, it.id)
             }
         }
         viewModel.theme.observe(this) {
@@ -327,7 +327,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     /** Maps a nav-graph destination id to its analytics screen (null = not tracked as a screen). */
     private fun screenForDestination(destinationId: Int): AnalyticsScreen? = when (destinationId) {
-        R.id.homeFragment -> AnalyticsScreen.SHUTTLE_REALTIME
+        R.id.homeFragment -> AnalyticsScreen.HOME
         R.id.shuttleRealtimeFragment -> AnalyticsScreen.SHUTTLE_REALTIME
         R.id.shuttleTimetableFragment -> AnalyticsScreen.SHUTTLE_TIMETABLE
         R.id.shuttleStopDialogFragment -> AnalyticsScreen.SHUTTLE_STOP_INFO
@@ -359,7 +359,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     /** Maps a bottom-navigation item id to its analytics tab item. */
     private fun tabItemForDestination(destinationId: Int): AnalyticsItem? = when (destinationId) {
-        R.id.homeFragment -> AnalyticsItem.TAB_SHUTTLE
+        R.id.homeFragment -> AnalyticsItem.TAB_HOME
         R.id.busRealtimeFragment -> AnalyticsItem.TAB_BUS
         R.id.subwayRealtimeFragment -> AnalyticsItem.TAB_SUBWAY
         R.id.cafeteriaFragment -> AnalyticsItem.TAB_CAFETERIA
@@ -368,6 +368,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     override fun onNavigationItemReselected(item: MenuItem) {
+        tabItemForDestination(item.itemId)?.let {
+            AnalyticsManager.logSelect(it, AnalyticsContentType.TAB)
+        }
         val reselectedDestinationId = item.itemId
         navController.popBackStack(reselectedDestinationId, false)
     }

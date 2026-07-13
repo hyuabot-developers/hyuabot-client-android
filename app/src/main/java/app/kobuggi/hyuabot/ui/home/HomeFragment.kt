@@ -36,6 +36,9 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentHomeBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.localizedSubwayStationName
 import app.kobuggi.hyuabot.util.setSkeletonLoading
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -83,10 +86,12 @@ class HomeFragment : Fragment() {
         binding.dateText.text = DateFormat.getDateInstance(DateFormat.FULL).format(Date())
         setupDestinationButtons()
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
+            AnalyticsManager.logSelect(AnalyticsItem.HOME_REFRESH)
             refreshHome()
         }
         binding.homeSwipeRefreshLayout.setColorSchemeResources(R.color.hanyang_blue)
         binding.movementDetail.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_SHUTTLE_DETAIL)
             findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
         }
         binding.legacyShuttleButton.setOnClickListener {
@@ -98,6 +103,7 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner,
         ) { _, result ->
             if (result.getBoolean(HomeQuickSettingsDialog.KEY_OPEN_LEGACY_SHUTTLE, false)) {
+                AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_LEGACY_SHUTTLE)
                 findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
             }
             if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_BUS50_TRANSFER)) {
@@ -114,6 +120,7 @@ class HomeFragment : Fragment() {
             }
         }
         binding.mealDetail.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_CAFETERIA)
             val args = Bundle().apply {
                 putString("tab", activeMealPeriod().tab)
             }
@@ -228,6 +235,11 @@ class HomeFragment : Fragment() {
             if (!isChecked) return@addOnButtonCheckedListener
             val destination = group.findViewById<View>(checkedId)?.tag as? HomeDestination ?: return@addOnButtonCheckedListener
             selectedDestination = destination
+            AnalyticsManager.logSelect(
+                AnalyticsItem.HOME_SELECT_DESTINATION,
+                type = AnalyticsContentType.TAB,
+                name = destination.debugValue,
+            )
             render(viewModel.data.value)
         }
     }
