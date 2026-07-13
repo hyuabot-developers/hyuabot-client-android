@@ -9,6 +9,7 @@
     <string name="bus">路线公交</string>
     <string name="tabbar_bus">公交</string>
     <string name="tabbar_more">更多</string>
+    <string name="tabbar_campus">校园</string>
     <string name="home_hero_title">只看现在需要的</string>
     <string name="home_hero_subtitle">从出行到用餐，显示符合当前情况的信息。</string>
     <string name="home_movement_title">现在出行</string>
@@ -373,6 +374,17 @@
     <string name="menu_section_support">支持与设置</string>
     <string name="menu_section_external">外部链接</string>
     <string name="menu_map">校园地图</string>
+    <string name="campus_tools_title">校园工具</string>
+    <string name="campus_tools_subtitle">快速查找校园生活所需的功能。</string>
+    <string name="campus_map_title">校园地图</string>
+    <string name="campus_map_subtitle">查找建筑和教室位置</string>
+    <string name="campus_reading_room_title">阅览室</string>
+    <string name="campus_reading_room_subtitle">查看剩余座位并设置空位提醒</string>
+    <string name="campus_calendar_title">学事历</string>
+    <string name="campus_calendar_subtitle">查看重要学事日程</string>
+    <string name="campus_contact_title">校内联系方式</string>
+    <string name="campus_contact_subtitle">查找校内部门和电话号码</string>
+    <string name="campus_support_title">支持与设置</string>
     <string name="map_search_guide">请输入要搜索的教室</string>
     <string name="map_external_error">没有可打开地图的应用。</string>
     <string name="map_current_location">当前位置</string>

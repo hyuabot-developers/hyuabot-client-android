@@ -18,6 +18,6 @@
         android:title="@string/cafeteria" />
     <item
         android:id="@+id/menuFragment"
-        android:icon="@drawable/ic_more"
-        android:title="@string/menu" />
+        android:icon="@drawable/ic_campus"
+        android:title="@string/tabbar_campus" />
 </menu>

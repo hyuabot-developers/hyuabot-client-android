@@ -222,8 +222,10 @@
     <fragment
         android:id="@+id/menuFragment"
         android:name="app.kobuggi.hyuabot.ui.menu.MenuFragment"
-        android:label="메뉴"
+        android:label="@string/tabbar_campus"
         tools:layout="@layout/fragment_menu">
+        <deepLink app:uri="hyuabot://campus" />
+        <deepLink app:uri="https://hyuabot.app/campus" />
         <action
             android:id="@+id/action_menuFragment_to_readingRoomFragment"
             app:destination="@id/readingRoomFragment" />

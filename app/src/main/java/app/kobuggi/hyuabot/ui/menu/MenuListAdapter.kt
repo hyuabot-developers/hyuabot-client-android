@@ -19,7 +19,14 @@ class MenuListAdapter(
     inner class ViewHolder(private val binding: ItemMainMenuBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(menuItem: MenuItem) {
             binding.apply {
-                menuItemView.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.MENU_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM); onClickListener(menuItem) }
+                menuItemView.setOnClickListener {
+                    AnalyticsManager.logSelect(
+                        AnalyticsItem.CAMPUS_SELECT_TOOL,
+                        type = AnalyticsContentType.LIST_ITEM,
+                        name = menuItem.analyticsName,
+                    )
+                    onClickListener(menuItem)
+                }
                 menuIconView.setImageResource(menuItem.iconResource)
                 menuTextView.text = context.getString(menuItem.titleResource)
                 if (menuItem.sectionTitleResource == null) {

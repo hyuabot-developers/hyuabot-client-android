@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         menu.add(0, R.id.busRealtimeFragment, 1, R.string.bus).setIcon(R.drawable.ic_bus)
         menu.add(0, R.id.subwayRealtimeFragment, 2, R.string.subway).setIcon(R.drawable.ic_subway)
         menu.add(0, R.id.cafeteriaFragment, 3, R.string.cafeteria).setIcon(R.drawable.ic_cafeteria)
-        menu.add(0, R.id.menuFragment, 4, R.string.menu).setIcon(R.drawable.ic_more)
+        menu.add(0, R.id.menuFragment, 4, R.string.tabbar_campus).setIcon(R.drawable.ic_campus)
     }
 
     private fun applyStatusBarStyle() {
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)?.title = getString(R.string.tabbar_bus)
         binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)?.title = getString(R.string.subway)
         binding.bottomNavigation.menu.findItem(R.id.cafeteriaFragment)?.title = getString(R.string.cafeteria)
-        binding.bottomNavigation.menu.findItem(R.id.menuFragment)?.title = getString(R.string.tabbar_more)
+        binding.bottomNavigation.menu.findItem(R.id.menuFragment)?.title = getString(R.string.tabbar_campus)
     }
 
     private fun updatePrimaryNavigationItem(destinationId: Int?) {
@@ -349,7 +349,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.noticeWebViewFragment -> AnalyticsScreen.WEB_VIEW
         R.id.contactFragment -> AnalyticsScreen.CONTACT
         R.id.calendarFragment -> AnalyticsScreen.CALENDAR
-        R.id.menuFragment -> AnalyticsScreen.MENU
+        R.id.menuFragment -> AnalyticsScreen.CAMPUS
         R.id.languageSettingDialogFragment -> AnalyticsScreen.SETTING_LANGUAGE
         R.id.campusSettingDialogFragment -> AnalyticsScreen.SETTING_CAMPUS
         R.id.themeSettingDialogFragment -> AnalyticsScreen.SETTING_THEME
@@ -363,7 +363,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.busRealtimeFragment -> AnalyticsItem.TAB_BUS
         R.id.subwayRealtimeFragment -> AnalyticsItem.TAB_SUBWAY
         R.id.cafeteriaFragment -> AnalyticsItem.TAB_CAFETERIA
-        R.id.menuFragment -> AnalyticsItem.TAB_MENU
+        R.id.menuFragment -> AnalyticsItem.TAB_CAMPUS
         else -> null
     }
 

@@ -9,6 +9,7 @@
     <string name="bus">路線バス</string>
     <string name="tabbar_bus">バス</string>
     <string name="tabbar_more">もっと見る</string>
+    <string name="tabbar_campus">キャンパス</string>
     <string name="home_hero_title">今必要なものだけ</string>
     <string name="home_hero_subtitle">移動から食事まで、今の状況に合う情報を表示します。</string>
     <string name="home_movement_title">今の移動</string>
@@ -373,6 +374,17 @@
     <string name="menu_section_support">サポート・設定</string>
     <string name="menu_section_external">外部リンク</string>
     <string name="menu_map">キャンパスマップ</string>
+    <string name="campus_tools_title">キャンパスツール</string>
+    <string name="campus_tools_subtitle">学校生活に必要な機能をすばやく見つけられます。</string>
+    <string name="campus_map_title">キャンパスマップ</string>
+    <string name="campus_map_subtitle">建物や講義室の場所を検索</string>
+    <string name="campus_reading_room_title">閲覧室</string>
+    <string name="campus_reading_room_subtitle">空席確認と空席通知</string>
+    <string name="campus_calendar_title">学事暦</string>
+    <string name="campus_calendar_subtitle">主な学事日程を一覧で確認</string>
+    <string name="campus_contact_title">学内連絡先</string>
+    <string name="campus_contact_subtitle">学内の部署と電話番号を検索</string>
+    <string name="campus_support_title">サポートと設定</string>
     <string name="map_search_guide">検索する講義室を入力してください</string>
     <string name="map_external_error">地図を開けるアプリがありません。</string>
     <string name="map_current_location">現在地</string>

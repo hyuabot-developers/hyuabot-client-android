@@ -9,6 +9,7 @@
     <string name="bus">노선버스</string>
     <string name="tabbar_bus">버스</string>
     <string name="tabbar_more">더 보기</string>
+    <string name="tabbar_campus">캠퍼스</string>
     <!-- 홈 -->
     <string name="home_hero_title">지금 필요한 것만</string>
     <string name="home_hero_subtitle">이동부터 식사까지, 지금 상황에 맞는 정보를 보여줘요.</string>
@@ -448,6 +449,17 @@
     <string name="menu_section_support">지원 및 설정</string>
     <string name="menu_section_external">외부 링크</string>
     <string name="menu_map">캠퍼스 지도</string>
+    <string name="campus_tools_title">캠퍼스 도구</string>
+    <string name="campus_tools_subtitle">학교생활에 필요한 기능을 빠르게 찾아보세요.</string>
+    <string name="campus_map_title">캠퍼스 지도</string>
+    <string name="campus_map_subtitle">건물과 강의실 위치 찾기</string>
+    <string name="campus_reading_room_title">열람실</string>
+    <string name="campus_reading_room_subtitle">잔여 좌석 확인과 빈자리 알림</string>
+    <string name="campus_calendar_title">학사일정</string>
+    <string name="campus_calendar_subtitle">주요 학사일정 한눈에 보기</string>
+    <string name="campus_contact_title">교내 연락처</string>
+    <string name="campus_contact_subtitle">교내 부서와 전화번호 찾기</string>
+    <string name="campus_support_title">지원 및 설정</string>
     <string name="map_search_guide">검색할 강의실을 입력하세요</string>
     <string name="map_external_error">지도를 열 수 있는 앱이 없습니다.</string>
     <string name="map_current_location">현재 위치</string>

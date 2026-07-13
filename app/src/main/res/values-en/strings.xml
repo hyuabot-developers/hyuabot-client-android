@@ -9,6 +9,7 @@
     <string name="bus">Bus</string>
     <string name="tabbar_bus">Bus</string>
     <string name="tabbar_more">More</string>
+    <string name="tabbar_campus">Campus</string>
     <!-- Home -->
     <string name="home_hero_title">Only what you need now</string>
     <string name="home_hero_subtitle">See information that fits the moment, from transit to meals.</string>
@@ -396,6 +397,17 @@
     <string name="menu_section_support">Support and settings</string>
     <string name="menu_section_external">External links</string>
     <string name="menu_map">Campus Map</string>
+    <string name="campus_tools_title">Campus tools</string>
+    <string name="campus_tools_subtitle">Quickly find the campus services you need.</string>
+    <string name="campus_map_title">Campus Map</string>
+    <string name="campus_map_subtitle">Find buildings and classrooms</string>
+    <string name="campus_reading_room_title">Reading Room</string>
+    <string name="campus_reading_room_subtitle">Check seats and vacancy alerts</string>
+    <string name="campus_calendar_title">Academic Calendar</string>
+    <string name="campus_calendar_subtitle">View important academic dates</string>
+    <string name="campus_contact_title">Campus Contacts</string>
+    <string name="campus_contact_subtitle">Find campus offices and phone numbers</string>
+    <string name="campus_support_title">Support and settings</string>
     <string name="map_search_guide">Enter a room to search</string>
     <string name="map_external_error">No app is available to open the map.</string>
     <string name="map_current_location">Current location</string>

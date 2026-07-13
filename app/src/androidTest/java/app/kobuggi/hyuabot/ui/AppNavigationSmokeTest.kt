@@ -91,7 +91,7 @@ class AppNavigationSmokeTest {
             onView(withId(R.id.date_picker_layout)).check(matches(isDisplayed()))
 
             selectBottomTab(R.id.menuFragment)
-            onView(withId(R.id.menu_recycler_view)).check(matches(isDisplayed()))
+            onView(withId(R.id.campus_tools_grid)).check(matches(isDisplayed()))
         }
     }
 
@@ -116,15 +116,19 @@ class AppNavigationSmokeTest {
     @Test
     fun menuDestinationsRender() {
         ActivityScenario.launch(MainActivity::class.java).use {
-            openMenuDestination(R.string.menu_book)
+            openCampusTool(R.id.campus_map_card)
+            onView(withId(R.id.search_bar)).check(matches(isDisplayed()))
+
+            selectBottomTab(R.id.menuFragment)
+            openCampusTool(R.id.campus_reading_room_card)
             onView(withId(R.id.reading_room_swipe_refresh_layout)).check(matches(isDisplayed()))
 
             selectBottomTab(R.id.menuFragment)
-            openMenuDestination(R.string.menu_contact)
+            openCampusTool(R.id.campus_contact_card)
             onView(withId(R.id.contact_list_view)).check(matches(isDisplayed()))
 
             selectBottomTab(R.id.menuFragment)
-            openMenuDestination(R.string.menu_calendar)
+            openCampusTool(R.id.campus_calendar_card)
             onView(withId(R.id.calendar_timeline_view)).check(matches(isDisplayed()))
 
             selectBottomTab(R.id.menuFragment)
@@ -158,5 +162,10 @@ class AppNavigationSmokeTest {
                 click(),
             ),
         )
+    }
+
+    private fun openCampusTool(cardId: Int) {
+        selectBottomTab(R.id.menuFragment)
+        onView(withId(cardId)).perform(click())
     }
 }

@@ -65,6 +65,7 @@ enum class AnalyticsScreen(val id: String) {
 
     // Android-only screens
     MENU("menu"),                       // bottom-nav "more" hub
+    CAMPUS("campus"),
     NOTICE("notice"),                   // notice list
     SETTING_CAMPUS("setting_campus"),   // campus picker dialog
     SETTING_THEME("setting_theme"),     // theme picker dialog
@@ -91,6 +92,7 @@ enum class AnalyticsItem(val id: String) {
     TAB_SUBWAY("tab_subway"),
     TAB_CAFETERIA("tab_cafeteria"),
     TAB_MENU("tab_menu"), // Android 5th tab
+    TAB_CAMPUS("tab_campus"),
 
     // Home
     HOME_TRY("home_try"),
@@ -144,6 +146,7 @@ enum class AnalyticsItem(val id: String) {
     // Notice (Android-only)
     NOTICE_OPEN("notice_open"),
     MENU_SELECT_ROW("menu_select_row"),
+    CAMPUS_SELECT_TOOL("campus_select_tool"),
 
     // Birthday dialog
     BIRTHDAY_DO_NOT_SHOW("birthday_do_not_show"),
