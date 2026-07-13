@@ -218,12 +218,28 @@ class HomeFragment : Fragment() {
 
     private fun setupDestinationButtons() {
         binding.destinationGroup.clearOnButtonCheckedListeners()
-        binding.destinationGroup.removeAllViews()
+        ensureDestinationButtons()
+        HomeDestination.entries.forEach { destination ->
+            binding.destinationGroup.findViewById<View>(destination.buttonIdRes).visibility =
+                if (destination in selectedDeparture.destinations) View.VISIBLE else View.GONE
+        }
+        binding.destinationGroup.check(selectedDestination.buttonIdRes)
+        binding.destinationGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            val destination = group.findViewById<View>(checkedId)?.tag as? HomeDestination ?: return@addOnButtonCheckedListener
+            selectedDestination = destination
+            render(viewModel.data.value)
+        }
+    }
+
+    private fun ensureDestinationButtons() {
+        if (binding.destinationGroup.childCount > 0) return
+
         val buttonContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_SegmentedButton)
         val textColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_text)
         val backgroundColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_background)
         val strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_stroke)
-        selectedDeparture.destinations.forEach { destination ->
+        HomeDestination.entries.forEach { destination ->
             val button = MaterialButton(buttonContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
                 id = destination.buttonIdRes
                 text = getString(destination.titleRes)
@@ -243,13 +259,6 @@ class HomeFragment : Fragment() {
                 tag = destination
             }
             binding.destinationGroup.addView(button)
-            if (destination == selectedDestination) binding.destinationGroup.check(button.id)
-        }
-        binding.destinationGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-            val destination = group.findViewById<View>(checkedId)?.tag as? HomeDestination ?: return@addOnButtonCheckedListener
-            selectedDestination = destination
-            render(viewModel.data.value)
         }
     }
 

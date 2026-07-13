@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -25,8 +26,10 @@ import androidx.test.rule.GrantPermissionRule
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.service.preferences.userDataStore
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.button.MaterialButtonToggleGroup
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matcher
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -89,6 +92,24 @@ class AppNavigationSmokeTest {
 
             selectBottomTab(R.id.menuFragment)
             onView(withId(R.id.menu_recycler_view)).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun homeDestinationGroupKeepsStableChildren() {
+        val intent = Intent(context, MainActivity::class.java)
+            .putExtra("homeDebugDeparture", "terminal")
+
+        ActivityScenario.launch<MainActivity>(intent).use { scenario ->
+            scenario.onActivity { activity ->
+                val group = activity.findViewById<MaterialButtonToggleGroup>(R.id.destination_group)
+                val visibleChildCount = (0 until group.childCount).count { index ->
+                    group.getChildAt(index).visibility == View.VISIBLE
+                }
+
+                assertEquals(4, group.childCount)
+                assertEquals(1, visibleChildCount)
+            }
         }
     }
 
