@@ -8,4 +8,7 @@
     <string name="stop_jungang">중앙역</string>
     <string name="no_scheduled_shuttle">도착 예정인\n셔틀이 없습니다.</string>
     <string name="shuttle_service_ended">운행 종료</string>
+    <string name="finding_nearest_stop">가까운 정류장을 찾고 있습니다</string>
+    <string name="nearest_stop">가장 가까운 정류장</string>
+    <string name="other_stops">다른 정류장 보기</string>
 </resources>

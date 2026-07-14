@@ -12,6 +12,7 @@ class NavigationUtils {
         @Composable
         fun NavigationStack(
             startRoute: String = Screen.Main.route,
+            nearestStopID: String? = null,
             onStopSelected: (String) -> Unit = {},
         ) {
             val navController = rememberNavController()
@@ -30,7 +31,18 @@ class NavigationUtils {
                 ) {
                     val stopID = it.arguments?.getString("stopID")
                     if (stopID != null) {
-                        MainActivity.DepartureListScreen(stopID)
+                        MainActivity.DepartureListScreen(
+                            stopID = stopID,
+                            isNearest = stopID == nearestStopID,
+                            onShowOtherStops = {
+                                navController.navigate(Screen.Main.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                }
+                            },
+                        )
                     }
                 }
             }

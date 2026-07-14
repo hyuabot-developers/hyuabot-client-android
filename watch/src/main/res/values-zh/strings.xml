@@ -8,4 +8,7 @@
     <string name="stop_jungang">中央站</string>
     <string name="no_scheduled_shuttle">暂无预定\n校车。</string>
     <string name="shuttle_service_ended">运行结束</string>
+    <string name="finding_nearest_stop">正在查找最近的车站</string>
+    <string name="nearest_stop">最近的车站</string>
+    <string name="other_stops">查看其他车站</string>
 </resources>
