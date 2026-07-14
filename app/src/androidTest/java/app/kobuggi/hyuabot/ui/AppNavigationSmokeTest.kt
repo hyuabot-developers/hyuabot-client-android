@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -25,8 +26,10 @@ import androidx.test.rule.GrantPermissionRule
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.service.preferences.userDataStore
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.button.MaterialButtonToggleGroup
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matcher
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -88,22 +91,44 @@ class AppNavigationSmokeTest {
             onView(withId(R.id.date_picker_layout)).check(matches(isDisplayed()))
 
             selectBottomTab(R.id.menuFragment)
-            onView(withId(R.id.menu_recycler_view)).check(matches(isDisplayed()))
+            onView(withId(R.id.campus_tools_grid)).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun homeDestinationGroupKeepsStableChildren() {
+        val intent = Intent(context, MainActivity::class.java)
+            .putExtra("homeDebugDeparture", "terminal")
+
+        ActivityScenario.launch<MainActivity>(intent).use { scenario ->
+            scenario.onActivity { activity ->
+                val group = activity.findViewById<MaterialButtonToggleGroup>(R.id.destination_group)
+                val visibleChildCount = (0 until group.childCount).count { index ->
+                    group.getChildAt(index).visibility == View.VISIBLE
+                }
+
+                assertEquals(4, group.childCount)
+                assertEquals(1, visibleChildCount)
+            }
         }
     }
 
     @Test
     fun menuDestinationsRender() {
         ActivityScenario.launch(MainActivity::class.java).use {
-            openMenuDestination(R.string.menu_book)
+            openCampusTool(R.id.campus_map_card)
+            onView(withId(R.id.search_bar)).check(matches(isDisplayed()))
+
+            selectBottomTab(R.id.menuFragment)
+            openCampusTool(R.id.campus_reading_room_card)
             onView(withId(R.id.reading_room_swipe_refresh_layout)).check(matches(isDisplayed()))
 
             selectBottomTab(R.id.menuFragment)
-            openMenuDestination(R.string.menu_contact)
+            openCampusTool(R.id.campus_contact_card)
             onView(withId(R.id.contact_list_view)).check(matches(isDisplayed()))
 
             selectBottomTab(R.id.menuFragment)
-            openMenuDestination(R.string.menu_calendar)
+            openCampusTool(R.id.campus_calendar_card)
             onView(withId(R.id.calendar_timeline_view)).check(matches(isDisplayed()))
 
             selectBottomTab(R.id.menuFragment)
@@ -137,5 +162,10 @@ class AppNavigationSmokeTest {
                 click(),
             ),
         )
+    }
+
+    private fun openCampusTool(cardId: Int) {
+        selectBottomTab(R.id.menuFragment)
+        onView(withId(cardId)).perform(click())
     }
 }

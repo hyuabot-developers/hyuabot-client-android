@@ -25,6 +25,9 @@ import com.google.firebase.analytics.logEvent
 
 /** Every user-visible screen. [id] == GA4 `screen_name` (shared with iOS). */
 enum class AnalyticsScreen(val id: String) {
+    // Home
+    HOME("home"),
+
     // Shuttle
     SHUTTLE_REALTIME("shuttle_realtime"),
     SHUTTLE_TIMETABLE("shuttle_timetable"),
@@ -62,6 +65,7 @@ enum class AnalyticsScreen(val id: String) {
 
     // Android-only screens
     MENU("menu"),                       // bottom-nav "more" hub
+    CAMPUS("campus"),
     NOTICE("notice"),                   // notice list
     SETTING_CAMPUS("setting_campus"),   // campus picker dialog
     SETTING_THEME("setting_theme"),     // theme picker dialog
@@ -79,14 +83,35 @@ enum class AnalyticsContentType(val id: String) {
     DATE_CONTROL("date_control"),
 }
 
+/** Event-scoped parameters registered as GA4 custom dimensions. */
+object AnalyticsParameter {
+    const val SCHEMA_VERSION = "analytics_schema_version"
+    const val ELEMENT_ID = "element_id"
+    const val ELEMENT_TYPE = "element_type"
+    const val DESTINATION_ID = "destination_id"
+}
+
+const val ANALYTICS_SCHEMA_VERSION = "2"
+
 /** Every tappable element. [id] == GA4 `item_id` (shared with iOS). */
 enum class AnalyticsItem(val id: String) {
     // Tab bar (bottom navigation)
+    TAB_HOME("tab_home"),
     TAB_SHUTTLE("tab_shuttle"),
     TAB_BUS("tab_bus"),
     TAB_SUBWAY("tab_subway"),
     TAB_CAFETERIA("tab_cafeteria"),
     TAB_MENU("tab_menu"), // Android 5th tab
+    TAB_CAMPUS("tab_campus"),
+
+    // Home
+    HOME_TRY("home_try"),
+    HOME_DISMISS_PROMPT("home_dismiss_prompt"),
+    HOME_OPEN_LEGACY_SHUTTLE("home_open_legacy_shuttle"),
+    HOME_OPEN_SHUTTLE_DETAIL("home_open_shuttle_detail"),
+    HOME_OPEN_CAFETERIA("home_open_cafeteria"),
+    HOME_REFRESH("home_refresh"),
+    HOME_SELECT_DESTINATION("home_select_destination"),
 
     // Shuttle
     SHUTTLE_OPEN_HELP("shuttle_open_help"),
@@ -131,6 +156,7 @@ enum class AnalyticsItem(val id: String) {
     // Notice (Android-only)
     NOTICE_OPEN("notice_open"),
     MENU_SELECT_ROW("menu_select_row"),
+    CAMPUS_SELECT_TOOL("campus_select_tool"),
 
     // Birthday dialog
     BIRTHDAY_DO_NOT_SHOW("birthday_do_not_show"),
@@ -140,12 +166,25 @@ enum class AnalyticsItem(val id: String) {
 /** Thin wrapper over Firebase Analytics. The only place that calls `logEvent`. */
 object AnalyticsManager {
     private val analytics: FirebaseAnalytics by lazy { Firebase.analytics }
+    private val collectionGate = AnalyticsCollectionGate()
+
+    /**
+     * Applies the user's collection preference and flushes events that arrived
+     * while DataStore was still loading the preference at app startup.
+     */
+    fun setCollectionEnabled(enabled: Boolean) {
+        analytics.setAnalyticsCollectionEnabled(enabled)
+        collectionGate.setEnabled(enabled)
+    }
 
     /** Logs a GA4 `screen_view` event. */
     fun logScreen(screen: AnalyticsScreen, screenClass: String? = null) {
-        analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            param(FirebaseAnalytics.Param.SCREEN_NAME, screen.id)
-            screenClass?.let { param(FirebaseAnalytics.Param.SCREEN_CLASS, it) }
+        collectionGate.runWhenEnabled {
+            analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+                param(FirebaseAnalytics.Param.SCREEN_NAME, screen.id)
+                screenClass?.let { param(FirebaseAnalytics.Param.SCREEN_CLASS, it) }
+                param(AnalyticsParameter.SCHEMA_VERSION, ANALYTICS_SCHEMA_VERSION)
+            }
         }
     }
 
@@ -156,16 +195,66 @@ object AnalyticsManager {
      * @param type the kind of element (becomes `content_type`).
      * @param name optional contextual label (becomes `item_name`), e.g. the
      *   selected stop, contact name, building name, campus, or theme.
+     * @param destinationId optional low-cardinality destination identifier for
+     *   funnel analysis. Unlike [name], this value is reportable in GA4.
      */
     fun logSelect(
         item: AnalyticsItem,
         type: AnalyticsContentType = AnalyticsContentType.BUTTON,
         name: String? = null,
+        destinationId: String? = null,
     ) {
-        analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT) {
-            param(FirebaseAnalytics.Param.CONTENT_TYPE, type.id)
-            param(FirebaseAnalytics.Param.ITEM_ID, item.id)
-            name?.let { param(FirebaseAnalytics.Param.ITEM_NAME, it) }
+        val parameters = selectionParameters(item, type, name, destinationId)
+        collectionGate.runWhenEnabled {
+            analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT) {
+                parameters.forEach { (key, value) -> param(key, value) }
+            }
         }
+    }
+}
+
+internal fun selectionParameters(
+    item: AnalyticsItem,
+    type: AnalyticsContentType,
+    name: String?,
+    destinationId: String?,
+): Map<String, String> = buildMap {
+    put(FirebaseAnalytics.Param.CONTENT_TYPE, type.id)
+    put(FirebaseAnalytics.Param.ITEM_ID, item.id)
+    name?.let { put(FirebaseAnalytics.Param.ITEM_NAME, it) }
+    put(AnalyticsParameter.SCHEMA_VERSION, ANALYTICS_SCHEMA_VERSION)
+    put(AnalyticsParameter.ELEMENT_ID, item.id)
+    put(AnalyticsParameter.ELEMENT_TYPE, type.id)
+    destinationId?.let { put(AnalyticsParameter.DESTINATION_ID, it) }
+}
+
+/** Thread-safe startup gate for consent-aware Analytics events. */
+internal class AnalyticsCollectionGate {
+    private val lock = Any()
+    private var enabled: Boolean? = null
+    private val pendingEvents = mutableListOf<() -> Unit>()
+
+    fun setEnabled(isEnabled: Boolean) {
+        val eventsToRun = synchronized(lock) {
+            enabled = isEnabled
+            val pending = if (isEnabled) pendingEvents.toList() else emptyList()
+            pendingEvents.clear()
+            pending
+        }
+        eventsToRun.forEach { it() }
+    }
+
+    fun runWhenEnabled(event: () -> Unit) {
+        val shouldRun = synchronized(lock) {
+            when (enabled) {
+                true -> true
+                false -> false
+                null -> {
+                    pendingEvents += event
+                    false
+                }
+            }
+        }
+        if (shouldRun) event()
     }
 }

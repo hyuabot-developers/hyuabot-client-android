@@ -49,7 +49,7 @@ class TransitTimelineView @JvmOverloads constructor(
         color = android.graphics.Color.WHITE
     }
     private val bubbleFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = android.graphics.Color.WHITE
+        color = ContextCompat.getColor(context, R.color.dialog_background)
         style = Paint.Style.FILL
     }
     private val bubbleStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {

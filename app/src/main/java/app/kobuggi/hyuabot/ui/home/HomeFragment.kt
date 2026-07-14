@@ -36,6 +36,9 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentHomeBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.localizedSubwayStationName
 import app.kobuggi.hyuabot.util.setSkeletonLoading
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -83,10 +86,12 @@ class HomeFragment : Fragment() {
         binding.dateText.text = DateFormat.getDateInstance(DateFormat.FULL).format(Date())
         setupDestinationButtons()
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
+            AnalyticsManager.logSelect(AnalyticsItem.HOME_REFRESH)
             refreshHome()
         }
         binding.homeSwipeRefreshLayout.setColorSchemeResources(R.color.hanyang_blue)
         binding.movementDetail.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_SHUTTLE_DETAIL)
             findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
         }
         binding.legacyShuttleButton.setOnClickListener {
@@ -98,6 +103,7 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner,
         ) { _, result ->
             if (result.getBoolean(HomeQuickSettingsDialog.KEY_OPEN_LEGACY_SHUTTLE, false)) {
+                AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_LEGACY_SHUTTLE)
                 findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
             }
             if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_BUS50_TRANSFER)) {
@@ -114,6 +120,7 @@ class HomeFragment : Fragment() {
             }
         }
         binding.mealDetail.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_CAFETERIA)
             val args = Bundle().apply {
                 putString("tab", activeMealPeriod().tab)
             }
@@ -218,12 +225,34 @@ class HomeFragment : Fragment() {
 
     private fun setupDestinationButtons() {
         binding.destinationGroup.clearOnButtonCheckedListeners()
-        binding.destinationGroup.removeAllViews()
+        ensureDestinationButtons()
+        HomeDestination.entries.forEach { destination ->
+            binding.destinationGroup.findViewById<View>(destination.buttonIdRes).visibility =
+                if (destination in selectedDeparture.destinations) View.VISIBLE else View.GONE
+        }
+        binding.destinationGroup.check(selectedDestination.buttonIdRes)
+        binding.destinationGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            val destination = group.findViewById<View>(checkedId)?.tag as? HomeDestination ?: return@addOnButtonCheckedListener
+            selectedDestination = destination
+            AnalyticsManager.logSelect(
+                AnalyticsItem.HOME_SELECT_DESTINATION,
+                type = AnalyticsContentType.TAB,
+                name = destination.debugValue,
+                destinationId = destination.debugValue,
+            )
+            render(viewModel.data.value)
+        }
+    }
+
+    private fun ensureDestinationButtons() {
+        if (binding.destinationGroup.childCount > 0) return
+
         val buttonContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_SegmentedButton)
         val textColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_text)
         val backgroundColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_background)
         val strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_stroke)
-        selectedDeparture.destinations.forEach { destination ->
+        HomeDestination.entries.forEach { destination ->
             val button = MaterialButton(buttonContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
                 id = destination.buttonIdRes
                 text = getString(destination.titleRes)
@@ -243,13 +272,6 @@ class HomeFragment : Fragment() {
                 tag = destination
             }
             binding.destinationGroup.addView(button)
-            if (destination == selectedDestination) binding.destinationGroup.check(button.id)
-        }
-        binding.destinationGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-            val destination = group.findViewById<View>(checkedId)?.tag as? HomeDestination ?: return@addOnButtonCheckedListener
-            selectedDestination = destination
-            render(viewModel.data.value)
         }
     }
 

@@ -25,6 +25,7 @@ class MainViewModel(private val apolloClient: ApolloClient, private val stopID: 
     private val _thirdItem = MutableLiveData<ShuttleRealtimePageQuery.Entry?>(null)
     private val _fourthItem = MutableLiveData<ShuttleRealtimePageQuery.Entry?>(null)
     private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Entry>>(emptyList())
+    private val _isLoading = MutableLiveData(true)
     private val _disposable = CompositeDisposable()
 
     val firstItem: LiveData<ShuttleRealtimePageQuery.Entry?> get() = _firstItem
@@ -32,24 +33,26 @@ class MainViewModel(private val apolloClient: ApolloClient, private val stopID: 
     val thirdItem: LiveData<ShuttleRealtimePageQuery.Entry?> get() = _thirdItem
     val fourthItem: LiveData<ShuttleRealtimePageQuery.Entry?> get() = _fourthItem
     val result: LiveData<List<ShuttleRealtimePageQuery.Entry>> get() = _result
+    val isLoading: LiveData<Boolean> get() = _isLoading
 
     private fun fetchData() {
         val now = LocalDateTime.now()
         viewModelScope.launch {
-            val response = apolloClient.query(ShuttleRealtimePageQuery(
-                stops = getStop().map {
-                    ShuttleStopInput(
-                        name = it,
-                        limit = ShuttleLimitInput(
-                            destination = Optional.present(1),
+            try {
+                val response = apolloClient.query(ShuttleRealtimePageQuery(
+                    stops = getStop().map {
+                        ShuttleStopInput(
+                            name = it,
+                            limit = ShuttleLimitInput(
+                                destination = Optional.present(1),
+                            )
                         )
-                    )
-                },
-                after = Optional.present(now.toLocalTime())
-            )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
-            response.data?.shuttle?.stops.let { stops ->
-                if (stops == null) return@let
-                when (stopID) {
+                    },
+                    after = Optional.present(now.toLocalTime())
+                )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                response.data?.shuttle?.stops.let { stops ->
+                    if (stops == null) return@let
+                    when (stopID) {
                     "dormitory" -> {
                         val stop = stops.first { it.name == "dormitory_o" }
                         stop.timetable.destination.let { timetableByDestination ->
@@ -102,7 +105,12 @@ class MainViewModel(private val apolloClient: ApolloClient, private val stopID: 
                             _result.value = timetableByDestination.first { it.destination == "CAMPUS" }.entries
                         }
                     }
+                    }
                 }
+            } catch (error: Exception) {
+                error.printStackTrace()
+            } finally {
+                _isLoading.value = false
             }
         }
     }

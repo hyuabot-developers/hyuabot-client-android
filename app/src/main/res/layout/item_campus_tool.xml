@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tool_card"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minHeight="148dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:screenReaderFocusable="true"
+    app:cardBackgroundColor="@color/home_row_background"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/app_separator"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="start"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/tool_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_campus_tool_icon"
+            android:importantForAccessibility="no"
+            android:padding="9dp"
+            app:tint="@color/campus_icon_tint"
+            tools:src="@drawable/ic_map" />
+
+        <TextView
+            android:id="@+id/tool_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:importantForAccessibility="no"
+            android:maxLines="2"
+            android:textColor="@color/primary_text"
+            android:textFontWeight="700"
+            android:textSize="16sp"
+            tools:text="Campus Map" />
+
+        <TextView
+            android:id="@+id/tool_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:importantForAccessibility="no"
+            android:maxLines="3"
+            android:textColor="@color/secondary_text"
+            android:textSize="13sp"
+            tools:text="Find buildings and classrooms" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

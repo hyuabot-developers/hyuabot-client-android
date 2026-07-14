@@ -37,6 +37,7 @@ import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.AnalyticsScreen
+import app.kobuggi.hyuabot.util.AnalyticsScreenDispatcher
 import app.kobuggi.hyuabot.util.InAppReviewManager
 import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import app.kobuggi.hyuabot.widget.ShuttleWidgetProvider
@@ -47,9 +48,6 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import androidx.core.content.edit
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.analytics
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedListener, NavigationBarView.OnItemSelectedListener, DialogInterface.OnDismissListener {
@@ -59,7 +57,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragment.id)!! as NavHostFragment
         navHostFragment.navController
     }
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private val analyticsScreenDispatcher = AnalyticsScreenDispatcher {
+        AnalyticsManager.logScreen(it, it.id)
+    }
 
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager
@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         applyStatusBarStyle()
-        firebaseAnalytics = Firebase.analytics
         binding.bottomNavigation.apply {
             populateBottomNavigationMenu()
             setupWithNavController(navController)
@@ -82,7 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         navController.addOnDestinationChangedListener { _, destination, _ ->
             updatePrimaryNavigationItem(destination.id)
             screenForDestination(destination.id)?.let {
-                AnalyticsManager.logScreen(it, destination.label?.toString())
+                analyticsScreenDispatcher.onDestinationChanged(it)
             }
         }
         viewModel.theme.observe(this) {
@@ -100,13 +99,23 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         navController.handleDeepLink(intent)
     }
 
+    override fun onPostResume() {
+        super.onPostResume()
+        analyticsScreenDispatcher.onResumed()
+    }
+
+    override fun onPause() {
+        analyticsScreenDispatcher.onPaused()
+        super.onPause()
+    }
+
     private fun NavigationBarView.populateBottomNavigationMenu() {
         if (menu.size() > 0) return
         menu.add(0, R.id.homeFragment, 0, R.string.home).setIcon(R.drawable.ic_home)
         menu.add(0, R.id.busRealtimeFragment, 1, R.string.bus).setIcon(R.drawable.ic_bus)
         menu.add(0, R.id.subwayRealtimeFragment, 2, R.string.subway).setIcon(R.drawable.ic_subway)
         menu.add(0, R.id.cafeteriaFragment, 3, R.string.cafeteria).setIcon(R.drawable.ic_cafeteria)
-        menu.add(0, R.id.menuFragment, 4, R.string.menu).setIcon(R.drawable.ic_more)
+        menu.add(0, R.id.menuFragment, 4, R.string.tabbar_campus).setIcon(R.drawable.ic_campus)
     }
 
     private fun applyStatusBarStyle() {
@@ -147,7 +156,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)?.title = getString(R.string.tabbar_bus)
         binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)?.title = getString(R.string.subway)
         binding.bottomNavigation.menu.findItem(R.id.cafeteriaFragment)?.title = getString(R.string.cafeteria)
-        binding.bottomNavigation.menu.findItem(R.id.menuFragment)?.title = getString(R.string.tabbar_more)
+        binding.bottomNavigation.menu.findItem(R.id.menuFragment)?.title = getString(R.string.tabbar_campus)
     }
 
     private fun updatePrimaryNavigationItem(destinationId: Int?) {
@@ -327,7 +336,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     /** Maps a nav-graph destination id to its analytics screen (null = not tracked as a screen). */
     private fun screenForDestination(destinationId: Int): AnalyticsScreen? = when (destinationId) {
-        R.id.homeFragment -> AnalyticsScreen.SHUTTLE_REALTIME
+        R.id.homeFragment -> AnalyticsScreen.HOME
         R.id.shuttleRealtimeFragment -> AnalyticsScreen.SHUTTLE_REALTIME
         R.id.shuttleTimetableFragment -> AnalyticsScreen.SHUTTLE_TIMETABLE
         R.id.shuttleStopDialogFragment -> AnalyticsScreen.SHUTTLE_STOP_INFO
@@ -349,7 +358,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.noticeWebViewFragment -> AnalyticsScreen.WEB_VIEW
         R.id.contactFragment -> AnalyticsScreen.CONTACT
         R.id.calendarFragment -> AnalyticsScreen.CALENDAR
-        R.id.menuFragment -> AnalyticsScreen.MENU
+        R.id.menuFragment -> AnalyticsScreen.CAMPUS
         R.id.languageSettingDialogFragment -> AnalyticsScreen.SETTING_LANGUAGE
         R.id.campusSettingDialogFragment -> AnalyticsScreen.SETTING_CAMPUS
         R.id.themeSettingDialogFragment -> AnalyticsScreen.SETTING_THEME
@@ -359,15 +368,18 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     /** Maps a bottom-navigation item id to its analytics tab item. */
     private fun tabItemForDestination(destinationId: Int): AnalyticsItem? = when (destinationId) {
-        R.id.homeFragment -> AnalyticsItem.TAB_SHUTTLE
+        R.id.homeFragment -> AnalyticsItem.TAB_HOME
         R.id.busRealtimeFragment -> AnalyticsItem.TAB_BUS
         R.id.subwayRealtimeFragment -> AnalyticsItem.TAB_SUBWAY
         R.id.cafeteriaFragment -> AnalyticsItem.TAB_CAFETERIA
-        R.id.menuFragment -> AnalyticsItem.TAB_MENU
+        R.id.menuFragment -> AnalyticsItem.TAB_CAMPUS
         else -> null
     }
 
     override fun onNavigationItemReselected(item: MenuItem) {
+        tabItemForDestination(item.itemId)?.let {
+            AnalyticsManager.logSelect(it, AnalyticsContentType.TAB)
+        }
         val reselectedDestinationId = item.itemId
         navController.popBackStack(reselectedDestinationId, false)
     }

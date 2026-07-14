@@ -5,7 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
-import com.google.firebase.analytics.FirebaseAnalytics
+import app.kobuggi.hyuabot.util.AnalyticsManager
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -31,7 +31,7 @@ class GlobalApplication : Application() {
         createNotificationChannels()
         applicationScope.launch {
             val enabled = userPreferencesRepository.analyticsConsent.first()
-            FirebaseAnalytics.getInstance(applicationContext).setAnalyticsCollectionEnabled(enabled)
+            AnalyticsManager.setCollectionEnabled(enabled)
             FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = enabled
         }
     }

@@ -10,11 +10,15 @@ import androidx.navigation.navArgument
 class NavigationUtils {
     companion object {
         @Composable
-        fun NavigationStack(startRoute: String = Screen.Main.route) {
+        fun NavigationStack(
+            startRoute: String = Screen.Main.route,
+            nearestStopID: String? = null,
+            onStopSelected: (String) -> Unit = {},
+        ) {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = startRoute) {
                 composable(Screen.Main.route) {
-                    MainActivity.MainScreen(navController)
+                    MainActivity.MainScreen(navController, onStopSelected)
                 }
                 composable(
                     route = Screen.Detail.route + "/{stopID}",
@@ -27,7 +31,18 @@ class NavigationUtils {
                 ) {
                     val stopID = it.arguments?.getString("stopID")
                     if (stopID != null) {
-                        MainActivity.DepartureListScreen(stopID)
+                        MainActivity.DepartureListScreen(
+                            stopID = stopID,
+                            isNearest = stopID == nearestStopID,
+                            onShowOtherStops = {
+                                navController.navigate(Screen.Main.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                }
+                            },
+                        )
                     }
                 }
             }

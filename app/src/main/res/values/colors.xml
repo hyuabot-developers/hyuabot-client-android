@@ -32,6 +32,8 @@
     <color name="bottom_navigation_selected">#005BAA</color>
     <color name="bottom_navigation_unselected">#202124</color>
     <color name="plain_button_text">#0E4A84</color>
+    <color name="campus_icon_background">#E4EFF8</color>
+    <color name="campus_icon_tint">#0E4A84</color>
     <color name="app_separator">#C6C6C8</color>
     <color name="app_selection_background">#E5E5EA</color>
     <color name="skeleton_placeholder">#E0E0E0</color>
