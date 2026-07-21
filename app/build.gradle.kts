@@ -51,7 +51,6 @@ android {
         versionCode = 519000000
         versionName = "5.1.9"
         signingConfig = signingConfigs.getByName("config")
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAP_CLIENT_ID"] = props["MAP_CLIENT_ID"]?.toString() ?: ""
     }
 
@@ -122,10 +121,6 @@ dependencies {
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.test.rules)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.espresso.contrib)
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
