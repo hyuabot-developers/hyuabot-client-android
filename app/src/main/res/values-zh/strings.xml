@@ -432,6 +432,10 @@
     <string name="language_japanese">日本語</string>
     <string name="language_chinese">中文（简体）</string>
     <string name="about">应用信息</string>
+    <string name="privacy_policy">隐私政策</string>
+    <string name="privacy_policy_description">了解所收集的信息及其用途。</string>
+    <string name="open_source_licenses">开源许可</string>
+    <string name="open_source_licenses_description">查看本应用使用的开源软件。</string>
     <string name="developer_name">开发者: 李正仁</string>
     <string name="developer_belong">所属: 软件学院 17届</string>
     <string name="contact_loading">正在加载联系方式列表…</string>

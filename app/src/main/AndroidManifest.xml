@@ -39,6 +39,10 @@
         android:name=".GlobalApplication"
         android:localeConfig="@xml/locale_config"
         tools:ignore="UnusedAttribute">
+        <activity
+            android:name="com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity"
+            android:theme="@style/Theme.HYUabot"
+            tools:replace="android:theme" />
         <receiver
             android:name=".service.alarm.AlarmReceiver"
             android:enabled="true"

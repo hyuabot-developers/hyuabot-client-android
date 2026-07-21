@@ -192,6 +192,9 @@
         <action
             android:id="@+id/action_settingFragment_to_settingDeveloperDialogFragment"
             app:destination="@id/settingDeveloperDialogFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_noticeWebViewFragment"
+            app:destination="@id/noticeWebViewFragment" />
     </fragment>
     <dialog
         android:id="@+id/noticeWebViewFragment"
@@ -202,6 +205,11 @@
             android:name="url"
             app:argType="string"
             android:defaultValue="https://www.hanyang.ac.kr/web/www/research" />
+        <argument
+            android:name="title"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
     </dialog>
     <fragment
         android:id="@+id/contactFragment"

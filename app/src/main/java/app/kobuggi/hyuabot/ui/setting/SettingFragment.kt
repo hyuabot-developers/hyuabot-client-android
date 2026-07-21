@@ -4,6 +4,7 @@ import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,6 +47,14 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
             settingLanguage.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "language"); openLanguageDialog() }
             settingTheme.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "theme"); openThemeDialog() }
             appInfo.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "info"); openInfoDialog() }
+            settingPrivacyPolicy.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "privacy_policy")
+                openPrivacyPolicy()
+            }
+            settingOpenSourceLicenses.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "open_source_licenses")
+                openOpenSourceLicenses()
+            }
             settingCoachmarkReset.setOnClickListener {
                 lifecycleScope.launch {
                     Coachmarks.USER_VISIBLE_KEYS.forEach { userPreferencesRepository.resetCoachmark(it) }
@@ -158,6 +168,20 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
         SettingFragmentDirections.actionSettingFragmentToSettingDeveloperDialogFragment().also {
             findNavController().safeNavigate(it)
         }
+    }
+
+    private fun openPrivacyPolicy() {
+        SettingFragmentDirections.actionSettingFragmentToNoticeWebViewFragment(
+            getString(R.string.privacy_policy_url),
+            getString(R.string.privacy_policy),
+        ).also {
+            findNavController().safeNavigate(it)
+        }
+    }
+
+    private fun openOpenSourceLicenses() {
+        OssLicensesMenuActivity.setActivityTitle(getString(R.string.open_source_licenses))
+        startActivity(Intent(requireContext(), OssLicensesMenuActivity::class.java))
     }
 
     override fun onDismiss(dialogInterface: DialogInterface?) {
