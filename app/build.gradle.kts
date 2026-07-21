@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.googleServicesPlugin)
     alias(libs.plugins.crashlyticsPlugin)
     alias(libs.plugins.kover)
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 val props = Properties()
@@ -179,6 +180,8 @@ dependencies {
     implementation(libs.coreRemoteViews)
     // ML Kit
     implementation(libs.mlkit.translate)
+    // Open source notices
+    implementation(libs.play.services.oss.licenses)
 }
 
 hilt {

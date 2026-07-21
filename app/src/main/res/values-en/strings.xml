@@ -453,6 +453,10 @@
     <string name="language_korean">Korean</string>
     <string name="language_english">English</string>
     <string name="about">App Information</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_description">Learn what information is collected and why.</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="open_source_licenses_description">View the open source software used by the app.</string>
     <string name="developer_name">Developer: Jeongin Lee</string>
     <string name="developer_belong">Department: Software Studies, Class of \'17</string>
     <string name="contact_loading">Loading contacts…</string>

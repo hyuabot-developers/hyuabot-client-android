@@ -432,6 +432,10 @@
     <string name="language_japanese">日本語</string>
     <string name="language_chinese">中文（简体）</string>
     <string name="about">アプリ情報</string>
+    <string name="privacy_policy">プライバシーポリシー</string>
+    <string name="privacy_policy_description">収集する情報と利用目的を確認します。</string>
+    <string name="open_source_licenses">オープンソースライセンス</string>
+    <string name="open_source_licenses_description">アプリで使用しているオープンソースソフトウェアを確認します。</string>
     <string name="developer_name">開発者: イ・ジョンイン</string>
     <string name="developer_belong">所属: ソフトウェア学部 17期</string>
     <string name="contact_loading">連絡先リストを読み込み中…</string>

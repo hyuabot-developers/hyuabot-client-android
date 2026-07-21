@@ -35,6 +35,7 @@ class NoticeWebviewFragment @Inject constructor() : BottomSheetDialogFragment() 
             dismiss()
             true
         }
+        binding.toolbar.title = arguments?.getString("title") ?: getString(app.kobuggi.hyuabot.R.string.menu_notice)
         arguments?.getString("url")?.let { url ->
             binding.noticeWebview.apply {
                 settings.apply {
