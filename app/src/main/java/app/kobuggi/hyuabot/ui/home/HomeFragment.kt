@@ -48,7 +48,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -84,7 +84,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         applyDebugRouteOverride()
-        binding.dateText.text = DateFormat.getDateInstance(DateFormat.FULL).format(Date())
+        binding.dateText.text = formattedToday()
         setupDestinationButtons()
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
             AnalyticsManager.logSelect(AnalyticsItem.HOME_REFRESH)
@@ -373,9 +373,15 @@ class HomeFragment : Fragment() {
     }
 
     private fun refreshHome() {
-        binding.dateText.text = DateFormat.getDateInstance(DateFormat.FULL).format(Date())
+        binding.dateText.text = formattedToday()
         moveToNearestDeparture()
         viewModel.fetchData()
+    }
+
+    private fun formattedToday(): String {
+        val locale = resources.configuration.locales[0]
+        val pattern = android.text.format.DateFormat.getBestDateTimePattern(locale, "MdEEEE")
+        return SimpleDateFormat(pattern, locale).format(Date())
     }
 
     private fun render(data: HomePageQuery.Data?) {

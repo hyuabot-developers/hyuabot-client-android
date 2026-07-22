@@ -240,18 +240,18 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
 
     private fun cafeteriaName(context: Context, seq: Int): String = context.getString(
         when (seq) {
-            1 -> R.string.cafeteria_1
-            2 -> R.string.cafeteria_2
-            4 -> R.string.cafeteria_4
-            6 -> R.string.cafeteria_6
-            7 -> R.string.cafeteria_7
-            8 -> R.string.cafeteria_8
-            11 -> R.string.cafeteria_11
-            12 -> R.string.cafeteria_12
-            13 -> R.string.cafeteria_13
-            14 -> R.string.cafeteria_14
-            15 -> R.string.cafeteria_15
-            else -> R.string.cafeteria_1
+            1 -> R.string.widget_cafeteria_1
+            2 -> R.string.widget_cafeteria_2
+            4 -> R.string.widget_cafeteria_4
+            6 -> R.string.widget_cafeteria_6
+            7 -> R.string.widget_cafeteria_7
+            8 -> R.string.widget_cafeteria_8
+            11 -> R.string.widget_cafeteria_11
+            12 -> R.string.widget_cafeteria_12
+            13 -> R.string.widget_cafeteria_13
+            14 -> R.string.widget_cafeteria_14
+            15 -> R.string.widget_cafeteria_15
+            else -> R.string.widget_cafeteria_1
         }
     )
 }
