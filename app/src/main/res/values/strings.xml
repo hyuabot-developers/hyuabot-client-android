@@ -13,6 +13,15 @@
     <!-- 홈 -->
     <string name="home_hero_title">지금 필요한 것만</string>
     <string name="home_hero_subtitle">이동부터 식사까지, 지금 상황에 맞는 정보를 보여줘요.</string>
+    <string name="home_weather_rain_title">오늘 비 소식이 있어요</string>
+    <string name="home_weather_sleet_title">오늘 비와 눈이 섞여 내려요</string>
+    <string name="home_weather_snow_title">오늘 눈 소식이 있어요</string>
+    <string name="home_weather_hot_title">오늘은 많이 더워요</string>
+    <string name="home_weather_cold_title">오늘은 많이 추워요</string>
+    <string name="home_weather_clear_title">대체로 맑은 하루예요</string>
+    <string name="home_weather_cloudy_title">오늘은 구름이 많아요</string>
+    <string name="home_weather_precipitation_subtitle">강수 확률 %1$d%% · 오늘 %2$.0f°~%3$.0f°</string>
+    <string name="home_weather_temperature_subtitle">현재 %1$.0f° · 오늘 %2$.0f°~%3$.0f°</string>
     <string name="home_movement_title">지금 이동</string>
     <string name="home_movement_detail">셔틀 상세</string>
     <string name="home_cafeteria_detail">학식 보기</string>

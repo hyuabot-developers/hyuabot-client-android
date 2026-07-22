@@ -13,6 +13,15 @@
     <!-- Home -->
     <string name="home_hero_title">Only what you need now</string>
     <string name="home_hero_subtitle">See information that fits the moment, from transit to meals.</string>
+    <string name="home_weather_rain_title">Rain is expected today</string>
+    <string name="home_weather_sleet_title">Rain and snow are expected today</string>
+    <string name="home_weather_snow_title">Snow is expected today</string>
+    <string name="home_weather_hot_title">It will be very hot today</string>
+    <string name="home_weather_cold_title">It will be very cold today</string>
+    <string name="home_weather_clear_title">A mostly clear day</string>
+    <string name="home_weather_cloudy_title">A cloudy day ahead</string>
+    <string name="home_weather_precipitation_subtitle">%1$d%% chance of precipitation · %2$.0f°–%3$.0f° today</string>
+    <string name="home_weather_temperature_subtitle">%1$.0f° now · %2$.0f°–%3$.0f° today</string>
     <string name="home_movement_title">Move now</string>
     <string name="home_movement_detail">Shuttle detail</string>
     <string name="home_cafeteria_detail">Meals</string>

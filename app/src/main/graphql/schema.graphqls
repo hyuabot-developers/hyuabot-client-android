@@ -650,6 +650,8 @@ input PhonebookInput {
 }
 
 type Query {
+  homeWeather: HomeWeather
+
   notices(input: NoticeInput): [NoticeCategory!]!
 
   calendar(input: AcademicCalendarInput): AcademicCalendar!
@@ -671,6 +673,18 @@ type Query {
   shuttle(input: ShuttleInput!): Shuttle!
 
   _service: _Service!
+}
+
+type HomeWeather {
+  issuedAt: DateTime!
+  expiresAt: DateTime!
+  currentTemperature: Float
+  minimumTemperature: Float
+  maximumTemperature: Float
+  precipitationProbabilityMax: Int!
+  precipitationStartAt: DateTime
+  precipitationType: String!
+  primaryCondition: String!
 }
 
 """

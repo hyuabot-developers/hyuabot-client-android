@@ -12,6 +12,15 @@
     <string name="tabbar_campus">キャンパス</string>
     <string name="home_hero_title">今必要なものだけ</string>
     <string name="home_hero_subtitle">移動から食事まで、今の状況に合う情報を表示します。</string>
+    <string name="home_weather_rain_title">今日は雨が降る予報です</string>
+    <string name="home_weather_sleet_title">今日はみぞれの予報です</string>
+    <string name="home_weather_snow_title">今日は雪が降る予報です</string>
+    <string name="home_weather_hot_title">今日はとても暑くなります</string>
+    <string name="home_weather_cold_title">今日はとても寒くなります</string>
+    <string name="home_weather_clear_title">おおむね晴れる一日です</string>
+    <string name="home_weather_cloudy_title">今日は雲の多い一日です</string>
+    <string name="home_weather_precipitation_subtitle">降水確率 %1$d%%・今日 %2$.0f°〜%3$.0f°</string>
+    <string name="home_weather_temperature_subtitle">現在 %1$.0f°・今日 %2$.0f°〜%3$.0f°</string>
     <string name="home_movement_title">今の移動</string>
     <string name="home_movement_detail">シャトル詳細</string>
     <string name="home_cafeteria_detail">学食</string>

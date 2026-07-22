@@ -376,6 +376,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun render(data: HomePageQuery.Data?) {
+        renderWeather(data?.homeWeather)
         binding.routeText.text = getString(
             R.string.home_route_format,
             getString(selectedDeparture.titleRes),
@@ -386,6 +387,54 @@ class HomeFragment : Fragment() {
         binding.mealIcon.setImageResource(mealPeriod.iconRes)
         renderMovement(data)
         renderMeals(data)
+    }
+
+    private fun renderWeather(weather: HomePageQuery.HomeWeather?) {
+        if (weather == null) {
+            binding.homeHeroTitle.setText(R.string.home_hero_title)
+            binding.homeHeroSubtitle.setText(R.string.home_hero_subtitle)
+            binding.homeWeatherIcon.visibility = View.GONE
+            return
+        }
+
+        val maximum = weather.maximumTemperature
+        val minimum = weather.minimumTemperature
+        val current = weather.currentTemperature
+        val condition = weather.primaryCondition
+        val titleRes = when {
+            condition == "RAIN" -> R.string.home_weather_rain_title
+            condition == "SLEET" -> R.string.home_weather_sleet_title
+            condition == "SNOW" -> R.string.home_weather_snow_title
+            maximum != null && maximum >= 32.0 -> R.string.home_weather_hot_title
+            current != null && current <= -5.0 -> R.string.home_weather_cold_title
+            condition == "CLEAR" -> R.string.home_weather_clear_title
+            else -> R.string.home_weather_cloudy_title
+        }
+        val iconRes = when (condition) {
+            "RAIN", "SLEET" -> R.drawable.ic_weather_rain
+            "SNOW" -> R.drawable.ic_weather_snow
+            "CLEAR" -> R.drawable.ic_weather_clear
+            else -> R.drawable.ic_weather_cloud
+        }
+
+        binding.homeHeroTitle.setText(titleRes)
+        binding.homeWeatherIcon.setImageResource(iconRes)
+        binding.homeWeatherIcon.visibility = View.VISIBLE
+        binding.homeHeroSubtitle.text = when {
+            minimum != null && maximum != null && weather.precipitationType != "NONE" -> getString(
+                R.string.home_weather_precipitation_subtitle,
+                weather.precipitationProbabilityMax,
+                minimum,
+                maximum,
+            )
+            current != null && minimum != null && maximum != null -> getString(
+                R.string.home_weather_temperature_subtitle,
+                current,
+                minimum,
+                maximum,
+            )
+            else -> getString(R.string.home_hero_subtitle)
+        }
     }
 
     private fun renderMovement(data: HomePageQuery.Data?) {
