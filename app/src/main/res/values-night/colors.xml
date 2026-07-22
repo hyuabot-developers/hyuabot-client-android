@@ -5,8 +5,9 @@
     <color name="background">#000000</color>
     <color name="home_screen_background">#000000</color>
     <color name="home_card_background">#1C1C1E</color>
+    <color name="home_card_stroke">#38383A</color>
     <color name="dialog_background">#1C1C1E</color>
-    <color name="home_row_background">#1C1C1E</color>
+    <color name="home_row_background">#2C2C2E</color>
     <color name="home_action_button_background">#D9ECFB</color>
     <color name="home_detail_button_text">#FFFFFF</color>
     <color name="home_notice_background">#1C1C1E</color>

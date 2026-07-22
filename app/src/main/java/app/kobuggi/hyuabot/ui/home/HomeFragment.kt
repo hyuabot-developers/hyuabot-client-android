@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.content.res.ColorStateList
 import android.content.pm.PackageManager
 import android.graphics.Typeface
@@ -428,6 +429,9 @@ class HomeFragment : Fragment() {
 
         binding.homeHeroTitle.setText(titleRes)
         binding.homeWeatherIcon.setImageResource(iconRes)
+        binding.homeWeatherIcon.alpha = if (
+            resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        ) 0.42f else 0.22f
         binding.homeWeatherIcon.visibility = View.VISIBLE
         binding.homeHeroSubtitle.text = when {
             minimum != null && maximum != null && weather.precipitationType != "NONE" -> getString(
