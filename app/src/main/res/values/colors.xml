@@ -2,6 +2,7 @@
 <resources>
     <color name="hanyang_blue">#0E4A84</color>
     <color name="hanyang_blue_variant">#B5BED5</color>
+    <color name="home_weather_icon_tint">#0E4A84</color>
     <color name="hanyang_silver">#898C8A</color>
     <color name="hanyang_green">#7DB928</color>
     <color name="hanyang_orange">#F08100</color>
@@ -20,6 +21,8 @@
     <color name="secondary_text">#757575</color>
     <!-- 배경 색상 -->
     <color name="background">#FFFFFF</color>
+    <color name="home_screen_background">#F2F2F7</color>
+    <color name="home_card_background">#FFFFFF</color>
     <color name="dialog_background">#FFFFFF</color>
     <color name="home_row_background">#F6F7F9</color>
     <color name="home_action_button_background">#DBEDF9</color>
