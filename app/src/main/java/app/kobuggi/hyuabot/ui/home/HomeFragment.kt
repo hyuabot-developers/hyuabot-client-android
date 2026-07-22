@@ -24,6 +24,7 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
@@ -92,7 +93,11 @@ class HomeFragment : Fragment() {
         binding.homeSwipeRefreshLayout.setColorSchemeResources(R.color.hanyang_blue)
         binding.movementDetail.setOnClickListener {
             AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_SHUTTLE_DETAIL)
-            findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
+            val route = selectedDeparture.routeTo(selectedDestination)
+            findNavController().navigate(
+                R.id.action_homeFragment_to_shuttleRealtimeFragment,
+                bundleOf("stop" to route.stop, "to" to route.destination),
+            )
         }
         binding.legacyShuttleButton.setOnClickListener {
             openQuickSettings()
