@@ -23,6 +23,7 @@
     <string name="home_weather_temperature_subtitle">現在 %1$.0f°・今日 %2$.0f°〜%3$.0f°</string>
     <string name="home_movement_title">今の移動</string>
     <string name="home_movement_detail">シャトル詳細</string>
+    <string name="home_movement_timetable">全時刻表</string>
     <string name="home_cafeteria_detail">学食</string>
     <string name="home_quick_settings_action_bar_title">ホームの表示を調整できます</string>
     <string name="home_quick_settings_button">ホーム設定</string>

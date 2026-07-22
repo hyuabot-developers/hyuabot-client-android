@@ -109,6 +109,7 @@ enum class AnalyticsItem(val id: String) {
     HOME_DISMISS_PROMPT("home_dismiss_prompt"),
     HOME_OPEN_LEGACY_SHUTTLE("home_open_legacy_shuttle"),
     HOME_OPEN_SHUTTLE_DETAIL("home_open_shuttle_detail"),
+    HOME_OPEN_SHUTTLE_TIMETABLE("home_open_shuttle_timetable"),
     HOME_OPEN_CAFETERIA("home_open_cafeteria"),
     HOME_REFRESH("home_refresh"),
     HOME_SELECT_DESTINATION("home_select_destination"),

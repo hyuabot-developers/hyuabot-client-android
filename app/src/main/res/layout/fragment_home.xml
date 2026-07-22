@@ -137,7 +137,7 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -159,19 +159,16 @@
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
 
-                            <TextView
-                                android:id="@+id/movement_detail"
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/movement_timetable"
+                                style="@style/Widget.App.HomeHeaderButton"
                                 android:layout_width="wrap_content"
-                                android:layout_height="40dp"
-                                android:drawableEnd="@drawable/ic_chevron_right"
-                                android:drawablePadding="2dp"
-                                android:drawableTint="@color/home_detail_button_text"
-                                android:gravity="center"
-                                android:paddingHorizontal="8dp"
-                                android:text="@string/home_movement_detail"
-                                android:textColor="@color/home_detail_button_text"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
+                                android:layout_height="match_parent"
+                                android:text="@string/home_movement_timetable"
+                                app:icon="@drawable/ic_chevron_right"
+                                app:iconGravity="textEnd"
+                                app:iconPadding="2dp"
+                                app:iconTint="@color/home_detail_button_text" />
                         </LinearLayout>
 
                         <TextView
@@ -260,19 +257,16 @@
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/meal_detail"
+                                style="@style/Widget.App.HomeHeaderButton"
                                 android:layout_width="wrap_content"
-                                android:layout_height="40dp"
-                                android:drawableEnd="@drawable/ic_chevron_right"
-                                android:drawablePadding="2dp"
-                                android:drawableTint="@color/home_detail_button_text"
-                                android:gravity="center"
-                                android:paddingHorizontal="8dp"
+                                android:layout_height="48dp"
                                 android:text="@string/home_cafeteria_detail"
-                                android:textColor="@color/home_detail_button_text"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
+                                app:icon="@drawable/ic_chevron_right"
+                                app:iconGravity="textEnd"
+                                app:iconPadding="2dp"
+                                app:iconTint="@color/home_detail_button_text" />
                         </LinearLayout>
 
                         <com.faltenreich.skeletonlayout.SkeletonLayout

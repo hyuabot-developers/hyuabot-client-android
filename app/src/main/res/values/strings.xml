@@ -24,6 +24,7 @@
     <string name="home_weather_temperature_subtitle">현재 %1$.0f° · 오늘 %2$.0f°~%3$.0f°</string>
     <string name="home_movement_title">지금 이동</string>
     <string name="home_movement_detail">셔틀 상세</string>
+    <string name="home_movement_timetable">전체 시간표</string>
     <string name="home_cafeteria_detail">학식 보기</string>
     <string name="home_quick_settings_action_bar_title">홈에 보일 내용을 조정해요</string>
     <string name="home_quick_settings_button">홈 옵션</string>

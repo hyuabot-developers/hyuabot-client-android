@@ -91,12 +91,15 @@ class HomeFragment : Fragment() {
             refreshHome()
         }
         binding.homeSwipeRefreshLayout.setColorSchemeResources(R.color.hanyang_blue)
-        binding.movementDetail.setOnClickListener {
-            AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_SHUTTLE_DETAIL)
-            val route = selectedDeparture.routeTo(selectedDestination)
+        binding.movementTimetable.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_SHUTTLE_TIMETABLE)
+            val args = Bundle().apply {
+                putInt("stopID", selectedDeparture.timetableStopRes(selectedDestination))
+                putInt("destinationID", selectedDestination.timetableDestinationRes)
+            }
             findNavController().navigate(
-                R.id.action_homeFragment_to_shuttleRealtimeFragment,
-                bundleOf("stop" to route.stop, "to" to route.destination),
+                R.id.action_homeFragment_to_shuttleTimetableFragment,
+                args,
             )
         }
         binding.legacyShuttleButton.setOnClickListener {
@@ -1383,6 +1386,13 @@ private enum class HomeDeparture(
         else -> HomeShuttleRoute("dormitory_o", "STATION")
     }
 
+    fun timetableStopRes(destination: HomeDestination): Int =
+        if (this == SHUTTLECOCK && destination == HomeDestination.DORMITORY) {
+            R.string.shuttle_tab_shuttlecock_in
+        } else {
+            titleRes
+        }
+
     fun distanceTo(location: Location): Float {
         val departureLocation = Location("home_departure").apply {
             latitude = this@HomeDeparture.latitude
@@ -1411,6 +1421,14 @@ private enum class HomeDestination(
             TERMINAL -> "terminal"
             JUNGANG -> "jungang"
             DORMITORY -> "dormitory"
+        }
+
+    val timetableDestinationRes: Int
+        get() = when (this) {
+            STATION -> R.string.shuttle_header_bound_for_station
+            TERMINAL -> R.string.shuttle_header_bound_for_terminal
+            JUNGANG -> R.string.shuttle_header_bound_for_jungang_station
+            DORMITORY -> R.string.shuttle_header_bound_for_dormitory
         }
 
     companion object {

@@ -24,6 +24,7 @@
     <string name="home_weather_temperature_subtitle">%1$.0f° now · %2$.0f°–%3$.0f° today</string>
     <string name="home_movement_title">Move now</string>
     <string name="home_movement_detail">Shuttle detail</string>
+    <string name="home_movement_timetable">Full timetable</string>
     <string name="home_cafeteria_detail">Meals</string>
     <string name="home_quick_settings_action_bar_title">Adjust what appears on Home</string>
     <string name="home_quick_settings_button">Home options</string>

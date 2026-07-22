@@ -23,6 +23,7 @@
     <string name="home_weather_temperature_subtitle">当前 %1$.0f° · 今日 %2$.0f°～%3$.0f°</string>
     <string name="home_movement_title">现在出行</string>
     <string name="home_movement_detail">校车详情</string>
+    <string name="home_movement_timetable">完整时刻表</string>
     <string name="home_cafeteria_detail">食堂</string>
     <string name="home_quick_settings_action_bar_title">调整首页显示内容</string>
     <string name="home_quick_settings_button">首页选项</string>
