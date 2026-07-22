@@ -178,7 +178,7 @@
                             android:id="@+id/route_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="8dp"
                             android:textColor="@color/secondary_text"
                             android:textSize="13sp"
                             android:textStyle="bold" />
@@ -187,7 +187,7 @@
                             android:id="@+id/movement_loading"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="8dp"
                             app:maskColor="@color/skeleton_placeholder"
                             app:maskCornerRadius="8dp"
                             app:shimmerColor="@color/skeleton_placeholder_highlight">
@@ -214,7 +214,7 @@
                             android:id="@+id/movement_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="8dp"
                             android:orientation="vertical" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -279,7 +279,7 @@
                             android:id="@+id/meal_loading"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="8dp"
                             app:maskColor="@color/skeleton_placeholder"
                             app:maskCornerRadius="8dp"
                             app:shimmerColor="@color/skeleton_placeholder_highlight">
@@ -294,7 +294,7 @@
                             android:id="@+id/meal_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="8dp"
                             android:orientation="vertical" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
