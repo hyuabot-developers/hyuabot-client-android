@@ -225,11 +225,7 @@ class HomeFragment : Fragment() {
 
     private fun setupDestinationButtons() {
         binding.destinationGroup.clearOnButtonCheckedListeners()
-        ensureDestinationButtons()
-        HomeDestination.entries.forEach { destination ->
-            binding.destinationGroup.findViewById<View>(destination.buttonIdRes).visibility =
-                if (destination in selectedDeparture.destinations) View.VISIBLE else View.GONE
-        }
+        ensureDestinationButtons(selectedDeparture.destinations)
         binding.destinationGroup.check(selectedDestination.buttonIdRes)
         binding.destinationGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (!isChecked) return@addOnButtonCheckedListener
@@ -245,14 +241,13 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun ensureDestinationButtons() {
-        if (binding.destinationGroup.childCount > 0) return
-
+    private fun ensureDestinationButtons(visibleDestinations: List<HomeDestination>) {
+        binding.destinationGroup.removeAllViews()
         val buttonContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_SegmentedButton)
         val textColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_text)
         val backgroundColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_background)
         val strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_stroke)
-        HomeDestination.entries.forEach { destination ->
+        HomeDestination.entries.filter { it in visibleDestinations }.forEach { destination ->
             val button = MaterialButton(buttonContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
                 id = destination.buttonIdRes
                 text = getString(destination.titleRes)
