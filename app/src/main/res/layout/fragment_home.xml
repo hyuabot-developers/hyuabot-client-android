@@ -146,17 +146,17 @@
                                 android:layout_marginEnd="10dp"
                                 android:contentDescription="@null"
                                 android:src="@drawable/ic_home_movement"
-                                app:tint="@color/hanyang_blue" />
+                                app:tint="@color/plain_button_text" />
 
-                            <TextView
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/movement_title"
+                                style="@style/Widget.App.HomeSelectorButton"
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:text="@string/home_movement_title"
-                                android:textColor="@color/primary_text"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
+                                app:icon="@drawable/ic_chevron_down"
+                                app:iconGravity="textEnd" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/movement_timetable"
@@ -282,7 +282,7 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -292,16 +292,16 @@
                                 android:layout_height="22dp"
                                 android:layout_marginEnd="10dp"
                                 android:contentDescription="@null"
-                                app:tint="@color/hanyang_blue" />
+                                app:tint="@color/plain_button_text" />
 
-                            <TextView
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/meal_title"
+                                style="@style/Widget.App.HomeSelectorButton"
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:textColor="@color/primary_text"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
+                                app:icon="@drawable/ic_chevron_down"
+                                app:iconGravity="textEnd" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/meal_detail"

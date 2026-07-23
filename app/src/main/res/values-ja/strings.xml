@@ -24,6 +24,8 @@
     <string name="home_movement_title">今すぐ移動</string>
     <string name="home_movement_detail">シャトル詳細</string>
     <string name="home_movement_timetable">全時刻表</string>
+    <string name="home_departure_selector_description">出発停留所を選択：%1$s</string>
+    <string name="home_destination_summary">%1$s方面</string>
     <string name="home_cafeteria_detail">全ての学食</string>
     <string name="home_quick_settings_action_bar_title">ホームの表示を調整できます</string>
     <string name="home_quick_settings_button">ホーム設定</string>
@@ -80,6 +82,8 @@
     <string name="home_meal_breakfast">朝食</string>
     <string name="home_meal_lunch">昼食</string>
     <string name="home_meal_dinner">夕食</string>
+    <string name="home_meal_period_selector_description">食事時間帯を選択：%1$s</string>
+    <string name="home_meal_tomorrow_format">明日の%1$s</string>
     <string name="home_meal_tomorrow_breakfast">明日の朝食</string>
     <string name="home_meal_empty_title">%1$sメニューがありません</string>
     <string name="home_meal_empty_message">全ての学食で他の時間帯のメニューを確認できます。</string>

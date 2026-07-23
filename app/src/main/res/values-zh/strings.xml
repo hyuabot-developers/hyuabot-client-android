@@ -24,6 +24,8 @@
     <string name="home_movement_title">现在出发</string>
     <string name="home_movement_detail">校车详情</string>
     <string name="home_movement_timetable">完整时刻表</string>
+    <string name="home_departure_selector_description">选择出发站：%1$s</string>
+    <string name="home_destination_summary">前往%1$s</string>
     <string name="home_cafeteria_detail">全部食堂</string>
     <string name="home_quick_settings_action_bar_title">调整首页显示内容</string>
     <string name="home_quick_settings_button">首页选项</string>
@@ -80,6 +82,8 @@
     <string name="home_meal_breakfast">早餐</string>
     <string name="home_meal_lunch">午餐</string>
     <string name="home_meal_dinner">晚餐</string>
+    <string name="home_meal_period_selector_description">选择餐次：%1$s</string>
+    <string name="home_meal_tomorrow_format">明天%1$s</string>
     <string name="home_meal_tomorrow_breakfast">明天早餐</string>
     <string name="home_meal_empty_title">暂无%1$s菜单</string>
     <string name="home_meal_empty_message">可在全部食堂中查看其他时段菜单。</string>

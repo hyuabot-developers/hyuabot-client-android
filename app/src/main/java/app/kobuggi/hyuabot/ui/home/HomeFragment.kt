@@ -22,6 +22,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -30,6 +31,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import app.kobuggi.hyuabot.BuildConfig
@@ -67,6 +70,9 @@ class HomeFragment : Fragment() {
     private var selectedDestination = HomeDestination.STATION
     private var hasResolvedInitialDepartureLocation = false
     private var lockDepartureSelection = false
+    private var isDepartureManuallySelected = false
+    private var shouldRestoreAutomaticDepartureOnForeground = false
+    private var selectedMealPeriod: HomeMealPeriod? = null
     private var debugSubwayTransferDestination: HomeSubwayTransferDestination? = null
     private var noticePosition = 0
     private var noticeManuallyScrolled = false
@@ -74,11 +80,29 @@ class HomeFragment : Fragment() {
     private lateinit var noticeAutoScrollRunnable: Runnable
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
+    private val activityLifecycleObserver = object : DefaultLifecycleObserver {
+        override fun onStop(owner: LifecycleOwner) {
+            shouldRestoreAutomaticDepartureOnForeground = isDepartureManuallySelected
+        }
+
+        override fun onStart(owner: LifecycleOwner) {
+            if (!shouldRestoreAutomaticDepartureOnForeground) return
+            shouldRestoreAutomaticDepartureOnForeground = false
+            isDepartureManuallySelected = false
+            hasResolvedInitialDepartureLocation = false
+            moveToNearestDeparture()
+        }
+    }
     private val autoRefreshRunnable = object : Runnable {
         override fun run() {
             refreshHome()
             refreshHandler.postDelayed(this, AUTO_REFRESH_INTERVAL_MILLIS)
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().lifecycle.addObserver(activityLifecycleObserver)
     }
 
     override fun onCreateView(
@@ -95,6 +119,12 @@ class HomeFragment : Fragment() {
         }
         binding.dateText.text = formattedToday()
         setupDestinationButtons()
+        binding.movementTitle.setOnClickListener {
+            showDepartureMenu()
+        }
+        binding.mealTitle.setOnClickListener {
+            showMealPeriodMenu()
+        }
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
             AnalyticsManager.logSelect(AnalyticsItem.HOME_REFRESH)
             refreshHome()
@@ -216,6 +246,11 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
     }
 
+    override fun onDestroy() {
+        activity?.lifecycle?.removeObserver(activityLifecycleObserver)
+        super.onDestroy()
+    }
+
     private fun setupNotices() {
         binding.noticeViewPager.adapter = HomeNoticeAdapter(emptyList())
         binding.noticeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -277,17 +312,63 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun showDepartureMenu() {
+        val popup = PopupMenu(requireContext(), binding.movementTitle)
+        HomeDeparture.entries.forEachIndexed { index, departure ->
+            popup.menu.add(0, index + 1, index, getString(departure.titleRes))
+        }
+        popup.setOnMenuItemClickListener { item ->
+            val departure = HomeDeparture.entries.getOrNull(item.itemId - 1)
+                ?: return@setOnMenuItemClickListener false
+            selectDepartureManually(departure)
+            true
+        }
+        popup.show()
+    }
+
+    private fun selectDepartureManually(departure: HomeDeparture) {
+        locationCancellationTokenSource?.cancel()
+        locationCancellationTokenSource = null
+        isDepartureManuallySelected = true
+        shouldRestoreAutomaticDepartureOnForeground = false
+        hasResolvedInitialDepartureLocation = true
+        selectedDeparture = departure
+        if (selectedDestination !in selectedDeparture.destinations) {
+            selectedDestination = selectedDeparture.destinations.first()
+        }
+        setupDestinationButtons()
+        render(viewModel.data.value)
+    }
+
+    private fun showMealPeriodMenu() {
+        val selectedPeriod = activeMealPeriod()
+        val popup = PopupMenu(requireContext(), binding.mealTitle)
+        mealPeriods(selectedPeriod.isTomorrow).forEachIndexed { index, period ->
+            popup.menu.add(0, index + 1, index, period.title(requireContext()))
+        }
+        popup.setOnMenuItemClickListener { item ->
+            val period = mealPeriods(selectedPeriod.isTomorrow).getOrNull(item.itemId - 1)
+                ?: return@setOnMenuItemClickListener false
+            selectedMealPeriod = period
+            render(viewModel.data.value)
+            true
+        }
+        popup.show()
+    }
+
     private fun ensureDestinationButtons(visibleDestinations: List<HomeDestination>) {
         binding.destinationGroup.removeAllViews()
-        val buttonContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_SegmentedButton)
+        val buttonContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_HomeSegmentButton)
         val textColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_text)
         val backgroundColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_background)
         val strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_stroke)
+        val buttonHeight = resources.getDimensionPixelSize(R.dimen.home_destination_button_min_height)
         HomeDestination.entries.filter { it in visibleDestinations }.forEach { destination ->
             val button = MaterialButton(buttonContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
                 id = destination.buttonIdRes
                 text = getString(destination.titleRes)
-                minHeight = resources.getDimensionPixelSize(R.dimen.home_destination_button_min_height)
+                minHeight = 0
+                minimumHeight = 0
                 minWidth = 0
                 minimumWidth = 0
                 maxLines = 1
@@ -299,7 +380,7 @@ class HomeFragment : Fragment() {
                 setTextColor(textColor)
                 backgroundTintList = backgroundColor
                 this.strokeColor = strokeColor
-                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                layoutParams = LinearLayout.LayoutParams(0, buttonHeight, 1f)
                 tag = destination
             }
             binding.destinationGroup.addView(button)
@@ -320,7 +401,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun moveToNearestDeparture() {
-        if (lockDepartureSelection || !hasLocationPermission()) return
+        if (lockDepartureSelection || isDepartureManuallySelected || !hasLocationPermission()) return
         val client = LocationServices.getFusedLocationProviderClient(requireActivity())
         requestCurrentLocation(client)
     }
@@ -379,7 +460,7 @@ class HomeFragment : Fragment() {
 
     private fun selectNearestDeparture(location: Location) {
         if (!isAdded || view == null) return
-        if (lockDepartureSelection) return
+        if (lockDepartureSelection || isDepartureManuallySelected) return
         val nearestDeparture = HomeDeparture.entries.minByOrNull { it.distanceTo(location) } ?: return
         val shouldApplyHysteresis = hasResolvedInitialDepartureLocation
         hasResolvedInitialDepartureLocation = true
@@ -421,13 +502,21 @@ class HomeFragment : Fragment() {
     private fun render(data: HomePageQuery.Data?) {
         renderWeather(data?.homeWeather)
         viewModel.setPresenceStop(selectedDeparture.routeTo(selectedDestination).stop)
-        binding.routeText.text = getString(
-            R.string.home_route_format,
+        binding.movementTitle.text = getString(selectedDeparture.titleRes)
+        binding.movementTitle.contentDescription = getString(
+            R.string.home_departure_selector_description,
             getString(selectedDeparture.titleRes),
+        )
+        binding.routeText.text = getString(
+            R.string.home_destination_summary,
             getString(selectedDestination.titleRes),
         )
         val mealPeriod = activeMealPeriod()
         binding.mealTitle.text = mealPeriod.title(requireContext())
+        binding.mealTitle.contentDescription = getString(
+            R.string.home_meal_period_selector_description,
+            mealPeriod.title(requireContext()),
+        )
         binding.mealIcon.setImageResource(mealPeriod.iconRes)
         renderMovement(data)
         renderMeals(data)
@@ -1328,14 +1417,27 @@ class HomeFragment : Fragment() {
     }
 
     private fun activeMealPeriod(): HomeMealPeriod {
-        val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-        return when {
-            now.hour < 10 -> HomeMealPeriod("조식", R.string.home_meal_breakfast, "breakfast", R.drawable.ic_meal_breakfast)
-            now.hour < 15 -> HomeMealPeriod("중식", R.string.home_meal_lunch, "lunch", R.drawable.ic_meal_lunch)
-            now.hour < 20 -> HomeMealPeriod("석식", R.string.home_meal_dinner, "dinner", R.drawable.ic_meal_dinner)
-            else -> HomeMealPeriod("조식", R.string.home_meal_tomorrow_breakfast, "breakfast", R.drawable.ic_meal_breakfast)
-        }
+        val automaticPeriod = automaticMealPeriod()
+        return selectedMealPeriod?.copy(isTomorrow = automaticPeriod.isTomorrow) ?: automaticPeriod
     }
+
+    private fun automaticMealPeriod(): HomeMealPeriod {
+        val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+        val periods = mealPeriods(isTomorrow = now.hour >= 20)
+        return periods[
+            when {
+                now.hour < 10 || now.hour >= 20 -> 0
+                now.hour < 15 -> 1
+                else -> 2
+            }
+        ]
+    }
+
+    private fun mealPeriods(isTomorrow: Boolean): List<HomeMealPeriod> = listOf(
+        HomeMealPeriod("조식", R.string.home_meal_breakfast, "breakfast", R.drawable.ic_meal_breakfast, isTomorrow),
+        HomeMealPeriod("중식", R.string.home_meal_lunch, "lunch", R.drawable.ic_meal_lunch, isTomorrow),
+        HomeMealPeriod("석식", R.string.home_meal_dinner, "dinner", R.drawable.ic_meal_dinner, isTomorrow),
+    )
 
     private fun runningTime(cafeteria: HomePageQuery.Cafeterium, period: HomeMealPeriod): String? = when (period.marker) {
         "조식" -> cafeteria.runningTime.breakfast
@@ -1493,8 +1595,16 @@ private data class HomeMealPeriod(
     val titleRes: Int,
     val tab: String,
     val iconRes: Int,
+    val isTomorrow: Boolean,
 ) {
-    fun title(context: android.content.Context): String = context.getString(titleRes)
+    fun title(context: android.content.Context): String {
+        val title = context.getString(titleRes)
+        return if (isTomorrow) {
+            context.getString(R.string.home_meal_tomorrow_format, title)
+        } else {
+            title
+        }
+    }
 }
 
 private data class HomeMealSection(

@@ -141,7 +141,10 @@
         <item name="strokeWidth">1dp</item>
     </style>
 
-    <style name="Widget.App.HomeSegmentButton" parent="Widget.App.SegmentedButton" />
+    <style name="Widget.App.HomeSegmentButton" parent="Widget.App.SegmentedButton">
+        <item name="android:textSize">13sp</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
 
     <style name="Widget.App.HomeHeaderButton" parent="Widget.Material3.Button.TextButton">
         <item name="android:fontFamily">@font/godo</item>
@@ -156,6 +159,24 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
         <item name="backgroundTint">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.App.HomeSelectorButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:fontFamily">@font/godo</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="iconPadding">5dp</item>
+        <item name="iconTint">@color/primary_text</item>
     </style>
 
     <style name="Widget.App.FilledActionButton" parent="Widget.Material3.Button">

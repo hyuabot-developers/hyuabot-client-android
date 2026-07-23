@@ -25,6 +25,8 @@
     <string name="home_movement_title">Move now</string>
     <string name="home_movement_detail">Shuttle details</string>
     <string name="home_movement_timetable">Full timetable</string>
+    <string name="home_departure_selector_description">Select departure stop: %1$s</string>
+    <string name="home_destination_summary">Toward %1$s</string>
     <string name="home_cafeteria_detail">All menus</string>
     <string name="home_quick_settings_action_bar_title">Adjust what appears on Home</string>
     <string name="home_quick_settings_button">Home options</string>
@@ -81,6 +83,8 @@
     <string name="home_meal_breakfast">Breakfast</string>
     <string name="home_meal_lunch">Lunch</string>
     <string name="home_meal_dinner">Dinner</string>
+    <string name="home_meal_period_selector_description">Select meal period: %1$s</string>
+    <string name="home_meal_tomorrow_format">Tomorrow %1$s</string>
     <string name="home_meal_tomorrow_breakfast">Tomorrow breakfast</string>
     <string name="home_meal_empty_title">%1$s menu is unavailable</string>
     <string name="home_meal_empty_message">Check other meal times in all menus.</string>
