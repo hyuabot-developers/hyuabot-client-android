@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        applyStatusBarStyle()
+        applyStatusBarStyle(navController.currentDestination?.id)
         binding.bottomNavigation.apply {
             populateBottomNavigationMenu()
             setupWithNavController(navController)
@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             setOnItemReselectedListener(this@MainActivity)
         }
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            applyStatusBarStyle(destination.id)
             updatePrimaryNavigationItem(destination.id)
             screenForDestination(destination.id)?.let {
                 analyticsScreenDispatcher.onDestinationChanged(it)
@@ -118,15 +119,23 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         menu.add(0, R.id.menuFragment, 4, R.string.tabbar_campus).setIcon(R.drawable.ic_campus)
     }
 
-    private fun applyStatusBarStyle() {
-        val statusBarColor = ContextCompat.getColor(this, R.color.hanyang_blue)
-        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(statusBarColor))
+    private fun applyStatusBarStyle(destinationId: Int?) {
+        val isHome = destinationId == R.id.homeFragment
+        val statusBarColor = ContextCompat.getColor(
+            this,
+            if (isHome) R.color.home_screen_background else R.color.hanyang_blue
+        )
+        val statusBarStyle = if (isHome) {
+            SystemBarStyle.auto(statusBarColor, statusBarColor)
+        } else {
+            SystemBarStyle.dark(statusBarColor)
+        }
+        enableEdgeToEdge(statusBarStyle = statusBarStyle)
 
         val decorView = window.decorView as? ViewGroup ?: return
         val statusBarBackground = decorView.findViewWithTag<View>(STATUS_BAR_BACKGROUND_TAG)
             ?: View(this).apply {
                 tag = STATUS_BAR_BACKGROUND_TAG
-                setBackgroundColor(statusBarColor)
                 importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
                 decorView.addView(
                     this,
@@ -137,6 +146,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                     )
                 )
             }
+        statusBarBackground.setBackgroundColor(statusBarColor)
         statusBarBackground.layoutParams = statusBarBackground.layoutParams.apply {
             height = statusBarHeight()
         }

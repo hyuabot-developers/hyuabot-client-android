@@ -30,7 +30,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:text="@string/campus_tools_subtitle"
             android:textColor="@color/secondary_text"
             android:textSize="14sp" />
@@ -93,10 +93,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="4dp"
             android:text="@string/campus_support_title"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/primary_text"
             android:textFontWeight="700"
             android:textSize="13sp" />
 

@@ -46,7 +46,7 @@
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
     </style>
     <style name="ThemeOverlay.App.BottomNavigationView" parent="">
-        <item name="colorSurfaceContainer">@color/background</item>
+        <item name="colorSurfaceContainer">@color/bottom_navigation_background</item>
         <item name="colorOnSurfaceVariant">@color/bottom_navigation_unselected</item>
         <item name="colorOnSecondaryContainer">@color/hanyang_blue</item>
         <item name="colorOnSurface">@color/hanyang_blue</item>
@@ -123,6 +123,8 @@
     </style>
     <style name="Widget.App.Switch.Shuttle" parent="Widget.Material3.CompoundButton.MaterialSwitch">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.Switch</item>
+        <item name="thumbTint">@color/shuttle_switch_thumb</item>
+        <item name="trackTint">@color/shuttle_switch_track</item>
     </style>
 
     <style name="Widget.App.SegmentedButton" parent="Widget.Material3.Button.OutlinedButton">
@@ -200,8 +202,8 @@
     </style>
 
     <style name="ThemeOverlay.App.Switch" parent="">
-        <item name="colorPrimary">@android:color/white</item>
-        <item name="colorOnPrimary">@color/hanyang_blue</item>
+        <item name="colorPrimary">@color/switch_track_on</item>
+        <item name="colorOnPrimary">@color/switch_thumb</item>
     </style>
     <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <!-- Disable Material3's internal edge-to-edge setup for bottom sheet dialogs.

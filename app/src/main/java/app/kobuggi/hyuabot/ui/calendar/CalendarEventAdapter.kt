@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.calendar
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +31,40 @@ class CalendarEventAdapter(
                 text = event.description
                 visibility = if (event.description.isBlank()) View.GONE else View.VISIBLE
             }
-            binding.eventStatus.text = eventStatus(startDate, endDate)
+            val today = LocalDate.now()
+            val isPast = endDate < today
+            binding.eventName.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    if (isPast) R.color.tertiary_text else R.color.primary_text
+                )
+            )
+            binding.eventDate.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    if (isPast) R.color.tertiary_text else R.color.secondary_text
+                )
+            )
+            binding.eventStatus.apply {
+                val daysUntilStart = ChronoUnit.DAYS.between(today, startDate)
+                when {
+                    today in startDate..endDate -> {
+                        visibility = View.VISIBLE
+                        text = context.getString(R.string.calendar_event_ongoing)
+                        backgroundTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(context, R.color.calendar_status_ongoing)
+                        )
+                    }
+                    daysUntilStart in 0..7 -> {
+                        visibility = View.VISIBLE
+                        text = "D-$daysUntilStart"
+                        backgroundTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(context, R.color.calendar_status_upcoming)
+                        )
+                    }
+                    else -> visibility = View.GONE
+                }
+            }
             binding.eventCategoryIndicator.setBackgroundColor(eventColor(event.category))
         }
     }
@@ -52,25 +86,15 @@ class CalendarEventAdapter(
         notifyDataSetChanged()
     }
 
-    private fun eventStatus(startDate: LocalDate, endDate: LocalDate): String {
-        val today = LocalDate.now()
-        return if (today in startDate..endDate) {
-            context.getString(R.string.calendar_event_ongoing)
-        } else {
-            val daysUntilStart = ChronoUnit.DAYS.between(today, startDate)
-            if (daysUntilStart >= 0) "D-$daysUntilStart" else "D+${-daysUntilStart}"
-        }
-    }
-
     private fun eventColor(category: String): Int {
         return ContextCompat.getColor(
             context,
             when (category) {
-                "1학년" -> R.color.hanyang_blue
-                "2학년" -> R.color.hanyang_orange
-                "3학년" -> R.color.hanyang_green
-                "4학년" -> R.color.hanyang_gold
-                else -> R.color.hanyang_orange
+                "1학년" -> R.color.calendar_category_blue
+                "2학년" -> R.color.calendar_category_orange
+                "3학년" -> R.color.calendar_category_green
+                "4학년" -> R.color.calendar_category_purple
+                else -> R.color.calendar_category_orange
             }
         )
     }

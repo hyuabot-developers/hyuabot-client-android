@@ -128,8 +128,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:paddingHorizontal="16dp"
-                        android:paddingTop="20dp"
-                        android:paddingBottom="18dp">
+                        android:paddingTop="18dp"
+                        android:paddingBottom="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -171,7 +171,7 @@
                             android:id="@+id/route_status_row"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="14dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -227,7 +227,7 @@
                             android:id="@+id/movement_loading"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="14dp"
                             app:maskColor="@color/skeleton_placeholder"
                             app:maskCornerRadius="8dp"
                             app:shimmerColor="@color/skeleton_placeholder_highlight">
@@ -254,7 +254,7 @@
                             android:id="@+id/movement_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="14dp"
                             android:orientation="vertical" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -274,8 +274,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:paddingHorizontal="16dp"
-                        android:paddingTop="20dp"
-                        android:paddingBottom="18dp">
+                        android:paddingTop="18dp"
+                        android:paddingBottom="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -316,7 +316,7 @@
                             android:id="@+id/meal_loading"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="12dp"
                             app:maskColor="@color/skeleton_placeholder"
                             app:maskCornerRadius="8dp"
                             app:shimmerColor="@color/skeleton_placeholder_highlight">
@@ -331,7 +331,7 @@
                             android:id="@+id/meal_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="12dp"
                             android:orientation="vertical" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>

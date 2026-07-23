@@ -331,7 +331,7 @@ class ShuttleAlarmService : Service() {
                 .setContentText(content)
                 .setSubText(checkpointText)
                 .setSmallIcon(R.drawable.ic_notification_shuttle)
-                .setColor(ContextCompat.getColor(this, R.color.hanyang_blue))
+                .setColor(ContextCompat.getColor(this, R.color.live_activity_accent))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setProgress(100, progress, false)
@@ -370,7 +370,7 @@ class ShuttleAlarmService : Service() {
                 .setContentText(content)
                 .setSubText(checkpointText)
                 .setSmallIcon(R.drawable.ic_notification_shuttle)
-                .setColor(ContextCompat.getColor(this, R.color.hanyang_blue))
+                .setColor(ContextCompat.getColor(this, R.color.live_activity_accent))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setProgress(100, progress, distanceM == null)
@@ -390,7 +390,7 @@ class ShuttleAlarmService : Service() {
         progressSegments: IntArray = intArrayOf(100),
         subText: String? = null
     ): Notification {
-        val color = ContextCompat.getColor(this, R.color.hanyang_blue)
+        val color = ContextCompat.getColor(this, R.color.live_activity_accent)
         val style = Notification.ProgressStyle()
         val segments = if (progressSegments.isEmpty()) intArrayOf(100) else progressSegments
         segments.forEach { segmentLength ->
