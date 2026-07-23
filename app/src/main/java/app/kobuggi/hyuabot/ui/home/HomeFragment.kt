@@ -77,9 +77,16 @@ class HomeFragment : Fragment() {
     private var noticePosition = 0
     private var noticeManuallyScrolled = false
     private var locationCancellationTokenSource: CancellationTokenSource? = null
-    private lateinit var noticeAutoScrollRunnable: Runnable
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
+    private val noticeAutoScrollRunnable = Runnable {
+        val adapter = binding.noticeViewPager.adapter
+        if (adapter != null && adapter.itemCount > 1 && !noticeManuallyScrolled && isResumed) {
+            noticePosition = (binding.noticeViewPager.currentItem + 1) % adapter.itemCount
+            binding.noticeViewPager.setCurrentItem(noticePosition, true)
+            scheduleNoticeAutoScroll()
+        }
+    }
     private val activityLifecycleObserver = object : DefaultLifecycleObserver {
         override fun onStop(owner: LifecycleOwner) {
             shouldRestoreAutomaticDepartureOnForeground = isDepartureManuallySelected
@@ -225,21 +232,18 @@ class HomeFragment : Fragment() {
         viewModel.startPresenceUpdates()
         refreshHandler.removeCallbacks(autoRefreshRunnable)
         refreshHandler.postDelayed(autoRefreshRunnable, AUTO_REFRESH_INTERVAL_MILLIS)
-        if (::noticeAutoScrollRunnable.isInitialized) {
-            noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
-        }
+        scheduleNoticeAutoScroll()
     }
 
     override fun onPause() {
         viewModel.stopPresenceUpdates()
         refreshHandler.removeCallbacks(autoRefreshRunnable)
-        if (::noticeAutoScrollRunnable.isInitialized) {
-            noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
-        }
+        stopNoticeAutoScroll()
         super.onPause()
     }
 
     override fun onDestroyView() {
+        stopNoticeAutoScroll()
         locationCancellationTokenSource?.cancel()
         locationCancellationTokenSource = null
         binding.noticeViewPager.adapter = null
@@ -257,9 +261,7 @@ class HomeFragment : Fragment() {
             override fun onPageScrollStateChanged(state: Int) {
                 if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
                     noticeManuallyScrolled = true
-                    if (::noticeAutoScrollRunnable.isInitialized) {
-                        noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
-                    }
+                    stopNoticeAutoScroll()
                 }
                 if (state == ViewPager2.SCROLL_STATE_IDLE && noticeManuallyScrolled) {
                     noticePosition = binding.noticeViewPager.currentItem
@@ -272,26 +274,26 @@ class HomeFragment : Fragment() {
         val notices = data?.notices?.flatMap { it.notices }.orEmpty()
         if (notices.isEmpty()) {
             binding.noticeLayout.visibility = View.GONE
-            if (::noticeAutoScrollRunnable.isInitialized) {
-                noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
-            }
+            stopNoticeAutoScroll()
             return
         }
 
         binding.noticeLayout.visibility = View.VISIBLE
         (binding.noticeViewPager.adapter as HomeNoticeAdapter).updateList(notices)
-        noticeAutoScrollRunnable = Runnable {
-            val adapter = binding.noticeViewPager.adapter
-            if (adapter != null && adapter.itemCount > 0 && !noticeManuallyScrolled) {
-                noticePosition = (noticePosition + 1) % adapter.itemCount
-                binding.noticeViewPager.setCurrentItem(noticePosition, true)
-                noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
-            }
-        }
-        if (!noticeManuallyScrolled) {
-            noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+        noticePosition = binding.noticeViewPager.currentItem.coerceAtMost(notices.lastIndex)
+        scheduleNoticeAutoScroll()
+    }
+
+    private fun scheduleNoticeAutoScroll() {
+        stopNoticeAutoScroll()
+        val itemCount = binding.noticeViewPager.adapter?.itemCount ?: 0
+        if (itemCount > 1 && !noticeManuallyScrolled && isResumed) {
             noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
         }
+    }
+
+    private fun stopNoticeAutoScroll() {
+        noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
     }
 
     private fun setupDestinationButtons() {

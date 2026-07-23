@@ -60,7 +60,14 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private var isApplyingInitialLocationSelection = false
     private var coachmarkShown = false
     private val scrollHandler = Handler(Looper.getMainLooper())
-    private lateinit var autoScrollRunnable: Runnable
+    private val autoScrollRunnable = Runnable {
+        val adapter = binding.noticeViewPager.adapter
+        if (adapter != null && adapter.itemCount > 1 && !manuallyScrolled && isResumed) {
+            currentPosition = (binding.noticeViewPager.currentItem + 1) % adapter.itemCount
+            binding.noticeViewPager.setCurrentItem(currentPosition, true)
+            scheduleNoticeAutoScroll()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -163,26 +170,18 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             if (notices.isNotEmpty()) {
                 binding.noticeLayout.visibility = View.VISIBLE
                 (binding.noticeViewPager.adapter as ShuttleNoticeAdapter).updateList(notices)
-                autoScrollRunnable = Runnable {
-                    if (binding.noticeViewPager.adapter != null && binding.noticeViewPager.adapter!!.itemCount > 0 && !manuallyScrolled) {
-                        currentPosition = (currentPosition + 1) % binding.noticeViewPager.adapter!!.itemCount
-                        binding.noticeViewPager.setCurrentItem(currentPosition, true)
-                        scrollHandler.postDelayed(autoScrollRunnable, 5000)
-                    }
-                }
-                if (!manuallyScrolled) scrollHandler.postDelayed(autoScrollRunnable, 5000)
+                currentPosition = binding.noticeViewPager.currentItem.coerceAtMost(notices.lastIndex)
+                scheduleNoticeAutoScroll()
             } else {
                 binding.noticeLayout.visibility = View.GONE
-                if (::autoScrollRunnable.isInitialized) {
-                    scrollHandler.removeCallbacks(autoScrollRunnable)
-                }
+                stopNoticeAutoScroll()
             }
         }
         binding.noticeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
                 if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
                     manuallyScrolled = true
-                    scrollHandler.removeCallbacks(autoScrollRunnable)
+                    stopNoticeAutoScroll()
                 }
                 if (state == ViewPager2.SCROLL_STATE_IDLE && manuallyScrolled) {
                     currentPosition = binding.noticeViewPager.currentItem
@@ -238,26 +237,35 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     override fun onPause() {
         super.onPause()
         viewModel.stop()
-        if (::autoScrollRunnable.isInitialized) {
-            scrollHandler.removeCallbacks(autoScrollRunnable)
-        }
+        stopNoticeAutoScroll()
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.start()
         manuallyScrolled = false
-        if (::autoScrollRunnable.isInitialized) {
-            scrollHandler.postDelayed(autoScrollRunnable, 5000)
-        }
+        scheduleNoticeAutoScroll()
     }
 
     override fun onDestroyView() {
+        stopNoticeAutoScroll()
         super.onDestroyView()
         childFragmentManager.fragments.toList().forEach {
             childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
         }
         binding.viewPager.adapter = null
+    }
+
+    private fun scheduleNoticeAutoScroll() {
+        stopNoticeAutoScroll()
+        val itemCount = binding.noticeViewPager.adapter?.itemCount ?: 0
+        if (itemCount > 1 && !manuallyScrolled && isResumed) {
+            scrollHandler.postDelayed(autoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
+        }
+    }
+
+    private fun stopNoticeAutoScroll() {
+        scrollHandler.removeCallbacks(autoScrollRunnable)
     }
 
     private fun openQuickSettings() {
@@ -516,6 +524,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
 
     companion object {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
+        private const val NOTICE_AUTO_SCROLL_INTERVAL_MILLIS = 5_000L
         private val COACHMARK_KEY = Coachmarks.SHUTTLE
         private val REALTIME_UPDATES_COACHMARK_KEY = Coachmarks.SHUTTLE_REALTIME_UPDATES
         private const val SHUTTLE_QUICK_SETTINGS_TAG = "ShuttleQuickSettingsDialog"
