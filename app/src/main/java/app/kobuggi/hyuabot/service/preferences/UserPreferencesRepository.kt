@@ -277,6 +277,28 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             }
     }
 
+    override suspend fun setShowShuttlePresence(show: Boolean) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[SHUTTLE_SHOW_PRESENCE_KEY] = show
+            }
+        }
+    }
+
+    override suspend fun getShowShuttlePresence(): Flow<Boolean> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[SHUTTLE_SHOW_PRESENCE_KEY] ?: true
+            }
+    }
+
     override suspend fun setShowHomeBus50Transfer(show: Boolean) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
@@ -446,6 +468,7 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val CALENDAR_KEY = stringPreferencesKey("calendar_version")
         private val SHUTTLE_SHOW_DEPARTURE_TIME_KEY = booleanPreferencesKey("shuttle_show_departure_time")
         private val SHUTTLE_SHOW_BY_DESTINATION_KEY = booleanPreferencesKey("shuttle_show_by_destination")
+        private val SHUTTLE_SHOW_PRESENCE_KEY = booleanPreferencesKey("shuttle_show_presence")
         private val HOME_SHOW_BUS50_TRANSFER_KEY = booleanPreferencesKey("home_show_bus50_transfer")
         private val HOME_SHOW_SUBWAY_TRANSFER_KEY = booleanPreferencesKey("home_show_subway_transfer")
         private val HOME_SUBWAY_TRANSFER_DESTINATION_KEY = stringPreferencesKey("home_subway_transfer_destination")

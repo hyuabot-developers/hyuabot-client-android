@@ -105,6 +105,9 @@
     <string name="shuttle_quick_settings_title">シャトル簡単設定</string>
     <string name="shuttle_quick_settings_arrival_by_time_subtitle">残り時間でシャトル到着を表示します。</string>
     <string name="shuttle_quick_settings_departure_time_subtitle">出発時刻でシャトル時刻を表示します。</string>
+    <string name="shuttle_quick_settings_presence_title">一緒に見ている人を表示</string>
+    <string name="shuttle_quick_settings_presence_subtitle">同じ停留所の情報を見ている人数を表示します。</string>
+    <string name="shuttle_presence_viewer_count">%1$d人が一緒に閲覧中</string>
     <string name="shuttle_display_order_title">表示順</string>
     <string name="shuttle_display_order_subtitle">シャトル到着を時間順または行先別に整理します。</string>
     <string name="shuttle_display_time_order">時間順</string>

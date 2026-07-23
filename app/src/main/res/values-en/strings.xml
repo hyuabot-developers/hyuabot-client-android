@@ -109,6 +109,9 @@
     <string name="shuttle_quick_settings_title">Shuttle quick settings</string>
     <string name="shuttle_quick_settings_arrival_by_time_subtitle">Show shuttle arrivals by remaining time.</string>
     <string name="shuttle_quick_settings_departure_time_subtitle">Show shuttle times by departure time.</string>
+    <string name="shuttle_quick_settings_presence_title">Show fellow viewers</string>
+    <string name="shuttle_quick_settings_presence_subtitle">Show how many people are viewing the same stop information.</string>
+    <string name="shuttle_presence_viewer_count">Viewing together: %1$d</string>
     <string name="shuttle_display_order_title">Display order</string>
     <string name="shuttle_display_order_subtitle">Organize shuttle arrivals by time or destination.</string>
     <string name="shuttle_display_time_order">By time</string>

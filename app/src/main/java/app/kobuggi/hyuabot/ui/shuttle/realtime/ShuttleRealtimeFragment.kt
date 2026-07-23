@@ -19,7 +19,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.core.view.isNotEmpty
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
@@ -79,8 +81,21 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             viewModel.userPreferencesRepository.getShowShuttleByDestination().first().let {
                 viewModel.showByDestination.value = it
             }
+            viewModel.userPreferencesRepository.getShowShuttlePresence().first().let {
+                viewModel.applyShowPresenceStatus(it)
+            }
         }
         binding.viewPager.adapter = viewpagerAdapter
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                viewModel.setPresenceStop(position)
+            }
+        })
+        if (BuildConfig.DEBUG) {
+            requireActivity().intent.getIntExtra(EXTRA_PRESENCE_PREVIEW_COUNT, -1)
+                .takeIf { it >= 0 }
+                ?.let(viewModel::setPresencePreviewCount)
+        }
         binding.shuttleQuickSettingsButton.setOnClickListener { openQuickSettings() }
         childFragmentManager.setFragmentResultListener(
             ShuttleQuickSettingsDialog.REQUEST_KEY,
@@ -91,6 +106,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
             if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_DEPARTURE_TIME)) {
                 viewModel.setShowDepartureTime(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_DEPARTURE_TIME))
+            }
+            if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS)) {
+                viewModel.setShowPresenceStatus(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS))
             }
             if (result.getBoolean(ShuttleQuickSettingsDialog.KEY_OPEN_HOME, false)) {
                 findNavController().navigate(R.id.homeFragment)
@@ -164,6 +182,18 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         viewModel.result.observe(viewLifecycleOwner) { stops ->
             if (stops.isNotEmpty()) maybeShowCoachmark()
         }
+        viewModel.presenceViewerCount.observe(viewLifecycleOwner) { viewerCount ->
+            binding.shuttlePresencePill.isVisible = viewerCount != null
+            if (viewerCount != null) {
+                binding.shuttlePresenceCount.text = viewerCount.toString()
+                binding.shuttlePresencePill.contentDescription = getString(
+                    R.string.shuttle_presence_viewer_count,
+                    viewerCount,
+                )
+            } else {
+                binding.shuttlePresencePill.contentDescription = null
+            }
+        }
         viewModel.viewModelScope.apply {
             launch {
                 viewModel.userPreferencesRepository.getShowShuttleDepartureTime().collect {
@@ -173,6 +203,11 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             launch {
                 viewModel.userPreferencesRepository.getShowShuttleByDestination().collect {
                     viewModel.showByDestination.value = it
+                }
+            }
+            launch {
+                viewModel.userPreferencesRepository.getShowShuttlePresence().collect {
+                    viewModel.applyShowPresenceStatus(it)
                 }
             }
         }
@@ -208,6 +243,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         ShuttleQuickSettingsDialog.newInstance(
             showByDestination = viewModel.showByDestination.value ?: false,
             showDepartureTime = viewModel.showDepartureTime.value ?: false,
+            showPresenceStatus = viewModel.showPresenceStatus.value ?: true,
         ).show(childFragmentManager, SHUTTLE_QUICK_SETTINGS_TAG)
     }
 
@@ -458,5 +494,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         private val COACHMARK_KEY = Coachmarks.SHUTTLE
         private val REALTIME_UPDATES_COACHMARK_KEY = Coachmarks.SHUTTLE_REALTIME_UPDATES
         private const val SHUTTLE_QUICK_SETTINGS_TAG = "ShuttleQuickSettingsDialog"
+        private const val EXTRA_PRESENCE_PREVIEW_COUNT = "shuttle_presence_preview_count"
     }
 }

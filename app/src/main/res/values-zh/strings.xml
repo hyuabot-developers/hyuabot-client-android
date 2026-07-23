@@ -105,6 +105,9 @@
     <string name="shuttle_quick_settings_title">校车快速设置</string>
     <string name="shuttle_quick_settings_arrival_by_time_subtitle">按剩余时间显示校车到达信息。</string>
     <string name="shuttle_quick_settings_departure_time_subtitle">按发车时间显示校车时刻。</string>
+    <string name="shuttle_quick_settings_presence_title">显示同时查看的人</string>
+    <string name="shuttle_quick_settings_presence_subtitle">显示正在查看同一站点信息的人数。</string>
+    <string name="shuttle_presence_viewer_count">%1$d人同时查看</string>
     <string name="shuttle_display_order_title">显示顺序</string>
     <string name="shuttle_display_order_subtitle">按时间或目的地整理校车到达信息。</string>
     <string name="shuttle_display_time_order">按时间</string>
