@@ -18,7 +18,7 @@
     <color name="home_segmented_selected">#636366</color>
     <color name="bottom_navigation_indicator">#48484A</color>
     <color name="bottom_navigation_background">#1C1C1E</color>
-    <color name="bottom_navigation_selected">#0E4A84</color>
+    <color name="bottom_navigation_selected">#0A84FF</color>
     <color name="bottom_navigation_unselected">#FFFFFF</color>
     <color name="plain_button_text">#FFFFFF</color>
     <color name="campus_icon_background">#17324D</color>

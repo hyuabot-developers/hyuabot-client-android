@@ -274,22 +274,14 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         val busItem = binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)
         val subwayItem = binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)
         val moreItem = binding.bottomNavigation.menu.findItem(R.id.menuFragment)
+        primaryItem.title = getString(R.string.home)
+        primaryItem.setIcon(R.drawable.ic_home)
         when {
-            destinationId.isShuttleDestination() -> {
-                primaryItem.title = getString(R.string.shuttle_bus)
-                primaryItem.setIcon(R.drawable.ic_shuttle_bus)
+            destinationId == R.id.homeFragment || destinationId.isShuttleDestination() ->
                 primaryItem.isChecked = true
-            }
-            else -> {
-                primaryItem.title = getString(R.string.home)
-                primaryItem.setIcon(R.drawable.ic_home)
-                when {
-                    destinationId == R.id.homeFragment -> primaryItem.isChecked = true
-                    destinationId.isBusDestination() -> busItem?.isChecked = true
-                    destinationId.isSubwayDestination() -> subwayItem?.isChecked = true
-                    destinationId.isMoreDestination() -> moreItem?.isChecked = true
-                }
-            }
+            destinationId.isBusDestination() -> busItem?.isChecked = true
+            destinationId.isSubwayDestination() -> subwayItem?.isChecked = true
+            destinationId.isMoreDestination() -> moreItem?.isChecked = true
         }
     }
 
