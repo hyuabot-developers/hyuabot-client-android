@@ -54,10 +54,12 @@ import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.Duration
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Date
 import kotlin.math.ceil
 
@@ -536,28 +538,67 @@ class HomeFragment : Fragment() {
         val minimum = weather.minimumTemperature
         val current = weather.currentTemperature
         val condition = weather.primaryCondition
-        val titleRes = when {
-            condition == "RAIN" -> R.string.home_weather_rain_title
-            condition == "SLEET" -> R.string.home_weather_sleet_title
-            condition == "SNOW" -> R.string.home_weather_snow_title
-            maximum != null && maximum >= 32.0 -> R.string.home_weather_hot_title
-            current != null && current <= -5.0 -> R.string.home_weather_cold_title
-            condition == "CLEAR" -> R.string.home_weather_clear_title
-            else -> R.string.home_weather_cloudy_title
+        val titleStyle = HomeWeatherDisplayLogic.titleStyle(
+            condition = condition,
+            currentTemperature = current,
+            maximumTemperature = maximum,
+            precipitationType = weather.precipitationType,
+            precipitationStartAt = weather.precipitationStartAt,
+        )
+        val titleRes = when (titleStyle) {
+            HomeWeatherTitleStyle.CLEAR -> R.string.home_weather_clear_title
+            HomeWeatherTitleStyle.CLOUDY -> R.string.home_weather_cloudy_title
+            HomeWeatherTitleStyle.HOT -> R.string.home_weather_hot_title
+            HomeWeatherTitleStyle.COLD -> R.string.home_weather_cold_title
+            HomeWeatherTitleStyle.RAIN_NOW -> R.string.home_weather_rain_now_title
+            HomeWeatherTitleStyle.RAIN_LATER -> R.string.home_weather_rain_start_title
+            HomeWeatherTitleStyle.RAIN_TODAY -> R.string.home_weather_rain_title
+            HomeWeatherTitleStyle.SLEET_NOW -> R.string.home_weather_sleet_now_title
+            HomeWeatherTitleStyle.SLEET_LATER -> R.string.home_weather_sleet_start_title
+            HomeWeatherTitleStyle.SLEET_TODAY -> R.string.home_weather_sleet_title
+            HomeWeatherTitleStyle.SNOW_NOW -> R.string.home_weather_snow_now_title
+            HomeWeatherTitleStyle.SNOW_LATER -> R.string.home_weather_snow_start_title
+            HomeWeatherTitleStyle.SNOW_TODAY -> R.string.home_weather_snow_title
         }
-        binding.homeHeroTitle.setText(titleRes)
+        binding.homeHeroTitle.text = when (titleStyle) {
+            HomeWeatherTitleStyle.RAIN_LATER,
+            HomeWeatherTitleStyle.SLEET_LATER,
+            HomeWeatherTitleStyle.SNOW_LATER,
+            -> getString(
+                titleRes,
+                weather.precipitationStartAt
+                    ?.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                    ?.format(
+                        DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+                            .withLocale(resources.configuration.locales[0]),
+                    ),
+            )
+            else -> getString(titleRes)
+        }
         binding.homeWeatherIcon.setWeatherCondition(condition)
         binding.homeWeatherIcon.visibility = View.VISIBLE
         binding.homeHeroSubtitle.text = when {
-            minimum != null && maximum != null && weather.precipitationType != "NONE" -> getString(
-                R.string.home_weather_precipitation_subtitle,
+            weather.precipitationType != "NONE" && current != null -> getString(
+                R.string.home_weather_precipitation_current_subtitle,
+                current,
                 weather.precipitationProbabilityMax,
-                minimum,
-                maximum,
+            )
+            weather.precipitationType != "NONE" -> getString(
+                R.string.home_weather_precipitation_probability_subtitle,
+                weather.precipitationProbabilityMax,
             )
             current != null && minimum != null && maximum != null -> getString(
                 R.string.home_weather_temperature_subtitle,
                 current,
+                minimum,
+                maximum,
+            )
+            current != null -> getString(
+                R.string.home_weather_current_subtitle,
+                current,
+            )
+            minimum != null && maximum != null -> getString(
+                R.string.home_weather_range_subtitle,
                 minimum,
                 maximum,
             )
