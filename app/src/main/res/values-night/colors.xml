@@ -24,5 +24,4 @@
     <color name="calendar_grid_line">#38383A</color>
     <color name="skeleton_placeholder">#2C2C2E</color>
     <color name="skeleton_placeholder_highlight">#3A3A3C</color>
-    <color name="home_weather_icon_tint">#FFFFFF</color>
 </resources>

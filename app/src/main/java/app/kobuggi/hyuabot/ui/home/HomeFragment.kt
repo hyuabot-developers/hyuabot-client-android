@@ -2,7 +2,6 @@ package app.kobuggi.hyuabot.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.res.Configuration
 import android.content.res.ColorStateList
 import android.content.pm.PackageManager
 import android.graphics.Typeface
@@ -543,18 +542,8 @@ class HomeFragment : Fragment() {
             condition == "CLEAR" -> R.string.home_weather_clear_title
             else -> R.string.home_weather_cloudy_title
         }
-        val iconRes = when (condition) {
-            "RAIN", "SLEET" -> R.drawable.ic_weather_rain
-            "SNOW" -> R.drawable.ic_weather_snow
-            "CLEAR" -> R.drawable.ic_weather_clear
-            else -> R.drawable.ic_weather_cloud
-        }
-
         binding.homeHeroTitle.setText(titleRes)
-        binding.homeWeatherIcon.setImageResource(iconRes)
-        binding.homeWeatherIcon.alpha = if (
-            resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-        ) 0.42f else 0.22f
+        binding.homeWeatherIcon.setWeatherCondition(condition)
         binding.homeWeatherIcon.visibility = View.VISIBLE
         binding.homeHeroSubtitle.text = when {
             minimum != null && maximum != null && weather.precipitationType != "NONE" -> getString(

@@ -2,5 +2,7 @@
 <resources>
     <dimen name="home_destination_button_min_height">32dp</dimen>
     <dimen name="home_row_gap">10dp</dimen>
+    <dimen name="home_weather_icon_size">88dp</dimen>
+    <dimen name="home_weather_text_end_padding">84dp</dimen>
     <dimen name="setting_selection_check_padding">12dp</dimen>
 </resources>
