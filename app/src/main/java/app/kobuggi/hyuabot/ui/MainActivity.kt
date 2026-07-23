@@ -21,14 +21,18 @@ import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.FloatingWindow
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.R
@@ -79,6 +83,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             setOnItemSelectedListener(this@MainActivity)
             setOnItemReselectedListener(this@MainActivity)
         }
+        setupTopAppBar()
         navController.addOnDestinationChangedListener { _, destination, _ ->
             applyStatusBarStyle(destination.id)
             updatePrimaryNavigationItem(destination.id)
@@ -99,6 +104,99 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         requestInAppReview()
         syncShuttleServiceNotices()
         navController.handleDeepLink(intent)
+    }
+
+    private fun setupTopAppBar() {
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.homeFragment,
+                R.id.busRealtimeFragment,
+                R.id.subwayRealtimeFragment,
+                R.id.cafeteriaFragment,
+                R.id.menuFragment
+            )
+        )
+        binding.topAppBar.setupWithNavController(navController, appBarConfiguration)
+        val appBarContentColor = ContextCompat.getColor(this, android.R.color.white)
+        binding.topAppBar.setNavigationIconTint(appBarContentColor)
+        binding.topAppBar.setTitleTextColor(appBarContentColor)
+        navController.addOnDestinationChangedListener { _, destination, arguments ->
+            if (destination is FloatingWindow) return@addOnDestinationChangedListener
+            val title = timetableTitle(destination.id, arguments)
+            binding.topAppBar.isVisible = title != null
+            if (title != null) {
+                binding.topAppBar.title = title
+                binding.topAppBar.navigationIcon?.setTint(appBarContentColor)
+                (binding.topAppBar.navigationIcon as? DrawerArrowDrawable)?.color = appBarContentColor
+            }
+        }
+    }
+
+    private fun timetableTitle(destinationId: Int, arguments: Bundle?): String? = when (destinationId) {
+        R.id.shuttleTimetableFragment -> shuttleTimetableTitle(arguments)
+        R.id.busTimetableFragment -> busTimetableTitle(arguments)
+        R.id.subwayTimetableFragment -> subwayTimetableTitle(arguments)
+        else -> null
+    }
+
+    private fun shuttleTimetableTitle(arguments: Bundle?): String {
+        val stop = when (val stopId = arguments?.getInt("stopID")) {
+            R.string.shuttle_tab_dormitory_out,
+            R.string.shuttle_tab_shuttlecock_out,
+            R.string.shuttle_tab_station,
+            R.string.shuttle_tab_terminal,
+            R.string.shuttle_tab_jungang_station,
+            R.string.shuttle_tab_shuttlecock_in -> getString(stopId)
+            else -> null
+        }
+        val destination = when (arguments?.getInt("destinationID")) {
+            R.string.shuttle_header_bound_for_station -> getString(R.string.shuttle_tab_station)
+            R.string.shuttle_header_bound_for_dormitory -> getString(R.string.shuttle_tab_dormitory_out)
+            R.string.shuttle_header_bound_for_terminal -> getString(R.string.shuttle_tab_terminal)
+            R.string.shuttle_header_bound_for_jungang_station -> getString(R.string.shuttle_tab_jungang_station)
+            else -> null
+        }
+        return if (stop != null && destination != null) {
+            getString(R.string.timetable_route_title, stop, destination)
+        } else {
+            getString(R.string.home_movement_timetable)
+        }
+    }
+
+    private fun busTimetableTitle(arguments: Bundle?): String {
+        val route = when (arguments?.getInt("firstRouteID")) {
+            216000068 -> "10-1"
+            216000061 -> "3102"
+            216000096 -> "3100/3101"
+            216000075 -> "50"
+            else -> null
+        }
+        val stop = when (arguments?.getInt("stopID")) {
+            216000379 -> R.string.bus_stop_convention
+            216000381 -> R.string.bus_stop_cluster
+            216000383 -> R.string.bus_stop_dormitory
+            216000138 -> R.string.bus_stop_sangnoksu_station
+            216000719 -> R.string.bus_stop_main_gate
+            216000759 -> R.string.bus_stop_terminal
+            213000487 -> R.string.bus_stop_gwangmyeong_station
+            else -> null
+        }
+        return if (route != null && stop != null) {
+            getString(R.string.bus_header_format, route, getString(stop))
+        } else {
+            getString(R.string.home_movement_timetable)
+        }
+    }
+
+    private fun subwayTimetableTitle(arguments: Bundle?): String {
+        val title = when (arguments?.getString("stationID") to arguments?.getString("heading")) {
+            "K449" to "up" -> R.string.subway_timetable_title_line4_up
+            "K449" to "down" -> R.string.subway_timetable_title_line4_down
+            "K251" to "up" -> R.string.subway_timetable_title_suin_up
+            "K251" to "down" -> R.string.subway_timetable_title_suin_down
+            else -> null
+        }
+        return title?.let(::getString) ?: getString(R.string.home_movement_timetable)
     }
 
     override fun onPostResume() {

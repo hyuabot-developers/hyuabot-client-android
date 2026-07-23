@@ -189,6 +189,7 @@
     <string name="shuttle_help_departure_content">画面上部のスイッチをオンにしてください！各バスの出発時刻を確認できます。</string>
     <string name="shuttle_timetable_tab_weekdays">平日</string>
     <string name="shuttle_timetable_tab_weekends">週末</string>
+    <string name="timetable_route_title">%1$s → %2$s</string>
     <string name="shuttle_timetable_empty">運行予定のシャトルバスはありません。</string>
     <string name="shuttle_timetable_filter_title">シャトル時刻表を検索</string>
     <string name="shuttle_period">運行期間</string>
@@ -332,6 +333,10 @@
     <string name="subway_station_choji">草芝</string>
     <string name="subway_timetable_tab_weekdays">平日</string>
     <string name="subway_timetable_tab_weekends">週末</string>
+    <string name="subway_timetable_title_line4_up">4号線 (ソウル方面)</string>
+    <string name="subway_timetable_title_line4_down">4号線 (安山・オイド)</string>
+    <string name="subway_timetable_title_suin_up">水仁線 (水原)</string>
+    <string name="subway_timetable_title_suin_down">水仁線 (仁川)</string>
     <string name="subway_timetable_time_format">%1$s時%2$s分</string>
     <string name="cafeteria">学食</string>
     <string name="cafeteria_tab_breakfast">朝食</string>

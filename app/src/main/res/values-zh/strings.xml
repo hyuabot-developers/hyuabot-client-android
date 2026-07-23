@@ -189,6 +189,7 @@
     <string name="shuttle_help_departure_content">打开页面上方的开关！即可查看该班车的出发时间。</string>
     <string name="shuttle_timetable_tab_weekdays">工作日</string>
     <string name="shuttle_timetable_tab_weekends">周末</string>
+    <string name="timetable_route_title">%1$s → %2$s</string>
     <string name="shuttle_timetable_empty">暂无运行校车。</string>
     <string name="shuttle_timetable_filter_title">搜索校车时刻表</string>
     <string name="shuttle_period">运行期间</string>
@@ -332,6 +333,10 @@
     <string name="subway_station_choji">草芝</string>
     <string name="subway_timetable_tab_weekdays">工作日</string>
     <string name="subway_timetable_tab_weekends">周末</string>
+    <string name="subway_timetable_title_line4_up">4号线 (首尔方向)</string>
+    <string name="subway_timetable_title_line4_down">4号线 (安山·乌耳岛)</string>
+    <string name="subway_timetable_title_suin_up">水仁线 (水原)</string>
+    <string name="subway_timetable_title_suin_down">水仁线 (仁川)</string>
     <string name="subway_timetable_time_format">%1$s时%2$s分</string>
     <string name="cafeteria">学生食堂</string>
     <string name="cafeteria_tab_breakfast">早餐</string>

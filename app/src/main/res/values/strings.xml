@@ -247,6 +247,7 @@
     <!-- 셔틀버스 시간표 -->
     <string name="shuttle_timetable_tab_weekdays">평일</string>
     <string name="shuttle_timetable_tab_weekends">주말</string>
+    <string name="timetable_route_title">%1$s → %2$s</string>
     <string name="shuttle_timetable_empty">운행 예정인 셔틀버스가 없습니다.</string>
     <!-- 셔틀버스 시간표 필터 -->
     <string name="shuttle_timetable_filter_title">셔틀 시간표 검색</string>
@@ -408,6 +409,10 @@
     <!-- 전철 시간표 탭 -->
     <string name="subway_timetable_tab_weekdays">평일</string>
     <string name="subway_timetable_tab_weekends">주말</string>
+    <string name="subway_timetable_title_line4_up">4호선 (사당·당고개)</string>
+    <string name="subway_timetable_title_line4_down">4호선 (안산·오이도)</string>
+    <string name="subway_timetable_title_suin_up">수인선 (왕십리·수원)</string>
+    <string name="subway_timetable_title_suin_down">수인선 (오이도·인천)</string>
     <string name="subway_timetable_time_format">%1$s시 %2$s분</string>
     <!-- 학식 -->
     <string name="cafeteria">학식</string>
