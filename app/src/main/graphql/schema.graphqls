@@ -874,6 +874,8 @@ type SubwayArrival {
   isExpress: Boolean
 
   isLast: Boolean
+
+  status: Int
 }
 
 type SubwayArrivalGroup {

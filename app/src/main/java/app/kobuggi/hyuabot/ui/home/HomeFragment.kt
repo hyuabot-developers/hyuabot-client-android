@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.content.res.ColorStateList
 import android.content.pm.PackageManager
 import android.graphics.Typeface
@@ -727,17 +728,31 @@ class HomeFragment : Fragment() {
         if (viewModel.showBus50Transfer.value != true) return null
         if (route.destination != "TERMINAL" || route.stop !in setOf("dormitory_o", "shuttlecock_o")) return null
         val terminalArrival = candidateArrivalDate(entry, "TERMINAL") ?: return null
-        val busArrival = data.transferBus
+        val realtimeArrival = data.transferBus
             .filter { it.stop.seq == 216000759 }
             .flatMap { it.arrival }
-            .mapNotNull { it.minutes?.let(::timeAfterMinutes) }
-            .filter { !it.isBefore(terminalArrival) }
-            .minOrNull()
-            ?: viewModel.bus50TerminalLogTimes.value
+            .filter { it.isRealtime }
+            .mapNotNull { arrival ->
+                arrival.minutes?.let { minutes ->
+                    HomeBusArrival(
+                        arrivalDate = timeAfterMinutes(minutes),
+                        minutes = minutes,
+                        stops = arrival.stops,
+                    )
+                }
+            }
+            .filter { !it.arrivalDate.isBefore(terminalArrival) }
+            .minByOrNull { it.arrivalDate }
+        val logArrival = if (realtimeArrival == null) {
+            viewModel.bus50TerminalLogTimes.value
                 .orEmpty()
                 .map(::dateTimeFor)
                 .filter { !it.isBefore(terminalArrival) }
                 .minOrNull()
+        } else {
+            null
+        }
+        val busArrival = realtimeArrival?.arrivalDate ?: logArrival
             ?: return null
         val bufferMinutes = Duration.between(terminalArrival, busArrival).toMinutes().coerceAtLeast(0).toInt()
         val tint = ContextCompat.getColor(
@@ -747,14 +762,77 @@ class HomeFragment : Fragment() {
         return HomeConnection(
             row = HomeRow(
                 badge = getString(R.string.home_transfer_bus50_badge),
-                title = getString(R.string.home_transfer_bus50_title, compactTime(busArrival.toLocalTime())),
-                subtitle = getString(R.string.home_transfer_bus50_subtitle),
-                trailing = getString(R.string.home_transfer_buffer, bufferMinutes),
+                title = getString(
+                    R.string.home_transfer_subway_title,
+                    getString(R.string.bus_stop_gwangmyeong_station),
+                ),
+                subtitle = realtimeArrival?.let(::busRealtimeArrivalText)
+                    ?: arrivalClockText(busArrival, R.string.home_transfer_bus50_log_arrival_record),
+                trailing = transferWaitingText(bufferMinutes, null),
                 tint = tint,
             ),
+            connectorTitle = getString(R.string.home_transfer_bus50_connector),
+            connectorTravelMinutes = null,
             arrivalDate = busArrival,
             minimumTransferMinutes = 0,
         )
+    }
+
+    private fun busRealtimeArrivalText(arrival: HomeBusArrival): String {
+        val stops = arrival.stops
+        return when {
+            stops != null && stops > 0 -> getString(R.string.home_transfer_bus50_realtime_stops, stops)
+            stops == 0 -> getString(R.string.home_transfer_realtime_arriving)
+            else -> getString(R.string.home_transfer_realtime_minutes, arrival.minutes)
+        }
+    }
+
+    private fun transferWaitingText(bufferMinutes: Int, travelMinutes: Int?): String {
+        val waitingMinutes = (bufferMinutes - (travelMinutes ?: 0)).coerceAtLeast(0)
+        return if (waitingMinutes == 0) {
+            getString(R.string.home_transfer_wait_immediate)
+        } else {
+            getString(R.string.home_transfer_wait_minutes, waitingMinutes)
+        }
+    }
+
+    private fun subwayArrivalText(arrival: HomeSubwayArrival): String {
+        if (!arrival.isRealtime) {
+            return arrivalClockText(arrival.arrivalDate, R.string.home_transfer_subway_timetable_arrival)
+        }
+        val stops = arrival.stops
+        if (stops == null || stops <= 0) {
+            return getString(R.string.home_transfer_realtime_arriving)
+        }
+
+        val isKorean = resources.configuration.locales[0].language == "ko"
+        if (isKorean && arrival.status == 3) {
+            return getString(R.string.home_transfer_subway_realtime_previous_departure, stops)
+        }
+        val status = subwayRealtimeStatusText(arrival.status)
+        if (isKorean && !arrival.location.isNullOrBlank() && status != null) {
+            return getString(
+                R.string.home_transfer_subway_realtime_status,
+                stops,
+                arrival.location,
+                status,
+            )
+        }
+        return getString(R.string.home_transfer_subway_realtime_stops, stops)
+    }
+
+    private fun subwayRealtimeStatusText(status: Int?): String? {
+        val resource = when (status) {
+            0 -> R.string.home_transfer_subway_status_entering
+            1 -> R.string.home_transfer_subway_status_arrived
+            2 -> R.string.home_transfer_subway_status_departed
+            else -> return null
+        }
+        return getString(resource)
+    }
+
+    private fun arrivalClockText(arrivalDate: ZonedDateTime, resource: Int): String {
+        return getString(resource, arrivalDate.hour, arrivalDate.minute)
     }
 
     private fun subwayTransferConnections(
@@ -813,7 +891,12 @@ class HomeFragment : Fragment() {
                 ?: return@mapNotNull null
             listOf(
                 subwayConnection(firstLeg, stationArrival),
-                subwayConnection(secondLeg, firstLeg.arrivalDate, R.string.home_transfer_subway_oido_subtitle),
+                subwayConnection(
+                    secondLeg,
+                    firstLeg.arrivalDate,
+                    connectorTitleRes = R.string.home_transfer_subway_oido_connector,
+                    connectorTravelMinutes = null,
+                ),
             )
         }
     }
@@ -835,8 +918,9 @@ class HomeFragment : Fragment() {
                 subwayConnection(
                     secondLeg,
                     firstLeg.arrivalDate,
-                    R.string.home_transfer_subway_choji_subtitle,
-                    CHOJI_MINIMUM_TRANSFER_MINUTES,
+                    connectorTitleRes = R.string.home_transfer_subway_choji_connector,
+                    connectorTravelMinutes = CHOJI_MINIMUM_TRANSFER_MINUTES,
+                    minimumTransferMinutes = CHOJI_MINIMUM_TRANSFER_MINUTES,
                 ),
             )
         }
@@ -949,6 +1033,10 @@ class HomeFragment : Fragment() {
                     terminalName = it.terminal.name,
                     arrivalDate = timeAfterMinutes(it.minutes),
                     tint = tint,
+                    isRealtime = it.isRealtime,
+                    location = it.location,
+                    stops = it.stops,
+                    status = it.status,
                 )
             }
             .orEmpty()
@@ -973,6 +1061,10 @@ class HomeFragment : Fragment() {
                     terminalName = it.terminal.name,
                     arrivalDate = upcomingDateTimeFor(it.time),
                     tint = tint,
+                    isRealtime = false,
+                    location = null,
+                    stops = null,
+                    status = null,
                 )
             }
             .orEmpty()
@@ -991,7 +1083,8 @@ class HomeFragment : Fragment() {
     private fun subwayConnection(
         arrival: HomeSubwayArrival,
         transferStartDate: ZonedDateTime,
-        subtitleRes: Int = R.string.home_transfer_subway_subtitle,
+        connectorTitleRes: Int = R.string.home_transfer_subway_connector,
+        connectorTravelMinutes: Int? = SUBWAY_MINIMUM_TRANSFER_MINUTES,
         minimumTransferMinutes: Int = SUBWAY_MINIMUM_TRANSFER_MINUTES,
     ): HomeConnection {
         val bufferMinutes = Duration.between(transferStartDate, arrival.arrivalDate).toMinutes().coerceAtLeast(0).toInt()
@@ -1002,10 +1095,12 @@ class HomeFragment : Fragment() {
                     R.string.home_transfer_subway_title,
                     localizedSubwayStationName(requireContext(), arrival.terminalStationID, arrival.terminalName),
                 ),
-                subtitle = getString(subtitleRes),
-                trailing = getString(R.string.home_transfer_buffer, bufferMinutes),
+                subtitle = subwayArrivalText(arrival),
+                trailing = transferWaitingText(bufferMinutes, connectorTravelMinutes),
                 tint = arrival.tint,
             ),
+            connectorTitle = getString(connectorTitleRes),
+            connectorTravelMinutes = connectorTravelMinutes,
             arrivalDate = arrival.arrivalDate,
             minimumTransferMinutes = minimumTransferMinutes,
         )
@@ -1102,12 +1197,15 @@ class HomeFragment : Fragment() {
         }
         val shuttleView = createHomeRowView(movement.row)
         pair.addView(shuttleView)
-        movement.connections.forEach { connection ->
-            pair.addView(createLinkBadge(connection.row.tint), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(22)).apply {
-                topMargin = -dp(7)
-                bottomMargin = -dp(7)
+        movement.connections.forEachIndexed { index, connection ->
+            pair.addView(createLinkBadge(connection), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(24)).apply {
+                topMargin = -dp(8)
+                bottomMargin = -dp(8)
             })
-            pair.addView(createHomeTransferRowView(connection.row), LinearLayout.LayoutParams(
+            pair.addView(createHomeTransferRowView(
+                row = connection.row,
+                hasFollowingConnection = index < movement.connections.lastIndex,
+            ), LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
             ))
@@ -1135,8 +1233,14 @@ class HomeFragment : Fragment() {
         return rowBinding.root
     }
 
-    private fun createHomeTransferRowView(row: HomeRow): View {
+    private fun createHomeTransferRowView(row: HomeRow, hasFollowingConnection: Boolean): View {
         val rowBinding = ItemHomeTransferRowBinding.inflate(layoutInflater)
+        rowBinding.root.setPadding(
+            dp(12),
+            dp(14),
+            dp(12),
+            dp(if (hasFollowingConnection) 14 else 8),
+        )
         rowBinding.badge.applyHomeTypeface(Typeface.BOLD)
         rowBinding.title.applyHomeTypeface(Typeface.BOLD)
         rowBinding.subtitle.applyHomeTypeface(Typeface.NORMAL)
@@ -1155,22 +1259,66 @@ class HomeFragment : Fragment() {
         return rowBinding.root
     }
 
-    private fun createLinkBadge(tint: Int): View {
+    private fun createLinkBadge(connection: HomeConnection): View {
+        val isDarkMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+            Configuration.UI_MODE_NIGHT_YES
+        val foreground = if (isDarkMode) {
+            ContextCompat.getColor(requireContext(), R.color.primary_text)
+        } else {
+            connection.row.tint
+        }
+        val title = connection.connectorTravelMinutes?.let { travelMinutes ->
+            getString(
+                R.string.home_transfer_connector_travel_time,
+                connection.connectorTitle,
+                travelMinutes,
+            )
+        } ?: connection.connectorTitle
         return LinearLayout(requireContext()).apply {
             clipChildren = false
             clipToPadding = false
+            elevation = dp(2).toFloat()
             gravity = Gravity.CENTER
-            addView(ImageView(requireContext()).apply {
-                setImageResource(R.drawable.ic_home_link)
-                imageTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(tint, 184))
-                scaleType = ImageView.ScaleType.CENTER_INSIDE
-                setPadding(dp(5), dp(5), dp(5), dp(5))
+            contentDescription = title
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+            addView(LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(dp(8), dp(4), dp(8), dp(4))
                 background = android.graphics.drawable.GradientDrawable().apply {
-                    shape = android.graphics.drawable.GradientDrawable.OVAL
-                    setColor(ContextCompat.getColor(requireContext(), R.color.background))
-                    setStroke(dp(1), ColorUtils.setAlphaComponent(tint, 46))
+                    cornerRadius = dp(12).toFloat()
+                    setColor(ContextCompat.getColor(requireContext(), R.color.home_card_background))
+                    setStroke(
+                        dp(1),
+                        ColorUtils.setAlphaComponent(connection.row.tint, if (isDarkMode) 153 else 46),
+                    )
                 }
-            }, LinearLayout.LayoutParams(dp(22), dp(22)))
+                addView(ImageView(requireContext()).apply {
+                    setImageResource(R.drawable.ic_home_link)
+                    imageTintList = ColorStateList.valueOf(
+                        if (isDarkMode) foreground else ColorUtils.setAlphaComponent(foreground, 184),
+                    )
+                    scaleType = ImageView.ScaleType.CENTER_INSIDE
+                    importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                }, LinearLayout.LayoutParams(dp(11), dp(11)))
+                addView(TextView(requireContext()).apply {
+                    applyHomeTypeface(Typeface.BOLD)
+                    text = title
+                    setTextColor(foreground)
+                    textSize = 10f
+                    includeFontPadding = false
+                    maxLines = 1
+                    importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                }, LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                ).apply {
+                    leftMargin = dp(4)
+                })
+            }, LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                dp(24),
+            ))
         }
     }
 
@@ -1627,8 +1775,16 @@ private data class HomeRouteDisplay(
 
 private data class HomeConnection(
     val row: HomeRow,
+    val connectorTitle: String,
+    val connectorTravelMinutes: Int?,
     val arrivalDate: ZonedDateTime,
     val minimumTransferMinutes: Int,
+)
+
+private data class HomeBusArrival(
+    val arrivalDate: ZonedDateTime,
+    val minutes: Int,
+    val stops: Int?,
 )
 
 private data class HomeSubwayArrival(
@@ -1637,6 +1793,10 @@ private data class HomeSubwayArrival(
     val terminalName: String,
     val arrivalDate: ZonedDateTime,
     val tint: Int,
+    val isRealtime: Boolean,
+    val location: String?,
+    val stops: Int?,
+    val status: Int?,
 )
 
 private enum class HomeSubwayRouteTarget {
