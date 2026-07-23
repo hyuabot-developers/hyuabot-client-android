@@ -29,6 +29,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
@@ -172,17 +173,24 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     private fun updatePrimaryNavigationItem(destinationId: Int?) {
         updateBottomNavigationLabels()
         val primaryItem = binding.bottomNavigation.menu.findItem(R.id.homeFragment) ?: return
+        val busItem = binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)
+        val subwayItem = binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)
         val moreItem = binding.bottomNavigation.menu.findItem(R.id.menuFragment)
-        if (destinationId.isShuttleDestination()) {
-            primaryItem.title = getString(R.string.shuttle_bus)
-            primaryItem.setIcon(R.drawable.ic_shuttle_bus)
-            primaryItem.isChecked = true
-        } else {
-            primaryItem.title = getString(R.string.home)
-            primaryItem.setIcon(R.drawable.ic_home)
-            when {
-                destinationId == R.id.homeFragment -> primaryItem.isChecked = true
-                destinationId.isMoreDestination() -> moreItem?.isChecked = true
+        when {
+            destinationId.isShuttleDestination() -> {
+                primaryItem.title = getString(R.string.shuttle_bus)
+                primaryItem.setIcon(R.drawable.ic_shuttle_bus)
+                primaryItem.isChecked = true
+            }
+            else -> {
+                primaryItem.title = getString(R.string.home)
+                primaryItem.setIcon(R.drawable.ic_home)
+                when {
+                    destinationId == R.id.homeFragment -> primaryItem.isChecked = true
+                    destinationId.isBusDestination() -> busItem?.isChecked = true
+                    destinationId.isSubwayDestination() -> subwayItem?.isChecked = true
+                    destinationId.isMoreDestination() -> moreItem?.isChecked = true
+                }
             }
         }
     }
@@ -194,6 +202,22 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.shuttleHelpDialogFragment,
         R.id.shuttleTimetableDialogFragment,
         R.id.shuttleTimetableFilterDialogFragment -> true
+        else -> false
+    }
+
+    private fun Int?.isBusDestination(): Boolean = when (this) {
+        R.id.busRealtimeFragment,
+        R.id.busTimetableFragment,
+        R.id.busHelpDialogFragment,
+        R.id.busStopInfoFragment,
+        R.id.busDepartureLogDialogFragment,
+        R.id.busRouteInfoDialogFragment -> true
+        else -> false
+    }
+
+    private fun Int?.isSubwayDestination(): Boolean = when (this) {
+        R.id.subwayRealtimeFragment,
+        R.id.subwayTimetableFragment -> true
         else -> false
     }
 
@@ -336,12 +360,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         tabItemForDestination(item.itemId)?.let {
             AnalyticsManager.logSelect(it, AnalyticsContentType.TAB)
         }
-        if (item.itemId == navController.currentDestination?.id) {
-            navController.popBackStack(navController.graph.startDestinationId, false)
-        } else {
-            navController.navigate(item.itemId)
-        }
-        return true
+        return item.onNavDestinationSelected(navController)
     }
 
     /** Maps a nav-graph destination id to its analytics screen (null = not tracked as a screen). */
