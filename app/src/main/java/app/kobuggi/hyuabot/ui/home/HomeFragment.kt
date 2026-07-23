@@ -65,6 +65,7 @@ class HomeFragment : Fragment() {
     private val homeTypeface by lazy { ResourcesCompat.getFont(requireContext(), R.font.godo) }
     private var selectedDeparture = HomeDeparture.DORMITORY
     private var selectedDestination = HomeDestination.STATION
+    private var hasResolvedInitialDepartureLocation = false
     private var lockDepartureSelection = false
     private var debugSubwayTransferDestination: HomeSubwayTransferDestination? = null
     private var noticePosition = 0
@@ -380,7 +381,12 @@ class HomeFragment : Fragment() {
         if (!isAdded || view == null) return
         if (lockDepartureSelection) return
         val nearestDeparture = HomeDeparture.entries.minByOrNull { it.distanceTo(location) } ?: return
+        val shouldApplyHysteresis = hasResolvedInitialDepartureLocation
+        hasResolvedInitialDepartureLocation = true
+        val currentDistance = selectedDeparture.distanceTo(location)
+        val nearestDistance = nearestDeparture.distanceTo(location)
         if (nearestDeparture == selectedDeparture) return
+        if (shouldApplyHysteresis && nearestDistance + DEPARTURE_SWITCH_HYSTERESIS_METERS >= currentDistance) return
 
         selectedDeparture = nearestDeparture
         if (selectedDestination !in selectedDeparture.destinations) {
@@ -1370,6 +1376,7 @@ class HomeFragment : Fragment() {
 
     companion object {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
+        private const val DEPARTURE_SWITCH_HYSTERESIS_METERS = 75f
         private const val ROW_BACKGROUND_ALPHA = 24
         private const val TRANSFER_ROW_BACKGROUND_ALPHA = 20
         private const val TRANSFER_ROW_STROKE_ALPHA = 31

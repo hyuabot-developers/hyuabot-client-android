@@ -35,6 +35,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Runnable
@@ -54,6 +55,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private var currentPosition = 0
     private var manuallyScrolled = false
     private var honorDeepLinkStop = false
+    private var hasRequestedInitialStopLocation = false
+    private var hasManualStopSelection = false
+    private var isApplyingInitialLocationSelection = false
     private var coachmarkShown = false
     private val scrollHandler = Handler(Looper.getMainLooper())
     private lateinit var autoScrollRunnable: Runnable
@@ -90,6 +94,12 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             override fun onPageSelected(position: Int) {
                 viewModel.setPresenceStop(position)
             }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                    hasManualStopSelection = true
+                }
+            }
         })
         if (BuildConfig.DEBUG) {
             requireActivity().intent.getIntExtra(EXTRA_PRESENCE_PREVIEW_COUNT, -1)
@@ -119,9 +129,20 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                if (!isApplyingInitialLocationSelection) {
+                    hasManualStopSelection = true
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) = Unit
+
+            override fun onTabReselected(tab: TabLayout.Tab) = Unit
+        })
         stopNameToTabIndex(args.stop)?.let { index ->
-            binding.viewPager.setCurrentItem(index, false)
             honorDeepLinkStop = true
+            binding.viewPager.setCurrentItem(index, false)
         }
         // If weekdays is from monday to friday and time is before 10:00, it is true and else false
         if (now.dayOfWeek.value in 1..5 && now.hour < 10) {
@@ -169,10 +190,11 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
         })
         viewModel.result.observe(viewLifecycleOwner) { stops ->
-            if (honorDeepLinkStop) {
+            if (honorDeepLinkStop || hasManualStopSelection || hasRequestedInitialStopLocation) {
                 return@observe
             }
             if (stops.isNotEmpty()) {
+                hasRequestedInitialStopLocation = true
                 moveToNearestStop(fusedLocationProviderClient, stops)
             }
         }
@@ -295,14 +317,17 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     }
 
     private fun selectNearestStop(stops: List<ShuttleRealtimePageQuery.Stop>, location: Location) {
-        if (honorDeepLinkStop) {
+        if (!isAdded || view == null || honorDeepLinkStop || hasManualStopSelection) {
             return
         }
-        val nearestStop = stops.map { stopItem ->
+        val gpsCandidates = stops.filterNot { it.name == "shuttlecock_i" }.ifEmpty { stops }
+        val nearestStop = gpsCandidates.map { stopItem ->
             Pair(stopItem, calculateDistance(stopItem, location))
         }.minByOrNull { it.second }?.first
         Log.d("ShuttleRealtimeFragment", "Nearest stop: ${nearestStop?.name}, distance: ${nearestStop?.let { calculateDistance(it, location) }}")
+        isApplyingInitialLocationSelection = true
         binding.viewPager.setCurrentItem(stopNameToTabIndex(nearestStop?.name) ?: 0, false)
+        isApplyingInitialLocationSelection = false
     }
 
     private fun maybeShowCoachmark() {
