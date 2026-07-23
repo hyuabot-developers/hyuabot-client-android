@@ -170,14 +170,61 @@
                                 app:iconTint="@color/home_detail_button_text" />
                         </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/route_text"
+                        <LinearLayout
+                            android:id="@+id/route_status_row"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textColor="@color/secondary_text"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/route_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textColor="@color/secondary_text"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/home_presence_pill"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginStart="10dp"
+                                android:importantForAccessibility="yes"
+                                android:visibility="gone"
+                                app:cardBackgroundColor="@color/home_action_button_background"
+                                app:cardCornerRadius="15dp"
+                                app:cardElevation="0dp"
+                                app:strokeWidth="0dp">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:orientation="horizontal"
+                                    android:paddingHorizontal="10dp">
+
+                                    <ImageView
+                                        android:layout_width="15dp"
+                                        android:layout_height="12dp"
+                                        android:contentDescription="@null"
+                                        android:importantForAccessibility="no"
+                                        android:src="@drawable/ic_people_filled"
+                                        app:tint="@color/hanyang_blue" />
+
+                                    <TextView
+                                        android:id="@+id/home_presence_count"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="4dp"
+                                        android:textColor="@color/hanyang_blue"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
 
                         <com.faltenreich.skeletonlayout.SkeletonLayout
                             android:id="@+id/movement_loading"

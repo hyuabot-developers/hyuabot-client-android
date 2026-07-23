@@ -49,6 +49,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.ZoneId
@@ -85,6 +86,12 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         applyDebugRouteOverride()
+        if (BuildConfig.DEBUG) {
+            val previewCount = activity?.intent
+                ?.takeIf { it.hasExtra(PRESENCE_PREVIEW_COUNT_EXTRA) }
+                ?.getIntExtra(PRESENCE_PREVIEW_COUNT_EXTRA, 0)
+            viewModel.setPresencePreviewCount(previewCount)
+        }
         binding.dateText.text = formattedToday()
         setupDestinationButtons()
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
@@ -114,6 +121,9 @@ class HomeFragment : Fragment() {
             if (result.getBoolean(HomeQuickSettingsDialog.KEY_OPEN_LEGACY_SHUTTLE, false)) {
                 AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_LEGACY_SHUTTLE)
                 findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
+            }
+            if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS)) {
+                viewModel.setShowPresenceStatus(result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS))
             }
             if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_BUS50_TRANSFER)) {
                 viewModel.setShowBus50Transfer(result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_BUS50_TRANSFER))
@@ -154,6 +164,20 @@ class HomeFragment : Fragment() {
         viewModel.showSubwayTransfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.subwayTransferDestination.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.bus50TerminalLogTimes.observe(viewLifecycleOwner) { render(viewModel.data.value) }
+        viewModel.presenceViewerCount.observe(viewLifecycleOwner) { viewerCount ->
+            binding.homePresencePill.visibility = if (viewerCount == null) View.GONE else View.VISIBLE
+            if (viewerCount != null) {
+                binding.homePresenceCount.text = NumberFormat
+                    .getIntegerInstance(resources.configuration.locales[0])
+                    .format(viewerCount)
+                binding.homePresencePill.contentDescription = getString(
+                    R.string.shuttle_presence_viewer_count,
+                    viewerCount,
+                )
+            } else {
+                binding.homePresencePill.contentDescription = null
+            }
+        }
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let {
                 binding.homeSwipeRefreshLayout.isRefreshing = false
@@ -167,6 +191,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        viewModel.startPresenceUpdates()
         refreshHandler.removeCallbacks(autoRefreshRunnable)
         refreshHandler.postDelayed(autoRefreshRunnable, AUTO_REFRESH_INTERVAL_MILLIS)
         if (::noticeAutoScrollRunnable.isInitialized) {
@@ -175,6 +200,7 @@ class HomeFragment : Fragment() {
     }
 
     override fun onPause() {
+        viewModel.stopPresenceUpdates()
         refreshHandler.removeCallbacks(autoRefreshRunnable)
         if (::noticeAutoScrollRunnable.isInitialized) {
             noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
@@ -367,6 +393,7 @@ class HomeFragment : Fragment() {
     private fun openQuickSettings() {
         if (childFragmentManager.findFragmentByTag(HOME_QUICK_SETTINGS_TAG) != null) return
         HomeQuickSettingsDialog.newInstance(
+            showPresenceStatus = viewModel.showPresenceStatus.value ?: true,
             showBus50Transfer = viewModel.showBus50Transfer.value ?: true,
             showSubwayTransfer = viewModel.showSubwayTransfer.value ?: true,
             subwayTransferDestination = selectedSubwayTransferDestination(),
@@ -387,6 +414,7 @@ class HomeFragment : Fragment() {
 
     private fun render(data: HomePageQuery.Data?) {
         renderWeather(data?.homeWeather)
+        viewModel.setPresenceStop(selectedDeparture.routeTo(selectedDestination).stop)
         binding.routeText.text = getString(
             R.string.home_route_format,
             getString(selectedDeparture.titleRes),
@@ -1356,6 +1384,7 @@ class HomeFragment : Fragment() {
         private const val DEBUG_DEPARTURE_EXTRA = "homeDebugDeparture"
         private const val DEBUG_DESTINATION_EXTRA = "homeDebugDestination"
         private const val DEBUG_SUBWAY_DESTINATION_EXTRA = "homeDebugSubwayDestination"
+        private const val PRESENCE_PREVIEW_COUNT_EXTRA = "shuttle_presence_preview_count"
     }
 }
 
