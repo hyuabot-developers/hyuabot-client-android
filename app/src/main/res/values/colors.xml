@@ -5,6 +5,7 @@
     <color name="hanyang_silver">#898C8E</color>
     <color name="hanyang_green">#7DB928</color>
     <color name="hanyang_orange">#F08100</color>
+    <color name="shuttle_status_badge_background">#F08100</color>
     <color name="hanyang_gold">#88774F</color>
     <!-- 버스 노선 색상 -->
     <color name="red_bus">#E60012</color>
