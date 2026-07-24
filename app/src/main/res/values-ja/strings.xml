@@ -32,7 +32,7 @@
     <string name="home_weather_range_subtitle">今日 %1$.0f°C〜%2$.0f°C</string>
     <string name="home_weather_precipitation_amount_subtitle">現在 %1$.0f°C・直近1時間 %2$.1f mm</string>
     <string name="home_weather_confidence_low">予報が変わる可能性があります</string>
-    <string name="home_weather_attribution">予報：Open-Meteo</string>
+    <string name="home_weather_attribution">Open-Meteo ↗</string>
     <string name="home_movement_title">今すぐ移動</string>
     <string name="home_movement_detail">シャトル詳細</string>
     <string name="home_movement_timetable">全時刻表</string>

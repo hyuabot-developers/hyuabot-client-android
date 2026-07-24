@@ -33,7 +33,7 @@
     <string name="home_weather_range_subtitle">오늘 %1$.0f°C~%2$.0f°C</string>
     <string name="home_weather_precipitation_amount_subtitle">현재 %1$.0f°C · 최근 1시간 %2$.1fmm</string>
     <string name="home_weather_confidence_low">예보가 달라질 수 있어요</string>
-    <string name="home_weather_attribution">예보 Open-Meteo</string>
+    <string name="home_weather_attribution">Open-Meteo ↗</string>
     <string name="home_movement_title">지금 이동</string>
     <string name="home_movement_detail">셔틀 상세</string>
     <string name="home_movement_timetable">전체 시간표</string>
