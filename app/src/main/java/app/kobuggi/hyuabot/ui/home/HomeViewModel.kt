@@ -10,6 +10,8 @@ import app.kobuggi.hyuabot.HomePageQuery
 import app.kobuggi.hyuabot.service.ShuttlePresenceService
 import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
+import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import app.kobuggi.hyuabot.type.BusRouteStopInput
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
@@ -39,6 +41,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _data = MutableLiveData<HomePageQuery.Data?>()
+    private val _initialStopRules = MutableLiveData<List<ShuttleInitialStopRuleCandidate>?>(null)
     private val _queryError = MutableLiveData<QueryError?>(null)
     private val _showBus50Transfer = MutableLiveData(true)
     private val _showSubwayTransfer = MutableLiveData(true)
@@ -55,6 +58,7 @@ class HomeViewModel @Inject constructor(
 
     val isLoading: LiveData<Boolean> get() = _isLoading
     val data: LiveData<HomePageQuery.Data?> get() = _data
+    val initialStopRules: LiveData<List<ShuttleInitialStopRuleCandidate>?> get() = _initialStopRules
     val queryError: LiveData<QueryError?> get() = _queryError
     val showBus50Transfer: LiveData<Boolean> get() = _showBus50Transfer
     val showSubwayTransfer: LiveData<Boolean> get() = _showSubwayTransfer
@@ -106,20 +110,41 @@ class HomeViewModel @Inject constructor(
                 ).fetchPolicy(FetchPolicy.NetworkOnly).execute()
 
                 if (response.data == null || response.exception != null) {
+                    _initialStopRules.value = emptyList()
                     _queryError.value = QueryError.SERVER_ERROR
                 } else {
+                    _initialStopRules.value =
+                        response.data?.shuttle?.initialStopRules.orEmpty().map { rule ->
+                            ShuttleInitialStopRuleCandidate(
+                                sequence = rule.seq,
+                                stopName = rule.stopName,
+                                priority = rule.priority,
+                                polygon =
+                                    rule.polygon.map { point ->
+                                        ShuttleGeoCoordinate(
+                                            latitude = point.latitude,
+                                            longitude = point.longitude,
+                                        )
+                                    },
+                            )
+                        }
                     _data.value = response.data
                     _bus50TerminalLogTimes.value = fetchBus50TerminalLogTimes(now.toLocalDate())
                     shuttleServiceNoticeScheduler.sync()
                     _queryError.value = null
                 }
             } catch (_: Exception) {
+                _initialStopRules.value = emptyList()
                 _queryError.value = QueryError.SERVER_ERROR
             } finally {
                 _isLoading.value = false
                 isFetching = false
             }
         }
+    }
+
+    fun invalidateInitialStopRules() {
+        _initialStopRules.value = null
     }
 
     fun setShowBus50Transfer(show: Boolean) {

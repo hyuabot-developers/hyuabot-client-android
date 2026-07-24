@@ -31,6 +31,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkEligibility
 import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
+import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopResolver
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -207,7 +208,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
             if (stops.isNotEmpty()) {
                 hasRequestedInitialStopLocation = true
-                moveToNearestStop(fusedLocationProviderClient, stops)
+                moveToInitialStop(fusedLocationProviderClient, stops)
             }
         }
         viewModel.queryError.observe(viewLifecycleOwner) {
@@ -295,7 +296,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun moveToNearestStop(
+    private fun moveToInitialStop(
         client: FusedLocationProviderClient,
         stops: List<ShuttleRealtimePageQuery.Stop>,
     ) {
@@ -309,7 +310,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     ) {
         client.lastLocation
             .addOnSuccessListener { location ->
-                if (location != null && isFresh(location)) selectNearestStop(stops, location)
+                if (location != null && isFresh(location)) selectInitialStop(stops, location)
             }
             .addOnFailureListener {
                 Log.e("ShuttleRealtimeFragment", "Failed to get last known location", it)
@@ -330,7 +331,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
             .addOnSuccessListener { location ->
                 if (location != null) {
-                    selectNearestStop(stops, location)
+                    selectInitialStop(stops, location)
                 } else {
                     selectLastKnownLocation(client, stops)
                 }
@@ -341,17 +342,29 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
     }
 
-    private fun selectNearestStop(stops: List<ShuttleRealtimePageQuery.Stop>, location: Location) {
+    private fun selectInitialStop(stops: List<ShuttleRealtimePageQuery.Stop>, location: Location) {
         if (!isAdded || view == null || honorDeepLinkStop || hasManualStopSelection) {
             return
         }
+        val configuredStopName =
+            ShuttleInitialStopResolver.resolve(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                rules = viewModel.initialStopRules.value.orEmpty(),
+            )
+        val configuredStop = configuredStopName?.let { name -> stops.firstOrNull { it.name == name } }
         val gpsCandidates = stops.filterNot { it.name == "shuttlecock_i" }.ifEmpty { stops }
         val nearestStop = gpsCandidates.map { stopItem ->
             Pair(stopItem, calculateDistance(stopItem, location))
         }.minByOrNull { it.second }?.first
-        Log.d("ShuttleRealtimeFragment", "Nearest stop: ${nearestStop?.name}, distance: ${nearestStop?.let { calculateDistance(it, location) }}")
+        val initialStop = configuredStop ?: nearestStop
+        Log.d(
+            "ShuttleRealtimeFragment",
+            "Initial stop: ${initialStop?.name}, configured: ${configuredStop != null}, " +
+                "distance: ${initialStop?.let { calculateDistance(it, location) }}",
+        )
         isApplyingInitialLocationSelection = true
-        binding.viewPager.setCurrentItem(stopNameToTabIndex(nearestStop?.name) ?: 0, false)
+        binding.viewPager.setCurrentItem(stopNameToTabIndex(initialStop?.name) ?: 0, false)
         isApplyingInitialLocationSelection = false
     }
 

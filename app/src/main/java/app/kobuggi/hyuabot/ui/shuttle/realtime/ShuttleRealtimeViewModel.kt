@@ -11,6 +11,8 @@ import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.ShuttlePresenceService
 import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
+import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
+import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import app.kobuggi.hyuabot.util.QueryError
 import app.kobuggi.hyuabot.util.currentShuttleWeekday
 import app.kobuggi.hyuabot.util.shuttleBusLogReferenceDates
@@ -44,6 +46,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _showByDestination = MutableLiveData(false)
     private val _showRemainingTime = MutableLiveData(true)
     private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Stop>>()
+    private val _initialStopRules = MutableLiveData<List<ShuttleInitialStopRuleCandidate>>(emptyList())
     private val _notices = MutableLiveData<List<ShuttleRealtimePageQuery.Notice1>>()
     private val _transfer = MutableLiveData<ShuttleRealtimePageQuery.Data?>(null)
     private val _disposable = CompositeDisposable()
@@ -71,6 +74,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private var isStarted = false
 
     val result get() = _result
+    val initialStopRules get() = _initialStopRules
     val notices get() = _notices
     val transfer get() = _transfer
     val isLoading get() = _isLoading
@@ -140,6 +144,21 @@ class ShuttleRealtimeViewModel @Inject constructor(
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.shuttle?.stops != null) {
+                _initialStopRules.value =
+                    response.data?.shuttle?.initialStopRules.orEmpty().map { rule ->
+                        ShuttleInitialStopRuleCandidate(
+                            sequence = rule.seq,
+                            stopName = rule.stopName,
+                            priority = rule.priority,
+                            polygon =
+                                rule.polygon.map { point ->
+                                    ShuttleGeoCoordinate(
+                                        latitude = point.latitude,
+                                        longitude = point.longitude,
+                                    )
+                                },
+                        )
+                    }
                 _result.value = response.data?.shuttle?.stops
                 _transfer.value = response.data
                 updateBusAlternatives(response.data?.busAlternative.orEmpty())
