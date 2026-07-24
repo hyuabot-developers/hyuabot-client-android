@@ -64,6 +64,35 @@ class HomeWeatherDisplayLogicTest {
         )
     }
 
+    @Test
+    fun `observed precipitation takes priority over forecast timing`() {
+        val now = ZonedDateTime.parse("2026-07-24T09:30:00+09:00")
+        assertEquals(
+            HomeWeatherTitleStyle.RAIN_NOW,
+            HomeWeatherDisplayLogic.titleStyle(
+                condition = "RAIN",
+                currentTemperature = 28.0,
+                maximumTemperature = 31.0,
+                precipitationType = "RAIN",
+                currentPrecipitationType = "RAIN",
+                precipitationStartAt = ZonedDateTime.parse("2026-07-24T10:00:00+09:00"),
+                now = now,
+            ),
+        )
+        assertEquals(
+            HomeWeatherTitleStyle.RAIN_TODAY,
+            HomeWeatherDisplayLogic.titleStyle(
+                condition = "RAIN",
+                currentTemperature = 28.0,
+                maximumTemperature = 31.0,
+                precipitationType = "RAIN",
+                currentPrecipitationType = "NONE",
+                precipitationStartAt = ZonedDateTime.parse("2026-07-24T09:00:00+09:00"),
+                now = now,
+            ),
+        )
+    }
+
     private fun style(
         condition: String,
         current: Double,

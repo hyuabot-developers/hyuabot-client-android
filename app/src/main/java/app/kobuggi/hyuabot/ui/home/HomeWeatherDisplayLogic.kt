@@ -27,6 +27,7 @@ object HomeWeatherDisplayLogic {
         currentTemperature: Double?,
         maximumTemperature: Double?,
         precipitationType: String,
+        currentPrecipitationType: String? = null,
         precipitationStartAt: ZonedDateTime?,
         now: ZonedDateTime = ZonedDateTime.now(serviceZone),
     ): HomeWeatherTitleStyle {
@@ -49,6 +50,20 @@ object HomeWeatherDisplayLogic {
             else -> null
         }
         if (precipitationStyles != null) {
+            if (currentPrecipitationType != null) {
+                if (currentPrecipitationType in setOf("RAIN", "SLEET", "SNOW")) {
+                    return when (currentPrecipitationType) {
+                        "RAIN" -> HomeWeatherTitleStyle.RAIN_NOW
+                        "SLEET" -> HomeWeatherTitleStyle.SLEET_NOW
+                        else -> HomeWeatherTitleStyle.SNOW_NOW
+                    }
+                }
+                return when {
+                    precipitationStartAt == null -> precipitationStyles.third
+                    precipitationStartAt.toInstant() > now.toInstant() -> precipitationStyles.second
+                    else -> precipitationStyles.third
+                }
+            }
             return when {
                 precipitationStartAt == null -> precipitationStyles.third
                 precipitationStartAt.toInstant() <= now.toInstant() -> precipitationStyles.first

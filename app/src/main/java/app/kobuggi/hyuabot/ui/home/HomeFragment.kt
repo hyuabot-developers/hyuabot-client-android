@@ -543,6 +543,7 @@ class HomeFragment : Fragment() {
             currentTemperature = current,
             maximumTemperature = maximum,
             precipitationType = weather.precipitationType,
+            currentPrecipitationType = weather.currentPrecipitationType,
             precipitationStartAt = weather.precipitationStartAt,
         )
         val titleRes = when (titleStyle) {
@@ -577,7 +578,19 @@ class HomeFragment : Fragment() {
         }
         binding.homeWeatherIcon.setWeatherCondition(condition)
         binding.homeWeatherIcon.visibility = View.VISIBLE
-        binding.homeHeroSubtitle.text = when {
+        val isCurrentlyPrecipitating = weather.currentPrecipitationType in setOf("RAIN", "SLEET", "SNOW")
+        val subtitle = when {
+            isCurrentlyPrecipitating && current != null &&
+                weather.currentPrecipitationAmount != null &&
+                weather.currentPrecipitationAmount > 0 -> getString(
+                R.string.home_weather_precipitation_amount_subtitle,
+                current,
+                weather.currentPrecipitationAmount,
+            )
+            isCurrentlyPrecipitating && current != null -> getString(
+                R.string.home_weather_current_subtitle,
+                current,
+            )
             weather.precipitationType != "NONE" && current != null -> getString(
                 R.string.home_weather_precipitation_current_subtitle,
                 current,
@@ -604,6 +617,15 @@ class HomeFragment : Fragment() {
             )
             else -> getString(R.string.home_hero_subtitle)
         }
+        binding.homeHeroSubtitle.text = buildList {
+            add(subtitle)
+            if (weather.precipitationConfidence == "LOW") {
+                add(getString(R.string.home_weather_confidence_low))
+            }
+            if (weather.attribution != null) {
+                add(getString(R.string.home_weather_attribution))
+            }
+        }.joinToString(" · ")
     }
 
     private fun renderMovement(data: HomePageQuery.Data?) {

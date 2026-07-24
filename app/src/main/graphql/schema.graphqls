@@ -678,13 +678,22 @@ type Query {
 type HomeWeather {
   issuedAt: DateTime!
   expiresAt: DateTime!
+  observedAt: DateTime
+  forecastUpdatedAt: DateTime
   currentTemperature: Float
+  currentPrecipitationType: String
+  currentPrecipitationAmount: Float
   minimumTemperature: Float
   maximumTemperature: Float
   precipitationProbabilityMax: Int!
   precipitationStartAt: DateTime
+  precipitationEndAt: DateTime
   precipitationType: String!
+  precipitationConfidence: String
+  availableModelCount: Int
+  agreeingModelCount: Int
   primaryCondition: String!
+  attribution: String
 }
 
 """

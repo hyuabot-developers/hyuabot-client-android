@@ -16,6 +16,15 @@ query HomePageQuery(
         precipitationStartAt
         precipitationType
         primaryCondition
+        observedAt
+        forecastUpdatedAt
+        currentPrecipitationType
+        currentPrecipitationAmount
+        precipitationEndAt
+        precipitationConfidence
+        availableModelCount
+        agreeingModelCount
+        attribution
     }
     notices(input: { language: $language, category: "셔틀" }) {
         notices {
