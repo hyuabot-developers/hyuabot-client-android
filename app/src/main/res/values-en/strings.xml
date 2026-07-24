@@ -33,7 +33,7 @@
     <string name="home_weather_range_subtitle">%1$.0f°C–%2$.0f°C today</string>
     <string name="home_weather_precipitation_amount_subtitle">Now %1$.0f°C · %2$.1f mm in the last hour</string>
     <string name="home_weather_confidence_low">Forecast may change</string>
-    <string name="home_weather_attribution">Forecast by Open-Meteo</string>
+    <string name="home_weather_attribution">Open-Meteo ↗</string>
     <string name="home_movement_title">Move now</string>
     <string name="home_movement_detail">Shuttle details</string>
     <string name="home_movement_timetable">Full timetable</string>

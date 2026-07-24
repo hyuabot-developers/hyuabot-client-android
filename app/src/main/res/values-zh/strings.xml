@@ -32,7 +32,7 @@
     <string name="home_weather_range_subtitle">今日 %1$.0f°C～%2$.0f°C</string>
     <string name="home_weather_precipitation_amount_subtitle">当前 %1$.0f°C · 近1小时 %2$.1f毫米</string>
     <string name="home_weather_confidence_low">预报可能会变化</string>
-    <string name="home_weather_attribution">预报由 Open-Meteo 提供</string>
+    <string name="home_weather_attribution">Open-Meteo ↗</string>
     <string name="home_movement_title">现在出发</string>
     <string name="home_movement_detail">校车详情</string>
     <string name="home_movement_timetable">完整时刻表</string>

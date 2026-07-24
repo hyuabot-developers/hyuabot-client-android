@@ -2,16 +2,24 @@ package app.kobuggi.hyuabot.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.ColorStateList
-import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.TextPaint
 import android.text.TextUtils
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.Gravity
@@ -530,6 +538,7 @@ class HomeFragment : Fragment() {
         if (weather == null) {
             binding.homeHeroTitle.setText(R.string.home_hero_title)
             binding.homeHeroSubtitle.setText(R.string.home_hero_subtitle)
+            binding.homeHeroSubtitle.movementMethod = null
             binding.homeWeatherIcon.visibility = View.GONE
             return
         }
@@ -617,15 +626,53 @@ class HomeFragment : Fragment() {
             )
             else -> getString(R.string.home_hero_subtitle)
         }
-        binding.homeHeroSubtitle.text = buildList {
+        val subtitleParts = buildList {
             add(subtitle)
             if (weather.precipitationConfidence == "LOW") {
                 add(getString(R.string.home_weather_confidence_low))
             }
-            if (weather.attribution != null) {
-                add(getString(R.string.home_weather_attribution))
-            }
-        }.joinToString(" · ")
+        }
+        binding.homeHeroSubtitle.apply {
+            text = weatherSubtitleWithAttribution(
+                subtitle = subtitleParts.joinToString(" · "),
+                includesAttribution = weather.attribution != null,
+            )
+            movementMethod = if (weather.attribution != null) LinkMovementMethod.getInstance() else null
+            highlightColor = android.graphics.Color.TRANSPARENT
+        }
+    }
+
+    private fun weatherSubtitleWithAttribution(
+        subtitle: String,
+        includesAttribution: Boolean,
+    ): CharSequence {
+        if (!includesAttribution) return subtitle
+        return SpannableStringBuilder(subtitle).apply {
+            append("  ")
+            val attributionStart = length
+            append(getString(R.string.home_weather_attribution))
+            setSpan(
+                object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://open-meteo.com/")))
+                    }
+
+                    override fun updateDrawState(drawState: TextPaint) {
+                        drawState.color = binding.homeHeroSubtitle.currentTextColor
+                        drawState.isUnderlineText = false
+                    }
+                },
+                attributionStart,
+                length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+            setSpan(
+                RelativeSizeSpan(0.85f),
+                attributionStart,
+                length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
     }
 
     private fun renderMovement(data: HomePageQuery.Data?) {
