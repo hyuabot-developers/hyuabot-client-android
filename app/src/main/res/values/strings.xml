@@ -33,7 +33,7 @@
     <string name="home_weather_range_subtitle">오늘 %1$.0f°C~%2$.0f°C</string>
     <string name="home_weather_precipitation_amount_subtitle">현재 %1$.0f°C · 최근 1시간 %2$.1fmm</string>
     <string name="home_weather_confidence_low">예보가 달라질 수 있어요</string>
-    <string name="home_weather_attribution">예보 Open-Meteo</string>
+    <string name="home_weather_attribution">Open-Meteo ↗</string>
     <string name="home_movement_title">지금 이동</string>
     <string name="home_movement_detail">셔틀 상세</string>
     <string name="home_movement_timetable">전체 시간표</string>
@@ -145,6 +145,17 @@
     <string name="shuttle_quick_settings_departure_time_subtitle">셔틀 시간을 출발 시각 기준으로 보여줘요.</string>
     <string name="shuttle_quick_settings_presence_title">함께 보는 사람 표시</string>
     <string name="shuttle_quick_settings_presence_subtitle">현재 같은 정류장 정보를 보고 있는 사람 수를 표시해요.</string>
+    <string name="shuttle_quick_settings_section_display">셔틀 표시</string>
+    <string name="shuttle_quick_settings_section_connections">환승·대체 수단</string>
+    <string name="shuttle_quick_settings_order_title">목적지/시간 순서</string>
+    <string name="shuttle_quick_settings_time_title">남은 시간/출발 시간</string>
+    <string name="shuttle_quick_settings_subway_destination_title">전철 행선지</string>
+    <string name="shuttle_quick_settings_alternative_title">대체 수단 표시</string>
+    <string name="shuttle_quick_settings_alternative_subtitle">자동은 다음 셔틀까지 20분 이상일 때 표시해요.</string>
+    <string name="shuttle_quick_settings_alternative_mode_automatic">자동</string>
+    <string name="shuttle_quick_settings_alternative_mode_always">항상</string>
+    <string name="shuttle_quick_settings_alternative_mode_hidden">숨김</string>
+    <string name="shuttle_connection_transfer_format">%1$s 환승</string>
     <string name="shuttle_presence_viewer_count">%1$d명이 함께 보는 중</string>
     <string name="shuttle_display_order_title">표시 순서</string>
     <string name="shuttle_display_order_subtitle">셔틀 도착 정보를 시간순 또는 행선지별로 정리해요.</string>

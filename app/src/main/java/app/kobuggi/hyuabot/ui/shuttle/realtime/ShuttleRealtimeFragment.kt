@@ -30,6 +30,8 @@ import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkController
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkEligibility
+import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
+import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopResolver
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -127,6 +129,18 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS)) {
                 viewModel.setShowPresenceStatus(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS))
             }
+            if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_BUS_TRANSFER)) {
+                viewModel.setShowBusTransfer(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_BUS_TRANSFER))
+            }
+            if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_SUBWAY_TRANSFER)) {
+                viewModel.setShowSubwayTransfer(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_SUBWAY_TRANSFER))
+            }
+            result.getString(ShuttleQuickSettingsDialog.KEY_SUBWAY_DESTINATION)?.let {
+                viewModel.setSubwayTransferDestination(HomeSubwayTransferDestination.from(it))
+            }
+            result.getString(ShuttleQuickSettingsDialog.KEY_ALTERNATIVE_MODE)?.let {
+                viewModel.setAlternativeDisplayMode(ShuttleAlternativeDisplayMode.from(it))
+            }
             if (result.getBoolean(ShuttleQuickSettingsDialog.KEY_OPEN_HOME, false)) {
                 findNavController().navigate(R.id.homeFragment)
             }
@@ -194,7 +208,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
             if (stops.isNotEmpty()) {
                 hasRequestedInitialStopLocation = true
-                moveToNearestStop(fusedLocationProviderClient, stops)
+                moveToInitialStop(fusedLocationProviderClient, stops)
             }
         }
         viewModel.queryError.observe(viewLifecycleOwner) {
@@ -274,11 +288,15 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             showByDestination = viewModel.showByDestination.value ?: false,
             showDepartureTime = viewModel.showDepartureTime.value ?: false,
             showPresenceStatus = viewModel.showPresenceStatus.value ?: true,
+            showBusTransfer = viewModel.showBusTransfer.value ?: true,
+            showSubwayTransfer = viewModel.showSubwayTransfer.value ?: true,
+            subwayDestination = viewModel.subwayTransferDestination.value ?: HomeSubwayTransferDestination.SEOUL,
+            alternativeMode = viewModel.alternativeDisplayMode.value ?: ShuttleAlternativeDisplayMode.AUTOMATIC,
         ).show(childFragmentManager, SHUTTLE_QUICK_SETTINGS_TAG)
     }
 
     @SuppressLint("MissingPermission")
-    private fun moveToNearestStop(
+    private fun moveToInitialStop(
         client: FusedLocationProviderClient,
         stops: List<ShuttleRealtimePageQuery.Stop>,
     ) {
@@ -292,7 +310,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     ) {
         client.lastLocation
             .addOnSuccessListener { location ->
-                if (location != null && isFresh(location)) selectNearestStop(stops, location)
+                if (location != null && isFresh(location)) selectInitialStop(stops, location)
             }
             .addOnFailureListener {
                 Log.e("ShuttleRealtimeFragment", "Failed to get last known location", it)
@@ -313,7 +331,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
             .addOnSuccessListener { location ->
                 if (location != null) {
-                    selectNearestStop(stops, location)
+                    selectInitialStop(stops, location)
                 } else {
                     selectLastKnownLocation(client, stops)
                 }
@@ -324,17 +342,29 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
     }
 
-    private fun selectNearestStop(stops: List<ShuttleRealtimePageQuery.Stop>, location: Location) {
+    private fun selectInitialStop(stops: List<ShuttleRealtimePageQuery.Stop>, location: Location) {
         if (!isAdded || view == null || honorDeepLinkStop || hasManualStopSelection) {
             return
         }
+        val configuredStopName =
+            ShuttleInitialStopResolver.resolve(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                rules = viewModel.initialStopRules.value.orEmpty(),
+            )
+        val configuredStop = configuredStopName?.let { name -> stops.firstOrNull { it.name == name } }
         val gpsCandidates = stops.filterNot { it.name == "shuttlecock_i" }.ifEmpty { stops }
         val nearestStop = gpsCandidates.map { stopItem ->
             Pair(stopItem, calculateDistance(stopItem, location))
         }.minByOrNull { it.second }?.first
-        Log.d("ShuttleRealtimeFragment", "Nearest stop: ${nearestStop?.name}, distance: ${nearestStop?.let { calculateDistance(it, location) }}")
+        val initialStop = configuredStop ?: nearestStop
+        Log.d(
+            "ShuttleRealtimeFragment",
+            "Initial stop: ${initialStop?.name}, configured: ${configuredStop != null}, " +
+                "distance: ${initialStop?.let { calculateDistance(it, location) }}",
+        )
         isApplyingInitialLocationSelection = true
-        binding.viewPager.setCurrentItem(stopNameToTabIndex(nearestStop?.name) ?: 0, false)
+        binding.viewPager.setCurrentItem(stopNameToTabIndex(initialStop?.name) ?: 0, false)
         isApplyingInitialLocationSelection = false
     }
 

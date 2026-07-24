@@ -2,16 +2,24 @@ package app.kobuggi.hyuabot.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.ColorStateList
-import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.TextPaint
 import android.text.TextUtils
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.Gravity
@@ -46,6 +54,8 @@ import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.localizedSubwayStationName
 import app.kobuggi.hyuabot.util.setSkeletonLoading
+import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopResolver
+import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -79,6 +89,7 @@ class HomeFragment : Fragment() {
     private var noticePosition = 0
     private var noticeManuallyScrolled = false
     private var locationCancellationTokenSource: CancellationTokenSource? = null
+    private var pendingDepartureLocation: Location? = null
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
     private val noticeAutoScrollRunnable = Runnable {
@@ -99,7 +110,7 @@ class HomeFragment : Fragment() {
             shouldRestoreAutomaticDepartureOnForeground = false
             isDepartureManuallySelected = false
             hasResolvedInitialDepartureLocation = false
-            moveToNearestDeparture()
+            refreshHome()
         }
     }
     private val autoRefreshRunnable = object : Runnable {
@@ -200,6 +211,11 @@ class HomeFragment : Fragment() {
             renderNotices(it)
             render(it)
         }
+        viewModel.initialStopRules.observe(viewLifecycleOwner) { rules ->
+            if (rules != null) {
+                pendingDepartureLocation?.let { selectInitialDeparture(it, rules) }
+            }
+        }
         viewModel.showBus50Transfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.showSubwayTransfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.subwayTransferDestination.observe(viewLifecycleOwner) { render(viewModel.data.value) }
@@ -224,7 +240,6 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(), getString(R.string.shuttle_no_realtime_data), Toast.LENGTH_SHORT).show()
             }
         }
-        moveToNearestDeparture()
         refreshHome()
         return binding.root
     }
@@ -248,6 +263,7 @@ class HomeFragment : Fragment() {
         stopNoticeAutoScroll()
         locationCancellationTokenSource?.cancel()
         locationCancellationTokenSource = null
+        pendingDepartureLocation = null
         binding.noticeViewPager.adapter = null
         super.onDestroyView()
     }
@@ -333,6 +349,7 @@ class HomeFragment : Fragment() {
     private fun selectDepartureManually(departure: HomeDeparture) {
         locationCancellationTokenSource?.cancel()
         locationCancellationTokenSource = null
+        pendingDepartureLocation = null
         isDepartureManuallySelected = true
         shouldRestoreAutomaticDepartureOnForeground = false
         hasResolvedInitialDepartureLocation = true
@@ -415,7 +432,7 @@ class HomeFragment : Fragment() {
         client.lastLocation
             .addOnSuccessListener { location ->
                 if (!isAdded || view == null) return@addOnSuccessListener
-                if (location != null && isFresh(location)) selectNearestDeparture(location)
+                if (location != null && isFresh(location)) selectInitialDeparture(location)
             }
             .addOnFailureListener {
                 if (!isAdded || view == null) return@addOnFailureListener
@@ -447,7 +464,7 @@ class HomeFragment : Fragment() {
                 }
                 if (!isAdded || view == null) return@addOnSuccessListener
                 if (location != null) {
-                    selectNearestDeparture(location)
+                    selectInitialDeparture(location)
                 } else {
                     selectLastKnownLocation(client)
                 }
@@ -462,21 +479,46 @@ class HomeFragment : Fragment() {
             }
     }
 
-    private fun selectNearestDeparture(location: Location) {
+    private fun selectInitialDeparture(
+        location: Location,
+        resolvedRules: List<ShuttleInitialStopRuleCandidate>? = null,
+    ) {
         if (!isAdded || view == null) return
         if (lockDepartureSelection || isDepartureManuallySelected) return
+        pendingDepartureLocation = location
+        val rules = resolvedRules ?: viewModel.initialStopRules.value ?: return
+        pendingDepartureLocation = null
+        val configuredStopName =
+            ShuttleInitialStopResolver.resolve(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                rules = rules,
+            )
+        val configuredDeparture = configuredStopName?.let(HomeDeparture::fromShuttleStopName)
         val nearestDeparture = HomeDeparture.entries.minByOrNull { it.distanceTo(location) } ?: return
+        val initialDeparture = configuredDeparture ?: nearestDeparture
+        val initialDestination =
+            when (configuredStopName) {
+                "shuttlecock_i" -> HomeDestination.DORMITORY
+                "shuttlecock_o" -> selectedDestination.takeUnless { it == HomeDestination.DORMITORY } ?: HomeDestination.STATION
+                else -> selectedDestination.takeIf { it in initialDeparture.destinations } ?: initialDeparture.destinations.first()
+            }
         val shouldApplyHysteresis = hasResolvedInitialDepartureLocation
         hasResolvedInitialDepartureLocation = true
         val currentDistance = selectedDeparture.distanceTo(location)
-        val nearestDistance = nearestDeparture.distanceTo(location)
-        if (nearestDeparture == selectedDeparture) return
-        if (shouldApplyHysteresis && nearestDistance + DEPARTURE_SWITCH_HYSTERESIS_METERS >= currentDistance) return
-
-        selectedDeparture = nearestDeparture
-        if (selectedDestination !in selectedDeparture.destinations) {
-            selectedDestination = selectedDeparture.destinations.first()
+        val initialDistance = initialDeparture.distanceTo(location)
+        if (initialDeparture == selectedDeparture && initialDestination == selectedDestination) return
+        if (
+            initialDeparture != selectedDeparture &&
+            configuredDeparture == null &&
+            shouldApplyHysteresis &&
+            initialDistance + DEPARTURE_SWITCH_HYSTERESIS_METERS >= currentDistance
+        ) {
+            return
         }
+
+        selectedDeparture = initialDeparture
+        selectedDestination = initialDestination
         setupDestinationButtons()
         render(viewModel.data.value)
     }
@@ -493,6 +535,7 @@ class HomeFragment : Fragment() {
 
     private fun refreshHome() {
         binding.dateText.text = formattedToday()
+        viewModel.invalidateInitialStopRules()
         moveToNearestDeparture()
         viewModel.fetchData()
     }
@@ -530,6 +573,7 @@ class HomeFragment : Fragment() {
         if (weather == null) {
             binding.homeHeroTitle.setText(R.string.home_hero_title)
             binding.homeHeroSubtitle.setText(R.string.home_hero_subtitle)
+            binding.homeHeroSubtitle.movementMethod = null
             binding.homeWeatherIcon.visibility = View.GONE
             return
         }
@@ -617,15 +661,53 @@ class HomeFragment : Fragment() {
             )
             else -> getString(R.string.home_hero_subtitle)
         }
-        binding.homeHeroSubtitle.text = buildList {
+        val subtitleParts = buildList {
             add(subtitle)
             if (weather.precipitationConfidence == "LOW") {
                 add(getString(R.string.home_weather_confidence_low))
             }
-            if (weather.attribution != null) {
-                add(getString(R.string.home_weather_attribution))
-            }
-        }.joinToString(" · ")
+        }
+        binding.homeHeroSubtitle.apply {
+            text = weatherSubtitleWithAttribution(
+                subtitle = subtitleParts.joinToString(" · "),
+                includesAttribution = weather.attribution != null,
+            )
+            movementMethod = if (weather.attribution != null) LinkMovementMethod.getInstance() else null
+            highlightColor = android.graphics.Color.TRANSPARENT
+        }
+    }
+
+    private fun weatherSubtitleWithAttribution(
+        subtitle: String,
+        includesAttribution: Boolean,
+    ): CharSequence {
+        if (!includesAttribution) return subtitle
+        return SpannableStringBuilder(subtitle).apply {
+            append(" · ")
+            val attributionStart = length
+            append(getString(R.string.home_weather_attribution))
+            setSpan(
+                object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://open-meteo.com/")))
+                    }
+
+                    override fun updateDrawState(drawState: TextPaint) {
+                        drawState.color = binding.homeHeroSubtitle.currentTextColor
+                        drawState.isUnderlineText = false
+                    }
+                },
+                attributionStart,
+                length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+            setSpan(
+                RelativeSizeSpan(0.85f),
+                attributionStart,
+                length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
     }
 
     private fun renderMovement(data: HomePageQuery.Data?) {
@@ -1753,6 +1835,16 @@ private enum class HomeDeparture(
 
     companion object {
         fun fromDebugValue(value: String?): HomeDeparture? = entries.firstOrNull { it.debugValue == value }
+
+        fun fromShuttleStopName(value: String): HomeDeparture? =
+            when (value) {
+                "dormitory_o" -> DORMITORY
+                "shuttlecock_o", "shuttlecock_i" -> SHUTTLECOCK
+                "station" -> STATION
+                "terminal" -> TERMINAL
+                "jungang_stn" -> JUNGANG
+                else -> null
+            }
     }
 }
 

@@ -11,11 +11,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.ItemShuttleRealtimeBinding
+import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
 import app.kobuggi.hyuabot.ui.shuttle.via.ShuttleViaSheetDialog
+import app.kobuggi.hyuabot.util.TransitRow
+import app.kobuggi.hyuabot.util.buildShuttleConnectionRows
 import java.time.LocalTime
 
 class ShuttleRealtimeByDestinationListAdapter(
@@ -29,11 +33,53 @@ class ShuttleRealtimeByDestinationListAdapter(
     private val onAlarmClick: ((ShuttleRealtimePageQuery.Entry) -> Unit)? = null,
 ) : RecyclerView.Adapter<ShuttleRealtimeByDestinationListAdapter.ViewHolder>() {
     private var lastRunSeqs: Set<Int> = emptySet()
+    private var expandedSeq: Int? = null
+    private var transferData: ShuttleRealtimePageQuery.Data? = null
+    private var showBusTransfer = true
+    private var showSubwayTransfer = true
+    private var subwayTransferDestination = HomeSubwayTransferDestination.SEOUL
+
+    init {
+        shuttleRealtimeViewModel.transfer.observe(lifecycleOwner) {
+            transferData = it
+            notifyDataSetChanged()
+        }
+        shuttleRealtimeViewModel.showBusTransfer.observe(lifecycleOwner) {
+            showBusTransfer = it
+            notifyDataSetChanged()
+        }
+        shuttleRealtimeViewModel.showSubwayTransfer.observe(lifecycleOwner) {
+            showSubwayTransfer = it
+            notifyDataSetChanged()
+        }
+        shuttleRealtimeViewModel.subwayTransferDestination.observe(lifecycleOwner) {
+            subwayTransferDestination = it
+            notifyDataSetChanged()
+        }
+    }
 
     inner class ViewHolder(private val binding: ItemShuttleRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         val darkMode = context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleRealtimePageQuery.Entry) {
+            val transferRows = transferRows(item)
+            val isExpanded = expandedSeq == item.seq && transferRows.isNotEmpty()
+            binding.shuttleContent.setBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    if (isExpanded) R.color.app_selection_background else R.color.background,
+                ),
+            )
+            binding.transferSelectionAccent.visibility = if (isExpanded) View.VISIBLE else View.GONE
+            binding.transferExpansionContainer.visibility = if (isExpanded) View.VISIBLE else View.GONE
+            if (isExpanded) {
+                binding.transferSelectionAccent.setBackgroundColor(
+                    ContextCompat.getColor(context, R.color.hanyang_blue),
+                )
+                ShuttleTransferBinder.bindCompact(binding.transferExpansionContainer, transferRows)
+            } else {
+                binding.transferExpansionContainer.removeAllViews()
+            }
             val isLastRun = item.seq in lastRunSeqs
             binding.lastRunBadge.visibility = if (isLastRun) View.VISIBLE else View.GONE
             binding.warningView.visibility = if (
@@ -194,8 +240,12 @@ class ShuttleRealtimeByDestinationListAdapter(
 
             binding.shuttleItem.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.SHUTTLE_SELECT_VIA_ROW, type = AnalyticsContentType.LIST_ITEM)
-                val viaSheet = ShuttleViaSheetDialog(stopsOfTimetableByDestination = item.stops)
-                viaSheet.show(childFragmentManager, "ShuttleViaSheetDialog")
+                if (transferRows.isEmpty()) {
+                    val viaSheet = ShuttleViaSheetDialog(stopsOfTimetableByDestination = item.stops)
+                    viaSheet.show(childFragmentManager, "ShuttleViaSheetDialog")
+                } else {
+                    toggleExpansion(item.seq)
+                }
             }
 
             if (onAlarmClick != null) {
@@ -207,6 +257,18 @@ class ShuttleRealtimeByDestinationListAdapter(
                 binding.shuttleAlarmButton.visibility = ViewGroup.INVISIBLE
             }
         }
+
+        private fun transferRows(item: ShuttleRealtimePageQuery.Entry): List<TransitRow> =
+            buildShuttleConnectionRows(
+                context = context,
+                stopName = stopName(),
+                destination = destinationName(),
+                shuttle = item,
+                data = transferData,
+                showBusTransfer = showBusTransfer,
+                showSubwayTransfer = showSubwayTransfer,
+                subwayDestination = subwayTransferDestination,
+            )
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -225,6 +287,9 @@ class ShuttleRealtimeByDestinationListAdapter(
         lastRunSeqs: Set<Int> = emptySet(),
     ) {
         this.lastRunSeqs = lastRunSeqs
+        if (expandedSeq != null && newData.none { it.seq == expandedSeq }) {
+            expandedSeq = null
+        }
         if (shuttleList.size > newData.size) {
             shuttleList = newData
             notifyItemRangeChanged(0, shuttleList.size)
@@ -239,4 +304,34 @@ class ShuttleRealtimeByDestinationListAdapter(
         }
     }
 
+    private fun toggleExpansion(seq: Int) {
+        val previousSeq = expandedSeq
+        expandedSeq = if (previousSeq == seq) null else seq
+        previousSeq?.let { previous ->
+            shuttleList.indexOfFirst { it.seq == previous }
+                .takeIf { it >= 0 }
+                ?.let(::notifyItemChanged)
+        }
+        if (expandedSeq != null) {
+            shuttleList.indexOfFirst { it.seq == expandedSeq }
+                .takeIf { it >= 0 }
+                ?.let(::notifyItemChanged)
+        }
+    }
+
+    private fun stopName(): String = when (stopID) {
+        R.string.shuttle_tab_dormitory_out -> "dormitory_o"
+        R.string.shuttle_tab_shuttlecock_out -> "shuttlecock_o"
+        R.string.shuttle_tab_station -> "station"
+        R.string.shuttle_tab_terminal -> "terminal"
+        R.string.shuttle_tab_jungang_station -> "jungang_stn"
+        else -> "shuttlecock_i"
+    }
+
+    private fun destinationName(): String = when (headerID) {
+        R.string.shuttle_header_bound_for_station -> "STATION"
+        R.string.shuttle_header_bound_for_terminal -> "TERMINAL"
+        R.string.shuttle_header_bound_for_jungang_station -> "JUNGANG"
+        else -> "CAMPUS"
+    }
 }

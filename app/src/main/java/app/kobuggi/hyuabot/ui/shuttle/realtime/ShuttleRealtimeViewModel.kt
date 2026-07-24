@@ -10,8 +10,12 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.ShuttlePresenceService
+import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
+import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
+import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import app.kobuggi.hyuabot.util.QueryError
 import app.kobuggi.hyuabot.util.currentShuttleWeekday
+import app.kobuggi.hyuabot.util.shuttleBusLogReferenceDates
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.apollographql.cache.normalized.FetchPolicy
@@ -42,6 +46,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _showByDestination = MutableLiveData(false)
     private val _showRemainingTime = MutableLiveData(true)
     private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Stop>>()
+    private val _initialStopRules = MutableLiveData<List<ShuttleInitialStopRuleCandidate>>(emptyList())
     private val _notices = MutableLiveData<List<ShuttleRealtimePageQuery.Notice1>>()
     private val _transfer = MutableLiveData<ShuttleRealtimePageQuery.Data?>(null)
     private val _disposable = CompositeDisposable()
@@ -57,6 +62,10 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _busAlternativeJungang62 = MutableLiveData<BusAlternativeData?>(null)
     private val _forceShowBusAlternative = MutableLiveData<Boolean>(false)
     private val _showPresenceStatus = MutableLiveData(true)
+    private val _showBusTransfer = MutableLiveData(true)
+    private val _showSubwayTransfer = MutableLiveData(true)
+    private val _subwayTransferDestination = MutableLiveData(HomeSubwayTransferDestination.SEOUL)
+    private val _alternativeDisplayMode = MutableLiveData(ShuttleAlternativeDisplayMode.AUTOMATIC)
     private val _presenceViewerCount = MutableLiveData<Int?>(null)
     private var presenceJob: Job? = null
     private var selectedPresenceStop = PRESENCE_STOP_IDS.first()
@@ -65,6 +74,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private var isStarted = false
 
     val result get() = _result
+    val initialStopRules get() = _initialStopRules
     val notices get() = _notices
     val transfer get() = _transfer
     val isLoading get() = _isLoading
@@ -82,7 +92,34 @@ class ShuttleRealtimeViewModel @Inject constructor(
     val busAlternativeJungang62 get() = _busAlternativeJungang62
     val forceShowBusAlternative get() = _forceShowBusAlternative
     val showPresenceStatus get() = _showPresenceStatus
+    val showBusTransfer get() = _showBusTransfer
+    val showSubwayTransfer get() = _showSubwayTransfer
+    val subwayTransferDestination get() = _subwayTransferDestination
+    val alternativeDisplayMode get() = _alternativeDisplayMode
     val presenceViewerCount get() = _presenceViewerCount
+
+    init {
+        viewModelScope.launch {
+            userPreferencesRepository.getShowHomeBus50Transfer().collect {
+                _showBusTransfer.value = it
+            }
+        }
+        viewModelScope.launch {
+            userPreferencesRepository.getShowHomeSubwayTransfer().collect {
+                _showSubwayTransfer.value = it
+            }
+        }
+        viewModelScope.launch {
+            userPreferencesRepository.getHomeSubwayTransferDestination().collect {
+                _subwayTransferDestination.value = HomeSubwayTransferDestination.from(it)
+            }
+        }
+        viewModelScope.launch {
+            userPreferencesRepository.getShuttleAlternativeDisplayMode().collect {
+                _alternativeDisplayMode.value = ShuttleAlternativeDisplayMode.from(it)
+            }
+        }
+    }
 
     fun setForceShowBusAlternative(show: Boolean) {
         _forceShowBusAlternative.value = show
@@ -101,11 +138,27 @@ class ShuttleRealtimeViewModel @Inject constructor(
             val response = apolloClient.query(ShuttleRealtimePageQuery(
                 language,
                 Optional.present(LocalTime.now()),
-                currentShuttleWeekday()
+                currentShuttleWeekday(),
+                Optional.present(shuttleBusLogReferenceDates()),
             )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.shuttle?.stops != null) {
+                _initialStopRules.value =
+                    response.data?.shuttle?.initialStopRules.orEmpty().map { rule ->
+                        ShuttleInitialStopRuleCandidate(
+                            sequence = rule.seq,
+                            stopName = rule.stopName,
+                            priority = rule.priority,
+                            polygon =
+                                rule.polygon.map { point ->
+                                    ShuttleGeoCoordinate(
+                                        latitude = point.latitude,
+                                        longitude = point.longitude,
+                                    )
+                                },
+                        )
+                    }
                 _result.value = response.data?.shuttle?.stops
                 _transfer.value = response.data
                 updateBusAlternatives(response.data?.busAlternative.orEmpty())
@@ -224,6 +277,49 @@ class ShuttleRealtimeViewModel @Inject constructor(
         viewModelScope.launch { userPreferencesRepository.setShowShuttlePresence(show) }
     }
 
+    fun setShowBusTransfer(show: Boolean) {
+        _showBusTransfer.value = show
+        viewModelScope.launch { userPreferencesRepository.setShowHomeBus50Transfer(show) }
+    }
+
+    fun setShowSubwayTransfer(show: Boolean) {
+        _showSubwayTransfer.value = show
+        viewModelScope.launch { userPreferencesRepository.setShowHomeSubwayTransfer(show) }
+    }
+
+    fun setSubwayTransferDestination(destination: HomeSubwayTransferDestination) {
+        _subwayTransferDestination.value = destination
+        viewModelScope.launch {
+            userPreferencesRepository.setHomeSubwayTransferDestination(destination.value)
+        }
+    }
+
+    fun setAlternativeDisplayMode(mode: ShuttleAlternativeDisplayMode) {
+        _alternativeDisplayMode.value = mode
+        viewModelScope.launch { userPreferencesRepository.setShuttleAlternativeDisplayMode(mode.value) }
+    }
+
+    fun shouldShowBusAlternative(
+        data: BusAlternativeData?,
+        nextShuttleTime: LocalTime?,
+        forceShow: Boolean = false,
+    ): Boolean {
+        return when (_alternativeDisplayMode.value ?: ShuttleAlternativeDisplayMode.AUTOMATIC) {
+            ShuttleAlternativeDisplayMode.HIDDEN -> false
+            ShuttleAlternativeDisplayMode.ALWAYS -> data?.minutes != null || forceShow
+            ShuttleAlternativeDisplayMode.AUTOMATIC -> {
+                forceShow ||
+                    data?.minutes != null &&
+                    (nextShuttleTime == null || minutesUntil(nextShuttleTime) >= ALTERNATIVE_THRESHOLD_MINUTES)
+            }
+        }
+    }
+
+    private fun minutesUntil(time: LocalTime): Long {
+        val difference = java.time.Duration.between(LocalTime.now(), time).toMinutes()
+        return if (difference >= 0) difference else difference + MINUTES_PER_DAY
+    }
+
     fun setPresenceStop(position: Int) {
         val stopId = PRESENCE_STOP_IDS.getOrNull(position) ?: return
         if (selectedPresenceStop == stopId) return
@@ -266,6 +362,8 @@ class ShuttleRealtimeViewModel @Inject constructor(
     }
 
     private companion object {
+        const val ALTERNATIVE_THRESHOLD_MINUTES = 20
+        const val MINUTES_PER_DAY = 24 * 60L
         val PRESENCE_STOP_IDS = listOf(
             "dormitory_o",
             "shuttlecock_o",

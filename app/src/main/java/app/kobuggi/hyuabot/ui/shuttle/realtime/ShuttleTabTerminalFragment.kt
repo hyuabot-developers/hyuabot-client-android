@@ -27,6 +27,7 @@ import app.kobuggi.hyuabot.widget.ShuttleWidgetSupport
 class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: ShuttleRealtimeViewModel by viewModels({ requireParentFragment() })
+    private var nextCampusShuttleTime: LocalTime? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -155,6 +156,7 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
             val shuttle = source.result.firstOrNull { it.name == "terminal" } ?: return@observe
             val shuttleByOrder = shuttle.timetable.order.filter { it.time > now }
             val shuttleForCampus = shuttle.timetable.destination.firstOrNull { it.destination == "CAMPUS" }?.entries?.filter { it.time > now } ?: emptyList()
+            nextCampusShuttleTime = shuttleForCampus.firstOrNull()?.time
             // Hide the layout by showing the destination conf
             binding.shuttleDestinationScroll.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
             binding.shuttleTimeScroll.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
@@ -200,8 +202,11 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
         parentViewModel.busAlternativeTerminal62.observe(viewLifecycleOwner) { busMinutes ->
             updateBusAlternativeDormitory(parentViewModel.busAlternativeTerminal80.value, busMinutes)
         }
-        parentViewModel.transfer.observe(viewLifecycleOwner) { data ->
-            ShuttleTransferBinder.bind(binding.transferSection, binding.transferContainer, "terminal", data)
+        parentViewModel.alternativeDisplayMode.observe(viewLifecycleOwner) {
+            updateBusAlternativeDormitory(
+                parentViewModel.busAlternativeTerminal80.value,
+                parentViewModel.busAlternativeTerminal62.value,
+            )
         }
         bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
         return binding.root.also { disableViewStateSaving(it) }
@@ -234,9 +239,9 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
         val blueColor = requireContext().getColor(R.color.blue_bus)
         val greenColor = requireContext().getColor(R.color.green_bus)
 
-        val shouldShow80 = data80?.minutes != null
+        val shouldShow80 = parentViewModel.shouldShowBusAlternative(data80, nextCampusShuttleTime)
         binding.busAlternativeDormitory.visibility = if (shouldShow80) View.VISIBLE else View.GONE
-        if (shouldShow80) {
+        if (shouldShow80 && data80 != null) {
             binding.busAccentBarDormitory.setBackgroundColor(blueColor)
             binding.busAlternativeDormitoryRoute.setTextColor(blueColor)
             binding.busAlternativeDormitoryRoute.text = getString(data80.routeDisplayName)
@@ -253,9 +258,9 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
             binding.busAlternativeDormitoryInfo.alpha = 0.38f
         }
 
-        val shouldShow62 = data62?.minutes != null
+        val shouldShow62 = parentViewModel.shouldShowBusAlternative(data62, nextCampusShuttleTime)
         binding.busAlternativeDormitory2.visibility = if (shouldShow62) View.VISIBLE else View.GONE
-        if (shouldShow62) {
+        if (shouldShow62 && data62 != null) {
             binding.busAccentBarDormitory2.setBackgroundColor(greenColor)
             binding.busAlternativeDormitory2Route.setTextColor(greenColor)
             binding.busAlternativeDormitory2Route.text = getString(data62.routeDisplayName)

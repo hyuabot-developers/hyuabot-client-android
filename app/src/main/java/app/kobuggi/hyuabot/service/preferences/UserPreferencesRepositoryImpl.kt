@@ -25,6 +25,8 @@ interface UserPreferencesRepositoryImpl {
     suspend fun getShowHomeSubwayTransfer(): Flow<Boolean>
     suspend fun setHomeSubwayTransferDestination(destination: String)
     suspend fun getHomeSubwayTransferDestination(): Flow<String>
+    suspend fun setShuttleAlternativeDisplayMode(mode: String)
+    suspend fun getShuttleAlternativeDisplayMode(): Flow<String>
     suspend fun setAnalyticsConsent(enabled: Boolean)
     suspend fun incrementLaunchCount(): Int
     suspend fun resetLaunchCount()

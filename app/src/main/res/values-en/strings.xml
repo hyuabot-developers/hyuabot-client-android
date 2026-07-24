@@ -33,7 +33,7 @@
     <string name="home_weather_range_subtitle">%1$.0f°C–%2$.0f°C today</string>
     <string name="home_weather_precipitation_amount_subtitle">Now %1$.0f°C · %2$.1f mm in the last hour</string>
     <string name="home_weather_confidence_low">Forecast may change</string>
-    <string name="home_weather_attribution">Forecast by Open-Meteo</string>
+    <string name="home_weather_attribution">Open-Meteo ↗</string>
     <string name="home_movement_title">Move now</string>
     <string name="home_movement_detail">Shuttle details</string>
     <string name="home_movement_timetable">Full timetable</string>
@@ -145,6 +145,17 @@
     <string name="shuttle_quick_settings_departure_time_subtitle">Show shuttle times by departure time.</string>
     <string name="shuttle_quick_settings_presence_title">Show fellow viewers</string>
     <string name="shuttle_quick_settings_presence_subtitle">Show how many people are viewing the same stop information.</string>
+    <string name="shuttle_quick_settings_section_display">Shuttle display</string>
+    <string name="shuttle_quick_settings_section_connections">Transfers &amp; alternatives</string>
+    <string name="shuttle_quick_settings_order_title">By Destination / Time</string>
+    <string name="shuttle_quick_settings_time_title">Remaining / Departure Time</string>
+    <string name="shuttle_quick_settings_subway_destination_title">Subway destination</string>
+    <string name="shuttle_quick_settings_alternative_title">Show alternatives</string>
+    <string name="shuttle_quick_settings_alternative_subtitle">Auto shows alternatives when the next shuttle is at least 20 minutes away.</string>
+    <string name="shuttle_quick_settings_alternative_mode_automatic">Auto</string>
+    <string name="shuttle_quick_settings_alternative_mode_always">Always</string>
+    <string name="shuttle_quick_settings_alternative_mode_hidden">Hide</string>
+    <string name="shuttle_connection_transfer_format">Transfer at %1$s</string>
     <string name="shuttle_presence_viewer_count">Viewing together: %1$d</string>
     <string name="shuttle_display_order_title">Display order</string>
     <string name="shuttle_display_order_subtitle">Organize shuttle arrivals by time or destination.</string>
