@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.service.ShuttlePresenceService
 import app.kobuggi.hyuabot.util.QueryError
 import app.kobuggi.hyuabot.util.currentShuttleWeekday
 import com.apollographql.apollo.ApolloClient
@@ -21,6 +22,9 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.util.Locale
@@ -30,7 +34,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ShuttleRealtimeViewModel @Inject constructor(
     val userPreferencesRepository: UserPreferencesRepository,
-    private val apolloClient: ApolloClient
+    private val apolloClient: ApolloClient,
+    private val shuttlePresenceService: ShuttlePresenceService,
 ): ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _showDepartureTime = MutableLiveData(false)
@@ -51,6 +56,13 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _busAlternativeJungang80 = MutableLiveData<BusAlternativeData?>(null)
     private val _busAlternativeJungang62 = MutableLiveData<BusAlternativeData?>(null)
     private val _forceShowBusAlternative = MutableLiveData<Boolean>(false)
+    private val _showPresenceStatus = MutableLiveData(true)
+    private val _presenceViewerCount = MutableLiveData<Int?>(null)
+    private var presenceJob: Job? = null
+    private var selectedPresenceStop = PRESENCE_STOP_IDS.first()
+    private var presencePreviewCount: Int? = null
+    private var presencePreferenceLoaded = false
+    private var isStarted = false
 
     val result get() = _result
     val notices get() = _notices
@@ -69,6 +81,8 @@ class ShuttleRealtimeViewModel @Inject constructor(
     val busAlternativeJungang80 get() = _busAlternativeJungang80
     val busAlternativeJungang62 get() = _busAlternativeJungang62
     val forceShowBusAlternative get() = _forceShowBusAlternative
+    val showPresenceStatus get() = _showPresenceStatus
+    val presenceViewerCount get() = _presenceViewerCount
 
     fun setForceShowBusAlternative(show: Boolean) {
         _forceShowBusAlternative.value = show
@@ -173,18 +187,21 @@ class ShuttleRealtimeViewModel @Inject constructor(
     }
 
     fun start() {
-        if (_disposable.size() > 0) return
-        _disposable.add(
-            Observable.interval(0, 15, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe{
-                    try {
-                        fetchData()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+        isStarted = true
+        if (_disposable.size() == 0) {
+            _disposable.add(
+                Observable.interval(0, 15, TimeUnit.SECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe{
+                        try {
+                            fetchData()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                }
-        )
+            )
+        }
+        restartPresenceUpdates()
     }
 
     fun setShowDepartureTime(isVisible: Boolean) {
@@ -195,9 +212,67 @@ class ShuttleRealtimeViewModel @Inject constructor(
         viewModelScope.launch { userPreferencesRepository.setShowShuttleByDestination(isVisible) }
     }
 
-    fun stop() { _disposable.clear() }
+    fun applyShowPresenceStatus(show: Boolean) {
+        val changed = _showPresenceStatus.value != show
+        _showPresenceStatus.value = show
+        presencePreferenceLoaded = true
+        if (changed || presenceJob == null) restartPresenceUpdates()
+    }
+
+    fun setShowPresenceStatus(show: Boolean) {
+        applyShowPresenceStatus(show)
+        viewModelScope.launch { userPreferencesRepository.setShowShuttlePresence(show) }
+    }
+
+    fun setPresenceStop(position: Int) {
+        val stopId = PRESENCE_STOP_IDS.getOrNull(position) ?: return
+        if (selectedPresenceStop == stopId) return
+        selectedPresenceStop = stopId
+        restartPresenceUpdates()
+    }
+
+    fun setPresencePreviewCount(count: Int?) {
+        presencePreviewCount = count
+        restartPresenceUpdates()
+    }
+
+    private fun restartPresenceUpdates() {
+        presenceJob?.cancel()
+        presenceJob = null
+        _presenceViewerCount.value = null
+        if (!isStarted || !presencePreferenceLoaded || _showPresenceStatus.value != true) return
+        presenceJob = viewModelScope.launch {
+            presencePreviewCount?.let {
+                _presenceViewerCount.value = it
+                return@launch
+            }
+            while (isActive) {
+                _presenceViewerCount.value = shuttlePresenceService.heartbeat(selectedPresenceStop)
+                delay(30_000)
+            }
+        }
+    }
+
+    fun stop() {
+        isStarted = false
+        presenceJob?.cancel()
+        presenceJob = null
+        _presenceViewerCount.value = null
+        _disposable.clear()
+    }
 
     override fun onCleared() {
         stop()
+    }
+
+    private companion object {
+        val PRESENCE_STOP_IDS = listOf(
+            "dormitory_o",
+            "shuttlecock_o",
+            "station",
+            "terminal",
+            "jungang_stn",
+            "shuttlecock_i",
+        )
     }
 }

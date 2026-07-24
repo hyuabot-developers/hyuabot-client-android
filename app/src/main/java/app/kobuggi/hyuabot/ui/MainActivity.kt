@@ -21,14 +21,19 @@ import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.FloatingWindow
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
@@ -70,7 +75,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        applyStatusBarStyle()
+        applyStatusBarStyle(navController.currentDestination?.id)
         binding.bottomNavigation.apply {
             populateBottomNavigationMenu()
             setupWithNavController(navController)
@@ -78,7 +83,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             setOnItemSelectedListener(this@MainActivity)
             setOnItemReselectedListener(this@MainActivity)
         }
+        setupTopAppBar()
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            applyStatusBarStyle(destination.id)
             updatePrimaryNavigationItem(destination.id)
             screenForDestination(destination.id)?.let {
                 analyticsScreenDispatcher.onDestinationChanged(it)
@@ -97,6 +104,99 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         requestInAppReview()
         syncShuttleServiceNotices()
         navController.handleDeepLink(intent)
+    }
+
+    private fun setupTopAppBar() {
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.homeFragment,
+                R.id.busRealtimeFragment,
+                R.id.subwayRealtimeFragment,
+                R.id.cafeteriaFragment,
+                R.id.menuFragment
+            )
+        )
+        binding.topAppBar.setupWithNavController(navController, appBarConfiguration)
+        val appBarContentColor = ContextCompat.getColor(this, android.R.color.white)
+        binding.topAppBar.setNavigationIconTint(appBarContentColor)
+        binding.topAppBar.setTitleTextColor(appBarContentColor)
+        navController.addOnDestinationChangedListener { _, destination, arguments ->
+            if (destination is FloatingWindow) return@addOnDestinationChangedListener
+            val title = timetableTitle(destination.id, arguments)
+            binding.topAppBar.isVisible = title != null
+            if (title != null) {
+                binding.topAppBar.title = title
+                binding.topAppBar.navigationIcon?.setTint(appBarContentColor)
+                (binding.topAppBar.navigationIcon as? DrawerArrowDrawable)?.color = appBarContentColor
+            }
+        }
+    }
+
+    private fun timetableTitle(destinationId: Int, arguments: Bundle?): String? = when (destinationId) {
+        R.id.shuttleTimetableFragment -> shuttleTimetableTitle(arguments)
+        R.id.busTimetableFragment -> busTimetableTitle(arguments)
+        R.id.subwayTimetableFragment -> subwayTimetableTitle(arguments)
+        else -> null
+    }
+
+    private fun shuttleTimetableTitle(arguments: Bundle?): String {
+        val stop = when (val stopId = arguments?.getInt("stopID")) {
+            R.string.shuttle_tab_dormitory_out,
+            R.string.shuttle_tab_shuttlecock_out,
+            R.string.shuttle_tab_station,
+            R.string.shuttle_tab_terminal,
+            R.string.shuttle_tab_jungang_station,
+            R.string.shuttle_tab_shuttlecock_in -> getString(stopId)
+            else -> null
+        }
+        val destination = when (arguments?.getInt("destinationID")) {
+            R.string.shuttle_header_bound_for_station -> getString(R.string.shuttle_tab_station)
+            R.string.shuttle_header_bound_for_dormitory -> getString(R.string.shuttle_tab_dormitory_out)
+            R.string.shuttle_header_bound_for_terminal -> getString(R.string.shuttle_tab_terminal)
+            R.string.shuttle_header_bound_for_jungang_station -> getString(R.string.shuttle_tab_jungang_station)
+            else -> null
+        }
+        return if (stop != null && destination != null) {
+            getString(R.string.timetable_route_title, stop, destination)
+        } else {
+            getString(R.string.home_movement_timetable)
+        }
+    }
+
+    private fun busTimetableTitle(arguments: Bundle?): String {
+        val route = when (arguments?.getInt("firstRouteID")) {
+            216000068 -> "10-1"
+            216000061 -> "3102"
+            216000096 -> "3100/3101"
+            216000075 -> "50"
+            else -> null
+        }
+        val stop = when (arguments?.getInt("stopID")) {
+            216000379 -> R.string.bus_stop_convention
+            216000381 -> R.string.bus_stop_cluster
+            216000383 -> R.string.bus_stop_dormitory
+            216000138 -> R.string.bus_stop_sangnoksu_station
+            216000719 -> R.string.bus_stop_main_gate
+            216000759 -> R.string.bus_stop_terminal
+            213000487 -> R.string.bus_stop_gwangmyeong_station
+            else -> null
+        }
+        return if (route != null && stop != null) {
+            getString(R.string.bus_header_format, route, getString(stop))
+        } else {
+            getString(R.string.home_movement_timetable)
+        }
+    }
+
+    private fun subwayTimetableTitle(arguments: Bundle?): String {
+        val title = when (arguments?.getString("stationID") to arguments?.getString("heading")) {
+            "K449" to "up" -> R.string.subway_timetable_title_line4_up
+            "K449" to "down" -> R.string.subway_timetable_title_line4_down
+            "K251" to "up" -> R.string.subway_timetable_title_suin_up
+            "K251" to "down" -> R.string.subway_timetable_title_suin_down
+            else -> null
+        }
+        return title?.let(::getString) ?: getString(R.string.home_movement_timetable)
     }
 
     override fun onPostResume() {
@@ -118,15 +218,23 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         menu.add(0, R.id.menuFragment, 4, R.string.tabbar_campus).setIcon(R.drawable.ic_campus)
     }
 
-    private fun applyStatusBarStyle() {
-        val statusBarColor = ContextCompat.getColor(this, R.color.hanyang_blue)
-        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(statusBarColor))
+    private fun applyStatusBarStyle(destinationId: Int?) {
+        val isHome = destinationId == R.id.homeFragment
+        val statusBarColor = ContextCompat.getColor(
+            this,
+            if (isHome) R.color.home_screen_background else R.color.hanyang_blue
+        )
+        val statusBarStyle = if (isHome) {
+            SystemBarStyle.auto(statusBarColor, statusBarColor)
+        } else {
+            SystemBarStyle.dark(statusBarColor)
+        }
+        enableEdgeToEdge(statusBarStyle = statusBarStyle)
 
         val decorView = window.decorView as? ViewGroup ?: return
         val statusBarBackground = decorView.findViewWithTag<View>(STATUS_BAR_BACKGROUND_TAG)
             ?: View(this).apply {
                 tag = STATUS_BAR_BACKGROUND_TAG
-                setBackgroundColor(statusBarColor)
                 importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
                 decorView.addView(
                     this,
@@ -137,6 +245,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                     )
                 )
             }
+        statusBarBackground.setBackgroundColor(statusBarColor)
         statusBarBackground.layoutParams = statusBarBackground.layoutParams.apply {
             height = statusBarHeight()
         }
@@ -162,18 +271,17 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     private fun updatePrimaryNavigationItem(destinationId: Int?) {
         updateBottomNavigationLabels()
         val primaryItem = binding.bottomNavigation.menu.findItem(R.id.homeFragment) ?: return
+        val busItem = binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)
+        val subwayItem = binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)
         val moreItem = binding.bottomNavigation.menu.findItem(R.id.menuFragment)
-        if (destinationId.isShuttleDestination()) {
-            primaryItem.title = getString(R.string.shuttle_bus)
-            primaryItem.setIcon(R.drawable.ic_shuttle_bus)
-            primaryItem.isChecked = true
-        } else {
-            primaryItem.title = getString(R.string.home)
-            primaryItem.setIcon(R.drawable.ic_home)
-            when {
-                destinationId == R.id.homeFragment -> primaryItem.isChecked = true
-                destinationId.isMoreDestination() -> moreItem?.isChecked = true
-            }
+        primaryItem.title = getString(R.string.home)
+        primaryItem.setIcon(R.drawable.ic_home)
+        when {
+            destinationId == R.id.homeFragment || destinationId.isShuttleDestination() ->
+                primaryItem.isChecked = true
+            destinationId.isBusDestination() -> busItem?.isChecked = true
+            destinationId.isSubwayDestination() -> subwayItem?.isChecked = true
+            destinationId.isMoreDestination() -> moreItem?.isChecked = true
         }
     }
 
@@ -184,6 +292,22 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.shuttleHelpDialogFragment,
         R.id.shuttleTimetableDialogFragment,
         R.id.shuttleTimetableFilterDialogFragment -> true
+        else -> false
+    }
+
+    private fun Int?.isBusDestination(): Boolean = when (this) {
+        R.id.busRealtimeFragment,
+        R.id.busTimetableFragment,
+        R.id.busHelpDialogFragment,
+        R.id.busStopInfoFragment,
+        R.id.busDepartureLogDialogFragment,
+        R.id.busRouteInfoDialogFragment -> true
+        else -> false
+    }
+
+    private fun Int?.isSubwayDestination(): Boolean = when (this) {
+        R.id.subwayRealtimeFragment,
+        R.id.subwayTimetableFragment -> true
         else -> false
     }
 
@@ -326,12 +450,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         tabItemForDestination(item.itemId)?.let {
             AnalyticsManager.logSelect(it, AnalyticsContentType.TAB)
         }
-        if (item.itemId == navController.currentDestination?.id) {
-            navController.popBackStack(navController.graph.startDestinationId, false)
-        } else {
-            navController.navigate(item.itemId)
-        }
-        return true
+        return item.onNavDestinationSelected(navController)
     }
 
     /** Maps a nav-graph destination id to its analytics screen (null = not tracked as a screen). */

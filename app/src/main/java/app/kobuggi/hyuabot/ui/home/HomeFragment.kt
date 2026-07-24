@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.content.res.ColorStateList
 import android.content.pm.PackageManager
 import android.graphics.Typeface
@@ -21,13 +22,17 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import app.kobuggi.hyuabot.BuildConfig
@@ -47,11 +52,14 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.DateFormat
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.time.Duration
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.Duration
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Date
 import kotlin.math.ceil
 
@@ -62,19 +70,48 @@ class HomeFragment : Fragment() {
     private val homeTypeface by lazy { ResourcesCompat.getFont(requireContext(), R.font.godo) }
     private var selectedDeparture = HomeDeparture.DORMITORY
     private var selectedDestination = HomeDestination.STATION
+    private var hasResolvedInitialDepartureLocation = false
     private var lockDepartureSelection = false
+    private var isDepartureManuallySelected = false
+    private var shouldRestoreAutomaticDepartureOnForeground = false
+    private var selectedMealPeriod: HomeMealPeriod? = null
     private var debugSubwayTransferDestination: HomeSubwayTransferDestination? = null
     private var noticePosition = 0
     private var noticeManuallyScrolled = false
     private var locationCancellationTokenSource: CancellationTokenSource? = null
-    private lateinit var noticeAutoScrollRunnable: Runnable
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
+    private val noticeAutoScrollRunnable = Runnable {
+        val adapter = binding.noticeViewPager.adapter
+        if (adapter != null && adapter.itemCount > 1 && !noticeManuallyScrolled && isResumed) {
+            noticePosition = (binding.noticeViewPager.currentItem + 1) % adapter.itemCount
+            binding.noticeViewPager.setCurrentItem(noticePosition, true)
+            scheduleNoticeAutoScroll()
+        }
+    }
+    private val activityLifecycleObserver = object : DefaultLifecycleObserver {
+        override fun onStop(owner: LifecycleOwner) {
+            shouldRestoreAutomaticDepartureOnForeground = isDepartureManuallySelected
+        }
+
+        override fun onStart(owner: LifecycleOwner) {
+            if (!shouldRestoreAutomaticDepartureOnForeground) return
+            shouldRestoreAutomaticDepartureOnForeground = false
+            isDepartureManuallySelected = false
+            hasResolvedInitialDepartureLocation = false
+            moveToNearestDeparture()
+        }
+    }
     private val autoRefreshRunnable = object : Runnable {
         override fun run() {
             refreshHome()
             refreshHandler.postDelayed(this, AUTO_REFRESH_INTERVAL_MILLIS)
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().lifecycle.addObserver(activityLifecycleObserver)
     }
 
     override fun onCreateView(
@@ -83,16 +120,35 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         applyDebugRouteOverride()
-        binding.dateText.text = DateFormat.getDateInstance(DateFormat.FULL).format(Date())
+        if (BuildConfig.DEBUG) {
+            val previewCount = activity?.intent
+                ?.takeIf { it.hasExtra(PRESENCE_PREVIEW_COUNT_EXTRA) }
+                ?.getIntExtra(PRESENCE_PREVIEW_COUNT_EXTRA, 0)
+            viewModel.setPresencePreviewCount(previewCount)
+        }
+        binding.dateText.text = formattedToday()
         setupDestinationButtons()
+        binding.movementTitle.setOnClickListener {
+            showDepartureMenu()
+        }
+        binding.mealTitle.setOnClickListener {
+            showMealPeriodMenu()
+        }
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
             AnalyticsManager.logSelect(AnalyticsItem.HOME_REFRESH)
             refreshHome()
         }
         binding.homeSwipeRefreshLayout.setColorSchemeResources(R.color.hanyang_blue)
-        binding.movementDetail.setOnClickListener {
-            AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_SHUTTLE_DETAIL)
-            findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
+        binding.movementTimetable.setOnClickListener {
+            AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_SHUTTLE_TIMETABLE)
+            val args = Bundle().apply {
+                putInt("stopID", selectedDeparture.timetableStopRes(selectedDestination))
+                putInt("destinationID", selectedDestination.timetableDestinationRes)
+            }
+            findNavController().navigate(
+                R.id.action_homeFragment_to_shuttleTimetableFragment,
+                args,
+            )
         }
         binding.legacyShuttleButton.setOnClickListener {
             openQuickSettings()
@@ -105,6 +161,9 @@ class HomeFragment : Fragment() {
             if (result.getBoolean(HomeQuickSettingsDialog.KEY_OPEN_LEGACY_SHUTTLE, false)) {
                 AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_LEGACY_SHUTTLE)
                 findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
+            }
+            if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS)) {
+                viewModel.setShowPresenceStatus(result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS))
             }
             if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_BUS50_TRANSFER)) {
                 viewModel.setShowBus50Transfer(result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_BUS50_TRANSFER))
@@ -145,6 +204,20 @@ class HomeFragment : Fragment() {
         viewModel.showSubwayTransfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.subwayTransferDestination.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.bus50TerminalLogTimes.observe(viewLifecycleOwner) { render(viewModel.data.value) }
+        viewModel.presenceViewerCount.observe(viewLifecycleOwner) { viewerCount ->
+            binding.homePresencePill.visibility = if (viewerCount == null) View.GONE else View.VISIBLE
+            if (viewerCount != null) {
+                binding.homePresenceCount.text = NumberFormat
+                    .getIntegerInstance(resources.configuration.locales[0])
+                    .format(viewerCount)
+                binding.homePresencePill.contentDescription = getString(
+                    R.string.shuttle_presence_viewer_count,
+                    viewerCount,
+                )
+            } else {
+                binding.homePresencePill.contentDescription = null
+            }
+        }
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let {
                 binding.homeSwipeRefreshLayout.isRefreshing = false
@@ -158,26 +231,30 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        viewModel.startPresenceUpdates()
         refreshHandler.removeCallbacks(autoRefreshRunnable)
         refreshHandler.postDelayed(autoRefreshRunnable, AUTO_REFRESH_INTERVAL_MILLIS)
-        if (::noticeAutoScrollRunnable.isInitialized) {
-            noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
-        }
+        scheduleNoticeAutoScroll()
     }
 
     override fun onPause() {
+        viewModel.stopPresenceUpdates()
         refreshHandler.removeCallbacks(autoRefreshRunnable)
-        if (::noticeAutoScrollRunnable.isInitialized) {
-            noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
-        }
+        stopNoticeAutoScroll()
         super.onPause()
     }
 
     override fun onDestroyView() {
+        stopNoticeAutoScroll()
         locationCancellationTokenSource?.cancel()
         locationCancellationTokenSource = null
         binding.noticeViewPager.adapter = null
         super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        activity?.lifecycle?.removeObserver(activityLifecycleObserver)
+        super.onDestroy()
     }
 
     private fun setupNotices() {
@@ -186,9 +263,7 @@ class HomeFragment : Fragment() {
             override fun onPageScrollStateChanged(state: Int) {
                 if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
                     noticeManuallyScrolled = true
-                    if (::noticeAutoScrollRunnable.isInitialized) {
-                        noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
-                    }
+                    stopNoticeAutoScroll()
                 }
                 if (state == ViewPager2.SCROLL_STATE_IDLE && noticeManuallyScrolled) {
                     noticePosition = binding.noticeViewPager.currentItem
@@ -201,35 +276,31 @@ class HomeFragment : Fragment() {
         val notices = data?.notices?.flatMap { it.notices }.orEmpty()
         if (notices.isEmpty()) {
             binding.noticeLayout.visibility = View.GONE
-            if (::noticeAutoScrollRunnable.isInitialized) {
-                noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
-            }
+            stopNoticeAutoScroll()
             return
         }
 
         binding.noticeLayout.visibility = View.VISIBLE
         (binding.noticeViewPager.adapter as HomeNoticeAdapter).updateList(notices)
-        noticeAutoScrollRunnable = Runnable {
-            val adapter = binding.noticeViewPager.adapter
-            if (adapter != null && adapter.itemCount > 0 && !noticeManuallyScrolled) {
-                noticePosition = (noticePosition + 1) % adapter.itemCount
-                binding.noticeViewPager.setCurrentItem(noticePosition, true)
-                noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
-            }
-        }
-        if (!noticeManuallyScrolled) {
-            noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+        noticePosition = binding.noticeViewPager.currentItem.coerceAtMost(notices.lastIndex)
+        scheduleNoticeAutoScroll()
+    }
+
+    private fun scheduleNoticeAutoScroll() {
+        stopNoticeAutoScroll()
+        val itemCount = binding.noticeViewPager.adapter?.itemCount ?: 0
+        if (itemCount > 1 && !noticeManuallyScrolled && isResumed) {
             noticeScrollHandler.postDelayed(noticeAutoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
         }
     }
 
+    private fun stopNoticeAutoScroll() {
+        noticeScrollHandler.removeCallbacks(noticeAutoScrollRunnable)
+    }
+
     private fun setupDestinationButtons() {
         binding.destinationGroup.clearOnButtonCheckedListeners()
-        ensureDestinationButtons()
-        HomeDestination.entries.forEach { destination ->
-            binding.destinationGroup.findViewById<View>(destination.buttonIdRes).visibility =
-                if (destination in selectedDeparture.destinations) View.VISIBLE else View.GONE
-        }
+        ensureDestinationButtons(selectedDeparture.destinations)
         binding.destinationGroup.check(selectedDestination.buttonIdRes)
         binding.destinationGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (!isChecked) return@addOnButtonCheckedListener
@@ -245,18 +316,63 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun ensureDestinationButtons() {
-        if (binding.destinationGroup.childCount > 0) return
+    private fun showDepartureMenu() {
+        val popup = PopupMenu(requireContext(), binding.movementTitle)
+        HomeDeparture.entries.forEachIndexed { index, departure ->
+            popup.menu.add(0, index + 1, index, getString(departure.titleRes))
+        }
+        popup.setOnMenuItemClickListener { item ->
+            val departure = HomeDeparture.entries.getOrNull(item.itemId - 1)
+                ?: return@setOnMenuItemClickListener false
+            selectDepartureManually(departure)
+            true
+        }
+        popup.show()
+    }
 
-        val buttonContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_SegmentedButton)
+    private fun selectDepartureManually(departure: HomeDeparture) {
+        locationCancellationTokenSource?.cancel()
+        locationCancellationTokenSource = null
+        isDepartureManuallySelected = true
+        shouldRestoreAutomaticDepartureOnForeground = false
+        hasResolvedInitialDepartureLocation = true
+        selectedDeparture = departure
+        if (selectedDestination !in selectedDeparture.destinations) {
+            selectedDestination = selectedDeparture.destinations.first()
+        }
+        setupDestinationButtons()
+        render(viewModel.data.value)
+    }
+
+    private fun showMealPeriodMenu() {
+        val selectedPeriod = activeMealPeriod()
+        val popup = PopupMenu(requireContext(), binding.mealTitle)
+        mealPeriods(selectedPeriod.isTomorrow).forEachIndexed { index, period ->
+            popup.menu.add(0, index + 1, index, period.title(requireContext()))
+        }
+        popup.setOnMenuItemClickListener { item ->
+            val period = mealPeriods(selectedPeriod.isTomorrow).getOrNull(item.itemId - 1)
+                ?: return@setOnMenuItemClickListener false
+            selectedMealPeriod = period
+            render(viewModel.data.value)
+            true
+        }
+        popup.show()
+    }
+
+    private fun ensureDestinationButtons(visibleDestinations: List<HomeDestination>) {
+        binding.destinationGroup.removeAllViews()
+        val buttonContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_HomeSegmentButton)
         val textColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_text)
         val backgroundColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_background)
         val strokeColor = ContextCompat.getColorStateList(requireContext(), R.color.home_destination_button_stroke)
-        HomeDestination.entries.forEach { destination ->
+        val buttonHeight = resources.getDimensionPixelSize(R.dimen.home_destination_button_min_height)
+        HomeDestination.entries.filter { it in visibleDestinations }.forEach { destination ->
             val button = MaterialButton(buttonContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
                 id = destination.buttonIdRes
                 text = getString(destination.titleRes)
-                minHeight = resources.getDimensionPixelSize(R.dimen.home_destination_button_min_height)
+                minHeight = 0
+                minimumHeight = 0
                 minWidth = 0
                 minimumWidth = 0
                 maxLines = 1
@@ -268,7 +384,7 @@ class HomeFragment : Fragment() {
                 setTextColor(textColor)
                 backgroundTintList = backgroundColor
                 this.strokeColor = strokeColor
-                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                layoutParams = LinearLayout.LayoutParams(0, buttonHeight, 1f)
                 tag = destination
             }
             binding.destinationGroup.addView(button)
@@ -289,7 +405,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun moveToNearestDeparture() {
-        if (lockDepartureSelection || !hasLocationPermission()) return
+        if (lockDepartureSelection || isDepartureManuallySelected || !hasLocationPermission()) return
         val client = LocationServices.getFusedLocationProviderClient(requireActivity())
         requestCurrentLocation(client)
     }
@@ -348,9 +464,14 @@ class HomeFragment : Fragment() {
 
     private fun selectNearestDeparture(location: Location) {
         if (!isAdded || view == null) return
-        if (lockDepartureSelection) return
+        if (lockDepartureSelection || isDepartureManuallySelected) return
         val nearestDeparture = HomeDeparture.entries.minByOrNull { it.distanceTo(location) } ?: return
+        val shouldApplyHysteresis = hasResolvedInitialDepartureLocation
+        hasResolvedInitialDepartureLocation = true
+        val currentDistance = selectedDeparture.distanceTo(location)
+        val nearestDistance = nearestDeparture.distanceTo(location)
         if (nearestDeparture == selectedDeparture) return
+        if (shouldApplyHysteresis && nearestDistance + DEPARTURE_SWITCH_HYSTERESIS_METERS >= currentDistance) return
 
         selectedDeparture = nearestDeparture
         if (selectedDestination !in selectedDeparture.destinations) {
@@ -363,6 +484,7 @@ class HomeFragment : Fragment() {
     private fun openQuickSettings() {
         if (childFragmentManager.findFragmentByTag(HOME_QUICK_SETTINGS_TAG) != null) return
         HomeQuickSettingsDialog.newInstance(
+            showPresenceStatus = viewModel.showPresenceStatus.value ?: true,
             showBus50Transfer = viewModel.showBus50Transfer.value ?: true,
             showSubwayTransfer = viewModel.showSubwayTransfer.value ?: true,
             subwayTransferDestination = selectedSubwayTransferDestination(),
@@ -370,22 +492,140 @@ class HomeFragment : Fragment() {
     }
 
     private fun refreshHome() {
-        binding.dateText.text = DateFormat.getDateInstance(DateFormat.FULL).format(Date())
+        binding.dateText.text = formattedToday()
         moveToNearestDeparture()
         viewModel.fetchData()
     }
 
+    private fun formattedToday(): String {
+        val locale = resources.configuration.locales[0]
+        val pattern = android.text.format.DateFormat.getBestDateTimePattern(locale, "MdEEEE")
+        return SimpleDateFormat(pattern, locale).format(Date())
+    }
+
     private fun render(data: HomePageQuery.Data?) {
-        binding.routeText.text = getString(
-            R.string.home_route_format,
+        renderWeather(data?.homeWeather)
+        viewModel.setPresenceStop(selectedDeparture.routeTo(selectedDestination).stop)
+        binding.movementTitle.text = getString(selectedDeparture.titleRes)
+        binding.movementTitle.contentDescription = getString(
+            R.string.home_departure_selector_description,
             getString(selectedDeparture.titleRes),
+        )
+        binding.routeText.text = getString(
+            R.string.home_destination_summary,
             getString(selectedDestination.titleRes),
         )
         val mealPeriod = activeMealPeriod()
         binding.mealTitle.text = mealPeriod.title(requireContext())
+        binding.mealTitle.contentDescription = getString(
+            R.string.home_meal_period_selector_description,
+            mealPeriod.title(requireContext()),
+        )
         binding.mealIcon.setImageResource(mealPeriod.iconRes)
         renderMovement(data)
         renderMeals(data)
+    }
+
+    private fun renderWeather(weather: HomePageQuery.HomeWeather?) {
+        if (weather == null) {
+            binding.homeHeroTitle.setText(R.string.home_hero_title)
+            binding.homeHeroSubtitle.setText(R.string.home_hero_subtitle)
+            binding.homeWeatherIcon.visibility = View.GONE
+            return
+        }
+
+        val maximum = weather.maximumTemperature
+        val minimum = weather.minimumTemperature
+        val current = weather.currentTemperature
+        val condition = weather.primaryCondition
+        val titleStyle = HomeWeatherDisplayLogic.titleStyle(
+            condition = condition,
+            currentTemperature = current,
+            maximumTemperature = maximum,
+            precipitationType = weather.precipitationType,
+            currentPrecipitationType = weather.currentPrecipitationType,
+            precipitationStartAt = weather.precipitationStartAt,
+        )
+        val titleRes = when (titleStyle) {
+            HomeWeatherTitleStyle.CLEAR -> R.string.home_weather_clear_title
+            HomeWeatherTitleStyle.CLOUDY -> R.string.home_weather_cloudy_title
+            HomeWeatherTitleStyle.HOT -> R.string.home_weather_hot_title
+            HomeWeatherTitleStyle.COLD -> R.string.home_weather_cold_title
+            HomeWeatherTitleStyle.RAIN_NOW -> R.string.home_weather_rain_now_title
+            HomeWeatherTitleStyle.RAIN_LATER -> R.string.home_weather_rain_start_title
+            HomeWeatherTitleStyle.RAIN_TODAY -> R.string.home_weather_rain_title
+            HomeWeatherTitleStyle.SLEET_NOW -> R.string.home_weather_sleet_now_title
+            HomeWeatherTitleStyle.SLEET_LATER -> R.string.home_weather_sleet_start_title
+            HomeWeatherTitleStyle.SLEET_TODAY -> R.string.home_weather_sleet_title
+            HomeWeatherTitleStyle.SNOW_NOW -> R.string.home_weather_snow_now_title
+            HomeWeatherTitleStyle.SNOW_LATER -> R.string.home_weather_snow_start_title
+            HomeWeatherTitleStyle.SNOW_TODAY -> R.string.home_weather_snow_title
+        }
+        binding.homeHeroTitle.text = when (titleStyle) {
+            HomeWeatherTitleStyle.RAIN_LATER,
+            HomeWeatherTitleStyle.SLEET_LATER,
+            HomeWeatherTitleStyle.SNOW_LATER,
+            -> getString(
+                titleRes,
+                weather.precipitationStartAt
+                    ?.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                    ?.format(
+                        DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+                            .withLocale(resources.configuration.locales[0]),
+                    ),
+            )
+            else -> getString(titleRes)
+        }
+        binding.homeWeatherIcon.setWeatherCondition(condition)
+        binding.homeWeatherIcon.visibility = View.VISIBLE
+        val isCurrentlyPrecipitating = weather.currentPrecipitationType in setOf("RAIN", "SLEET", "SNOW")
+        val subtitle = when {
+            isCurrentlyPrecipitating && current != null &&
+                weather.currentPrecipitationAmount != null &&
+                weather.currentPrecipitationAmount > 0 -> getString(
+                R.string.home_weather_precipitation_amount_subtitle,
+                current,
+                weather.currentPrecipitationAmount,
+            )
+            isCurrentlyPrecipitating && current != null -> getString(
+                R.string.home_weather_current_subtitle,
+                current,
+            )
+            weather.precipitationType != "NONE" && current != null -> getString(
+                R.string.home_weather_precipitation_current_subtitle,
+                current,
+                weather.precipitationProbabilityMax,
+            )
+            weather.precipitationType != "NONE" -> getString(
+                R.string.home_weather_precipitation_probability_subtitle,
+                weather.precipitationProbabilityMax,
+            )
+            current != null && minimum != null && maximum != null -> getString(
+                R.string.home_weather_temperature_subtitle,
+                current,
+                minimum,
+                maximum,
+            )
+            current != null -> getString(
+                R.string.home_weather_current_subtitle,
+                current,
+            )
+            minimum != null && maximum != null -> getString(
+                R.string.home_weather_range_subtitle,
+                minimum,
+                maximum,
+            )
+            else -> getString(R.string.home_hero_subtitle)
+        }
+        binding.homeHeroSubtitle.text = buildList {
+            add(subtitle)
+            if (weather.precipitationConfidence == "LOW") {
+                add(getString(R.string.home_weather_confidence_low))
+            }
+            if (weather.attribution != null) {
+                add(getString(R.string.home_weather_attribution))
+            }
+        }.joinToString(" · ")
     }
 
     private fun renderMovement(data: HomePageQuery.Data?) {
@@ -553,17 +793,31 @@ class HomeFragment : Fragment() {
         if (viewModel.showBus50Transfer.value != true) return null
         if (route.destination != "TERMINAL" || route.stop !in setOf("dormitory_o", "shuttlecock_o")) return null
         val terminalArrival = candidateArrivalDate(entry, "TERMINAL") ?: return null
-        val busArrival = data.transferBus
+        val realtimeArrival = data.transferBus
             .filter { it.stop.seq == 216000759 }
             .flatMap { it.arrival }
-            .mapNotNull { it.minutes?.let(::timeAfterMinutes) }
-            .filter { !it.isBefore(terminalArrival) }
-            .minOrNull()
-            ?: viewModel.bus50TerminalLogTimes.value
+            .filter { it.isRealtime }
+            .mapNotNull { arrival ->
+                arrival.minutes?.let { minutes ->
+                    HomeBusArrival(
+                        arrivalDate = timeAfterMinutes(minutes),
+                        minutes = minutes,
+                        stops = arrival.stops,
+                    )
+                }
+            }
+            .filter { !it.arrivalDate.isBefore(terminalArrival) }
+            .minByOrNull { it.arrivalDate }
+        val logArrival = if (realtimeArrival == null) {
+            viewModel.bus50TerminalLogTimes.value
                 .orEmpty()
                 .map(::dateTimeFor)
                 .filter { !it.isBefore(terminalArrival) }
                 .minOrNull()
+        } else {
+            null
+        }
+        val busArrival = realtimeArrival?.arrivalDate ?: logArrival
             ?: return null
         val bufferMinutes = Duration.between(terminalArrival, busArrival).toMinutes().coerceAtLeast(0).toInt()
         val tint = ContextCompat.getColor(
@@ -573,14 +827,77 @@ class HomeFragment : Fragment() {
         return HomeConnection(
             row = HomeRow(
                 badge = getString(R.string.home_transfer_bus50_badge),
-                title = getString(R.string.home_transfer_bus50_title, compactTime(busArrival.toLocalTime())),
-                subtitle = getString(R.string.home_transfer_bus50_subtitle),
-                trailing = getString(R.string.home_transfer_buffer, bufferMinutes),
+                title = getString(
+                    R.string.home_transfer_subway_title,
+                    getString(R.string.bus_stop_gwangmyeong_station),
+                ),
+                subtitle = realtimeArrival?.let(::busRealtimeArrivalText)
+                    ?: arrivalClockText(busArrival, R.string.home_transfer_bus50_log_arrival_record),
+                trailing = transferWaitingText(bufferMinutes, null),
                 tint = tint,
             ),
+            connectorTitle = getString(R.string.home_transfer_bus50_connector),
+            connectorTravelMinutes = null,
             arrivalDate = busArrival,
             minimumTransferMinutes = 0,
         )
+    }
+
+    private fun busRealtimeArrivalText(arrival: HomeBusArrival): String {
+        val stops = arrival.stops
+        return when {
+            stops != null && stops > 0 -> getString(R.string.home_transfer_bus50_realtime_stops, stops)
+            stops == 0 -> getString(R.string.home_transfer_realtime_arriving)
+            else -> getString(R.string.home_transfer_realtime_minutes, arrival.minutes)
+        }
+    }
+
+    private fun transferWaitingText(bufferMinutes: Int, travelMinutes: Int?): String {
+        val waitingMinutes = (bufferMinutes - (travelMinutes ?: 0)).coerceAtLeast(0)
+        return if (waitingMinutes == 0) {
+            getString(R.string.home_transfer_wait_immediate)
+        } else {
+            getString(R.string.home_transfer_wait_minutes, waitingMinutes)
+        }
+    }
+
+    private fun subwayArrivalText(arrival: HomeSubwayArrival): String {
+        if (!arrival.isRealtime) {
+            return arrivalClockText(arrival.arrivalDate, R.string.home_transfer_subway_timetable_arrival)
+        }
+        val stops = arrival.stops
+        if (stops == null || stops <= 0) {
+            return getString(R.string.home_transfer_realtime_arriving)
+        }
+
+        val isKorean = resources.configuration.locales[0].language == "ko"
+        if (isKorean && arrival.status == 3) {
+            return getString(R.string.home_transfer_subway_realtime_previous_departure, stops)
+        }
+        val status = subwayRealtimeStatusText(arrival.status)
+        if (isKorean && !arrival.location.isNullOrBlank() && status != null) {
+            return getString(
+                R.string.home_transfer_subway_realtime_status,
+                stops,
+                arrival.location,
+                status,
+            )
+        }
+        return getString(R.string.home_transfer_subway_realtime_stops, stops)
+    }
+
+    private fun subwayRealtimeStatusText(status: Int?): String? {
+        val resource = when (status) {
+            0 -> R.string.home_transfer_subway_status_entering
+            1 -> R.string.home_transfer_subway_status_arrived
+            2 -> R.string.home_transfer_subway_status_departed
+            else -> return null
+        }
+        return getString(resource)
+    }
+
+    private fun arrivalClockText(arrivalDate: ZonedDateTime, resource: Int): String {
+        return getString(resource, arrivalDate.hour, arrivalDate.minute)
     }
 
     private fun subwayTransferConnections(
@@ -639,7 +956,12 @@ class HomeFragment : Fragment() {
                 ?: return@mapNotNull null
             listOf(
                 subwayConnection(firstLeg, stationArrival),
-                subwayConnection(secondLeg, firstLeg.arrivalDate, R.string.home_transfer_subway_oido_subtitle),
+                subwayConnection(
+                    secondLeg,
+                    firstLeg.arrivalDate,
+                    connectorTitleRes = R.string.home_transfer_subway_oido_connector,
+                    connectorTravelMinutes = null,
+                ),
             )
         }
     }
@@ -661,8 +983,9 @@ class HomeFragment : Fragment() {
                 subwayConnection(
                     secondLeg,
                     firstLeg.arrivalDate,
-                    R.string.home_transfer_subway_choji_subtitle,
-                    CHOJI_MINIMUM_TRANSFER_MINUTES,
+                    connectorTitleRes = R.string.home_transfer_subway_choji_connector,
+                    connectorTravelMinutes = CHOJI_MINIMUM_TRANSFER_MINUTES,
+                    minimumTransferMinutes = CHOJI_MINIMUM_TRANSFER_MINUTES,
                 ),
             )
         }
@@ -775,6 +1098,10 @@ class HomeFragment : Fragment() {
                     terminalName = it.terminal.name,
                     arrivalDate = timeAfterMinutes(it.minutes),
                     tint = tint,
+                    isRealtime = it.isRealtime,
+                    location = it.location,
+                    stops = it.stops,
+                    status = it.status,
                 )
             }
             .orEmpty()
@@ -799,6 +1126,10 @@ class HomeFragment : Fragment() {
                     terminalName = it.terminal.name,
                     arrivalDate = upcomingDateTimeFor(it.time),
                     tint = tint,
+                    isRealtime = false,
+                    location = null,
+                    stops = null,
+                    status = null,
                 )
             }
             .orEmpty()
@@ -817,7 +1148,8 @@ class HomeFragment : Fragment() {
     private fun subwayConnection(
         arrival: HomeSubwayArrival,
         transferStartDate: ZonedDateTime,
-        subtitleRes: Int = R.string.home_transfer_subway_subtitle,
+        connectorTitleRes: Int = R.string.home_transfer_subway_connector,
+        connectorTravelMinutes: Int? = SUBWAY_MINIMUM_TRANSFER_MINUTES,
         minimumTransferMinutes: Int = SUBWAY_MINIMUM_TRANSFER_MINUTES,
     ): HomeConnection {
         val bufferMinutes = Duration.between(transferStartDate, arrival.arrivalDate).toMinutes().coerceAtLeast(0).toInt()
@@ -828,10 +1160,12 @@ class HomeFragment : Fragment() {
                     R.string.home_transfer_subway_title,
                     localizedSubwayStationName(requireContext(), arrival.terminalStationID, arrival.terminalName),
                 ),
-                subtitle = getString(subtitleRes),
-                trailing = getString(R.string.home_transfer_buffer, bufferMinutes),
+                subtitle = subwayArrivalText(arrival),
+                trailing = transferWaitingText(bufferMinutes, connectorTravelMinutes),
                 tint = arrival.tint,
             ),
+            connectorTitle = getString(connectorTitleRes),
+            connectorTravelMinutes = connectorTravelMinutes,
             arrivalDate = arrival.arrivalDate,
             minimumTransferMinutes = minimumTransferMinutes,
         )
@@ -928,12 +1262,15 @@ class HomeFragment : Fragment() {
         }
         val shuttleView = createHomeRowView(movement.row)
         pair.addView(shuttleView)
-        movement.connections.forEach { connection ->
-            pair.addView(createLinkBadge(connection.row.tint), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(22)).apply {
-                topMargin = -dp(7)
-                bottomMargin = -dp(7)
+        movement.connections.forEachIndexed { index, connection ->
+            pair.addView(createLinkBadge(connection), LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(24)).apply {
+                topMargin = -dp(8)
+                bottomMargin = -dp(8)
             })
-            pair.addView(createHomeTransferRowView(connection.row), LinearLayout.LayoutParams(
+            pair.addView(createHomeTransferRowView(
+                row = connection.row,
+                hasFollowingConnection = index < movement.connections.lastIndex,
+            ), LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
             ))
@@ -961,8 +1298,14 @@ class HomeFragment : Fragment() {
         return rowBinding.root
     }
 
-    private fun createHomeTransferRowView(row: HomeRow): View {
+    private fun createHomeTransferRowView(row: HomeRow, hasFollowingConnection: Boolean): View {
         val rowBinding = ItemHomeTransferRowBinding.inflate(layoutInflater)
+        rowBinding.root.setPadding(
+            dp(12),
+            dp(14),
+            dp(12),
+            dp(if (hasFollowingConnection) 14 else 8),
+        )
         rowBinding.badge.applyHomeTypeface(Typeface.BOLD)
         rowBinding.title.applyHomeTypeface(Typeface.BOLD)
         rowBinding.subtitle.applyHomeTypeface(Typeface.NORMAL)
@@ -981,22 +1324,66 @@ class HomeFragment : Fragment() {
         return rowBinding.root
     }
 
-    private fun createLinkBadge(tint: Int): View {
+    private fun createLinkBadge(connection: HomeConnection): View {
+        val isDarkMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+            Configuration.UI_MODE_NIGHT_YES
+        val foreground = if (isDarkMode) {
+            ContextCompat.getColor(requireContext(), R.color.primary_text)
+        } else {
+            connection.row.tint
+        }
+        val title = connection.connectorTravelMinutes?.let { travelMinutes ->
+            getString(
+                R.string.home_transfer_connector_travel_time,
+                connection.connectorTitle,
+                travelMinutes,
+            )
+        } ?: connection.connectorTitle
         return LinearLayout(requireContext()).apply {
             clipChildren = false
             clipToPadding = false
+            elevation = dp(2).toFloat()
             gravity = Gravity.CENTER
-            addView(ImageView(requireContext()).apply {
-                setImageResource(R.drawable.ic_home_link)
-                imageTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(tint, 184))
-                scaleType = ImageView.ScaleType.CENTER_INSIDE
-                setPadding(dp(5), dp(5), dp(5), dp(5))
+            contentDescription = title
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+            addView(LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(dp(8), dp(4), dp(8), dp(4))
                 background = android.graphics.drawable.GradientDrawable().apply {
-                    shape = android.graphics.drawable.GradientDrawable.OVAL
-                    setColor(ContextCompat.getColor(requireContext(), R.color.background))
-                    setStroke(dp(1), ColorUtils.setAlphaComponent(tint, 46))
+                    cornerRadius = dp(12).toFloat()
+                    setColor(ContextCompat.getColor(requireContext(), R.color.home_card_background))
+                    setStroke(
+                        dp(1),
+                        ColorUtils.setAlphaComponent(connection.row.tint, if (isDarkMode) 153 else 46),
+                    )
                 }
-            }, LinearLayout.LayoutParams(dp(22), dp(22)))
+                addView(ImageView(requireContext()).apply {
+                    setImageResource(R.drawable.ic_home_link)
+                    imageTintList = ColorStateList.valueOf(
+                        if (isDarkMode) foreground else ColorUtils.setAlphaComponent(foreground, 184),
+                    )
+                    scaleType = ImageView.ScaleType.CENTER_INSIDE
+                    importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                }, LinearLayout.LayoutParams(dp(11), dp(11)))
+                addView(TextView(requireContext()).apply {
+                    applyHomeTypeface(Typeface.BOLD)
+                    text = title
+                    setTextColor(foreground)
+                    textSize = 10f
+                    includeFontPadding = false
+                    maxLines = 1
+                    importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                }, LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                ).apply {
+                    leftMargin = dp(4)
+                })
+            }, LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                dp(24),
+            ))
         }
     }
 
@@ -1232,14 +1619,27 @@ class HomeFragment : Fragment() {
     }
 
     private fun activeMealPeriod(): HomeMealPeriod {
-        val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-        return when {
-            now.hour < 10 -> HomeMealPeriod("조식", R.string.home_meal_breakfast, "breakfast", R.drawable.ic_meal_breakfast)
-            now.hour < 15 -> HomeMealPeriod("중식", R.string.home_meal_lunch, "lunch", R.drawable.ic_meal_lunch)
-            now.hour < 20 -> HomeMealPeriod("석식", R.string.home_meal_dinner, "dinner", R.drawable.ic_meal_dinner)
-            else -> HomeMealPeriod("조식", R.string.home_meal_tomorrow_breakfast, "breakfast", R.drawable.ic_meal_breakfast)
-        }
+        val automaticPeriod = automaticMealPeriod()
+        return selectedMealPeriod?.copy(isTomorrow = automaticPeriod.isTomorrow) ?: automaticPeriod
     }
+
+    private fun automaticMealPeriod(): HomeMealPeriod {
+        val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+        val periods = mealPeriods(isTomorrow = now.hour >= 20)
+        return periods[
+            when {
+                now.hour < 10 || now.hour >= 20 -> 0
+                now.hour < 15 -> 1
+                else -> 2
+            }
+        ]
+    }
+
+    private fun mealPeriods(isTomorrow: Boolean): List<HomeMealPeriod> = listOf(
+        HomeMealPeriod("조식", R.string.home_meal_breakfast, "breakfast", R.drawable.ic_meal_breakfast, isTomorrow),
+        HomeMealPeriod("중식", R.string.home_meal_lunch, "lunch", R.drawable.ic_meal_lunch, isTomorrow),
+        HomeMealPeriod("석식", R.string.home_meal_dinner, "dinner", R.drawable.ic_meal_dinner, isTomorrow),
+    )
 
     private fun runningTime(cafeteria: HomePageQuery.Cafeterium, period: HomeMealPeriod): String? = when (period.marker) {
         "조식" -> cafeteria.runningTime.breakfast
@@ -1280,6 +1680,7 @@ class HomeFragment : Fragment() {
 
     companion object {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
+        private const val DEPARTURE_SWITCH_HYSTERESIS_METERS = 75f
         private const val ROW_BACKGROUND_ALPHA = 24
         private const val TRANSFER_ROW_BACKGROUND_ALPHA = 20
         private const val TRANSFER_ROW_STROKE_ALPHA = 31
@@ -1294,6 +1695,7 @@ class HomeFragment : Fragment() {
         private const val DEBUG_DEPARTURE_EXTRA = "homeDebugDeparture"
         private const val DEBUG_DESTINATION_EXTRA = "homeDebugDestination"
         private const val DEBUG_SUBWAY_DESTINATION_EXTRA = "homeDebugSubwayDestination"
+        private const val PRESENCE_PREVIEW_COUNT_EXTRA = "shuttle_presence_preview_count"
     }
 }
 
@@ -1334,6 +1736,13 @@ private enum class HomeDeparture(
         else -> HomeShuttleRoute("dormitory_o", "STATION")
     }
 
+    fun timetableStopRes(destination: HomeDestination): Int =
+        if (this == SHUTTLECOCK && destination == HomeDestination.DORMITORY) {
+            R.string.shuttle_tab_shuttlecock_in
+        } else {
+            titleRes
+        }
+
     fun distanceTo(location: Location): Float {
         val departureLocation = Location("home_departure").apply {
             latitude = this@HomeDeparture.latitude
@@ -1364,6 +1773,14 @@ private enum class HomeDestination(
             DORMITORY -> "dormitory"
         }
 
+    val timetableDestinationRes: Int
+        get() = when (this) {
+            STATION -> R.string.shuttle_header_bound_for_station
+            TERMINAL -> R.string.shuttle_header_bound_for_terminal
+            JUNGANG -> R.string.shuttle_header_bound_for_jungang_station
+            DORMITORY -> R.string.shuttle_header_bound_for_dormitory
+        }
+
     companion object {
         fun fromDebugValue(value: String?): HomeDestination? = entries.firstOrNull { it.debugValue == value }
     }
@@ -1380,8 +1797,16 @@ private data class HomeMealPeriod(
     val titleRes: Int,
     val tab: String,
     val iconRes: Int,
+    val isTomorrow: Boolean,
 ) {
-    fun title(context: android.content.Context): String = context.getString(titleRes)
+    fun title(context: android.content.Context): String {
+        val title = context.getString(titleRes)
+        return if (isTomorrow) {
+            context.getString(R.string.home_meal_tomorrow_format, title)
+        } else {
+            title
+        }
+    }
 }
 
 private data class HomeMealSection(
@@ -1415,8 +1840,16 @@ private data class HomeRouteDisplay(
 
 private data class HomeConnection(
     val row: HomeRow,
+    val connectorTitle: String,
+    val connectorTravelMinutes: Int?,
     val arrivalDate: ZonedDateTime,
     val minimumTransferMinutes: Int,
+)
+
+private data class HomeBusArrival(
+    val arrivalDate: ZonedDateTime,
+    val minutes: Int,
+    val stops: Int?,
 )
 
 private data class HomeSubwayArrival(
@@ -1425,6 +1858,10 @@ private data class HomeSubwayArrival(
     val terminalName: String,
     val arrivalDate: ZonedDateTime,
     val tint: Int,
+    val isRealtime: Boolean,
+    val location: String?,
+    val stops: Int?,
+    val status: Int?,
 )
 
 private enum class HomeSubwayRouteTarget {

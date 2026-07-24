@@ -29,8 +29,8 @@ class SubwayTabYellowFragment @Inject constructor() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val upAdapter = SubwayRealtimeListAdapter(requireContext())
-        val downAdapter = SubwayRealtimeListAdapter(requireContext())
+        val upAdapter = SubwayRealtimeListAdapter(requireContext(), R.color.subway_suin)
+        val downAdapter = SubwayRealtimeListAdapter(requireContext(), R.color.subway_suin)
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
         binding.apply {
             headerUp.text = getString(R.string.subway_yellow_up)

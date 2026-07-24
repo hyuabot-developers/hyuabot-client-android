@@ -15,6 +15,9 @@
             android:id="@+id/action_homeFragment_to_shuttleRealtimeFragment"
             app:destination="@id/shuttleRealtimeFragment" />
         <action
+            android:id="@+id/action_homeFragment_to_shuttleTimetableFragment"
+            app:destination="@id/shuttleTimetableFragment" />
+        <action
             android:id="@+id/action_homeFragment_to_cafeteriaFragment"
             app:destination="@id/cafeteriaFragment" />
         <action

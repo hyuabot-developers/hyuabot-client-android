@@ -17,6 +17,9 @@ import androidx.core.content.ContextCompat
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.widget.ShuttleWidgetSupport
 import com.google.android.gms.location.Priority
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.ceil
 import kotlin.math.max
@@ -147,7 +150,7 @@ class ShuttleAlarmService : Service() {
         val progressSegments = checkpointProgressSegments(checkpointTimes)
         val notification = buildBoardingNotification(
             stopName,
-            initialMinutes,
+            departureTimeMillis,
             null,
             null,
             cancelPi,
@@ -170,9 +173,9 @@ class ShuttleAlarmService : Service() {
                     Location.distanceBetween(location.latitude, location.longitude, stopLat, stopLng, result)
                     val distance = result[0].toInt()
                     val direction = bearingToDirection(result[1].toDouble())
-                    updateBoardingNotification(stopName, remainingMinutes, distance, direction, cancelPi, progress, progressSegments, checkpointStatusText)
+                    updateBoardingNotification(stopName, departureTimeMillis, distance, direction, cancelPi, progress, progressSegments, checkpointStatusText)
                 } else {
-                    updateBoardingNotification(stopName, remainingMinutes, null, null, cancelPi, progress, progressSegments, checkpointStatusText)
+                    updateBoardingNotification(stopName, departureTimeMillis, null, null, cancelPi, progress, progressSegments, checkpointStatusText)
                 }
                 if (System.currentTimeMillis() >= departureTimeMillis) {
                     stopAlarm()
@@ -201,6 +204,7 @@ class ShuttleAlarmService : Service() {
         val progressSegments = checkpointProgressSegments(checkpointTimes)
         val notification = buildAlightingNotification(
             destStopName,
+            arrivalTimeMillis,
             null,
             cancelPi,
             checkpointProgress(checkpointTimes),
@@ -231,9 +235,9 @@ class ShuttleAlarmService : Service() {
                         stopAlarm()
                         return@launch
                     }
-                    updateAlightingNotification(destStopName, distance, cancelPi, progress, progressSegments, checkpointStatusText)
+                    updateAlightingNotification(destStopName, arrivalTimeMillis, distance, cancelPi, progress, progressSegments, checkpointStatusText)
                 } else {
-                    updateAlightingNotification(destStopName, null, cancelPi, checkpointProgress, progressSegments, checkpointStatusText)
+                    updateAlightingNotification(destStopName, arrivalTimeMillis, null, cancelPi, checkpointProgress, progressSegments, checkpointStatusText)
                 }
                 delay(UPDATE_INTERVAL_MS)
             }
@@ -259,7 +263,7 @@ class ShuttleAlarmService : Service() {
 
     private fun updateBoardingNotification(
         stopName: String,
-        minutes: Int,
+        departureTimeMillis: Long,
         distanceM: Int?,
         direction: String?,
         cancelPi: PendingIntent,
@@ -268,11 +272,12 @@ class ShuttleAlarmService : Service() {
         checkpointText: String?
     ) {
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        nm.notify(NOTIFICATION_ID_ONGOING, buildBoardingNotification(stopName, minutes, distanceM, direction, cancelPi, progress, progressSegments, checkpointText))
+        nm.notify(NOTIFICATION_ID_ONGOING, buildBoardingNotification(stopName, departureTimeMillis, distanceM, direction, cancelPi, progress, progressSegments, checkpointText))
     }
 
     private fun updateAlightingNotification(
         destStopName: String,
+        arrivalTimeMillis: Long,
         distanceM: Int?,
         cancelPi: PendingIntent,
         progress: Int,
@@ -280,7 +285,7 @@ class ShuttleAlarmService : Service() {
         checkpointText: String?
     ) {
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        nm.notify(NOTIFICATION_ID_ONGOING, buildAlightingNotification(destStopName, distanceM, cancelPi, progress, progressSegments, checkpointText))
+        nm.notify(NOTIFICATION_ID_ONGOING, buildAlightingNotification(destStopName, arrivalTimeMillis, distanceM, cancelPi, progress, progressSegments, checkpointText))
     }
 
     private fun fireAlightingAlert(destStopName: String, distanceM: Int?) {
@@ -303,7 +308,7 @@ class ShuttleAlarmService : Service() {
 
     private fun buildBoardingNotification(
         stopName: String,
-        minutes: Int,
+        departureTimeMillis: Long,
         distanceM: Int?,
         direction: String?,
         cancelPi: PendingIntent,
@@ -312,12 +317,12 @@ class ShuttleAlarmService : Service() {
         checkpointText: String?
     ): Notification {
         val title = getString(R.string.shuttle_alarm_boarding_title, stopName)
-        val content = if (distanceM != null && direction != null) {
-            getString(R.string.shuttle_alarm_boarding_content, minutes, direction, formatAlarmDistance(distanceM))
-        } else {
-            getString(R.string.shuttle_alarm_boarding_initial, minutes)
-        }
-        val shortText = if (minutes > 0) getString(R.string.shuttle_alarm_boarding_short, minutes) else getString(R.string.shuttle_alarm_now)
+        val departure = getString(R.string.shuttle_alarm_boarding_live_departure, formatAlarmTime(departureTimeMillis))
+        val distance = if (distanceM != null && direction != null) {
+            getString(R.string.shuttle_alarm_boarding_live_direction_distance, direction, formatAlarmDistance(distanceM))
+        } else null
+        val content = listOfNotNull(departure, distance).joinToString(" · ")
+        val shortText = departure
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
             buildLiveUpdateNotification(title, content, shortText, progress, cancelPi, progressSegments, checkpointText)
         } else {
@@ -326,7 +331,7 @@ class ShuttleAlarmService : Service() {
                 .setContentText(content)
                 .setSubText(checkpointText)
                 .setSmallIcon(R.drawable.ic_notification_shuttle)
-                .setColor(ContextCompat.getColor(this, R.color.hanyang_blue))
+                .setColor(ContextCompat.getColor(this, R.color.live_activity_accent))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setProgress(100, progress, false)
@@ -337,6 +342,7 @@ class ShuttleAlarmService : Service() {
 
     private fun buildAlightingNotification(
         destStopName: String,
+        arrivalTimeMillis: Long,
         distanceM: Int?,
         cancelPi: PendingIntent,
         progress: Int,
@@ -344,33 +350,27 @@ class ShuttleAlarmService : Service() {
         checkpointText: String?
     ): Notification {
         val title = getString(R.string.shuttle_alarm_alighting_title, destStopName)
-        val content = when {
-            checkpointText != null && distanceM != null -> {
-                getString(R.string.shuttle_alarm_alighting_checkpoint_distance, checkpointText, destStopName, formatAlarmDistance(distanceM))
-            }
-            checkpointText != null -> {
-                getString(R.string.shuttle_alarm_alighting_checkpoint_tracking, checkpointText, destStopName)
-            }
-            distanceM != null -> {
-                getString(R.string.shuttle_alarm_alighting_content, formatAlarmDistance(distanceM))
-            }
-            else -> {
-                getString(R.string.shuttle_alarm_alighting_preparing)
-            }
+        val arrival = getString(R.string.shuttle_alarm_alighting_live_arrival, formatAlarmTime(arrivalTimeMillis))
+        val distance = if (distanceM != null) {
+            getString(R.string.shuttle_alarm_alighting_content, formatAlarmDistance(distanceM))
+        } else {
+            getString(R.string.shuttle_alarm_alighting_tracking)
         }
+        val content = listOf(arrival, distance).joinToString(" · ")
         val shortText = if (distanceM != null) {
             getString(R.string.shuttle_alarm_distance_short, formatAlarmDistance(distanceM))
         } else {
             getString(R.string.shuttle_alarm_tracking_short)
         }
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            buildLiveUpdateNotification(title, content, shortText, progress, cancelPi, progressSegments)
+            buildLiveUpdateNotification(title, content, shortText, progress, cancelPi, progressSegments, checkpointText)
         } else {
             NotificationCompat.Builder(this, getString(R.string.shuttle_alarm_channel_id))
                 .setContentTitle(title)
                 .setContentText(content)
+                .setSubText(checkpointText)
                 .setSmallIcon(R.drawable.ic_notification_shuttle)
-                .setColor(ContextCompat.getColor(this, R.color.hanyang_blue))
+                .setColor(ContextCompat.getColor(this, R.color.live_activity_accent))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setProgress(100, progress, distanceM == null)
@@ -390,7 +390,7 @@ class ShuttleAlarmService : Service() {
         progressSegments: IntArray = intArrayOf(100),
         subText: String? = null
     ): Notification {
-        val color = ContextCompat.getColor(this, R.color.hanyang_blue)
+        val color = ContextCompat.getColor(this, R.color.live_activity_accent)
         val style = Notification.ProgressStyle()
         val segments = if (progressSegments.isEmpty()) intArrayOf(100) else progressSegments
         segments.forEach { segmentLength ->
@@ -510,6 +510,10 @@ class ShuttleAlarmService : Service() {
             "${distanceM}m"
         }
     }
+
+    private fun formatAlarmTime(timeMillis: Long): String = Instant.ofEpochMilli(timeMillis)
+        .atZone(ZoneId.of("Asia/Seoul"))
+        .format(DateTimeFormatter.ofPattern("HH:mm", Locale.US))
 
     private fun stopAlarm() {
         updateJob?.cancel()

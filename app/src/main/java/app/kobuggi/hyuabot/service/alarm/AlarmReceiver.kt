@@ -32,7 +32,13 @@ class AlarmReceiver: BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         manager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.createNotificationChannel(NotificationChannel(ALARM_CHANNEL_ID, "Reading Room Extend Notification", NotificationManager.IMPORTANCE_HIGH))
+        manager.createNotificationChannel(
+            NotificationChannel(
+                ALARM_CHANNEL_ID,
+                context.getString(R.string.reading_room_extend_notification_channel_name),
+                NotificationManager.IMPORTANCE_HIGH,
+            ),
+        )
         builder = NotificationCompat.Builder(context, ALARM_CHANNEL_ID)
 
         val title = intent?.extras?.getString("content") ?: return

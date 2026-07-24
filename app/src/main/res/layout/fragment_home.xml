@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/home_screen_background">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/home_swipe_refresh_layout"
@@ -25,38 +25,62 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp"
-                android:paddingTop="20dp">
+                android:paddingTop="16dp">
 
-                <TextView
-                    android:id="@+id/date_text"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:layout_height="wrap_content">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:text="@string/home_hero_title"
-                    android:textColor="@color/primary_text"
-                    android:textSize="25sp"
-                    android:textStyle="bold" />
+                    <app.kobuggi.hyuabot.ui.home.HomeWeatherIconView
+                        android:id="@+id/home_weather_icon"
+                        android:layout_width="@dimen/home_weather_icon_size"
+                        android:layout_height="@dimen/home_weather_icon_size"
+                        android:layout_gravity="end|bottom"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
+                        android:visibility="gone" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:text="@string/home_hero_subtitle"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="14sp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:orientation="vertical"
+                        android:paddingEnd="@dimen/home_weather_text_end_padding">
+
+                        <TextView
+                            android:id="@+id/date_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/home_hero_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="@string/home_hero_title"
+                            android:textColor="@color/primary_text"
+                            android:textSize="25sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/home_hero_subtitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/home_hero_subtitle"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </FrameLayout>
 
                 <LinearLayout
                     android:id="@+id/notice_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="vertical"
                     android:visibility="gone">
 
@@ -69,7 +93,7 @@
                         app:cardBackgroundColor="@color/home_notice_background"
                         app:cardCornerRadius="25dp"
                         app:cardElevation="0dp"
-                        app:strokeColor="@color/calendar_grid_line"
+                        app:strokeColor="@color/home_card_stroke"
                         app:strokeWidth="1dp">
 
                         <androidx.viewpager2.widget.ViewPager2
@@ -85,31 +109,31 @@
                     android:id="@+id/destination_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="12dp"
                     app:selectionRequired="true"
                     app:singleSelection="true" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    app:cardBackgroundColor="@color/background"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/home_card_background"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="0dp"
-                    app:strokeColor="@color/calendar_grid_line"
-                    app:strokeWidth="1dp">
+                    app:strokeColor="@color/home_card_stroke"
+                    app:strokeWidth="0.5dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:paddingHorizontal="16dp"
-                        android:paddingTop="20dp"
-                        android:paddingBottom="18dp">
+                        android:paddingTop="18dp"
+                        android:paddingBottom="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -119,47 +143,91 @@
                                 android:layout_marginEnd="10dp"
                                 android:contentDescription="@null"
                                 android:src="@drawable/ic_home_movement"
-                                app:tint="@color/hanyang_blue" />
+                                app:tint="@color/plain_button_text" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/movement_title"
+                                style="@style/Widget.App.HomeSelectorButton"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="@string/home_movement_title"
+                                app:icon="@drawable/ic_chevron_down"
+                                app:iconGravity="textEnd" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/movement_timetable"
+                                style="@style/Widget.App.HomeHeaderButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="@string/home_movement_timetable"
+                                app:icon="@drawable/ic_chevron_right"
+                                app:iconGravity="textEnd"
+                                app:iconPadding="2dp"
+                                app:iconTint="@color/home_detail_button_text" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/route_status_row"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/movement_title"
+                                android:id="@+id/route_text"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="@string/home_movement_title"
-                                android:textColor="@color/primary_text"
-                                android:textSize="20sp"
+                                android:textColor="@color/secondary_text"
+                                android:textSize="13sp"
                                 android:textStyle="bold" />
 
-                            <TextView
-                                android:id="@+id/movement_detail"
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/home_presence_pill"
                                 android:layout_width="wrap_content"
-                                android:layout_height="40dp"
-                                android:drawableEnd="@drawable/ic_chevron_right"
-                                android:drawablePadding="2dp"
-                                android:drawableTint="@color/home_detail_button_text"
-                                android:gravity="center"
-                                android:paddingHorizontal="8dp"
-                                android:text="@string/home_movement_detail"
-                                android:textColor="@color/home_detail_button_text"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
+                                android:layout_height="30dp"
+                                android:layout_marginStart="10dp"
+                                android:importantForAccessibility="yes"
+                                android:visibility="gone"
+                                app:cardBackgroundColor="@color/home_action_button_background"
+                                app:cardCornerRadius="15dp"
+                                app:cardElevation="0dp"
+                                app:strokeWidth="0dp">
 
-                        <TextView
-                            android:id="@+id/route_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:textColor="@color/secondary_text"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:orientation="horizontal"
+                                    android:paddingHorizontal="10dp">
+
+                                    <ImageView
+                                        android:layout_width="15dp"
+                                        android:layout_height="12dp"
+                                        android:contentDescription="@null"
+                                        android:importantForAccessibility="no"
+                                        android:src="@drawable/ic_people_filled"
+                                        app:tint="@color/hanyang_blue" />
+
+                                    <TextView
+                                        android:id="@+id/home_presence_count"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="4dp"
+                                        android:textColor="@color/hanyang_blue"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
 
                         <com.faltenreich.skeletonlayout.SkeletonLayout
                             android:id="@+id/movement_loading"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="14dp"
                             app:maskColor="@color/skeleton_placeholder"
                             app:maskCornerRadius="8dp"
                             app:shimmerColor="@color/skeleton_placeholder_highlight">
@@ -186,7 +254,7 @@
                             android:id="@+id/movement_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="14dp"
                             android:orientation="vertical" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -194,24 +262,24 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    app:cardBackgroundColor="@color/background"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/home_card_background"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="0dp"
-                    app:strokeColor="@color/calendar_grid_line"
-                    app:strokeWidth="1dp">
+                    app:strokeColor="@color/home_card_stroke"
+                    app:strokeWidth="0.5dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:paddingHorizontal="16dp"
-                        android:paddingTop="20dp"
-                        android:paddingBottom="18dp">
+                        android:paddingTop="18dp"
+                        android:paddingBottom="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -221,37 +289,34 @@
                                 android:layout_height="22dp"
                                 android:layout_marginEnd="10dp"
                                 android:contentDescription="@null"
-                                app:tint="@color/hanyang_blue" />
+                                app:tint="@color/plain_button_text" />
 
-                            <TextView
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/meal_title"
+                                style="@style/Widget.App.HomeSelectorButton"
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:textColor="@color/primary_text"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
+                                app:icon="@drawable/ic_chevron_down"
+                                app:iconGravity="textEnd" />
 
-                            <TextView
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/meal_detail"
+                                style="@style/Widget.App.HomeHeaderButton"
                                 android:layout_width="wrap_content"
-                                android:layout_height="40dp"
-                                android:drawableEnd="@drawable/ic_chevron_right"
-                                android:drawablePadding="2dp"
-                                android:drawableTint="@color/home_detail_button_text"
-                                android:gravity="center"
-                                android:paddingHorizontal="8dp"
+                                android:layout_height="48dp"
                                 android:text="@string/home_cafeteria_detail"
-                                android:textColor="@color/home_detail_button_text"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
+                                app:icon="@drawable/ic_chevron_right"
+                                app:iconGravity="textEnd"
+                                app:iconPadding="2dp"
+                                app:iconTint="@color/home_detail_button_text" />
                         </LinearLayout>
 
                         <com.faltenreich.skeletonlayout.SkeletonLayout
                             android:id="@+id/meal_loading"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="12dp"
                             app:maskColor="@color/skeleton_placeholder"
                             app:maskCornerRadius="8dp"
                             app:shimmerColor="@color/skeleton_placeholder_highlight">
@@ -266,7 +331,7 @@
                             android:id="@+id/meal_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="12dp"
                             android:orientation="vertical" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>

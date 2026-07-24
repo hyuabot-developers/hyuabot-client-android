@@ -30,8 +30,8 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
-        val upAdapter = SubwayRealtimeListAdapter(requireContext())
-        val downAdapter = SubwayRealtimeListAdapter(requireContext())
+        val upAdapter = SubwayRealtimeListAdapter(requireContext(), R.color.subway_line4)
+        val downAdapter = SubwayRealtimeListAdapter(requireContext(), R.color.subway_line4)
         binding.apply {
             headerUp.text = getString(R.string.subway_blue_up)
             realtimeViewUp.apply {

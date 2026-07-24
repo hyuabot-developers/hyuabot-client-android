@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="16dp"
+        android:paddingHorizontal="20dp"
         android:paddingBottom="16dp">
     <LinearLayout
         android:id="@+id/setting_campus"
@@ -24,13 +24,13 @@
             android:src="@drawable/ic_campus"
             android:backgroundTint="@color/app_separator"
             android:contentDescription="@string/campus_settings"
-            app:tint="@color/primary_text"
+            app:tint="@color/plain_button_text"
             android:layout_gravity="center_vertical"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:orientation="vertical"
             android:layout_gravity="center_vertical">
             <TextView
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_right"
             android:backgroundTint="@color/app_separator"
-            app:tint="@color/primary_text"
+            app:tint="@color/plain_button_text"
             android:contentDescription="@string/campus_settings"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
@@ -72,14 +72,14 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_language"
             android:contentDescription="@string/language_settings"
-            app:tint="@color/primary_text"
+            app:tint="@color/plain_button_text"
             android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:orientation="vertical"
             android:layout_gravity="center_vertical">
             <TextView
@@ -102,7 +102,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_right"
             android:contentDescription="@string/language_settings"
-            app:tint="@color/primary_text"
+            app:tint="@color/plain_button_text"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
     <View
@@ -121,13 +121,13 @@
             android:src="@drawable/ic_theme"
             android:contentDescription="@string/theme_settings"
             android:backgroundTint="@color/app_separator"
-            app:tint="@color/primary_text"
+            app:tint="@color/plain_button_text"
             android:layout_gravity="center_vertical"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:orientation="vertical"
             android:layout_gravity="center_vertical">
             <TextView
@@ -150,7 +150,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_right"
             android:contentDescription="@string/theme_settings"
-            app:tint="@color/primary_text"
+            app:tint="@color/plain_button_text"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
     <View
@@ -168,14 +168,14 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_info_black"
             android:contentDescription="@string/about"
-            app:tint="@color/primary_text"
+            app:tint="@color/plain_button_text"
             android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical"/>
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:text="@string/about"
             android:textColor="@color/primary_text"
             android:textSize="18sp"
@@ -186,7 +186,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_right"
             android:contentDescription="@string/about"
-            app:tint="@color/primary_text"
+            app:tint="@color/plain_button_text"
             android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
@@ -207,12 +207,12 @@
             android:backgroundTint="@color/app_separator"
             android:contentDescription="@string/privacy_policy"
             android:src="@drawable/ic_info_black"
-            app:tint="@color/primary_text"/>
+            app:tint="@color/plain_button_text"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
@@ -236,7 +236,7 @@
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/privacy_policy"
             android:src="@drawable/ic_arrow_right"
-            app:tint="@color/primary_text"/>
+            app:tint="@color/plain_button_text"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"
@@ -255,12 +255,12 @@
             android:backgroundTint="@color/app_separator"
             android:contentDescription="@string/open_source_licenses"
             android:src="@drawable/ic_book"
-            app:tint="@color/primary_text"/>
+            app:tint="@color/plain_button_text"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
@@ -284,7 +284,7 @@
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/open_source_licenses"
             android:src="@drawable/ic_arrow_right"
-            app:tint="@color/primary_text"/>
+            app:tint="@color/plain_button_text"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"
@@ -301,7 +301,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_info_black"
             android:contentDescription="@string/coachmark_reset_settings"
-            app:tint="@color/primary_text"
+            app:tint="@color/plain_button_text"
             android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical"/>
         <LinearLayout
@@ -309,7 +309,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:layout_gravity="center_vertical">
             <TextView
                 android:layout_width="match_parent"
@@ -342,7 +342,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_alarm"
             android:contentDescription="@string/analytics_settings"
-            app:tint="@color/primary_text"
+            app:tint="@color/plain_button_text"
             android:backgroundTint="@color/app_separator"
             android:layout_gravity="center_vertical"/>
         <LinearLayout
@@ -350,7 +350,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:layout_gravity="center_vertical">
             <TextView
                 android:layout_width="match_parent"
@@ -369,6 +369,7 @@
         </LinearLayout>
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/setting_analytics_switch"
+            style="@style/Widget.App.Switch.Shuttle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

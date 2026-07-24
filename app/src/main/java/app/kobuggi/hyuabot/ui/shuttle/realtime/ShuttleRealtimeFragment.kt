@@ -19,7 +19,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.core.view.isNotEmpty
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
@@ -33,6 +35,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Runnable
@@ -52,9 +55,19 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private var currentPosition = 0
     private var manuallyScrolled = false
     private var honorDeepLinkStop = false
+    private var hasRequestedInitialStopLocation = false
+    private var hasManualStopSelection = false
+    private var isApplyingInitialLocationSelection = false
     private var coachmarkShown = false
     private val scrollHandler = Handler(Looper.getMainLooper())
-    private lateinit var autoScrollRunnable: Runnable
+    private val autoScrollRunnable = Runnable {
+        val adapter = binding.noticeViewPager.adapter
+        if (adapter != null && adapter.itemCount > 1 && !manuallyScrolled && isResumed) {
+            currentPosition = (binding.noticeViewPager.currentItem + 1) % adapter.itemCount
+            binding.noticeViewPager.setCurrentItem(currentPosition, true)
+            scheduleNoticeAutoScroll()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,8 +92,27 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             viewModel.userPreferencesRepository.getShowShuttleByDestination().first().let {
                 viewModel.showByDestination.value = it
             }
+            viewModel.userPreferencesRepository.getShowShuttlePresence().first().let {
+                viewModel.applyShowPresenceStatus(it)
+            }
         }
         binding.viewPager.adapter = viewpagerAdapter
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                viewModel.setPresenceStop(position)
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                    hasManualStopSelection = true
+                }
+            }
+        })
+        if (BuildConfig.DEBUG) {
+            requireActivity().intent.getIntExtra(EXTRA_PRESENCE_PREVIEW_COUNT, -1)
+                .takeIf { it >= 0 }
+                ?.let(viewModel::setPresencePreviewCount)
+        }
         binding.shuttleQuickSettingsButton.setOnClickListener { openQuickSettings() }
         childFragmentManager.setFragmentResultListener(
             ShuttleQuickSettingsDialog.REQUEST_KEY,
@@ -92,6 +124,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_DEPARTURE_TIME)) {
                 viewModel.setShowDepartureTime(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_DEPARTURE_TIME))
             }
+            if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS)) {
+                viewModel.setShowPresenceStatus(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS))
+            }
             if (result.getBoolean(ShuttleQuickSettingsDialog.KEY_OPEN_HOME, false)) {
                 findNavController().navigate(R.id.homeFragment)
             }
@@ -101,9 +136,20 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                if (!isApplyingInitialLocationSelection) {
+                    hasManualStopSelection = true
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) = Unit
+
+            override fun onTabReselected(tab: TabLayout.Tab) = Unit
+        })
         stopNameToTabIndex(args.stop)?.let { index ->
-            binding.viewPager.setCurrentItem(index, false)
             honorDeepLinkStop = true
+            binding.viewPager.setCurrentItem(index, false)
         }
         // If weekdays is from monday to friday and time is before 10:00, it is true and else false
         if (now.dayOfWeek.value in 1..5 && now.hour < 10) {
@@ -124,26 +170,18 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             if (notices.isNotEmpty()) {
                 binding.noticeLayout.visibility = View.VISIBLE
                 (binding.noticeViewPager.adapter as ShuttleNoticeAdapter).updateList(notices)
-                autoScrollRunnable = Runnable {
-                    if (binding.noticeViewPager.adapter != null && binding.noticeViewPager.adapter!!.itemCount > 0 && !manuallyScrolled) {
-                        currentPosition = (currentPosition + 1) % binding.noticeViewPager.adapter!!.itemCount
-                        binding.noticeViewPager.setCurrentItem(currentPosition, true)
-                        scrollHandler.postDelayed(autoScrollRunnable, 5000)
-                    }
-                }
-                if (!manuallyScrolled) scrollHandler.postDelayed(autoScrollRunnable, 5000)
+                currentPosition = binding.noticeViewPager.currentItem.coerceAtMost(notices.lastIndex)
+                scheduleNoticeAutoScroll()
             } else {
                 binding.noticeLayout.visibility = View.GONE
-                if (::autoScrollRunnable.isInitialized) {
-                    scrollHandler.removeCallbacks(autoScrollRunnable)
-                }
+                stopNoticeAutoScroll()
             }
         }
         binding.noticeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
                 if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
                     manuallyScrolled = true
-                    scrollHandler.removeCallbacks(autoScrollRunnable)
+                    stopNoticeAutoScroll()
                 }
                 if (state == ViewPager2.SCROLL_STATE_IDLE && manuallyScrolled) {
                     currentPosition = binding.noticeViewPager.currentItem
@@ -151,10 +189,11 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
         })
         viewModel.result.observe(viewLifecycleOwner) { stops ->
-            if (honorDeepLinkStop) {
+            if (honorDeepLinkStop || hasManualStopSelection || hasRequestedInitialStopLocation) {
                 return@observe
             }
             if (stops.isNotEmpty()) {
+                hasRequestedInitialStopLocation = true
                 moveToNearestStop(fusedLocationProviderClient, stops)
             }
         }
@@ -163,6 +202,18 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         }
         viewModel.result.observe(viewLifecycleOwner) { stops ->
             if (stops.isNotEmpty()) maybeShowCoachmark()
+        }
+        viewModel.presenceViewerCount.observe(viewLifecycleOwner) { viewerCount ->
+            binding.shuttlePresencePill.isVisible = viewerCount != null
+            if (viewerCount != null) {
+                binding.shuttlePresenceCount.text = viewerCount.toString()
+                binding.shuttlePresencePill.contentDescription = getString(
+                    R.string.shuttle_presence_viewer_count,
+                    viewerCount,
+                )
+            } else {
+                binding.shuttlePresencePill.contentDescription = null
+            }
         }
         viewModel.viewModelScope.apply {
             launch {
@@ -175,27 +226,29 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                     viewModel.showByDestination.value = it
                 }
             }
+            launch {
+                viewModel.userPreferencesRepository.getShowShuttlePresence().collect {
+                    viewModel.applyShowPresenceStatus(it)
+                }
+            }
         }
     }
 
     override fun onPause() {
         super.onPause()
         viewModel.stop()
-        if (::autoScrollRunnable.isInitialized) {
-            scrollHandler.removeCallbacks(autoScrollRunnable)
-        }
+        stopNoticeAutoScroll()
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.start()
         manuallyScrolled = false
-        if (::autoScrollRunnable.isInitialized) {
-            scrollHandler.postDelayed(autoScrollRunnable, 5000)
-        }
+        scheduleNoticeAutoScroll()
     }
 
     override fun onDestroyView() {
+        stopNoticeAutoScroll()
         super.onDestroyView()
         childFragmentManager.fragments.toList().forEach {
             childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
@@ -203,11 +256,24 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         binding.viewPager.adapter = null
     }
 
+    private fun scheduleNoticeAutoScroll() {
+        stopNoticeAutoScroll()
+        val itemCount = binding.noticeViewPager.adapter?.itemCount ?: 0
+        if (itemCount > 1 && !manuallyScrolled && isResumed) {
+            scrollHandler.postDelayed(autoScrollRunnable, NOTICE_AUTO_SCROLL_INTERVAL_MILLIS)
+        }
+    }
+
+    private fun stopNoticeAutoScroll() {
+        scrollHandler.removeCallbacks(autoScrollRunnable)
+    }
+
     private fun openQuickSettings() {
         if (childFragmentManager.findFragmentByTag(SHUTTLE_QUICK_SETTINGS_TAG) != null) return
         ShuttleQuickSettingsDialog.newInstance(
             showByDestination = viewModel.showByDestination.value ?: false,
             showDepartureTime = viewModel.showDepartureTime.value ?: false,
+            showPresenceStatus = viewModel.showPresenceStatus.value ?: true,
         ).show(childFragmentManager, SHUTTLE_QUICK_SETTINGS_TAG)
     }
 
@@ -259,14 +325,17 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     }
 
     private fun selectNearestStop(stops: List<ShuttleRealtimePageQuery.Stop>, location: Location) {
-        if (honorDeepLinkStop) {
+        if (!isAdded || view == null || honorDeepLinkStop || hasManualStopSelection) {
             return
         }
-        val nearestStop = stops.map { stopItem ->
+        val gpsCandidates = stops.filterNot { it.name == "shuttlecock_i" }.ifEmpty { stops }
+        val nearestStop = gpsCandidates.map { stopItem ->
             Pair(stopItem, calculateDistance(stopItem, location))
         }.minByOrNull { it.second }?.first
         Log.d("ShuttleRealtimeFragment", "Nearest stop: ${nearestStop?.name}, distance: ${nearestStop?.let { calculateDistance(it, location) }}")
+        isApplyingInitialLocationSelection = true
         binding.viewPager.setCurrentItem(stopNameToTabIndex(nearestStop?.name) ?: 0, false)
+        isApplyingInitialLocationSelection = false
     }
 
     private fun maybeShowCoachmark() {
@@ -455,8 +524,10 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
 
     companion object {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
+        private const val NOTICE_AUTO_SCROLL_INTERVAL_MILLIS = 5_000L
         private val COACHMARK_KEY = Coachmarks.SHUTTLE
         private val REALTIME_UPDATES_COACHMARK_KEY = Coachmarks.SHUTTLE_REALTIME_UPDATES
         private const val SHUTTLE_QUICK_SETTINGS_TAG = "ShuttleQuickSettingsDialog"
+        private const val EXTRA_PRESENCE_PREVIEW_COUNT = "shuttle_presence_preview_count"
     }
 }

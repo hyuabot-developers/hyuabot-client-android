@@ -27,12 +27,14 @@ class ShuttleQuickSettingsDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         val showByDestination = requireArguments().getBoolean(ARG_SHOW_BY_DESTINATION)
         val showDepartureTime = requireArguments().getBoolean(ARG_SHOW_DEPARTURE_TIME)
+        val showPresenceStatus = requireArguments().getBoolean(ARG_SHOW_PRESENCE_STATUS, true)
         binding.showByDestinationGroup.check(
             if (showByDestination) binding.showByDestinationButton.id else binding.showByTimeButton.id,
         )
         binding.showDepartureTimeGroup.check(
             if (showDepartureTime) binding.showDepartureTimeButton.id else binding.showRemainingTimeButton.id,
         )
+        binding.showPresenceStatusSwitch.isChecked = showPresenceStatus
 
         binding.showByDestinationGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (!isChecked) return@addOnButtonCheckedListener
@@ -49,6 +51,14 @@ class ShuttleQuickSettingsDialog : BottomSheetDialogFragment() {
                 REQUEST_KEY,
                 Bundle().apply {
                     putBoolean(KEY_SHOW_DEPARTURE_TIME, checkedId == binding.showDepartureTimeButton.id)
+                },
+            )
+        }
+        binding.showPresenceStatusSwitch.setOnCheckedChangeListener { _, isChecked ->
+            parentFragmentManager.setFragmentResult(
+                REQUEST_KEY,
+                Bundle().apply {
+                    putBoolean(KEY_SHOW_PRESENCE_STATUS, isChecked)
                 },
             )
         }
@@ -78,15 +88,22 @@ class ShuttleQuickSettingsDialog : BottomSheetDialogFragment() {
         const val REQUEST_KEY = "shuttle_quick_settings"
         const val KEY_SHOW_BY_DESTINATION = "show_by_destination"
         const val KEY_SHOW_DEPARTURE_TIME = "show_departure_time"
+        const val KEY_SHOW_PRESENCE_STATUS = "show_presence_status"
         const val KEY_OPEN_HOME = "open_home"
         private const val ARG_SHOW_BY_DESTINATION = "arg_show_by_destination"
         private const val ARG_SHOW_DEPARTURE_TIME = "arg_show_departure_time"
+        private const val ARG_SHOW_PRESENCE_STATUS = "arg_show_presence_status"
 
-        fun newInstance(showByDestination: Boolean, showDepartureTime: Boolean): ShuttleQuickSettingsDialog {
+        fun newInstance(
+            showByDestination: Boolean,
+            showDepartureTime: Boolean,
+            showPresenceStatus: Boolean,
+        ): ShuttleQuickSettingsDialog {
             return ShuttleQuickSettingsDialog().apply {
                 arguments = Bundle().apply {
                     putBoolean(ARG_SHOW_BY_DESTINATION, showByDestination)
                     putBoolean(ARG_SHOW_DEPARTURE_TIME, showDepartureTime)
+                    putBoolean(ARG_SHOW_PRESENCE_STATUS, showPresenceStatus)
                 }
             }
         }

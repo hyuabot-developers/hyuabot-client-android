@@ -29,6 +29,7 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
         binding.subwayDestinationIncheon.tag = HomeSubwayTransferDestination.INCHEON
         binding.subwayDestinationOido.tag = HomeSubwayTransferDestination.OIDO
         binding.subwayDestinationSosa.tag = HomeSubwayTransferDestination.SOSA
+        binding.showPresenceStatusSwitch.isChecked = requireArguments().getBoolean(ARG_SHOW_PRESENCE_STATUS, true)
         binding.showBus50TransferSwitch.isChecked = requireArguments().getBoolean(ARG_SHOW_BUS50_TRANSFER, true)
         binding.showSubwayTransferSwitch.isChecked = requireArguments().getBoolean(ARG_SHOW_SUBWAY_TRANSFER, true)
         val subwayDestination = HomeSubwayTransferDestination.from(requireArguments().getString(ARG_SUBWAY_TRANSFER_DESTINATION))
@@ -39,6 +40,12 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.showPresenceStatusSwitch.setOnCheckedChangeListener { _, isChecked ->
+            parentFragmentManager.setFragmentResult(
+                REQUEST_KEY,
+                Bundle().apply { putBoolean(KEY_SHOW_PRESENCE_STATUS, isChecked) },
+            )
+        }
         binding.showBus50TransferSwitch.setOnCheckedChangeListener { _, isChecked ->
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
@@ -90,20 +97,24 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
     companion object {
         const val REQUEST_KEY = "HomeQuickSettingsDialog"
         const val KEY_OPEN_LEGACY_SHUTTLE = "openLegacyShuttle"
+        const val KEY_SHOW_PRESENCE_STATUS = "showPresenceStatus"
         const val KEY_SHOW_BUS50_TRANSFER = "showBus50Transfer"
         const val KEY_SHOW_SUBWAY_TRANSFER = "showSubwayTransfer"
         const val KEY_SUBWAY_TRANSFER_DESTINATION = "subwayTransferDestination"
+        private const val ARG_SHOW_PRESENCE_STATUS = "showPresenceStatus"
         private const val ARG_SHOW_BUS50_TRANSFER = "showBus50Transfer"
         private const val ARG_SHOW_SUBWAY_TRANSFER = "showSubwayTransfer"
         private const val ARG_SUBWAY_TRANSFER_DESTINATION = "subwayTransferDestination"
 
         fun newInstance(
+            showPresenceStatus: Boolean,
             showBus50Transfer: Boolean,
             showSubwayTransfer: Boolean,
             subwayTransferDestination: HomeSubwayTransferDestination,
         ): HomeQuickSettingsDialog {
             return HomeQuickSettingsDialog().apply {
                 arguments = Bundle().apply {
+                    putBoolean(ARG_SHOW_PRESENCE_STATUS, showPresenceStatus)
                     putBoolean(ARG_SHOW_BUS50_TRANSFER, showBus50Transfer)
                     putBoolean(ARG_SHOW_SUBWAY_TRANSFER, showSubwayTransfer)
                     putString(ARG_SUBWAY_TRANSFER_DESTINATION, subwayTransferDestination.value)

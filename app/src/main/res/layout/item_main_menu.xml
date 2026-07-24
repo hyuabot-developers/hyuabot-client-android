@@ -6,7 +6,8 @@
     android:id="@+id/menu_item_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="56dp"
+    android:background="@color/campus_support_background"
+    android:minHeight="54dp"
     android:paddingHorizontal="16dp"
     android:paddingVertical="12dp" >
     <TextView
@@ -15,7 +16,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:paddingBottom="12dp"
-        android:textColor="@color/secondary_text"
+        android:textColor="@color/primary_text"
         android:textFontWeight="700"
         android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +31,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/menu_section_text_view"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:tint="@color/primary_text"
+        app:tint="@color/campus_icon_tint"
         tools:ignore="HardcodedText" />
     <TextView
         android:id="@+id/menu_text_view"
@@ -39,7 +40,7 @@
         android:textSize="16sp"
         android:textColor="@color/primary_text"
         android:textFontWeight="700"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="14dp"
         app:layout_constraintStart_toEndOf="@id/menu_icon_view"
         app:layout_constraintEnd_toStartOf="@id/menu_arrow_view"
         app:layout_constraintTop_toTopOf="@id/menu_icon_view"
@@ -54,6 +55,6 @@
         app:layout_constraintTop_toTopOf="@id/menu_icon_view"
         app:layout_constraintBottom_toBottomOf="parent"
         android:src="@drawable/ic_arrow_right"
-        app:tint="@color/secondary_text"
+        app:tint="@color/tertiary_text"
         tools:ignore="HardcodedText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

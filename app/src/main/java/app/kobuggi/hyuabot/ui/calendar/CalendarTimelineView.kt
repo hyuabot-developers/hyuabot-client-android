@@ -263,11 +263,11 @@ class CalendarTimelineView @JvmOverloads constructor(
 
     private fun eventColor(category: String): Int {
         return when (category) {
-            "1학년" -> color(R.color.hanyang_blue)
-            "2학년" -> color(R.color.hanyang_orange)
-            "3학년" -> color(R.color.hanyang_green)
-            "4학년" -> color(R.color.hanyang_gold)
-            else -> color(R.color.hanyang_orange)
+            "1학년" -> color(R.color.calendar_category_blue)
+            "2학년" -> color(R.color.calendar_category_orange)
+            "3학년" -> color(R.color.calendar_category_green)
+            "4학년" -> color(R.color.calendar_category_purple)
+            else -> color(R.color.calendar_category_orange)
         }
     }
 

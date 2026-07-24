@@ -97,13 +97,13 @@
             android:minHeight="36dp"
             android:paddingHorizontal="12dp"
             android:text="@string/common_help"
-            android:textColor="@android:color/white"
+            android:textColor="@color/hanyang_blue"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:backgroundTint="@color/hanyang_blue"
+            app:backgroundTint="@color/home_action_button_background"
             app:icon="@drawable/ic_help"
             app:iconGravity="textStart"
-            app:iconTint="@android:color/white"
+            app:iconTint="@color/hanyang_blue"
             app:iconPadding="6dp" />
     </LinearLayout>
 
