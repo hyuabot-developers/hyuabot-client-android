@@ -365,6 +365,28 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             }
     }
 
+    override suspend fun setShuttleAlternativeDisplayMode(mode: String) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[SHUTTLE_ALTERNATIVE_DISPLAY_MODE_KEY] = mode
+            }
+        }
+    }
+
+    override suspend fun getShuttleAlternativeDisplayMode(): Flow<String> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[SHUTTLE_ALTERNATIVE_DISPLAY_MODE_KEY] ?: "automatic"
+            }
+    }
+
     override suspend fun setAnalyticsConsent(enabled: Boolean) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
@@ -472,6 +494,7 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val HOME_SHOW_BUS50_TRANSFER_KEY = booleanPreferencesKey("home_show_bus50_transfer")
         private val HOME_SHOW_SUBWAY_TRANSFER_KEY = booleanPreferencesKey("home_show_subway_transfer")
         private val HOME_SUBWAY_TRANSFER_DESTINATION_KEY = stringPreferencesKey("home_subway_transfer_destination")
+        private val SHUTTLE_ALTERNATIVE_DISPLAY_MODE_KEY = stringPreferencesKey("shuttle_alternative_display_mode")
         private val ANALYTICS_CONSENT_KEY = booleanPreferencesKey("analytics_consent")
         private val LAUNCH_COUNT_KEY = intPreferencesKey("launch_count")
         private val REVIEW_REQUESTED_AT_KEY = longPreferencesKey("review_requested_at")

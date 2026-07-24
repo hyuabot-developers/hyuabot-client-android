@@ -8,7 +8,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.ShuttleTransferQuery
+import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
 import java.time.DayOfWeek
+import java.time.Duration
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -18,6 +22,10 @@ data class TransitRow(
     val detail: String,
     val vehicleType: TransitVehicleType,
     val timeline: List<TransitTimelineEntry> = emptyList(),
+    val compactTitle: String = name,
+    val compactTrailing: String = detail,
+    val connectorTitle: String? = null,
+    val connectorTravelMinutes: Int? = null,
 )
 
 enum class TransitVehicleType {
@@ -34,6 +42,8 @@ data class TransitTimelineEntry(
     val direction: Int,
 )
 
+private const val SUBWAY_TRANSFER_MINUTES = 5
+private const val CHOJI_TRANSFER_MINUTES = 8
 private const val BUS_STOP_KWANGMYEONG = 216000759
 private const val BUS_STOP_ANSAN = 216000117
 
@@ -45,6 +55,7 @@ private data class TransferData(
 private data class TransferSubwayStation(
     val stationID: String,
     val arrival: List<TransferSubwayArrival>,
+    val timetable: List<TransferSubwayTimetable>,
 )
 
 private data class TransferSubwayArrival(
@@ -61,14 +72,34 @@ private data class TransferSubwayEntry(
     val terminalName: String,
 )
 
+private data class TransferSubwayTimetable(
+    val direction: String,
+    val time: LocalTime,
+    val terminalID: String,
+    val terminalName: String,
+)
+
 private data class TransferBus(
     val stopSeq: Int,
     val arrival: List<TransferBusArrival>,
+    val log: List<LocalTime>,
 )
 
 private data class TransferBusArrival(
     val minutes: Int?,
     val stops: Int?,
+    val isRealtime: Boolean,
+)
+
+private data class SubwayCandidate(
+    val lineName: String,
+    @param:ColorRes val colorRes: Int,
+    val terminalID: String,
+    val terminalName: String,
+    val arrivalDate: ZonedDateTime,
+    val minutes: Int?,
+    val stops: Int?,
+    val direction: Int,
     val isRealtime: Boolean,
 )
 
@@ -79,11 +110,15 @@ fun localizedContext(context: Context): Context {
     return context.createConfigurationContext(config)
 }
 
-fun currentShuttleWeekday(): String = when (ZonedDateTime.now(ZoneId.of("Asia/Seoul")).dayOfWeek) {
-    DayOfWeek.SATURDAY -> "saturday"
-    DayOfWeek.SUNDAY -> "sunday"
-    else -> "weekday"
-}
+fun currentShuttleWeekday(): String =
+    if (ZonedDateTime.now(ZoneId.of("Asia/Seoul")).dayOfWeek in setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)) {
+        "weekends"
+    } else {
+        "weekdays"
+    }
+
+fun shuttleBusLogReferenceDates(today: LocalDate = LocalDate.now(ZoneId.of("Asia/Seoul"))): List<LocalDate> =
+    listOf(today.minusDays(7), today.minusDays(2), today.minusDays(1))
 
 fun buildTransitRows(
     context: Context,
@@ -169,6 +204,9 @@ private val SUBWAY_STATION_NAMES: Map<String, Int> = mapOf(
     "K444" to R.string.subway_station_K444,
     "K453" to R.string.subway_station_K453,
     "K456" to R.string.subway_station_K456,
+    "S07" to R.string.subway_station_S07,
+    "S11" to R.string.subway_station_S11,
+    "S16" to R.string.subway_station_S16,
 )
 
 fun localizedSubwayStationName(context: Context, stationID: String, fallback: String): String =
@@ -205,6 +243,422 @@ private fun busRow(
     return TransitRow(destination, R.color.green_bus, detail, TransitVehicleType.BUS, timeline)
 }
 
+fun buildShuttleConnectionRows(
+    context: Context,
+    stopName: String,
+    destination: String,
+    shuttle: ShuttleRealtimePageQuery.Entry,
+    data: ShuttleRealtimePageQuery.Data?,
+    showBusTransfer: Boolean,
+    showSubwayTransfer: Boolean,
+    subwayDestination: HomeSubwayTransferDestination,
+): List<TransitRow> {
+    if (data == null || stopName !in setOf("dormitory_o", "shuttlecock_o")) return emptyList()
+    val transferData = data.toTransferData()
+    return when (destination) {
+        "STATION" -> if (showSubwayTransfer) {
+            stationConnectionRows(context, shuttle, transferData, subwayDestination)
+        } else {
+            emptyList()
+        }
+        "TERMINAL" -> if (showBusTransfer) {
+            terminalBusConnectionRows(context, shuttle, transferData)
+        } else {
+            emptyList()
+        }
+        "JUNGANG" -> if (showSubwayTransfer) {
+            jungangConnectionRows(context, shuttle, transferData, subwayDestination)
+        } else {
+            emptyList()
+        }
+        else -> emptyList()
+    }
+}
+
+private fun stationConnectionRows(
+    context: Context,
+    shuttle: ShuttleRealtimePageQuery.Entry,
+    data: TransferData,
+    destination: HomeSubwayTransferDestination,
+): List<TransitRow> {
+    val transferStart = shuttleTransferDate(shuttle, "station")
+    val line4 = subwayCandidates(context, data, "K449", "up", R.string.subway_line4, R.color.subway_line4)
+    val suin = subwayCandidates(
+        context,
+        data,
+        "K251",
+        "up",
+        R.string.home_transfer_subway_suin_bundang_badge,
+        R.color.home_subway_yellow,
+    )
+    return when (destination) {
+        HomeSubwayTransferDestination.SEOUL ->
+            earliestCandidate(line4, transferStart, SUBWAY_TRANSFER_MINUTES)
+                ?.let { listOf(candidateRow(context, it, transferStart, SUBWAY_TRANSFER_MINUTES)) }
+                .orEmpty()
+        HomeSubwayTransferDestination.SUWON_YONGIN ->
+            earliestCandidate(suin, transferStart, SUBWAY_TRANSFER_MINUTES)
+                ?.let { listOf(candidateRow(context, it, transferStart, SUBWAY_TRANSFER_MINUTES)) }
+                .orEmpty()
+        HomeSubwayTransferDestination.OIDO -> {
+            val candidates = oidoFirstLegCandidates(context, data)
+            earliestCandidate(candidates, transferStart, SUBWAY_TRANSFER_MINUTES)
+                ?.let { listOf(candidateRow(context, it, transferStart, SUBWAY_TRANSFER_MINUTES)) }
+                .orEmpty()
+        }
+        HomeSubwayTransferDestination.SOSA -> sosaRows(context, data, transferStart)
+        HomeSubwayTransferDestination.INCHEON -> incheonRows(context, data, transferStart)
+    }.mapIndexed { index, row ->
+        if (index == 0) {
+            row.copy(
+                connectorTitle = context.getString(
+                    R.string.shuttle_connection_transfer_format,
+                    context.getString(R.string.home_transfer_subway_connector),
+                ),
+                connectorTravelMinutes = SUBWAY_TRANSFER_MINUTES,
+            )
+        } else {
+            row
+        }
+    }
+}
+
+private fun sosaRows(
+    context: Context,
+    data: TransferData,
+    transferStart: ZonedDateTime?,
+): List<TransitRow> {
+    val firstLegs = eligibleCandidates(
+        chojiFirstLegCandidates(context, data),
+        transferStart,
+        SUBWAY_TRANSFER_MINUTES,
+    )
+    val secondLegs = subwayTimetableCandidates(
+        context,
+        data,
+        "S26",
+        "up",
+        R.string.home_transfer_subway_seohae_badge,
+        R.color.subway_seohae,
+    ) { it <= "S16" && it.startsWith("S") }
+    val path = firstLegs.mapNotNull { first ->
+        val second = earliestCandidate(secondLegs, first.arrivalDate, CHOJI_TRANSFER_MINUTES)
+            ?: return@mapNotNull null
+        listOf(first, second)
+    }.minByOrNull { it.last().arrivalDate } ?: return emptyList()
+    return listOf(
+        candidateRow(context, path[0], transferStart, SUBWAY_TRANSFER_MINUTES),
+        candidateRow(
+            context,
+            path[1],
+            path[0].arrivalDate,
+            CHOJI_TRANSFER_MINUTES,
+            context.getString(R.string.home_transfer_subway_choji_connector),
+            CHOJI_TRANSFER_MINUTES,
+        ),
+    )
+}
+
+private fun incheonRows(
+    context: Context,
+    data: TransferData,
+    transferStart: ZonedDateTime?,
+): List<TransitRow> {
+    val direct = subwayCandidates(
+        context,
+        data,
+        "K251",
+        "down",
+        R.string.home_transfer_subway_suin_bundang_badge,
+        R.color.home_subway_yellow,
+    ) { it > "K258" && it.startsWith("K2") }
+        .let { eligibleCandidates(it, transferStart, SUBWAY_TRANSFER_MINUTES) }
+        .map(::listOf)
+    val firstLegs = eligibleCandidates(
+        oidoFirstLegCandidates(context, data),
+        transferStart,
+        SUBWAY_TRANSFER_MINUTES,
+    )
+    val secondLegs = subwayCandidates(
+        context,
+        data,
+        "K258",
+        "down",
+        R.string.home_transfer_subway_suin_bundang_badge,
+        R.color.home_subway_yellow,
+    ) { it > "K258" && it.startsWith("K2") }
+    val transfer = firstLegs.mapNotNull { first ->
+        val second = earliestCandidate(secondLegs, first.arrivalDate, SUBWAY_TRANSFER_MINUTES)
+            ?: return@mapNotNull null
+        listOf(first, second)
+    }
+    val path = (direct + transfer).minByOrNull { it.last().arrivalDate } ?: return emptyList()
+    return path.mapIndexed { index, candidate ->
+        candidateRow(
+            context = context,
+            candidate = candidate,
+            transferStart = if (index == 0) transferStart else path[index - 1].arrivalDate,
+            travelMinutes = if (index == 0) SUBWAY_TRANSFER_MINUTES else null,
+            connectorTitle = if (index == 0) null else context.getString(R.string.home_transfer_subway_oido_connector),
+            connectorTravelMinutes = null,
+        )
+    }
+}
+
+private fun chojiFirstLegCandidates(context: Context, data: TransferData): List<SubwayCandidate> =
+    subwayCandidates(
+        context,
+        data,
+        "K449",
+        "down",
+        R.string.subway_line4,
+        R.color.subway_line4,
+    ) { it >= "K452" && it.startsWith("K4") } + subwayCandidates(
+        context,
+        data,
+        "K251",
+        "down",
+        R.string.home_transfer_subway_suin_bundang_badge,
+        R.color.home_subway_yellow,
+    ) { it >= "K254" && it.startsWith("K2") }
+
+private fun oidoFirstLegCandidates(context: Context, data: TransferData): List<SubwayCandidate> =
+    subwayCandidates(
+        context,
+        data,
+        "K449",
+        "down",
+        R.string.subway_line4,
+        R.color.subway_line4,
+    ) { it == "K456" } + subwayCandidates(
+        context,
+        data,
+        "K251",
+        "down",
+        R.string.home_transfer_subway_suin_bundang_badge,
+        R.color.home_subway_yellow,
+    ) { it >= "K258" && it.startsWith("K2") }
+
+private fun jungangConnectionRows(
+    context: Context,
+    shuttle: ShuttleRealtimePageQuery.Entry,
+    data: TransferData,
+    destination: HomeSubwayTransferDestination,
+): List<TransitRow> {
+    val direction = when (destination) {
+        HomeSubwayTransferDestination.SEOUL -> "up"
+        HomeSubwayTransferDestination.OIDO,
+        HomeSubwayTransferDestination.SOSA -> "down"
+        else -> return emptyList()
+    }
+    val transferStart = shuttleTransferDate(shuttle, "jungang_stn")
+    val candidate = earliestCandidate(
+        subwayCandidates(context, data, "K450", direction, R.string.subway_line4, R.color.subway_line4),
+        transferStart,
+        0,
+    ) ?: return emptyList()
+    return listOf(
+        candidateRow(context, candidate, transferStart, null).copy(
+            connectorTitle = context.getString(
+                R.string.shuttle_connection_transfer_format,
+                context.getString(R.string.shuttle_tab_jungang_station),
+            ),
+        ),
+    )
+}
+
+private fun terminalBusConnectionRows(
+    context: Context,
+    shuttle: ShuttleRealtimePageQuery.Entry,
+    data: TransferData,
+): List<TransitRow> {
+    val transferStart = shuttleTransferDate(shuttle, "terminal")
+    val bus = data.bus.firstOrNull { it.stopSeq == BUS_STOP_KWANGMYEONG } ?: return emptyList()
+    val realtime = bus.arrival
+        .filter { it.isRealtime && it.minutes != null }
+        .map { arrival ->
+            val arrivalDate = nowInSeoul().plusMinutes(arrival.minutes!!.toLong())
+            arrival to arrivalDate
+        }
+        .filter { (_, date) -> transferStart == null || !date.isBefore(transferStart) }
+        .minByOrNull { (_, date) -> date }
+    val arrivalDate = realtime?.second ?: bus.log
+        .map(::upcomingDateTime)
+        .filter { transferStart == null || !it.isBefore(transferStart) }
+        .minOrNull()
+        ?: return emptyList()
+    val trailing = transferWaitingText(context, transferStart, arrivalDate, null)
+    val detail = if (realtime != null) {
+        realtime.first.stops?.let { context.getString(R.string.home_transfer_bus50_realtime_stops, it) }
+            ?: context.getString(R.string.home_transfer_realtime_minutes, realtime.first.minutes)
+    } else {
+        context.getString(R.string.home_transfer_bus50_log_arrival_record, arrivalDate.hour, arrivalDate.minute)
+    }
+    val badge = context.getString(R.string.home_transfer_bus50_badge)
+    return listOf(
+        TransitRow(
+            name = badge,
+            colorRes = R.color.green_bus,
+            detail = detail,
+            vehicleType = TransitVehicleType.BUS,
+            compactTitle = badge,
+            compactTrailing = trailing ?: detail,
+            connectorTitle = context.getString(
+                R.string.shuttle_connection_transfer_format,
+                context.getString(R.string.home_transfer_bus50_connector),
+            ),
+        ),
+    )
+}
+
+private fun candidateRow(
+    context: Context,
+    candidate: SubwayCandidate,
+    transferStart: ZonedDateTime?,
+    travelMinutes: Int?,
+    connectorTitle: String? = null,
+    connectorTravelMinutes: Int? = null,
+): TransitRow {
+    val destination = localizedSubwayStationName(context, candidate.terminalID, candidate.terminalName)
+    val detail = if (candidate.isRealtime) {
+        candidate.stops?.let { context.getString(R.string.home_transfer_subway_realtime_stops, it) }
+            ?: candidate.minutes?.let { context.getString(R.string.home_transfer_realtime_minutes, it) }
+            ?: ""
+    } else {
+        context.getString(
+            R.string.home_transfer_subway_timetable_arrival,
+            candidate.arrivalDate.hour,
+            candidate.arrivalDate.minute,
+        )
+    }
+    return TransitRow(
+        name = candidate.lineName,
+        colorRes = candidate.colorRes,
+        detail = detail,
+        vehicleType = TransitVehicleType.SUBWAY,
+        timeline = listOf(
+            TransitTimelineEntry(
+                destination = destination,
+                minutes = candidate.minutes,
+                stops = candidate.stops,
+                locationLabel = null,
+                isRealtime = candidate.isRealtime,
+                direction = candidate.direction,
+            ),
+        ),
+        compactTitle = context.getString(R.string.home_transfer_subway_title, destination),
+        compactTrailing = transferWaitingText(context, transferStart, candidate.arrivalDate, travelMinutes) ?: detail,
+        connectorTitle = connectorTitle,
+        connectorTravelMinutes = connectorTravelMinutes,
+    )
+}
+
+private fun subwayCandidates(
+    context: Context,
+    data: TransferData,
+    stationID: String,
+    direction: String,
+    @StringRes lineNameRes: Int,
+    @ColorRes colorRes: Int,
+    isEligible: (String) -> Boolean = { true },
+): List<SubwayCandidate> {
+    val group = data.subway.firstOrNull { it.stationID == stationID }
+        ?.arrival
+        ?.firstOrNull { it.direction == direction }
+        ?: return emptyList()
+    val now = nowInSeoul()
+    return group.entries.filter { isEligible(it.terminalID) }.map {
+        SubwayCandidate(
+            lineName = context.getString(lineNameRes),
+            colorRes = colorRes,
+            terminalID = it.terminalID,
+            terminalName = it.terminalName,
+            arrivalDate = now.plusMinutes(it.minutes.toLong()),
+            minutes = it.minutes,
+            stops = it.stops,
+            direction = subwayDirection(direction),
+            isRealtime = it.isRealtime,
+        )
+    }
+}
+
+private fun subwayTimetableCandidates(
+    context: Context,
+    data: TransferData,
+    stationID: String,
+    direction: String,
+    @StringRes lineNameRes: Int,
+    @ColorRes colorRes: Int,
+    isEligible: (String) -> Boolean,
+): List<SubwayCandidate> =
+    data.subway.firstOrNull { it.stationID == stationID }
+        ?.timetable
+        ?.filter { it.direction == direction && isEligible(it.terminalID) }
+        ?.map {
+            val date = upcomingDateTime(it.time)
+            SubwayCandidate(
+                lineName = context.getString(lineNameRes),
+                colorRes = colorRes,
+                terminalID = it.terminalID,
+                terminalName = it.terminalName,
+                arrivalDate = date,
+                minutes = Duration.between(nowInSeoul(), date).toMinutes().coerceAtLeast(0).toInt(),
+                stops = null,
+                direction = subwayDirection(direction),
+                isRealtime = false,
+            )
+        }
+        .orEmpty()
+
+private fun earliestCandidate(
+    candidates: List<SubwayCandidate>,
+    transferStart: ZonedDateTime?,
+    minimumTransferMinutes: Int,
+): SubwayCandidate? =
+    eligibleCandidates(candidates, transferStart, minimumTransferMinutes).minByOrNull { it.arrivalDate }
+
+private fun eligibleCandidates(
+    candidates: List<SubwayCandidate>,
+    transferStart: ZonedDateTime?,
+    minimumTransferMinutes: Int,
+): List<SubwayCandidate> {
+    if (transferStart == null) return candidates
+    return candidates.filter {
+        Duration.between(transferStart, it.arrivalDate).toMinutes() >= minimumTransferMinutes
+    }
+}
+
+private fun shuttleTransferDate(
+    shuttle: ShuttleRealtimePageQuery.Entry,
+    stopName: String,
+): ZonedDateTime? =
+    shuttle.stops.firstOrNull { it.stop == stopName }?.time?.let(::upcomingDateTime)
+
+private fun transferWaitingText(
+    context: Context,
+    transferStart: ZonedDateTime?,
+    arrivalDate: ZonedDateTime,
+    travelMinutes: Int?,
+): String? {
+    if (transferStart == null) return null
+    val buffer = Duration.between(transferStart, arrivalDate).toMinutes().coerceAtLeast(0).toInt()
+    val waiting = (buffer - (travelMinutes ?: 0)).coerceAtLeast(0)
+    return if (waiting == 0) {
+        context.getString(R.string.home_transfer_wait_immediate)
+    } else {
+        context.getString(R.string.home_transfer_wait_minutes, waiting)
+    }
+}
+
+private fun upcomingDateTime(time: LocalTime): ZonedDateTime {
+    val now = nowInSeoul()
+    var result = now.toLocalDate().atTime(time).atZone(now.zone)
+    if (result.isBefore(now)) result = result.plusDays(1)
+    return result
+}
+
+private fun nowInSeoul(): ZonedDateTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+
 private fun ShuttleTransferQuery.Data.toTransferData(): TransferData =
     TransferData(
         subway = subway.map { station ->
@@ -225,6 +679,7 @@ private fun ShuttleTransferQuery.Data.toTransferData(): TransferData =
                         },
                     )
                 },
+                timetable = emptyList(),
             )
         },
         bus = bus.map { item ->
@@ -233,6 +688,7 @@ private fun ShuttleTransferQuery.Data.toTransferData(): TransferData =
                 arrival = item.arrival.map { arrival ->
                     TransferBusArrival(arrival.minutes, arrival.stops, arrival.isRealtime)
                 },
+                log = emptyList(),
             )
         },
     )
@@ -257,6 +713,14 @@ private fun ShuttleRealtimePageQuery.Data.toTransferData(): TransferData =
                         },
                     )
                 },
+                timetable = station.timetable.map {
+                    TransferSubwayTimetable(
+                        direction = it.direction,
+                        time = it.time,
+                        terminalID = it.terminal.stationID,
+                        terminalName = it.terminal.name,
+                    )
+                },
             )
         },
         bus = transferBus.map { item ->
@@ -265,6 +729,7 @@ private fun ShuttleRealtimePageQuery.Data.toTransferData(): TransferData =
                 arrival = item.arrival.map { arrival ->
                     TransferBusArrival(arrival.minutes, arrival.stops, arrival.isRealtime)
                 },
+                log = item.log.map { it.time },
             )
         },
     )

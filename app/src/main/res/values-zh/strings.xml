@@ -141,6 +141,17 @@
     <string name="shuttle_quick_settings_departure_time_subtitle">按发车时间显示校车时刻。</string>
     <string name="shuttle_quick_settings_presence_title">显示同时查看的人</string>
     <string name="shuttle_quick_settings_presence_subtitle">显示正在查看同一站点信息的人数。</string>
+    <string name="shuttle_quick_settings_section_display">校车显示</string>
+    <string name="shuttle_quick_settings_section_connections">换乘与替代交通</string>
+    <string name="shuttle_quick_settings_order_title">按目的地/时间排序</string>
+    <string name="shuttle_quick_settings_time_title">剩余时间/出发时间</string>
+    <string name="shuttle_quick_settings_subway_destination_title">地铁目的地</string>
+    <string name="shuttle_quick_settings_alternative_title">显示替代交通</string>
+    <string name="shuttle_quick_settings_alternative_subtitle">自动模式会在距下一班校车至少20分钟时显示。</string>
+    <string name="shuttle_quick_settings_alternative_mode_automatic">自动</string>
+    <string name="shuttle_quick_settings_alternative_mode_always">始终</string>
+    <string name="shuttle_quick_settings_alternative_mode_hidden">隐藏</string>
+    <string name="shuttle_connection_transfer_format">在%1$s换乘</string>
     <string name="shuttle_presence_viewer_count">%1$d人同时查看</string>
     <string name="shuttle_display_order_title">显示顺序</string>
     <string name="shuttle_display_order_subtitle">按时间或目的地整理校车到达信息。</string>

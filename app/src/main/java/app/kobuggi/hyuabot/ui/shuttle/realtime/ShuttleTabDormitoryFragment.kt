@@ -28,6 +28,9 @@ import app.kobuggi.hyuabot.widget.ShuttleWidgetSupport
 class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentShuttleRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: ShuttleRealtimeViewModel by viewModels({ requireParentFragment() })
+    private var nextStationShuttleTime: LocalTime? = null
+    private var nextTerminalShuttleTime: LocalTime? = null
+    private var nextJungangShuttleTime: LocalTime? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -317,6 +320,9 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             val shuttleForStation = shuttle.timetable.destination.firstOrNull { it.destination == "STATION" }?.entries?.filter { it.time > now } ?: emptyList()
             val shuttleForTerminal = shuttle.timetable.destination.firstOrNull { it.destination == "TERMINAL" }?.entries?.filter { it.time > now } ?: emptyList()
             val shuttleForJungangStation = shuttle.timetable.destination.firstOrNull { it.destination == "JUNGANG" }?.entries?.filter { it.time > now } ?: emptyList()
+            nextStationShuttleTime = shuttleForStation.firstOrNull()?.time
+            nextTerminalShuttleTime = shuttleForTerminal.firstOrNull()?.time
+            nextJungangShuttleTime = shuttleForJungangStation.firstOrNull()?.time
             // Hide the layout by showing the destination conf
             binding.shuttleDestinationScroll.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
             binding.shuttleTimeScroll.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
@@ -363,6 +369,13 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
         parentViewModel.busAlternativeDormitory80.observe(viewLifecycleOwner) { data ->
             updateBusAlternative80(data)
         }
+        parentViewModel.alternativeDisplayMode.observe(viewLifecycleOwner) {
+            updateBusAlternativeStation(
+                parentViewModel.busAlternativeDormitory.value,
+                parentViewModel.forceShowBusAlternative.value ?: false,
+            )
+            updateBusAlternative80(parentViewModel.busAlternativeDormitory80.value)
+        }
         binding.apply {
             headerBoundForDormitory.visibility = View.GONE
             realtimeViewBoundForDormitory.visibility = View.GONE
@@ -370,15 +383,16 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             entireTimetableBoundForDormitory.visibility = View.GONE
             entireTimetableDormitory.visibility = View.GONE
         }
-        parentViewModel.transfer.observe(viewLifecycleOwner) { data ->
-            ShuttleTransferBinder.bind(binding.transferSection, binding.transferContainer, "dormitory_o", data)
-        }
         bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
         return binding.root.also { disableViewStateSaving(it) }
     }
 
     private fun updateBusAlternativeStation(data: BusAlternativeData?, forceShow: Boolean = false) {
-        val shouldShow = data?.minutes != null || forceShow
+        val shouldShow = parentViewModel.shouldShowBusAlternative(
+            data,
+            nextStationShuttleTime,
+            forceShow,
+        )
         binding.busAlternativeStation.visibility = if (shouldShow) View.VISIBLE else View.GONE
         if (shouldShow) {
             binding.busAlternativeStationTime.text = if (data?.minutes != null)
@@ -418,10 +432,17 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
 
     private fun updateBusAlternative80(data: BusAlternativeData?) {
         val color = requireContext().getColor(R.color.blue_bus)
-        val shouldShow = data?.minutes != null
-        binding.busAlternativeTerminal.visibility = if (shouldShow) View.VISIBLE else View.GONE
-        binding.busAlternativeJungangStation.visibility = if (shouldShow) View.VISIBLE else View.GONE
-        if (shouldShow) {
+        val showForTerminal = parentViewModel.shouldShowBusAlternative(
+            data,
+            nextTerminalShuttleTime,
+        )
+        val showForJungang = parentViewModel.shouldShowBusAlternative(
+            data,
+            nextJungangShuttleTime,
+        )
+        binding.busAlternativeTerminal.visibility = if (showForTerminal) View.VISIBLE else View.GONE
+        binding.busAlternativeJungangStation.visibility = if (showForJungang) View.VISIBLE else View.GONE
+        if ((showForTerminal || showForJungang) && data != null) {
             binding.busAccentBarTerminal.setBackgroundColor(color)
             binding.busAlternativeTerminalRoute.setTextColor(color)
             binding.busAlternativeTerminalRoute.text = getString(data.routeDisplayName)

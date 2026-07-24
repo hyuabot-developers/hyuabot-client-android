@@ -30,6 +30,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkController
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.ensureCoachmarkEligibility
+import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -126,6 +127,18 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
             if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS)) {
                 viewModel.setShowPresenceStatus(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS))
+            }
+            if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_BUS_TRANSFER)) {
+                viewModel.setShowBusTransfer(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_BUS_TRANSFER))
+            }
+            if (result.containsKey(ShuttleQuickSettingsDialog.KEY_SHOW_SUBWAY_TRANSFER)) {
+                viewModel.setShowSubwayTransfer(result.getBoolean(ShuttleQuickSettingsDialog.KEY_SHOW_SUBWAY_TRANSFER))
+            }
+            result.getString(ShuttleQuickSettingsDialog.KEY_SUBWAY_DESTINATION)?.let {
+                viewModel.setSubwayTransferDestination(HomeSubwayTransferDestination.from(it))
+            }
+            result.getString(ShuttleQuickSettingsDialog.KEY_ALTERNATIVE_MODE)?.let {
+                viewModel.setAlternativeDisplayMode(ShuttleAlternativeDisplayMode.from(it))
             }
             if (result.getBoolean(ShuttleQuickSettingsDialog.KEY_OPEN_HOME, false)) {
                 findNavController().navigate(R.id.homeFragment)
@@ -274,6 +287,10 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             showByDestination = viewModel.showByDestination.value ?: false,
             showDepartureTime = viewModel.showDepartureTime.value ?: false,
             showPresenceStatus = viewModel.showPresenceStatus.value ?: true,
+            showBusTransfer = viewModel.showBusTransfer.value ?: true,
+            showSubwayTransfer = viewModel.showSubwayTransfer.value ?: true,
+            subwayDestination = viewModel.subwayTransferDestination.value ?: HomeSubwayTransferDestination.SEOUL,
+            alternativeMode = viewModel.alternativeDisplayMode.value ?: ShuttleAlternativeDisplayMode.AUTOMATIC,
         ).show(childFragmentManager, SHUTTLE_QUICK_SETTINGS_TAG)
     }
 

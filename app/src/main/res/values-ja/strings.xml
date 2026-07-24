@@ -141,6 +141,17 @@
     <string name="shuttle_quick_settings_departure_time_subtitle">出発時刻でシャトル時刻を表示します。</string>
     <string name="shuttle_quick_settings_presence_title">一緒に見ている人を表示</string>
     <string name="shuttle_quick_settings_presence_subtitle">同じ停留所の情報を見ている人数を表示します。</string>
+    <string name="shuttle_quick_settings_section_display">シャトル表示</string>
+    <string name="shuttle_quick_settings_section_connections">乗り換え・代替手段</string>
+    <string name="shuttle_quick_settings_order_title">目的地/時間順</string>
+    <string name="shuttle_quick_settings_time_title">残り時間/出発時間</string>
+    <string name="shuttle_quick_settings_subway_destination_title">電車の行き先</string>
+    <string name="shuttle_quick_settings_alternative_title">代替手段を表示</string>
+    <string name="shuttle_quick_settings_alternative_subtitle">自動では次のシャトルまで20分以上の場合に表示します。</string>
+    <string name="shuttle_quick_settings_alternative_mode_automatic">自動</string>
+    <string name="shuttle_quick_settings_alternative_mode_always">常に</string>
+    <string name="shuttle_quick_settings_alternative_mode_hidden">非表示</string>
+    <string name="shuttle_connection_transfer_format">%1$sで乗り換え</string>
     <string name="shuttle_presence_viewer_count">%1$d人が一緒に閲覧中</string>
     <string name="shuttle_display_order_title">表示順</string>
     <string name="shuttle_display_order_subtitle">シャトル到着を時間順または行先別に整理します。</string>
