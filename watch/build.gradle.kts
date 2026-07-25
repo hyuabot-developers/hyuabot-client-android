@@ -28,12 +28,21 @@ android {
     namespace = "app.kobuggi.hyuabot"
     compileSdk = 37
 
+    signingConfigs {
+        create("config") {
+            storeFile = file(props["SIGNING_KEY_FILE"]?.toString() ?: "keystore.jks")
+            storePassword = props["SIGNED_STORE_PASSWORD"]?.toString() ?: "storePassword"
+            keyAlias = props["SIGNED_KEY_ALIAS"]?.toString() ?: "keyAlias"
+            keyPassword = props["SIGNED_KEY_PASSWORD"]?.toString() ?: "keyPassword"
+        }
+    }
+
     defaultConfig {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 33
-        targetSdk = 34
-        versionCode = 500100000
-        versionName = "5.0.0"
+        targetSdk = 35
+        versionCode = 519100000
+        versionName = "5.1.9"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     }
@@ -45,7 +54,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("config")
         }
     }
 
