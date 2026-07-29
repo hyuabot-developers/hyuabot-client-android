@@ -468,6 +468,12 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_chat">Inquiries</string>
     <string name="menu_donate">Donate</string>
+    <string name="inquiry_title">Inquiries</string>
+    <string name="inquiry_input_hint">Type a message</string>
+    <string name="inquiry_send">Send</string>
+    <string name="inquiry_empty">No messages yet. Feel free to leave your question.</string>
+    <string name="inquiry_read">Read</string>
+    <string name="inquiry_load_failed">Failed to load the conversation.</string>
     <string name="menu_review">Rate this App</string>
     <string name="menu_section_school_life">School life</string>
     <string name="menu_section_support">Support and settings</string>

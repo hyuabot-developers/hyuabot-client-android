@@ -152,8 +152,7 @@ class MenuFragment @Inject constructor() : Fragment() {
                 }
             }
             R.string.menu_chat -> {
-                val url = "https://open.kakao.com/o/sW2kAinb"
-                MenuFragmentDirections.actionMenuFragmentToNoticeWebViewFragment(url).also {
+                MenuFragmentDirections.actionMenuFragmentToInquiryChatFragment().also {
                     findNavController().safeNavigate(it)
                 }
             }

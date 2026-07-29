@@ -445,6 +445,12 @@
     <string name="menu_settings">設定</string>
     <string name="menu_chat">お問い合わせ</string>
     <string name="menu_donate">寄付する</string>
+    <string name="inquiry_title">お問い合わせ</string>
+    <string name="inquiry_input_hint">メッセージを入力してください</string>
+    <string name="inquiry_send">送信</string>
+    <string name="inquiry_empty">まだ会話がありません。ご質問をお気軽にどうぞ。</string>
+    <string name="inquiry_read">既読</string>
+    <string name="inquiry_load_failed">会話を読み込めませんでした。</string>
     <string name="menu_review">アプリ評価</string>
     <string name="menu_section_school_life">学校生活</string>
     <string name="menu_section_support">サポート・設定</string>

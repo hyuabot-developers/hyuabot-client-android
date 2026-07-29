@@ -54,4 +54,7 @@
     <color name="widget_accent">#FFFFFF</color>
     <color name="widget_accent_on">#000000</color>
     <color name="widget_divider">#99545458</color>
+    <color name="inquiry_bubble_user">#0E4A84</color>
+    <color name="inquiry_bubble_user_text">#FFFFFF</color>
+    <color name="inquiry_bubble_admin">#2C2C2E</color>
 </resources>
