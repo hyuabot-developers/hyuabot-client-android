@@ -445,6 +445,12 @@
     <string name="menu_settings">设置</string>
     <string name="menu_chat">联系我们</string>
     <string name="menu_donate">捐赠</string>
+    <string name="inquiry_title">联系我们</string>
+    <string name="inquiry_input_hint">请输入消息</string>
+    <string name="inquiry_send">发送</string>
+    <string name="inquiry_empty">还没有对话。欢迎留下您的问题。</string>
+    <string name="inquiry_read">已读</string>
+    <string name="inquiry_load_failed">无法加载对话。</string>
     <string name="menu_review">评价应用</string>
     <string name="menu_section_school_life">校园生活</string>
     <string name="menu_section_support">支持与设置</string>

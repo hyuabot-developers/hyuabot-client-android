@@ -231,6 +231,14 @@
         <deepLink app:uri="https://hyuabot.app/calendar" />
     </fragment>
     <fragment
+        android:id="@+id/inquiryChatFragment"
+        android:name="app.kobuggi.hyuabot.ui.inquiry.InquiryChatFragment"
+        android:label="@string/inquiry_title"
+        tools:layout="@layout/fragment_inquiry_chat">
+        <deepLink app:uri="hyuabot://inquiry" />
+        <deepLink app:uri="https://hyuabot.app/inquiry" />
+    </fragment>
+    <fragment
         android:id="@+id/menuFragment"
         android:name="app.kobuggi.hyuabot.ui.menu.MenuFragment"
         android:label="@string/tabbar_campus"
@@ -255,6 +263,9 @@
         <action
             android:id="@+id/action_menuFragment_to_noticeWebViewFragment"
             app:destination="@id/noticeWebViewFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_inquiryChatFragment"
+            app:destination="@id/inquiryChatFragment" />
     </fragment>
     <dialog
         android:id="@+id/shuttleStopDialogFragment"

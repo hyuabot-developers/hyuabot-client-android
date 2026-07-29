@@ -524,6 +524,12 @@
     <string name="menu_settings">설정</string>
     <string name="menu_chat">문의하기</string>
     <string name="menu_donate">기부하기</string>
+    <string name="inquiry_title">문의하기</string>
+    <string name="inquiry_input_hint">메시지를 입력하세요</string>
+    <string name="inquiry_send">전송</string>
+    <string name="inquiry_empty">아직 대화가 없습니다. 궁금한 점을 남겨주세요.</string>
+    <string name="inquiry_read">읽음</string>
+    <string name="inquiry_load_failed">대화를 불러오지 못했습니다.</string>
     <string name="menu_review">앱 평가하기</string>
     <string name="menu_section_school_life">학교생활</string>
     <string name="menu_section_support">지원 및 설정</string>
