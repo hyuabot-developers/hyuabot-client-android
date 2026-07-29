@@ -385,6 +385,7 @@
     <string name="subway_timetable_title_suin_down">Suin Line (Incheon)</string>
     <string name="subway_timetable_time_format">%1$s:%2$s</string>
     <string name="cafeteria">Cafeteria</string>
+    <string name="cafeteria_tab_tomorrow_format">%1$s</string>
     <string name="cafeteria_tab_breakfast">Breakfast</string>
     <string name="cafeteria_tab_lunch">Lunch</string>
     <string name="cafeteria_tab_dinner">Dinner</string>

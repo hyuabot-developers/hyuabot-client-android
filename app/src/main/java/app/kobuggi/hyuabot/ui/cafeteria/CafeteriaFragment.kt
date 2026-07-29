@@ -33,6 +33,7 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentCafeteriaBinding.inflate(layoutInflater) }
     private val viewModel: CafeteriaViewModel by viewModels()
     private val args: CafeteriaFragmentArgs by navArgs()
+    private var showingAutomaticTomorrow = false
 
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
@@ -59,6 +60,7 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
             .build()
         datePicker.addOnPositiveButtonClickListener {
             AnalyticsManager.logSelect(AnalyticsItem.CAFETERIA_DATE_CHANGED, type = AnalyticsContentType.DATE_CONTROL)
+            clearAutomaticTomorrowIfNeeded()
             viewModel.date.value = LocalDateTime.ofEpochSecond(it / 1000, 0, ZoneOffset.ofHours(9))
         }
 
@@ -92,8 +94,8 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
                 datePicker.show(childFragmentManager, "CafeteriaDatePicker")
             }
         }
-        binding.prevButton.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.CAFETERIA_PREVIOUS_DATE, type = AnalyticsContentType.DATE_CONTROL); viewModel.date.value = viewModel.date.value?.minusDays(1) }
-        binding.nextButton.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.CAFETERIA_NEXT_DATE, type = AnalyticsContentType.DATE_CONTROL); viewModel.date.value = viewModel.date.value?.plusDays(1) }
+        binding.prevButton.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.CAFETERIA_PREVIOUS_DATE, type = AnalyticsContentType.DATE_CONTROL); clearAutomaticTomorrowIfNeeded(); viewModel.date.value = viewModel.date.value?.minusDays(1) }
+        binding.nextButton.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.CAFETERIA_NEXT_DATE, type = AnalyticsContentType.DATE_CONTROL); clearAutomaticTomorrowIfNeeded(); viewModel.date.value = viewModel.date.value?.plusDays(1) }
         binding.shareCafeteriaButton.setOnClickListener {
             val (mealType, menus) = currentMealMenus()
             if (menus.isEmpty()) return@setOnClickListener
@@ -117,11 +119,16 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
                 // 20시 이후에는 홈 화면과 동일하게 내일 조식으로 진입한다.
                 if (now.hour >= 20) {
                     viewModel.date.value = now.plusDays(1)
+                    showingAutomaticTomorrow = true
                 }
                 defaultMealTab(now)
             }
         }
         binding.viewPager.setCurrentItem(initialTab, false)
+        // 자동으로 내일 식단으로 넘어간 경우에만 탭 제목을 "내일 조식/중식/석식"으로 표시한다.
+        if (showingAutomaticTomorrow) {
+            updateMealTabTitles(tomorrow = true)
+        }
         showCoachmarkOnce(userPreferencesRepository, Coachmarks.CAFETERIA) {
             listOf(
                 CoachmarkStep(
@@ -160,6 +167,29 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
         dateTime.hour < 10 || dateTime.hour >= 20 -> 0 // 조식
         dateTime.hour < 15 -> 1 // 중식
         else -> 2 // 석식
+    }
+
+    // 자동으로 내일 식단으로 넘어간 경우에만 탭 제목을 "내일 조식/중식/석식"으로 표시한다.
+    // 접두어 포맷(cafeteria_tab_tomorrow_format)은 언어별로 정의되며, 탭이 길어지는
+    // 영어는 접두어 없이("%1$s") 기본 제목을 그대로 사용한다.
+    private fun updateMealTabTitles(tomorrow: Boolean) {
+        val labels = listOf(
+            R.string.cafeteria_tab_breakfast,
+            R.string.cafeteria_tab_lunch,
+            R.string.cafeteria_tab_dinner
+        )
+        for (i in labels.indices) {
+            val base = getString(labels[i])
+            val text = if (tomorrow) getString(R.string.cafeteria_tab_tomorrow_format, base) else base
+            binding.tabLayout.getTabAt(i)?.text = text
+        }
+    }
+
+    // 사용자가 날짜를 직접 변경하면 자동 "내일" 표시를 해제하고 기본 탭 제목으로 되돌린다.
+    private fun clearAutomaticTomorrowIfNeeded() {
+        if (!showingAutomaticTomorrow) return
+        showingAutomaticTomorrow = false
+        updateMealTabTitles(tomorrow = false)
     }
 
     override fun onDestroyView() {

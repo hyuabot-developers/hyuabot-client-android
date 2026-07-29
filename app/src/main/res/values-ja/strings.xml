@@ -362,6 +362,7 @@
     <string name="subway_timetable_title_suin_down">水仁線 (仁川)</string>
     <string name="subway_timetable_time_format">%1$s時%2$s分</string>
     <string name="cafeteria">学食</string>
+    <string name="cafeteria_tab_tomorrow_format">明日の%1$s</string>
     <string name="cafeteria_tab_breakfast">朝食</string>
     <string name="cafeteria_tab_lunch">昼食</string>
     <string name="cafeteria_tab_dinner">夕食</string>
