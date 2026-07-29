@@ -23,6 +23,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -111,7 +112,14 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
             "breakfast" -> 0
             "lunch" -> 1
             "dinner" -> 2
-            else -> defaultMealTab(viewModel.date.value ?: LocalDateTime.now())
+            else -> {
+                val now = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
+                // 20시 이후에는 홈 화면과 동일하게 내일 조식으로 진입한다.
+                if (now.hour >= 20) {
+                    viewModel.date.value = now.plusDays(1)
+                }
+                defaultMealTab(now)
+            }
         }
         binding.viewPager.setCurrentItem(initialTab, false)
         showCoachmarkOnce(userPreferencesRepository, Coachmarks.CAFETERIA) {
@@ -147,10 +155,11 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
         else -> "lunch" to (viewModel.lunch.value ?: emptyList())
     }
 
-    private fun defaultMealTab(dateTime: LocalDateTime): Int = when (dateTime.hour) {
-        in 0..10 -> 0
-        in 11..16 -> 1
-        else -> 2
+    // 홈 화면(HomeFragment.automaticMealPeriod)과 동일한 시각 경계로 조식/중식/석식을 선택한다.
+    private fun defaultMealTab(dateTime: LocalDateTime): Int = when {
+        dateTime.hour < 10 || dateTime.hour >= 20 -> 0 // 조식
+        dateTime.hour < 15 -> 1 // 중식
+        else -> 2 // 석식
     }
 
     override fun onDestroyView() {
