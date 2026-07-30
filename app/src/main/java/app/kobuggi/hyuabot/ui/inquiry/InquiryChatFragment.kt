@@ -8,6 +8,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentInquiryChatBinding
@@ -15,6 +16,7 @@ import app.kobuggi.hyuabot.service.InquiryMessage
 import app.kobuggi.hyuabot.service.InquiryService
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ class InquiryChatFragment @Inject constructor() : Fragment() {
 
     private var threadId: String? = null
     private var lastMessages: List<InquiryMessage> = emptyList()
+    private var streamJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +43,9 @@ class InquiryChatFragment @Inject constructor() : Fragment() {
             layoutManager = LinearLayoutManager(requireContext()).apply { stackFromEnd = true }
         }
         binding.inquirySendButton.setOnClickListener { sendMessage() }
+        binding.inquiryToolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
         binding.inquiryInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 sendMessage()
@@ -66,7 +72,26 @@ class InquiryChatFragment @Inject constructor() : Fragment() {
             }
             threadId = thread.id
             refreshMessages(markRead = true)
+            startStream(thread.id)
             pollMessages()
+        }
+    }
+
+    private fun startStream(currentThreadId: String) {
+        streamJob?.cancel()
+        streamJob = viewLifecycleOwner.lifecycleScope.launch {
+            while (viewLifecycleOwner.lifecycleScope.isActive) {
+                try {
+                    inquiryService.streamEvents { event ->
+                        if (event.threadId == currentThreadId) {
+                            viewLifecycleOwner.lifecycleScope.launch { refreshMessages(markRead = true) }
+                        }
+                    }
+                } catch (_: Exception) {
+                    // The polling fallback keeps the conversation current while SSE reconnects.
+                }
+                delay(STREAM_RECONNECT_DELAY_MS)
+            }
         }
     }
 
@@ -97,8 +122,8 @@ class InquiryChatFragment @Inject constructor() : Fragment() {
         lastMessages = messages
         messageAdapter.updateData(messages)
         binding.inquiryEmptyView.visibility = if (messages.isEmpty()) View.VISIBLE else View.GONE
-        if (messages.isNotEmpty()) {
-            binding.inquiryMessageList.scrollToPosition(messages.size - 1)
+        if (messageAdapter.itemCount > 0) {
+            binding.inquiryMessageList.scrollToPosition(messageAdapter.itemCount - 1)
         }
     }
 
@@ -123,6 +148,7 @@ class InquiryChatFragment @Inject constructor() : Fragment() {
     }
 
     private companion object {
-        const val POLL_INTERVAL_MS = 4000L
+        const val POLL_INTERVAL_MS = 30_000L
+        const val STREAM_RECONNECT_DELAY_MS = 1_000L
     }
 }
