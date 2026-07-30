@@ -67,6 +67,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _subwayTransferDestination = MutableLiveData(HomeSubwayTransferDestination.SEOUL)
     private val _alternativeDisplayMode = MutableLiveData(ShuttleAlternativeDisplayMode.AUTOMATIC)
     private val _presenceViewerCount = MutableLiveData<Int?>(null)
+    private val _presenceAvailableSeats = MutableLiveData<Int?>(null)
     private var presenceJob: Job? = null
     private var selectedPresenceStop = PRESENCE_STOP_IDS.first()
     private var presencePreviewCount: Int? = null
@@ -97,6 +98,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
     val subwayTransferDestination get() = _subwayTransferDestination
     val alternativeDisplayMode get() = _alternativeDisplayMode
     val presenceViewerCount get() = _presenceViewerCount
+    val presenceAvailableSeats get() = _presenceAvailableSeats
 
     init {
         viewModelScope.launch {
@@ -336,6 +338,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
         presenceJob?.cancel()
         presenceJob = null
         _presenceViewerCount.value = null
+        _presenceAvailableSeats.value = null
         if (!isStarted || !presencePreferenceLoaded || _showPresenceStatus.value != true) return
         presenceJob = viewModelScope.launch {
             presencePreviewCount?.let {
@@ -343,6 +346,8 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 return@launch
             }
             while (isActive) {
+                val viewerCounts = shuttlePresenceService.viewerCounts()
+                _presenceAvailableSeats.value = estimatedAvailableSeats(viewerCounts)
                 _presenceViewerCount.value = shuttlePresenceService.heartbeat(selectedPresenceStop)
                 delay(30_000)
             }
@@ -354,7 +359,19 @@ class ShuttleRealtimeViewModel @Inject constructor(
         presenceJob?.cancel()
         presenceJob = null
         _presenceViewerCount.value = null
+        _presenceAvailableSeats.value = null
         _disposable.clear()
+    }
+
+    private fun estimatedAvailableSeats(viewerCounts: Map<String, Int>?): Int? {
+        val stop = _result.value?.firstOrNull { it.name == selectedPresenceStop } ?: return null
+        val routeStops = stop.timetable.order.firstOrNull()?.stops?.map { it.stop } ?: return null
+        val stopIndex = routeStops.indexOf(selectedPresenceStop)
+        if (viewerCounts == null || stopIndex < 0) return null
+        val onboard = routeStops.take(stopIndex).fold(0) { count, stopId ->
+            (if (stopId == "station") 0 else count) + viewerCounts.getOrDefault(stopId, 0)
+        }
+        return (45 - onboard).coerceAtLeast(0)
     }
 
     override fun onCleared() {

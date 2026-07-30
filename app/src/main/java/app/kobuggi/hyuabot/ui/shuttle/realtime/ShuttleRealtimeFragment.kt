@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.core.view.isNotEmpty
 import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
@@ -230,6 +231,17 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                     R.string.shuttle_presence_viewer_count,
                     viewerCount,
                 )
+                val availableSeats = viewModel.presenceAvailableSeats.value
+                val isWarning = availableSeats != null && viewerCount > availableSeats / 2
+                val isFull = availableSeats != null && viewerCount > availableSeats
+                binding.shuttlePresencePill.setCardBackgroundColor(ContextCompat.getColor(
+                    requireContext(),
+                    if (isFull) R.color.red_bus else if (isWarning) R.color.hanyang_orange else R.color.home_action_button_background,
+                ))
+                binding.shuttlePresenceCount.setTextColor(ContextCompat.getColor(
+                    requireContext(),
+                    if (isWarning) android.R.color.white else R.color.hanyang_blue,
+                ))
             } else {
                 binding.shuttlePresencePill.contentDescription = null
             }

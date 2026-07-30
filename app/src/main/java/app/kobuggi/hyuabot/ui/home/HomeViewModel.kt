@@ -49,9 +49,11 @@ class HomeViewModel @Inject constructor(
     private val _bus50TerminalLogTimes = MutableLiveData<List<LocalTime>>(emptyList())
     private val _showPresenceStatus = MutableLiveData(true)
     private val _presenceViewerCount = MutableLiveData<Int?>(null)
+    private val _presenceAvailableSeats = MutableLiveData<Int?>(null)
     private var isFetching = false
     private var presenceJob: Job? = null
     private var selectedPresenceStop = "dormitory_o"
+    private var selectedPresenceDestination: String? = null
     private var presencePreviewCount: Int? = null
     private var presencePreferenceLoaded = false
     private var presenceUpdatesStarted = false
@@ -66,6 +68,7 @@ class HomeViewModel @Inject constructor(
     val bus50TerminalLogTimes: LiveData<List<LocalTime>> get() = _bus50TerminalLogTimes
     val showPresenceStatus: LiveData<Boolean> get() = _showPresenceStatus
     val presenceViewerCount: LiveData<Int?> get() = _presenceViewerCount
+    val presenceAvailableSeats: LiveData<Int?> get() = _presenceAvailableSeats
 
     init {
         viewModelScope.launch {
@@ -180,9 +183,10 @@ class HomeViewModel @Inject constructor(
         if (changed || presenceJob == null) restartPresenceUpdates()
     }
 
-    fun setPresenceStop(stopId: String) {
-        if (selectedPresenceStop == stopId) return
+    fun setPresenceStop(stopId: String, destination: String) {
+        if (selectedPresenceStop == stopId && selectedPresenceDestination == destination) return
         selectedPresenceStop = stopId
+        selectedPresenceDestination = destination
         restartPresenceUpdates()
     }
 
@@ -202,6 +206,7 @@ class HomeViewModel @Inject constructor(
         presenceJob?.cancel()
         presenceJob = null
         _presenceViewerCount.value = null
+        _presenceAvailableSeats.value = null
     }
 
     private fun restartPresenceUpdates() {
@@ -215,10 +220,24 @@ class HomeViewModel @Inject constructor(
                 return@launch
             }
             while (isActive) {
+                val viewerCounts = shuttlePresenceService.viewerCounts()
+                _presenceAvailableSeats.value = estimatedAvailableSeats(viewerCounts)
                 _presenceViewerCount.value = shuttlePresenceService.heartbeat(selectedPresenceStop)
                 delay(PRESENCE_REFRESH_INTERVAL_MILLIS)
             }
         }
+    }
+
+    private fun estimatedAvailableSeats(viewerCounts: Map<String, Int>?): Int? {
+        val stop = _data.value?.shuttle?.stops?.firstOrNull { it.name == selectedPresenceStop } ?: return null
+        val routeStops = stop.timetable.destination.firstOrNull { it.destination == selectedPresenceDestination }
+            ?.entries?.firstOrNull()?.stops?.map { it.stop } ?: return null
+        val stopIndex = routeStops.indexOf(selectedPresenceStop)
+        if (viewerCounts == null || stopIndex < 0) return null
+        val onboard = routeStops.take(stopIndex).fold(0) { count, stopId ->
+            (if (stopId == "station") 0 else count) + viewerCounts.getOrDefault(stopId, 0)
+        }
+        return (45 - onboard).coerceAtLeast(0)
     }
 
     private fun currentSubwayWeekday(now: ZonedDateTime): String {
