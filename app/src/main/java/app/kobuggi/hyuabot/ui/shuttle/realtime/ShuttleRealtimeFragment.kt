@@ -116,6 +116,11 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 ?.let(viewModel::setPresencePreviewCount)
         }
         binding.shuttleQuickSettingsButton.setOnClickListener { openQuickSettings() }
+        binding.inquiryButton.setOnClickListener {
+            findNavController().navigate(
+                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToInquiryChatFragment(),
+            )
+        }
         childFragmentManager.setFragmentResultListener(
             ShuttleQuickSettingsDialog.REQUEST_KEY,
             viewLifecycleOwner,

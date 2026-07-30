@@ -23,6 +23,18 @@
         <action
             android:id="@+id/action_homeFragment_to_noticeWebViewFragment"
             app:destination="@id/noticeWebViewFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_inquiryChatFragment"
+            app:destination="@id/inquiryChatFragment">
+            <argument
+                android:name="entryScreen"
+                android:defaultValue="home"
+                app:argType="string" />
+            <argument
+                android:name="entryScreenName"
+                android:defaultValue="홈"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/shuttleRealtimeFragment"
@@ -55,6 +67,18 @@
         <action
             android:id="@+id/action_shuttleRealtimeFragment_to_noticeWebViewFragment"
             app:destination="@id/noticeWebViewFragment" />
+        <action
+            android:id="@+id/action_shuttleRealtimeFragment_to_inquiryChatFragment"
+            app:destination="@id/inquiryChatFragment">
+            <argument
+                android:name="entryScreen"
+                android:defaultValue="shuttle"
+                app:argType="string" />
+            <argument
+                android:name="entryScreenName"
+                android:defaultValue="셔틀"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/shuttleTimetableFragment"
@@ -95,6 +119,18 @@
         <action
             android:id="@+id/action_busRealtimeFragment_to_busStopInfoFragment"
             app:destination="@id/busStopInfoFragment" />
+        <action
+            android:id="@+id/action_busRealtimeFragment_to_inquiryChatFragment"
+            app:destination="@id/inquiryChatFragment">
+            <argument
+                android:name="entryScreen"
+                android:defaultValue="bus"
+                app:argType="string" />
+            <argument
+                android:name="entryScreenName"
+                android:defaultValue="버스"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/busTimetableFragment"
@@ -235,6 +271,14 @@
         android:name="app.kobuggi.hyuabot.ui.inquiry.InquiryChatFragment"
         android:label="@string/inquiry_title"
         tools:layout="@layout/fragment_inquiry_chat">
+        <argument
+            android:name="entryScreen"
+            android:defaultValue="campus"
+            app:argType="string" />
+        <argument
+            android:name="entryScreenName"
+            android:defaultValue="캠퍼스"
+            app:argType="string" />
         <deepLink app:uri="hyuabot://inquiry" />
         <deepLink app:uri="https://hyuabot.app/inquiry" />
     </fragment>

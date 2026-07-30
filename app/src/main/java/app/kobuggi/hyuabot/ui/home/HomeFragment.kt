@@ -164,6 +164,11 @@ class HomeFragment : Fragment() {
         binding.legacyShuttleButton.setOnClickListener {
             openQuickSettings()
         }
+        binding.inquiryButton.setOnClickListener {
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToInquiryChatFragment(),
+            )
+        }
         setupNotices()
         childFragmentManager.setFragmentResultListener(
             HomeQuickSettingsDialog.REQUEST_KEY,

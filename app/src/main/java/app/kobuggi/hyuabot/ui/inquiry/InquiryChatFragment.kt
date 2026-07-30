@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentInquiryChatBinding
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class InquiryChatFragment @Inject constructor() : Fragment() {
+    private val args: InquiryChatFragmentArgs by navArgs()
     private val binding by lazy { FragmentInquiryChatBinding.inflate(layoutInflater) }
     private val messageAdapter = InquiryMessageAdapter(emptyList())
 
@@ -60,12 +62,11 @@ class InquiryChatFragment @Inject constructor() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
-            val thread = inquiryService.activeThread()
-                ?: inquiryService.openThread(
-                    subject = null,
-                    entryScreen = "menu",
-                    entryScreenName = getString(R.string.menu_chat),
-                )
+            val thread = inquiryService.openThread(
+                subject = null,
+                entryScreen = args.entryScreen,
+                entryScreenName = args.entryScreenName,
+            )
             if (thread == null) {
                 showLoadFailed()
                 return@launch

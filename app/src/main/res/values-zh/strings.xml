@@ -446,6 +446,7 @@
     <string name="menu_chat">联系我们</string>
     <string name="menu_donate">捐赠</string>
     <string name="inquiry_title">联系我们</string>
+    <string name="inquiry_short">咨询</string>
     <string name="inquiry_input_hint">请输入消息</string>
     <string name="inquiry_send">发送</string>
     <string name="inquiry_empty">还没有对话。欢迎留下您的问题。</string>

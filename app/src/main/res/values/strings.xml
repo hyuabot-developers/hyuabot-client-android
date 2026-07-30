@@ -525,6 +525,7 @@
     <string name="menu_chat">문의하기</string>
     <string name="menu_donate">기부하기</string>
     <string name="inquiry_title">문의하기</string>
+    <string name="inquiry_short">문의</string>
     <string name="inquiry_input_hint">메시지를 입력하세요</string>
     <string name="inquiry_send">전송</string>
     <string name="inquiry_empty">아직 대화가 없습니다. 궁금한 점을 남겨주세요.</string>
