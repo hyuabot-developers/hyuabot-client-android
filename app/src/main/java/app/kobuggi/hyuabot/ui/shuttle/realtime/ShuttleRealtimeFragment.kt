@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.content.res.ColorStateList
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
@@ -117,11 +119,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 ?.let(viewModel::setPresencePreviewCount)
         }
         binding.shuttleQuickSettingsButton.setOnClickListener { openQuickSettings() }
-        binding.inquiryButton.setOnClickListener {
-            findNavController().navigate(
-                ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToInquiryChatFragment(),
-            )
-        }
         childFragmentManager.setFragmentResultListener(
             ShuttleQuickSettingsDialog.REQUEST_KEY,
             viewLifecycleOwner,
@@ -148,7 +145,12 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 viewModel.setAlternativeDisplayMode(ShuttleAlternativeDisplayMode.from(it))
             }
             if (result.getBoolean(ShuttleQuickSettingsDialog.KEY_OPEN_HOME, false)) {
-                findNavController().navigate(R.id.homeFragment)
+                (activity as? MainActivity)?.showHomeExperienceAsRoot()
+            }
+            if (result.getBoolean(ShuttleQuickSettingsDialog.KEY_OPEN_INQUIRY, false)) {
+                findNavController().navigate(
+                    ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToInquiryChatFragment(),
+                )
             }
         }
         binding.noticeViewPager.adapter = noticeAdapter
@@ -223,28 +225,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         viewModel.result.observe(viewLifecycleOwner) { stops ->
             if (stops.isNotEmpty()) maybeShowCoachmark()
         }
-        viewModel.presenceViewerCount.observe(viewLifecycleOwner) { viewerCount ->
-            binding.shuttlePresencePill.isVisible = viewerCount != null
-            if (viewerCount != null) {
-                binding.shuttlePresenceCount.text = viewerCount.toString()
-                binding.shuttlePresencePill.contentDescription = getString(
-                    R.string.shuttle_presence_viewer_count,
-                    viewerCount,
-                )
-                val availableSeats = viewModel.presenceAvailableSeats.value
-                val isWarning = availableSeats != null && viewerCount > availableSeats / 2
-                val isFull = availableSeats != null && viewerCount > availableSeats
-                binding.shuttlePresencePill.setCardBackgroundColor(ContextCompat.getColor(
-                    requireContext(),
-                    if (isFull) R.color.red_bus else if (isWarning) R.color.hanyang_orange else R.color.home_action_button_background,
-                ))
-                binding.shuttlePresenceCount.setTextColor(ContextCompat.getColor(
-                    requireContext(),
-                    if (isWarning) android.R.color.white else R.color.hanyang_blue,
-                ))
-            } else {
-                binding.shuttlePresencePill.contentDescription = null
-            }
+        viewModel.presenceViewerCount.observe(viewLifecycleOwner, ::renderPresencePill)
+        viewModel.presenceAvailableSeats.observe(viewLifecycleOwner) {
+            renderPresencePill(viewModel.presenceViewerCount.value)
         }
         viewModel.viewModelScope.apply {
             launch {
@@ -263,6 +246,27 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 }
             }
         }
+    }
+
+    private fun renderPresencePill(viewerCount: Int?) {
+        binding.shuttlePresencePill.isVisible = viewerCount != null
+        if (viewerCount == null) {
+            binding.shuttlePresencePill.contentDescription = null
+            return
+        }
+        binding.shuttlePresenceCount.text = viewerCount.toString()
+        binding.shuttlePresencePill.contentDescription = getString(
+            R.string.shuttle_presence_viewer_count,
+            viewerCount,
+        )
+        val availableSeats = viewModel.presenceAvailableSeats.value
+        val isWarning = availableSeats != null && viewerCount > availableSeats / 2
+        val isFull = availableSeats != null && viewerCount > availableSeats
+        val background = if (isFull) R.color.red_bus else if (isWarning) R.color.hanyang_orange else R.color.home_action_button_background
+        val foreground = if (isFull || isWarning) android.R.color.white else R.color.hanyang_blue
+        binding.shuttlePresencePill.setCardBackgroundColor(ContextCompat.getColor(requireContext(), background))
+        binding.shuttlePresenceCount.setTextColor(ContextCompat.getColor(requireContext(), foreground))
+        binding.shuttlePresenceIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), foreground))
     }
 
     override fun onPause() {

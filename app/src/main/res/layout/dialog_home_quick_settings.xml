@@ -250,10 +250,28 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/legacy_shuttle_row"
+        android:id="@+id/inquiry_row"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_marginTop="14dp"
+        android:background="@drawable/bg_rounded_home_action"
+        android:clickable="true"
+        android:focusable="true"
+        android:drawableStart="@drawable/ic_chat"
+        android:drawablePadding="8dp"
+        android:drawableTint="@color/hanyang_blue"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="14dp"
+        android:text="@string/inquiry_title"
+        android:textColor="@color/hanyang_blue"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/legacy_shuttle_row"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/bg_rounded_home_action"
         android:clickable="true"
         android:focusable="true"

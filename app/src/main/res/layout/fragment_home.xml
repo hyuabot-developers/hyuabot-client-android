@@ -206,6 +206,7 @@
                                     android:paddingHorizontal="10dp">
 
                                     <ImageView
+                                        android:id="@+id/home_presence_icon"
                                         android:layout_width="15dp"
                                         android:layout_height="12dp"
                                         android:contentDescription="@null"
@@ -370,30 +371,8 @@
         android:textSize="13sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/home_action_bar"
-        app:layout_constraintEnd_toStartOf="@id/inquiry_button"
-        app:layout_constraintStart_toStartOf="@id/home_action_bar"
-        app:layout_constraintTop_toTopOf="@id/home_action_bar" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/inquiry_button"
-        style="@style/Widget.Material3.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginEnd="8dp"
-        android:minHeight="36dp"
-        android:paddingHorizontal="12dp"
-        android:text="@string/inquiry_short"
-        android:textColor="@color/hanyang_blue"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:backgroundTint="@color/home_action_button_background"
-        app:icon="@drawable/ic_chat"
-        app:iconGravity="textStart"
-        app:iconPadding="6dp"
-        app:iconSize="16dp"
-        app:iconTint="@color/hanyang_blue"
-        app:layout_constraintBottom_toBottomOf="@id/home_action_bar"
         app:layout_constraintEnd_toStartOf="@id/legacy_shuttle_button"
+        app:layout_constraintStart_toStartOf="@id/home_action_bar"
         app:layout_constraintTop_toTopOf="@id/home_action_bar" />
 
     <com.google.android.material.button.MaterialButton

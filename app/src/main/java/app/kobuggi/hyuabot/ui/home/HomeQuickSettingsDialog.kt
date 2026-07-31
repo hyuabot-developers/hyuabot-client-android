@@ -74,6 +74,13 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
             )
             dismiss()
         }
+        binding.inquiryRow.setOnClickListener {
+            parentFragmentManager.setFragmentResult(
+                REQUEST_KEY,
+                Bundle().apply { putBoolean(KEY_OPEN_INQUIRY, true) },
+            )
+            dismiss()
+        }
     }
 
     private fun buttonIdFor(destination: HomeSubwayTransferDestination): Int {
@@ -97,6 +104,7 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
     companion object {
         const val REQUEST_KEY = "HomeQuickSettingsDialog"
         const val KEY_OPEN_LEGACY_SHUTTLE = "openLegacyShuttle"
+        const val KEY_OPEN_INQUIRY = "openInquiry"
         const val KEY_SHOW_PRESENCE_STATUS = "showPresenceStatus"
         const val KEY_SHOW_BUS50_TRANSFER = "showBus50Transfer"
         const val KEY_SHOW_SUBWAY_TRANSFER = "showSubwayTransfer"

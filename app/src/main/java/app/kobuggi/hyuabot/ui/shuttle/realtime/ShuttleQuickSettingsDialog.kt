@@ -137,6 +137,13 @@ class ShuttleQuickSettingsDialog : BottomSheetDialogFragment() {
             )
             dismiss()
         }
+        binding.openInquiryButton.setOnClickListener {
+            parentFragmentManager.setFragmentResult(
+                REQUEST_KEY,
+                Bundle().apply { putBoolean(KEY_OPEN_INQUIRY, true) },
+            )
+            dismiss()
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -160,6 +167,7 @@ class ShuttleQuickSettingsDialog : BottomSheetDialogFragment() {
         const val KEY_SUBWAY_DESTINATION = "subway_destination"
         const val KEY_ALTERNATIVE_MODE = "alternative_mode"
         const val KEY_OPEN_HOME = "open_home"
+        const val KEY_OPEN_INQUIRY = "open_inquiry"
         private const val ARG_SHOW_BY_DESTINATION = "arg_show_by_destination"
         private const val ARG_SHOW_DEPARTURE_TIME = "arg_show_departure_time"
         private const val ARG_SHOW_PRESENCE_STATUS = "arg_show_presence_status"
