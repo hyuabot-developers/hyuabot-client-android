@@ -49,6 +49,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentHomeBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
+import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
@@ -164,11 +165,6 @@ class HomeFragment : Fragment() {
         binding.legacyShuttleButton.setOnClickListener {
             openQuickSettings()
         }
-        binding.inquiryButton.setOnClickListener {
-            findNavController().navigate(
-                HomeFragmentDirections.actionHomeFragmentToInquiryChatFragment(),
-            )
-        }
         setupNotices()
         childFragmentManager.setFragmentResultListener(
             HomeQuickSettingsDialog.REQUEST_KEY,
@@ -176,7 +172,12 @@ class HomeFragment : Fragment() {
         ) { _, result ->
             if (result.getBoolean(HomeQuickSettingsDialog.KEY_OPEN_LEGACY_SHUTTLE, false)) {
                 AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_LEGACY_SHUTTLE)
-                findNavController().navigate(R.id.action_homeFragment_to_shuttleRealtimeFragment)
+                (activity as? MainActivity)?.showLegacyShuttleAsRoot()
+            }
+            if (result.getBoolean(HomeQuickSettingsDialog.KEY_OPEN_INQUIRY, false)) {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToInquiryChatFragment(),
+                )
             }
             if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS)) {
                 viewModel.setShowPresenceStatus(result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_PRESENCE_STATUS))
@@ -225,30 +226,9 @@ class HomeFragment : Fragment() {
         viewModel.showSubwayTransfer.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.subwayTransferDestination.observe(viewLifecycleOwner) { render(viewModel.data.value) }
         viewModel.bus50TerminalLogTimes.observe(viewLifecycleOwner) { render(viewModel.data.value) }
-        viewModel.presenceViewerCount.observe(viewLifecycleOwner) { viewerCount ->
-            binding.homePresencePill.visibility = if (viewerCount == null) View.GONE else View.VISIBLE
-            if (viewerCount != null) {
-                binding.homePresenceCount.text = NumberFormat
-                    .getIntegerInstance(resources.configuration.locales[0])
-                    .format(viewerCount)
-                binding.homePresencePill.contentDescription = getString(
-                    R.string.shuttle_presence_viewer_count,
-                    viewerCount,
-                )
-                val availableSeats = viewModel.presenceAvailableSeats.value
-                val isWarning = availableSeats != null && viewerCount > availableSeats / 2
-                val isFull = availableSeats != null && viewerCount > availableSeats
-                binding.homePresencePill.setCardBackgroundColor(ContextCompat.getColor(
-                    requireContext(),
-                    if (isFull) R.color.red_bus else if (isWarning) R.color.hanyang_orange else R.color.home_action_button_background,
-                ))
-                binding.homePresenceCount.setTextColor(ContextCompat.getColor(
-                    requireContext(),
-                    if (isWarning) android.R.color.white else R.color.hanyang_blue,
-                ))
-            } else {
-                binding.homePresencePill.contentDescription = null
-            }
+        viewModel.presenceViewerCount.observe(viewLifecycleOwner, ::renderPresencePill)
+        viewModel.presenceAvailableSeats.observe(viewLifecycleOwner) {
+            renderPresencePill(viewModel.presenceViewerCount.value)
         }
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let {
@@ -258,6 +238,29 @@ class HomeFragment : Fragment() {
         }
         refreshHome()
         return binding.root
+    }
+
+    private fun renderPresencePill(viewerCount: Int?) {
+        binding.homePresencePill.visibility = if (viewerCount == null) View.GONE else View.VISIBLE
+        if (viewerCount == null) {
+            binding.homePresencePill.contentDescription = null
+            return
+        }
+        binding.homePresenceCount.text = NumberFormat
+            .getIntegerInstance(resources.configuration.locales[0])
+            .format(viewerCount)
+        binding.homePresencePill.contentDescription = getString(
+            R.string.shuttle_presence_viewer_count,
+            viewerCount,
+        )
+        val availableSeats = viewModel.presenceAvailableSeats.value
+        val isWarning = availableSeats != null && viewerCount > availableSeats / 2
+        val isFull = availableSeats != null && viewerCount > availableSeats
+        val background = if (isFull) R.color.red_bus else if (isWarning) R.color.hanyang_orange else R.color.home_action_button_background
+        val foreground = if (isFull || isWarning) android.R.color.white else R.color.hanyang_blue
+        binding.homePresencePill.setCardBackgroundColor(ContextCompat.getColor(requireContext(), background))
+        binding.homePresenceCount.setTextColor(ContextCompat.getColor(requireContext(), foreground))
+        binding.homePresenceIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), foreground))
     }
 
     override fun onResume() {

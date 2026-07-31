@@ -31,6 +31,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.FloatingWindow
 import androidx.navigation.NavController
+import androidx.navigation.navOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.onNavDestinationSelected
@@ -64,6 +65,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
     private val analyticsScreenDispatcher = AnalyticsScreenDispatcher {
         AnalyticsManager.logScreen(it, it.id)
+    }
+    private val homeExperiencePreferences by lazy {
+        getSharedPreferences(HOME_EXPERIENCE_PREFERENCES, MODE_PRIVATE)
     }
 
     @Inject
@@ -103,7 +107,14 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         openBirthDayDialog()
         requestInAppReview()
         syncShuttleServiceNotices()
-        navController.handleDeepLink(intent)
+        val handledDeepLink = navController.handleDeepLink(intent)
+        if (
+            savedInstanceState == null &&
+            !handledDeepLink &&
+            !homeExperiencePreferences.getBoolean(HOME_EXPERIENCE_ENABLED, true)
+        ) {
+            showLegacyShuttleAsRoot()
+        }
     }
 
     private fun setupTopAppBar() {
@@ -274,8 +285,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         val busItem = binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)
         val subwayItem = binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)
         val moreItem = binding.bottomNavigation.menu.findItem(R.id.menuFragment)
-        primaryItem.title = getString(R.string.home)
-        primaryItem.setIcon(R.drawable.ic_home)
+        val showsLegacyShuttle = !homeExperiencePreferences.getBoolean(HOME_EXPERIENCE_ENABLED, true)
+        primaryItem.title = getString(if (showsLegacyShuttle) R.string.shuttle_bus else R.string.home)
+        primaryItem.setIcon(if (showsLegacyShuttle) R.drawable.ic_bus else R.drawable.ic_home)
         when {
             destinationId == R.id.homeFragment || destinationId.isShuttleDestination() ->
                 primaryItem.isChecked = true
@@ -447,10 +459,42 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.homeFragment) {
+            if (!homeExperiencePreferences.getBoolean(HOME_EXPERIENCE_ENABLED, true)) {
+                showLegacyShuttleAsRoot()
+                return true
+            }
+        }
         tabItemForDestination(item.itemId)?.let {
             AnalyticsManager.logSelect(it, AnalyticsContentType.TAB)
         }
         return item.onNavDestinationSelected(navController)
+    }
+
+    fun showLegacyShuttleAsRoot() {
+        homeExperiencePreferences.edit { putBoolean(HOME_EXPERIENCE_ENABLED, false) }
+        navController.navigate(
+            R.id.shuttleRealtimeFragment,
+            null,
+            navOptions {
+                popUpTo(R.id.homeFragment) { inclusive = true }
+                launchSingleTop = true
+            },
+        )
+        updatePrimaryNavigationItem(navController.currentDestination?.id)
+    }
+
+    fun showHomeExperienceAsRoot() {
+        homeExperiencePreferences.edit { putBoolean(HOME_EXPERIENCE_ENABLED, true) }
+        navController.navigate(
+            R.id.homeFragment,
+            null,
+            navOptions {
+                popUpTo(R.id.shuttleRealtimeFragment) { inclusive = true }
+                launchSingleTop = true
+            },
+        )
+        updatePrimaryNavigationItem(navController.currentDestination?.id)
     }
 
     /** Maps a nav-graph destination id to its analytics screen (null = not tracked as a screen). */
@@ -538,6 +582,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     companion object {
+        const val HOME_EXPERIENCE_PREFERENCES = "home_experience"
+        const val HOME_EXPERIENCE_ENABLED = "enabled"
         private const val STATUS_BAR_BACKGROUND_TAG = "status_bar_background"
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 2

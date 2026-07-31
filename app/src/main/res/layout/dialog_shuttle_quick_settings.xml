@@ -291,6 +291,23 @@
                 android:textSize="12sp" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_inquiry_button"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:text="@string/inquiry_title"
+                android:textColor="@color/hanyang_blue"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/home_action_button_background"
+                app:icon="@drawable/ic_chat"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/hanyang_blue" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/open_home_button"
                 style="@style/Widget.Material3.Button"
                 android:layout_width="match_parent"

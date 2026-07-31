@@ -70,6 +70,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _presenceAvailableSeats = MutableLiveData<Int?>(null)
     private var presenceJob: Job? = null
     private var selectedPresenceStop = PRESENCE_STOP_IDS.first()
+    private var latestPresenceViewerCounts: Map<String, Int>? = null
     private var presencePreviewCount: Int? = null
     private var presencePreferenceLoaded = false
     private var isStarted = false
@@ -347,7 +348,8 @@ class ShuttleRealtimeViewModel @Inject constructor(
             }
             while (isActive) {
                 val viewerCounts = shuttlePresenceService.viewerCounts()
-                _presenceAvailableSeats.value = estimatedAvailableSeats(viewerCounts)
+                viewerCounts?.let { latestPresenceViewerCounts = it }
+                _presenceAvailableSeats.value = estimatedAvailableSeats(viewerCounts ?: latestPresenceViewerCounts)
                 _presenceViewerCount.value = shuttlePresenceService.heartbeat(selectedPresenceStop)
                 delay(30_000)
             }
