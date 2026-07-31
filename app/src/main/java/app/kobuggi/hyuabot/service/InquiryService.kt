@@ -8,7 +8,10 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.coroutineContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -34,12 +37,19 @@ data class InquiryMessage(
     val createdAt: String?,
 )
 
+data class InquiryStreamEvent(
+    val threadId: String?,
+)
+
 @Singleton
 class InquiryService @Inject constructor(
     @ApplicationContext context: Context,
 ) {
     private val client = OkHttpClient.Builder()
         .callTimeout(10, TimeUnit.SECONDS)
+        .build()
+    private val streamClient = OkHttpClient.Builder()
+        .readTimeout(0, TimeUnit.MILLISECONDS)
         .build()
     private val installationId = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).let { preferences ->
         preferences.getString(SESSION_ID_KEY, null) ?: UUID.randomUUID().toString().lowercase().also {
@@ -52,6 +62,46 @@ class InquiryService @Inject constructor(
         .header("X-App-Platform", "android")
         .header("X-App-Version", BuildConfig.VERSION_NAME)
         .header("Content-Type", "application/json")
+
+    suspend fun streamEvents(onEvent: (InquiryStreamEvent) -> Unit) = withContext(Dispatchers.IO) {
+        val request = Request.Builder()
+            .url("${BuildConfig.API_URL}/api/v1/inquiry/stream")
+            .withCommonHeaders()
+            .get()
+            .build()
+        val call = streamClient.newCall(request)
+        coroutineContext[Job]?.invokeOnCompletion { call.cancel() }
+        call.execute().use { response ->
+            if (!response.isSuccessful) return@withContext
+            var eventType: String? = null
+            var data: String? = null
+            val source = response.body.source()
+            while (!source.exhausted()) {
+                coroutineContext.ensureActive()
+                val line = source.readUtf8Line() ?: break
+                when {
+                    line.startsWith("event:") -> eventType = line.removePrefix("event:").trim()
+                    line.startsWith("data:") -> data = line.removePrefix("data:").trim()
+                    line.isEmpty() -> {
+                        if (eventType == "message") {
+                            data?.let { eventData ->
+                                val payload = JSONObject(eventData)
+                                val threadId =
+                                    if (payload.has("threadId") && !payload.isNull("threadId")) {
+                                        payload.getString("threadId")
+                                    } else {
+                                        null
+                                    }
+                                onEvent(InquiryStreamEvent(threadId))
+                            }
+                        }
+                        eventType = null
+                        data = null
+                    }
+                }
+            }
+        }
+    }
 
     private fun parseThread(json: JSONObject): InquiryThread = InquiryThread(
         id = json.getString("id"),

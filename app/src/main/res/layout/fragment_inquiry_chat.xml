@@ -6,6 +6,17 @@
     android:background="@color/background"
     android:orientation="vertical">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/inquiry_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/hanyang_blue"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="@android:color/white"
+        app:title="@string/inquiry_title"
+        app:titleTextColor="@android:color/white"
+        app:titleCentered="true" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -42,7 +53,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="bottom"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp">
@@ -51,7 +62,7 @@
             android:id="@+id/inquiry_input_layout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:hint="@string/inquiry_input_hint"
             app:boxCornerRadiusBottomEnd="20dp"
@@ -62,7 +73,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inquiry_input"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:imeOptions="actionSend"
                 android:inputType="textMultiLine|textCapSentences"
                 android:maxLines="4"
@@ -72,11 +84,12 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/inquiry_send_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
+            android:layout_width="64dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="8dp"
-            android:layout_marginBottom="4dp"
+            android:minWidth="0dp"
+            android:paddingHorizontal="8dp"
             android:text="@string/inquiry_send" />
     </LinearLayout>
 </LinearLayout>

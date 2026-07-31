@@ -164,6 +164,11 @@ class HomeFragment : Fragment() {
         binding.legacyShuttleButton.setOnClickListener {
             openQuickSettings()
         }
+        binding.inquiryButton.setOnClickListener {
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToInquiryChatFragment(),
+            )
+        }
         setupNotices()
         childFragmentManager.setFragmentResultListener(
             HomeQuickSettingsDialog.REQUEST_KEY,
@@ -230,6 +235,17 @@ class HomeFragment : Fragment() {
                     R.string.shuttle_presence_viewer_count,
                     viewerCount,
                 )
+                val availableSeats = viewModel.presenceAvailableSeats.value
+                val isWarning = availableSeats != null && viewerCount > availableSeats / 2
+                val isFull = availableSeats != null && viewerCount > availableSeats
+                binding.homePresencePill.setCardBackgroundColor(ContextCompat.getColor(
+                    requireContext(),
+                    if (isFull) R.color.red_bus else if (isWarning) R.color.hanyang_orange else R.color.home_action_button_background,
+                ))
+                binding.homePresenceCount.setTextColor(ContextCompat.getColor(
+                    requireContext(),
+                    if (isWarning) android.R.color.white else R.color.hanyang_blue,
+                ))
             } else {
                 binding.homePresencePill.contentDescription = null
             }
@@ -548,7 +564,9 @@ class HomeFragment : Fragment() {
 
     private fun render(data: HomePageQuery.Data?) {
         renderWeather(data?.homeWeather)
-        viewModel.setPresenceStop(selectedDeparture.routeTo(selectedDestination).stop)
+        selectedDeparture.routeTo(selectedDestination).let { route ->
+            viewModel.setPresenceStop(route.stop, route.destination)
+        }
         binding.movementTitle.text = getString(selectedDeparture.titleRes)
         binding.movementTitle.contentDescription = getString(
             R.string.home_departure_selector_description,

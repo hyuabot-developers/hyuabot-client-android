@@ -50,6 +50,27 @@ class ShuttlePresenceService @Inject constructor(
         }.getOrNull()
     }
 
+    suspend fun viewerCounts(): Map<String, Int>? = withContext(Dispatchers.IO) {
+        runCatching {
+            val request = Request.Builder()
+                .url("${BuildConfig.API_URL}/api/v1/presence/shuttle")
+                .get()
+                .build()
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) return@use null
+                val stops = JSONObject(response.body.string()).optJSONArray("stops") ?: return@use null
+                buildMap<String, Int> {
+                    for (index in 0 until stops.length()) {
+                        val stop = stops.getJSONObject(index)
+                        if (stop.optBoolean("visible", false) && !stop.isNull("viewerCount")) {
+                            put(stop.getString("stopId"), stop.getInt("viewerCount"))
+                        }
+                    }
+                }
+            }
+        }.getOrNull()
+    }
+
     private companion object {
         const val PREFERENCES_NAME = "shuttle_presence"
         const val SESSION_ID_KEY = "anonymous_installation_id"

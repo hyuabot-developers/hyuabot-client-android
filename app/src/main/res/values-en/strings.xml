@@ -41,8 +41,8 @@
     <string name="home_destination_summary">Toward %1$s</string>
     <string name="home_cafeteria_detail">All menus</string>
     <string name="home_quick_settings_action_bar_title">Adjust what appears on Home</string>
-    <string name="home_quick_settings_button">Home options</string>
-    <string name="home_quick_settings_title">Home options</string>
+    <string name="home_quick_settings_button">Settings</string>
+    <string name="home_quick_settings_title">Settings</string>
     <string name="home_quick_settings_legacy_title">Previous shuttle screen</string>
     <string name="home_quick_settings_legacy_subtitle">Check full arrivals and timetables.</string>
     <string name="home_quick_settings_legacy_button">Previous shuttle screen</string>
@@ -139,8 +139,8 @@
     <string name="shuttle_footer_stop_info">Location &amp; First/Last</string>
     <string name="shuttle_footer_help">Shuttle Help</string>
     <string name="shuttle_action_bar_title">Shuttle display options</string>
-    <string name="shuttle_quick_settings_button">Quick settings</string>
-    <string name="shuttle_quick_settings_title">Shuttle quick settings</string>
+    <string name="shuttle_quick_settings_button">Settings</string>
+    <string name="shuttle_quick_settings_title">Settings</string>
     <string name="shuttle_quick_settings_arrival_by_time_subtitle">Show shuttle arrivals by remaining time.</string>
     <string name="shuttle_quick_settings_departure_time_subtitle">Show shuttle times by departure time.</string>
     <string name="shuttle_quick_settings_presence_title">Show fellow viewers</string>
@@ -469,6 +469,7 @@
     <string name="menu_chat">Inquiries</string>
     <string name="menu_donate">Donate</string>
     <string name="inquiry_title">Inquiries</string>
+    <string name="inquiry_short">Inquiry</string>
     <string name="inquiry_input_hint">Type a message</string>
     <string name="inquiry_send">Send</string>
     <string name="inquiry_empty">No messages yet. Feel free to leave your question.</string>

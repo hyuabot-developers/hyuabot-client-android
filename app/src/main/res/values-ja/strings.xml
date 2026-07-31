@@ -40,8 +40,8 @@
     <string name="home_destination_summary">%1$s方面</string>
     <string name="home_cafeteria_detail">全ての学食</string>
     <string name="home_quick_settings_action_bar_title">ホームの表示を調整できます</string>
-    <string name="home_quick_settings_button">ホーム設定</string>
-    <string name="home_quick_settings_title">ホーム設定</string>
+    <string name="home_quick_settings_button">設定</string>
+    <string name="home_quick_settings_title">設定</string>
     <string name="home_quick_settings_legacy_title">以前のシャトル画面</string>
     <string name="home_quick_settings_legacy_subtitle">到着情報と時刻表を確認します。</string>
     <string name="home_quick_settings_legacy_button">以前のシャトル画面</string>
@@ -135,8 +135,8 @@
     <string name="shuttle_footer_stop_info">停留所位置 &amp; 始発/終発</string>
     <string name="shuttle_footer_help">ヘルプ</string>
     <string name="shuttle_action_bar_title">シャトル表示オプション</string>
-    <string name="shuttle_quick_settings_button">簡単設定</string>
-    <string name="shuttle_quick_settings_title">シャトル簡単設定</string>
+    <string name="shuttle_quick_settings_button">設定</string>
+    <string name="shuttle_quick_settings_title">設定</string>
     <string name="shuttle_quick_settings_arrival_by_time_subtitle">残り時間でシャトル到着を表示します。</string>
     <string name="shuttle_quick_settings_departure_time_subtitle">出発時刻でシャトル時刻を表示します。</string>
     <string name="shuttle_quick_settings_presence_title">一緒に見ている人を表示</string>
@@ -446,6 +446,7 @@
     <string name="menu_chat">お問い合わせ</string>
     <string name="menu_donate">寄付する</string>
     <string name="inquiry_title">お問い合わせ</string>
+    <string name="inquiry_short">問い合わせ</string>
     <string name="inquiry_input_hint">メッセージを入力してください</string>
     <string name="inquiry_send">送信</string>
     <string name="inquiry_empty">まだ会話がありません。ご質問をお気軽にどうぞ。</string>

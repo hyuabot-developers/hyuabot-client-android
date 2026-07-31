@@ -101,6 +101,11 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                 findNavController().safeNavigate(it)
             }
         }
+        binding.inquiryButton.setOnClickListener {
+            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToInquiryChatFragment().also {
+                findNavController().safeNavigate(it)
+            }
+        }
         binding.noticeViewPager.adapter = noticeAdapter
         binding.noticeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
