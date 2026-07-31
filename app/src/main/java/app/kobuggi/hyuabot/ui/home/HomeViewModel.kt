@@ -53,6 +53,7 @@ class HomeViewModel @Inject constructor(
     private var isFetching = false
     private var presenceJob: Job? = null
     private var selectedPresenceStop = "dormitory_o"
+    private var latestPresenceViewerCounts: Map<String, Int>? = null
     private var selectedPresenceDestination: String? = null
     private var presencePreviewCount: Int? = null
     private var presencePreferenceLoaded = false
@@ -221,7 +222,8 @@ class HomeViewModel @Inject constructor(
             }
             while (isActive) {
                 val viewerCounts = shuttlePresenceService.viewerCounts()
-                _presenceAvailableSeats.value = estimatedAvailableSeats(viewerCounts)
+                viewerCounts?.let { latestPresenceViewerCounts = it }
+                _presenceAvailableSeats.value = estimatedAvailableSeats(viewerCounts ?: latestPresenceViewerCounts)
                 _presenceViewerCount.value = shuttlePresenceService.heartbeat(selectedPresenceStop)
                 delay(PRESENCE_REFRESH_INTERVAL_MILLIS)
             }
