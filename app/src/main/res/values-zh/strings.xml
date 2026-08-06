@@ -235,6 +235,15 @@
     <string name="bus_stop_entrance">汉阳大入口</string>
     <string name="bus_stop_sangnoksu_station">常绿树站3号出口对面</string>
     <string name="bus_stop_terminal">安山公园普鲁吉奥</string>
+    <string name="bus_stop_seocho">瑞草站</string>
+    <string name="bus_stop_gyodae">教大站</string>
+    <string name="bus_stop_gangnam">江南站</string>
+    <string name="bus_stop_yangjae">良才站</string>
+    <string name="bus_stop_yangjae_forest">良才市民之林站</string>
+    <string name="bus_stop_suwon_station">水原站</string>
+    <string name="bus_quick_settings_title">公交设置</string>
+    <string name="bus_quick_settings_show_secondary_eta">显示到达时间</string>
+    <string name="bus_quick_settings_seoul_target">首尔方向目的地</string>
     <string name="bus_stop_title">路线公交站点信息</string>
     <string-array name="bus_stop_list">
         <item>@string/bus_stop_dormitory</item>
@@ -260,6 +269,7 @@
     </plurals>
     <string name="bus_timetable_format_last">%1$s时%2$s分出发（末班）</string>
     <string name="bus_arrival_estimated_format">%1$d分（预计）</string>
+    <string name="bus_arrival_secondary_format">" → %1$s到达"</string>
     <string name="bus_no_realtime_data">暂无即将到达的公交。</string>
     <string name="bus_departure_log">到站记录</string>
     <string name="bus_log_title">路线公交通过信息</string>
@@ -687,7 +697,6 @@
     <string name="language_suggestion_message">您的系统语言设置为%1$s。是否切换应用语言？</string>
     <string name="language_suggestion_keep_english">保持英语</string>
     <string name="bus_help_title">公交帮助</string>
-    <string name="bus_action_bar_title">公交使用指南</string>
     <string name="bus_help_realtime_title">1. 查看路线公交到达信息</string>
     <string name="bus_help_realtime_content">路线公交到达信息按实时到达信息和运输公司提供的终点出发时间顺序显示。如果站内电子屏幕未显示到达信息，可在终点出发时间后查看实时到达信息。</string>
     <string name="bus_help_stop_title">2. 查看路线公交站点信息</string>

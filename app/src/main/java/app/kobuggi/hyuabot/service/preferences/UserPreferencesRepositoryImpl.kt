@@ -27,6 +27,16 @@ interface UserPreferencesRepositoryImpl {
     suspend fun getHomeSubwayTransferDestination(): Flow<String>
     suspend fun setShuttleAlternativeDisplayMode(mode: String)
     suspend fun getShuttleAlternativeDisplayMode(): Flow<String>
+    suspend fun setShowBusSecondaryEta(show: Boolean)
+    suspend fun getShowBusSecondaryEta(): Flow<Boolean>
+    suspend fun setBusSeoulTargetStop(destination: String)
+    suspend fun getBusSeoulTargetStop(): Flow<String>
+    suspend fun setBusSeoulFirstStop(stopRes: Int)
+    suspend fun getBusSeoulFirstStop(): Flow<Int>
+    suspend fun setBusSeoulSecondStop(stopRes: Int)
+    suspend fun getBusSeoulSecondStop(): Flow<Int>
+    suspend fun setBusSuwonStop(stopRes: Int)
+    suspend fun getBusSuwonStop(): Flow<Int>
     suspend fun setAnalyticsConsent(enabled: Boolean)
     suspend fun incrementLaunchCount(): Int
     suspend fun resetLaunchCount()

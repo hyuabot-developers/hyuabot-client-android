@@ -95,15 +95,27 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             R.string.bus_tab_other
         )
         binding.viewPager.adapter = viewpagerAdapter
-        binding.helpButton.setOnClickListener {
-            AnalyticsManager.logSelect(AnalyticsItem.BUS_OPEN_HELP)
-            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusHelpDialogFragment().also {
-                findNavController().safeNavigate(it)
+        binding.busQuickSettingsButton.setOnClickListener { openQuickSettings() }
+        childFragmentManager.setFragmentResultListener(
+            BusQuickSettingsDialog.REQUEST_KEY,
+            viewLifecycleOwner,
+        ) { _, result ->
+            if (result.containsKey(BusQuickSettingsDialog.KEY_SHOW_SECONDARY_ETA)) {
+                viewModel.setShowSecondaryEta(result.getBoolean(BusQuickSettingsDialog.KEY_SHOW_SECONDARY_ETA))
             }
-        }
-        binding.inquiryButton.setOnClickListener {
-            BusRealtimeFragmentDirections.actionBusRealtimeFragmentToInquiryChatFragment().also {
-                findNavController().safeNavigate(it)
+            result.getString(BusQuickSettingsDialog.KEY_SEOUL_TARGET)?.let {
+                viewModel.setSeoulTarget(BusSeoulTargetStop.from(it))
+            }
+            if (result.getBoolean(BusQuickSettingsDialog.KEY_OPEN_HELP, false)) {
+                AnalyticsManager.logSelect(AnalyticsItem.BUS_OPEN_HELP)
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusHelpDialogFragment().also {
+                    findNavController().safeNavigate(it)
+                }
+            }
+            if (result.getBoolean(BusQuickSettingsDialog.KEY_OPEN_INQUIRY, false)) {
+                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToInquiryChatFragment().also {
+                    findNavController().safeNavigate(it)
+                }
             }
         }
         binding.noticeViewPager.adapter = noticeAdapter
@@ -128,7 +140,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                     R.string.coachmark_bus_tab_title, R.string.coachmark_bus_tab_desc
                 ),
                 CoachmarkStep(
-                    { binding.helpButton },
+                    { binding.busQuickSettingsButton },
                     R.string.coachmark_bus_stop_title, R.string.coachmark_bus_stop_desc,
                     shape = CoachmarkShape.ROUNDED_RECT
                 ),
@@ -148,6 +160,14 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         return binding.root.also { disableViewStateSaving(it) }
     }
 
+    private fun openQuickSettings() {
+        if (childFragmentManager.findFragmentByTag(BUS_QUICK_SETTINGS_TAG) != null) return
+        BusQuickSettingsDialog.newInstance(
+            showSecondaryEta = viewModel.showSecondaryEta.value ?: true,
+            seoulTarget = viewModel.seoulTarget.value ?: BusSeoulTargetStop.GANGNAM,
+        ).show(childFragmentManager, BUS_QUICK_SETTINGS_TAG)
+    }
+
     private fun firstVisibleBusChildView(vararg ids: Int): View? {
         val root = childFragmentManager.findFragmentByTag("f${binding.viewPager.currentItem}")?.view ?: return null
         for (id in ids) {
@@ -159,31 +179,52 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
 
     @SuppressLint("MissingPermission")
     private fun moveToNearestStop(client: FusedLocationProviderClient) {
-        val stops = viewModel.result.value
-            ?.distinctBy { it.stop.seq }
-            ?.filter { it.stop.seq in listOf(216000379, 216000381, 216000383) }
-            ?.map { item ->
-                val resId = when (item.stop.seq) {
-                    216000379 -> R.string.bus_stop_convention
-                    216000381 -> R.string.bus_stop_cluster
-                    216000383 -> R.string.bus_stop_dormitory
-                    else -> -1
-                }
-                Triple(resId, item.stop.latitude, item.stop.longitude)
-            } ?: emptyList()
+        val allStops = viewModel.result.value?.distinctBy { it.stop.seq } ?: emptyList()
 
-        if (stops.isEmpty()) return
+        fun candidates(seqToRes: Map<Int, Int>): List<Triple<Int, Double, Double>> {
+            return allStops.filter { it.stop.seq in seqToRes.keys }.map { item ->
+                Triple(seqToRes.getValue(item.stop.seq), item.stop.latitude, item.stop.longitude)
+            }
+        }
+
+        val campusStopMap = mapOf(
+            216000379 to R.string.bus_stop_convention,
+            216000381 to R.string.bus_stop_cluster,
+            216000383 to R.string.bus_stop_dormitory,
+        )
+        val seoulRemoteStopMap = mapOf(
+            121000060 to R.string.bus_stop_seocho,
+            121000929 to R.string.bus_stop_gyodae,
+            121000974 to R.string.bus_stop_gangnam,
+            121000970 to R.string.bus_stop_yangjae,
+            121000220 to R.string.bus_stop_yangjae_forest,
+        )
+        val cityCandidates = candidates(campusStopMap)
+        val seoulFirstCandidates = candidates(campusStopMap + seoulRemoteStopMap)
+        val seoulSecondCandidates = candidates(mapOf(216000719 to R.string.bus_stop_main_gate) + seoulRemoteStopMap)
+        val suwonCandidates = candidates(
+            mapOf(
+                216000070 to R.string.bus_stop_entrance,
+                202000106 to R.string.bus_stop_suwon_station,
+            )
+        )
+
+        if (cityCandidates.isEmpty() && seoulFirstCandidates.isEmpty() && seoulSecondCandidates.isEmpty() && suwonCandidates.isEmpty()) return
+
+        fun nearestKey(candidateList: List<Triple<Int, Double, Double>>, location: Location): Int? {
+            return candidateList.minByOrNull { (_, lat, lng) ->
+                (lat - location.latitude) * (lat - location.latitude) +
+                    (lng - location.longitude) * (lng - location.longitude)
+            }?.first
+        }
 
         fun selectNearest(location: Location) {
             if (setClosestStop) return
-            val nearest = stops.minByOrNull { (_, lat, lng) ->
-                (lat - location.latitude) * (lat - location.latitude) +
-                    (lng - location.longitude) * (lng - location.longitude)
-            }
-            nearest?.let { (stopRes, _, _) ->
-                setClosestStop = true
-                viewModel.setSelectedStopID(stopRes)
-            }
+            setClosestStop = true
+            nearestKey(cityCandidates, location)?.let { viewModel.setSelectedStopID(it) }
+            nearestKey(seoulFirstCandidates, location)?.let { viewModel.setSeoulFirstStopID(it) }
+            nearestKey(seoulSecondCandidates, location)?.let { viewModel.setSeoulSecondStopID(it) }
+            nearestKey(suwonCandidates, location)?.let { viewModel.setSuwonStopID(it) }
         }
 
         client.lastLocation
@@ -246,5 +287,6 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
     companion object {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
         private const val NOTICE_AUTO_SCROLL_INTERVAL_MILLIS = 5_000L
+        private const val BUS_QUICK_SETTINGS_TAG = "BusQuickSettingsDialog"
     }
 }

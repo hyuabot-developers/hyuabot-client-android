@@ -19,9 +19,19 @@ class BusRealtimeListAdapter(
     private var arrivalList: List<BusArrivalItem> = emptyList(),
     private val maxCount: Int = 5,
 ) : RecyclerView.Adapter<BusRealtimeListAdapter.ViewHolder>() {
+    private var showSecondaryEta: Boolean = true
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setShowSecondaryEta(show: Boolean) {
+        if (showSecondaryEta == show) return
+        showSecondaryEta = show
+        notifyDataSetChanged()
+    }
+
     inner class ViewHolder(private val binding: ItemBusRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         private val hourFormatter = DateTimeFormatter.ofPattern("HH")
         private val minuteFormatter = DateTimeFormatter.ofPattern("mm")
+        private val secondaryTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         private val godoTypeface by lazy {
             ResourcesCompat.getFont(binding.root.context, R.font.godo)
         }
@@ -30,6 +40,16 @@ class BusRealtimeListAdapter(
         fun bind(item: BusArrivalItem) {
             val routeName = item.route
             val arrival = item.item
+            val secondarySuffix = if (showSecondaryEta) {
+                item.secondaryArrivalTime?.let {
+                    binding.root.context.getString(
+                        R.string.bus_arrival_secondary_format,
+                        it.format(secondaryTimeFormatter)
+                    )
+                } ?: ""
+            } else {
+                ""
+            }
             binding.busLowFloorBadge.visibility = if (arrival.lowFloor == true) android.view.View.VISIBLE else android.view.View.GONE
             val item = arrival
             if (item.isRealtime) {
@@ -53,7 +73,7 @@ class BusRealtimeListAdapter(
                         item.stops
                     )
                 }
-                binding.busTimeText.applyRealtimeColor(realtimeText)
+                binding.busTimeText.applyRealtimeColor(realtimeText + secondarySuffix)
             } else {
                 binding.busRouteText.apply {
                     text = routeName
@@ -68,7 +88,7 @@ class BusRealtimeListAdapter(
                             if (s < 4 * 3600) s + 86400 else s
                         }
                         val remainingMinutes = (toServiceSec(arrivalTime) - toServiceSec(now)) / 60
-                        text = binding.root.context.getString(R.string.bus_arrival_estimated_format, remainingMinutes)
+                        text = binding.root.context.getString(R.string.bus_arrival_estimated_format, remainingMinutes) + secondarySuffix
                     }
                     setTextColor(binding.root.context.getColor(R.color.secondary_text))
                     setTypeface(godoTypeface, Typeface.NORMAL)
