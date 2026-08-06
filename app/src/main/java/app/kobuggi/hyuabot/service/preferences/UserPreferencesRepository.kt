@@ -387,6 +387,116 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             }
     }
 
+    override suspend fun setShowBusSecondaryEta(show: Boolean) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[BUS_SHOW_SECONDARY_ETA_KEY] = show
+            }
+        }
+    }
+
+    override suspend fun getShowBusSecondaryEta(): Flow<Boolean> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[BUS_SHOW_SECONDARY_ETA_KEY] ?: true
+            }
+    }
+
+    override suspend fun setBusSeoulTargetStop(destination: String) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[BUS_SEOUL_TARGET_STOP_KEY] = destination
+            }
+        }
+    }
+
+    override suspend fun getBusSeoulTargetStop(): Flow<String> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[BUS_SEOUL_TARGET_STOP_KEY] ?: "gangnam"
+            }
+    }
+
+    override suspend fun setBusSeoulFirstStop(stopRes: Int) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[BUS_SEOUL_FIRST_STOP_KEY] = stopRes
+            }
+        }
+    }
+
+    override suspend fun getBusSeoulFirstStop(): Flow<Int> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[BUS_SEOUL_FIRST_STOP_KEY] ?: R.string.bus_stop_convention
+            }
+    }
+
+    override suspend fun setBusSeoulSecondStop(stopRes: Int) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[BUS_SEOUL_SECOND_STOP_KEY] = stopRes
+            }
+        }
+    }
+
+    override suspend fun getBusSeoulSecondStop(): Flow<Int> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[BUS_SEOUL_SECOND_STOP_KEY] ?: R.string.bus_stop_main_gate
+            }
+    }
+
+    override suspend fun setBusSuwonStop(stopRes: Int) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[BUS_SUWON_STOP_KEY] = stopRes
+            }
+        }
+    }
+
+    override suspend fun getBusSuwonStop(): Flow<Int> {
+        return userDataStorePreferences.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map {
+                it[BUS_SUWON_STOP_KEY] ?: R.string.bus_stop_entrance
+            }
+    }
+
     override suspend fun setAnalyticsConsent(enabled: Boolean) {
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
@@ -495,6 +605,11 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val HOME_SHOW_SUBWAY_TRANSFER_KEY = booleanPreferencesKey("home_show_subway_transfer")
         private val HOME_SUBWAY_TRANSFER_DESTINATION_KEY = stringPreferencesKey("home_subway_transfer_destination")
         private val SHUTTLE_ALTERNATIVE_DISPLAY_MODE_KEY = stringPreferencesKey("shuttle_alternative_display_mode")
+        private val BUS_SHOW_SECONDARY_ETA_KEY = booleanPreferencesKey("bus_show_secondary_eta")
+        private val BUS_SEOUL_TARGET_STOP_KEY = stringPreferencesKey("bus_seoul_target_stop")
+        private val BUS_SEOUL_FIRST_STOP_KEY = intPreferencesKey("bus_seoul_first_stop")
+        private val BUS_SEOUL_SECOND_STOP_KEY = intPreferencesKey("bus_seoul_second_stop")
+        private val BUS_SUWON_STOP_KEY = intPreferencesKey("bus_suwon_stop")
         private val ANALYTICS_CONSENT_KEY = booleanPreferencesKey("analytics_consent")
         private val LAUNCH_COUNT_KEY = intPreferencesKey("launch_count")
         private val REVIEW_REQUESTED_AT_KEY = longPreferencesKey("review_requested_at")

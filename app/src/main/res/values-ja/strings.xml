@@ -235,6 +235,15 @@
     <string name="bus_stop_entrance">漢陽大入口</string>
     <string name="bus_stop_sangnoksu_station">常緑樹駅3番出口向かい</string>
     <string name="bus_stop_terminal">安山パークプルジオ</string>
+    <string name="bus_stop_seocho">瑞草駅</string>
+    <string name="bus_stop_gyodae">教大駅</string>
+    <string name="bus_stop_gangnam">江南駅</string>
+    <string name="bus_stop_yangjae">良才駅</string>
+    <string name="bus_stop_yangjae_forest">良才市民の森駅</string>
+    <string name="bus_stop_suwon_station">水原駅</string>
+    <string name="bus_quick_settings_title">バス設定</string>
+    <string name="bus_quick_settings_show_secondary_eta">到着時刻を表示</string>
+    <string name="bus_quick_settings_seoul_target">ソウル方面の目的地</string>
     <string name="bus_stop_title">路線バス停留所情報</string>
     <string-array name="bus_stop_list">
         <item>@string/bus_stop_dormitory</item>
@@ -260,6 +269,7 @@
     </plurals>
     <string name="bus_timetable_format_last">%1$s時%2$s分発（終バス）</string>
     <string name="bus_arrival_estimated_format">%1$d分（予定）</string>
+    <string name="bus_arrival_secondary_format">" → %1$s到着"</string>
     <string name="bus_no_realtime_data">到着予定のバスはありません。</string>
     <string name="bus_departure_log">到着記録</string>
     <string name="bus_log_title">路線バス通過情報</string>
@@ -687,7 +697,6 @@
     <string name="language_suggestion_message">システム言語が%1$sに設定されています。アプリの言語を変更しますか？</string>
     <string name="language_suggestion_keep_english">英語を維持</string>
     <string name="bus_help_title">バスのヘルプ</string>
-    <string name="bus_action_bar_title">バス利用案内</string>
     <string name="bus_help_realtime_title">1. 路線バス到着情報の確認</string>
     <string name="bus_help_realtime_content">路線バスの到着情報は、リアルタイム到着情報と運送会社が提供する終点出発時間の順に表示されます。停留所の電光掲示板に到着情報が表示されない場合、終点出発時間以降にリアルタイム到着情報を確認できます。</string>
     <string name="bus_help_stop_title">2. 路線バス停留所情報の確認</string>

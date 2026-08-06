@@ -25,6 +25,9 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentBusRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: BusRealtimeViewModel by viewModels({ requireParentFragment() })
 
+    private fun logsFor(route: Int, stop: Int) =
+        parentViewModel.logResult.value?.firstOrNull { it.route.seq == route && it.stop.seq == stop }?.log ?: emptyList()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,6 +36,10 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
         val decoration = DividerItemDecoration(requireContext(), VERTICAL)
         val busFirstAdapter = BusRealtimeListAdapter()
         val busSecondAdapter = BusRealtimeListAdapter()
+        parentViewModel.showSecondaryEta.observe(viewLifecycleOwner) {
+            busFirstAdapter.setShowSecondaryEta(it)
+            busSecondAdapter.setShowSecondaryEta(it)
+        }
         parentViewModel.selectedStopID.observe(viewLifecycleOwner) {
             if (it == null) return@observe
             when (it) {
@@ -64,7 +71,14 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                             binding.noRealtimeDataFirst.visibility = View.VISIBLE
                             return@observe
                         }
-                        busFirstAdapter.updateData(firstBusList.arrival.map { arrival -> BusArrivalItem(firstBusList.route.name, arrival) })
+                        val secondaryLogs = logsFor(216000068, 216000138)
+                        busFirstAdapter.updateData(firstBusList.arrival.map { arrival ->
+                            BusArrivalItem(
+                                firstBusList.route.name,
+                                arrival,
+                                BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs)
+                            )
+                        })
                         binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
                     }
                 }
@@ -96,7 +110,14 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                             binding.noRealtimeDataFirst.visibility = View.VISIBLE
                             return@observe
                         }
-                        busFirstAdapter.updateData(firstBusList.arrival.map { arrival -> BusArrivalItem(firstBusList.route.name, arrival) })
+                        val secondaryLogs = logsFor(216000068, 216000138)
+                        busFirstAdapter.updateData(firstBusList.arrival.map { arrival ->
+                            BusArrivalItem(
+                                firstBusList.route.name,
+                                arrival,
+                                BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs)
+                            )
+                        })
                         binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
                     }
                 }
@@ -128,7 +149,14 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                             binding.noRealtimeDataFirst.visibility = View.VISIBLE
                             return@observe
                         }
-                        busFirstAdapter.updateData(firstBusList.arrival.map { arrival -> BusArrivalItem(firstBusList.route.name, arrival) })
+                        val secondaryLogs = logsFor(216000068, 216000138)
+                        busFirstAdapter.updateData(firstBusList.arrival.map { arrival ->
+                            BusArrivalItem(
+                                firstBusList.route.name,
+                                arrival,
+                                BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs)
+                            )
+                        })
                         binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
                     }
                 }
@@ -151,9 +179,14 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
             } else {
                 secondBusList.arrival.filter { arrival -> !arrival.isRealtime }
             }
+            val secondaryReturnLogs = logsFor(216000068, 216000378)
             busSecondAdapter.updateData(
-                (secondBusRealtime + secondBusTimetable).map {
-                    arrival -> BusArrivalItem(secondBusList.route.name, arrival)
+                (secondBusRealtime + secondBusTimetable).map { arrival ->
+                    BusArrivalItem(
+                        secondBusList.route.name,
+                        arrival,
+                        BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(secondBusList.route.seq, secondBusList.stop.seq), secondaryReturnLogs)
+                    )
                 }
             )
             binding.noRealtimeDataSecond.visibility = if (secondBusList.arrival.isEmpty()) View.VISIBLE else View.GONE

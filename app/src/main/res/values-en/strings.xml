@@ -252,6 +252,15 @@
     <string name="bus_stop_entrance">Seongan High School</string>
     <string name="bus_stop_sangnoksu_station">Sangnoksu Stn.</string>
     <string name="bus_stop_terminal">Ansan Terminal</string>
+    <string name="bus_stop_seocho">Seocho Station</string>
+    <string name="bus_stop_gyodae">Gyodae Station</string>
+    <string name="bus_stop_gangnam">Gangnam Station</string>
+    <string name="bus_stop_yangjae">Yangjae Station</string>
+    <string name="bus_stop_yangjae_forest">Yangjae Citizens\' Forest Station</string>
+    <string name="bus_stop_suwon_station">Suwon Station</string>
+    <string name="bus_quick_settings_title">Bus settings</string>
+    <string name="bus_quick_settings_show_secondary_eta">Show arrival time</string>
+    <string name="bus_quick_settings_seoul_target">Seoul-bound destination</string>
     <!-- 노선 버스 정류장 선택 -->
     <string name="bus_stop_title">Stop Information</string>
     <string-array name="bus_stop_list">
@@ -279,6 +288,7 @@
     </plurals>
     <string name="bus_timetable_format_last">Departs at %1$s:%2$s (Last)</string>
     <string name="bus_arrival_estimated_format">%1$d min (scheduled)</string>
+    <string name="bus_arrival_secondary_format">" → arrives %1$s"</string>
     <!-- 노선버스 도착 정보 없음 -->
     <string name="bus_no_realtime_data">There are no buses scheduled to arrive.</string>
     <string name="bus_departure_log">Departure Log</string>
@@ -710,7 +720,6 @@
     <string name="language_suggestion_message">Your system language is %1$s. Would you like to switch the app language?</string>
     <string name="language_suggestion_keep_english">Keep English</string>
     <string name="bus_help_title">Bus Help</string>
-    <string name="bus_action_bar_title">Bus guide</string>
     <string name="bus_help_realtime_title">1. Checking Route Bus Arrival Information</string>
     <string name="bus_help_realtime_content">Route bus arrival information is displayed in the order of real-time arrival information and departure times from the terminal provided by the transportation company. If arrival information is not displayed on the electronic board at the stop, real-time arrival information can be checked after the terminal departure time.</string>
     <string name="bus_help_stop_title">2. Checking Route Bus Stop Information</string>

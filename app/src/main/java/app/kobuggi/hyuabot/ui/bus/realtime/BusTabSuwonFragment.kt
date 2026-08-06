@@ -15,14 +15,21 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
 import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.LocalTime
 import javax.inject.Inject
 import app.kobuggi.hyuabot.util.disableViewStateSaving
+
+private val SUWON_STOP_BY_RES = mapOf(
+    R.string.bus_stop_entrance to 216000070,
+    R.string.bus_stop_suwon_station to 202000106,
+)
 
 @AndroidEntryPoint
 class BusTabSuwonFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentBusRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: BusRealtimeViewModel by viewModels({ requireParentFragment() })
+
+    private fun logsFor(route: Int, stop: Int) =
+        parentViewModel.logResult.value?.firstOrNull { it.route.seq == route && it.stop.seq == stop }?.log ?: emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,34 +38,53 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
     ): View {
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         val busSecondAdapter = BusRealtimeListAdapter(maxCount = 10)
-        parentViewModel.result.observe(viewLifecycleOwner) { busList ->
-            if (busList == null) return@observe
-            val routes = busList.filter { route -> route.stop.seq == 216000070 && (route.route.seq == 216000104 || route.route.seq == 200000015) }
-            val arrivalList = routes.flatMap { route -> route.arrival.map { BusArrivalItem(route.route.name, it) } }
-            busSecondAdapter.updateData(arrivalList.sortedWith(compareBy({ it.item.minutes ?: Int.MAX_VALUE }, { it.item.arrivalTime ?: LocalTime.MAX })))
-            binding.noRealtimeDataFirst.visibility = if (arrivalList.isEmpty()) View.VISIBLE else View.GONE
+        parentViewModel.showSecondaryEta.observe(viewLifecycleOwner) {
+            busSecondAdapter.setShowSecondaryEta(it)
+        }
+        parentViewModel.suwonStopID.observe(viewLifecycleOwner) { stopRes ->
+            if (stopRes == null) return@observe
+            val stopSeq = SUWON_STOP_BY_RES[stopRes] ?: return@observe
+            val secondaryTargetSeq = if (stopRes == R.string.bus_stop_suwon_station) 216000141 else 202000208
+            val stopName = getString(stopRes)
+            binding.apply {
+                headerFirstTitle.text = getString(R.string.bus_header_format, "7070/9090", stopName)
+                headerFirstStopBtn.setOnClickListener {
+                    BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(stopSeq, 216000104, 200000015).also { direction ->
+                        findNavController().safeNavigate(direction)
+                    }
+                }
+                departureLogFirst.setOnClickListener {
+                    AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
+                    BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(
+                        stopSeq,
+                        216000104,
+                        200000015
+                    ).also { direction ->
+                        findNavController().safeNavigate(direction)
+                    }
+                }
+            }
+            parentViewModel.result.observe(viewLifecycleOwner) { busList ->
+                val routes = busList.filter { route -> route.stop.seq == stopSeq && (route.route.seq == 216000104 || route.route.seq == 200000015) }
+                val arrivalList = routes.flatMap { route ->
+                    val secondaryLogs = logsFor(route.route.seq, secondaryTargetSeq)
+                    route.arrival.map { arrival ->
+                        BusArrivalItem(
+                            route.route.name,
+                            arrival,
+                            BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(route.route.seq, route.stop.seq), secondaryLogs)
+                        )
+                    }
+                }
+                busSecondAdapter.updateData(arrivalList.sortedBy { it.remainingMinutes ?: Double.MAX_VALUE })
+                binding.noRealtimeDataFirst.visibility = if (arrivalList.isEmpty()) View.VISIBLE else View.GONE
+            }
         }
         binding.apply {
-            headerFirstTitle.text = getString(R.string.bus_header_format, "7070/9090", getString(R.string.bus_stop_entrance))
             realtimeViewFirst.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(context)
-            }
-            headerFirstStopBtn.setOnClickListener {
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000070, 216000104, 200000015).also { direction ->
-                    findNavController().safeNavigate(direction)
-                }
-            }
-            departureLogFirst.setOnClickListener {
-                AnalyticsManager.logSelect(AnalyticsItem.BUS_SHOW_DEPARTURE_LOG)
-                BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusDepartureLogDialogFragment(
-                    216000070,
-                    216000104,
-                    200000015
-                ).also { direction ->
-                    findNavController().safeNavigate(direction)
-                }
             }
             entireTimetableFirst.isEnabled = false
             headerSecond.visibility = View.GONE
