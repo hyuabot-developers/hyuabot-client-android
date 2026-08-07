@@ -41,8 +41,8 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 33
         targetSdk = 35
-        versionCode = 519100000
-        versionName = "5.1.9"
+        versionCode = (project.property("APP_VERSION_CODE") as String).toInt()
+        versionName = project.property("APP_VERSION_NAME") as String
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     }

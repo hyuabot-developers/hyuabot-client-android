@@ -48,8 +48,8 @@ android {
         applicationId = "app.kobuggi.hyuabot"
         minSdk = 29
         targetSdk = 37
-        versionCode = 521000000
-        versionName = "5.2.1"
+        versionCode = (project.property("APP_VERSION_CODE") as String).toInt()
+        versionName = project.property("APP_VERSION_NAME") as String
         signingConfig = signingConfigs.getByName("config")
         manifestPlaceholders["MAP_CLIENT_ID"] = props["MAP_CLIENT_ID"]?.toString() ?: ""
     }
