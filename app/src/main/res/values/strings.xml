@@ -624,6 +624,9 @@
     <string name="privacy_policy">개인정보처리방침</string>
     <string name="privacy_policy_description">수집 정보와 이용 목적을 확인합니다.</string>
     <string name="privacy_policy_url" translatable="false">https://jil8885.github.io/privacy_policy</string>
+    <string name="help">도움말</string>
+    <string name="help_description">앱 사용법을 문서 사이트에서 확인합니다.</string>
+    <string name="docs_site_base_url" translatable="false">https://hyuabot-developers.github.io</string>
     <string name="open_source_licenses">오픈소스 라이선스</string>
     <string name="open_source_licenses_description">앱에서 사용하는 오픈소스 소프트웨어를 확인합니다.</string>
     <string name="developer_name">개발자: 이정인</string>

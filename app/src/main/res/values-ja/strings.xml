@@ -541,6 +541,8 @@
     <string name="about">アプリ情報</string>
     <string name="privacy_policy">プライバシーポリシー</string>
     <string name="privacy_policy_description">収集する情報と利用目的を確認します。</string>
+    <string name="help">ヘルプ</string>
+    <string name="help_description">アプリの使い方をドキュメントサイトで確認します。</string>
     <string name="open_source_licenses">オープンソースライセンス</string>
     <string name="open_source_licenses_description">アプリで使用しているオープンソースソフトウェアを確認します。</string>
     <string name="developer_name">開発者: イ・ジョンイン</string>
