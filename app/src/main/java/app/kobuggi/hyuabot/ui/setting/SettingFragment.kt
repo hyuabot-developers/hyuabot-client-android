@@ -47,6 +47,10 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
             settingLanguage.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "language"); openLanguageDialog() }
             settingTheme.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "theme"); openThemeDialog() }
             appInfo.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "info"); openInfoDialog() }
+            settingHelp.setOnClickListener {
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "help")
+                openHelp()
+            }
             settingPrivacyPolicy.setOnClickListener {
                 AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "privacy_policy")
                 openPrivacyPolicy()
@@ -166,6 +170,24 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
 
     private fun openInfoDialog() {
         SettingFragmentDirections.actionSettingFragmentToSettingDeveloperDialogFragment().also {
+            findNavController().safeNavigate(it)
+        }
+    }
+
+    private fun openHelp() {
+        val appLanguage = AppCompatDelegate.getApplicationLocales()[0]?.language
+            ?: resources.configuration.locales[0].language
+        val docsLocalePath = when (appLanguage) {
+            "en" -> "en/"
+            "ja" -> "ja/"
+            "zh" -> "zh-Hans/"
+            else -> ""
+        }
+        val url = "${getString(R.string.docs_site_base_url)}/$docsLocalePath" + "docs/android"
+        SettingFragmentDirections.actionSettingFragmentToNoticeWebViewFragment(
+            url,
+            getString(R.string.help),
+        ).also {
             findNavController().safeNavigate(it)
         }
     }
