@@ -26,6 +26,8 @@ class SubwayTimetableViewModel @Inject constructor(private val apolloClient: Apo
 
     fun fetchData(stationID: String, heading: String) {
         _heading.value = heading
+        _timetable.value = emptyList()
+        _isLoading.value = true
         viewModelScope.launch {
             val response = apolloClient.query(
                 SubwayTimetablePageQuery(
@@ -33,7 +35,7 @@ class SubwayTimetableViewModel @Inject constructor(private val apolloClient: Apo
                     listOf(heading),
                     DynamicTextTranslator.currentAppLanguageTag(),
                 ),
-            ).fetchPolicy(FetchPolicy.CacheFirst).execute()
+            ).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.subway != null) {

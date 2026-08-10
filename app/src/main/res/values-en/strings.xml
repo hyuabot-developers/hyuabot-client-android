@@ -85,9 +85,9 @@
     <string name="home_transfer_subway_oido_connector">Oido</string>
     <string name="home_support_default">Only if urgent</string>
     <string name="home_support_emphasized">Alternatives / transfers</string>
-    <string name="home_destination_station">Handaeap</string>
+    <string name="home_destination_station">Station</string>
     <string name="home_destination_terminal">Terminal</string>
-    <string name="home_destination_jungang">Jungang</string>
+    <string name="home_destination_jungang">Jungang Stn.</string>
     <string name="home_destination_dormitory">Dormitory</string>
     <string name="home_route_format">%1$s → %2$s</string>
     <string name="home_departure_format">Departs %1$s</string>

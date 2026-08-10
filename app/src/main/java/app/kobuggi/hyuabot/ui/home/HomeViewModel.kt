@@ -10,6 +10,7 @@ import app.kobuggi.hyuabot.HomePageQuery
 import app.kobuggi.hyuabot.service.ShuttlePresenceService
 import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import app.kobuggi.hyuabot.type.BusRouteStopInput
@@ -51,6 +52,7 @@ class HomeViewModel @Inject constructor(
     private val _presenceViewerCount = MutableLiveData<Int?>(null)
     private val _presenceAvailableSeats = MutableLiveData<Int?>(null)
     private var isFetching = false
+    private var loadedSubwayLanguage: String? = null
     private var presenceJob: Job? = null
     private var selectedPresenceStop = "dormitory_o"
     private var latestPresenceViewerCounts: Map<String, Int>? = null
@@ -98,6 +100,11 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             if (isFetching) return@launch
             isFetching = true
+            val subwayLanguage = DynamicTextTranslator.currentAppLanguageTag()
+            if (loadedSubwayLanguage != subwayLanguage) {
+                _data.value = null
+                loadedSubwayLanguage = subwayLanguage
+            }
             if (_data.value == null) _isLoading.value = true
             try {
                 val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
@@ -105,6 +112,7 @@ class HomeViewModel @Inject constructor(
                 val response = apolloClient.query(
                     HomePageQuery(
                         language = currentNoticeLanguage(),
+                        subwayLanguage = subwayLanguage,
                         after = Optional.present(LocalTime.now(ZoneId.of("Asia/Seoul"))),
                         weekday = currentSubwayWeekday(now),
                         date = mealDate,
