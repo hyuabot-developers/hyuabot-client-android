@@ -101,7 +101,12 @@ class ShuttleTransferWidgetProvider : AppWidgetProvider() {
 
             val transitData = runCatching {
                 entryPoint.apolloClient()
-                    .query(ShuttleTransferQuery(currentShuttleWeekday()))
+                    .query(
+                        ShuttleTransferQuery(
+                            currentShuttleWeekday(),
+                            ctx.resources.configuration.locales[0].toLanguageTag(),
+                        ),
+                    )
                     .execute()
                     .data
             }.getOrNull()

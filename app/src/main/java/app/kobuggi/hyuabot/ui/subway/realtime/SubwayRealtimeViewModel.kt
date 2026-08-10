@@ -6,6 +6,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.SubwayRealtimePageQuery
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.FetchPolicy
@@ -53,7 +54,8 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
         val localDate = LocalDate.now()
         viewModelScope.launch {
             val response = apolloClient.query(SubwayRealtimePageQuery(
-                weekday = if (localDate.dayOfWeek.value in 1..5) "weekdays" else "weekends"
+                weekday = if (localDate.dayOfWeek.value in 1..5) "weekdays" else "weekends",
+                language = DynamicTextTranslator.currentAppLanguageTag(),
             )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR

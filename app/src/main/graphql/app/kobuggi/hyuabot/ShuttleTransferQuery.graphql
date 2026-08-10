@@ -1,5 +1,5 @@
-query ShuttleTransferQuery($weekday: String!) {
-    subway(input: { keys: [
+query ShuttleTransferQuery($weekday: String!, $language: String!) {
+    subway(input: { language: $language, keys: [
         { stationID: "K449", direction: ["up", "down"], weekdays: [$weekday], limit: 2 },
         { stationID: "K251", direction: ["up", "down"], weekdays: [$weekday], limit: 2 },
     ]}) {
