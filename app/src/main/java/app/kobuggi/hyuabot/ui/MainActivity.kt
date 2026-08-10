@@ -46,6 +46,14 @@ import app.kobuggi.hyuabot.util.AnalyticsScreen
 import app.kobuggi.hyuabot.util.AnalyticsScreenDispatcher
 import app.kobuggi.hyuabot.util.InAppReviewManager
 import app.kobuggi.hyuabot.ui.common.applyGodoTypography
+import app.kobuggi.hyuabot.ui.bus.realtime.BusQuickSettingsDialog
+import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
+import app.kobuggi.hyuabot.ui.home.HomeQuickSettingsDialog
+import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
+import app.kobuggi.hyuabot.ui.map.BuildingWebViewSheet
+import app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleAlternativeDisplayMode
+import app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleQuickSettingsDialog
+import app.kobuggi.hyuabot.ui.shuttle.via.ShuttleViaSheetDialog
 import app.kobuggi.hyuabot.widget.ShuttleWidgetProvider
 import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
@@ -107,7 +115,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         openBirthDayDialog()
         requestInAppReview()
         syncShuttleServiceNotices()
-        val handledDeepLink = navController.handleDeepLink(intent)
+        val handledDeepLink = handleDebugDeepLink(intent) || navController.handleDeepLink(intent)
         if (
             savedInstanceState == null &&
             !handledDeepLink &&
@@ -455,7 +463,50 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        navController.handleDeepLink(intent)
+        handleDebugDeepLink(intent) || navController.handleDeepLink(intent)
+    }
+
+    private fun handleDebugDeepLink(intent: Intent): Boolean {
+        val uri = DebugDeepLinkRouter.uriFrom(intent) ?: return false
+        if (DebugDeepLinkRouter.navigate(uri, navController)) return true
+
+        val route = uri.pathSegments.firstOrNull()?.lowercase() ?: return true
+        when (route) {
+            "home-quick-settings" -> HomeQuickSettingsDialog.newInstance(
+                showPresenceStatus = true,
+                showBus50Transfer = true,
+                showSubwayTransfer = true,
+                subwayTransferDestination = HomeSubwayTransferDestination.SEOUL,
+            ).show(supportFragmentManager, "debug-home-quick-settings")
+
+            "bus-quick-settings" -> BusQuickSettingsDialog.newInstance(
+                showSecondaryEta = true,
+                seoulTarget = BusSeoulTargetStop.GANGNAM,
+            ).show(supportFragmentManager, "debug-bus-quick-settings")
+
+            "shuttle-quick-settings" -> ShuttleQuickSettingsDialog.newInstance(
+                showByDestination = true,
+                showDepartureTime = false,
+                showPresenceStatus = true,
+                showBusTransfer = true,
+                showSubwayTransfer = true,
+                subwayDestination = HomeSubwayTransferDestination.SEOUL,
+                alternativeMode = ShuttleAlternativeDisplayMode.AUTOMATIC,
+            ).show(supportFragmentManager, "debug-shuttle-quick-settings")
+
+            "shuttle-via" -> ShuttleViaSheetDialog().show(
+                supportFragmentManager,
+                "debug-shuttle-via",
+            )
+
+            "building-webview" -> BuildingWebViewSheet.newInstance(
+                title = uri.getQueryParameter("title") ?: "Debug WebView",
+                url = uri.getQueryParameter("url") ?: "https://hyuabot.app",
+            ).show(supportFragmentManager, "debug-building-webview")
+
+            else -> Unit
+        }
+        return true
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
