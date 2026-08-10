@@ -89,7 +89,7 @@
     <string name="home_destination_terminal">Terminal</string>
     <string name="home_destination_jungang">Jungang Stn.</string>
     <string name="home_destination_dormitory">Dormitory</string>
-    <string name="home_route_format">%1$s → %2$s</string>
+    <string name="home_route_format">%1$s ▶ %2$s</string>
     <string name="home_departure_format">Departs %1$s</string>
     <string name="home_minutes">%1$d min</string>
     <string name="home_check">Check</string>
@@ -222,7 +222,7 @@
     <!-- 셔틀버스 시간표 -->
     <string name="shuttle_timetable_tab_weekdays">Weekdays</string>
     <string name="shuttle_timetable_tab_weekends">Weekends</string>
-    <string name="timetable_route_title">%1$s → %2$s</string>
+    <string name="timetable_route_title">%1$s ▶ %2$s</string>
     <string name="shuttle_timetable_empty">Out of service</string>
     <!-- 셔틀버스 시간표 필터 -->
     <string name="shuttle_timetable_filter_title">Search timetable</string>
@@ -288,7 +288,7 @@
     </plurals>
     <string name="bus_timetable_format_last">Departs at %1$s:%2$s (Last)</string>
     <string name="bus_arrival_estimated_format">%1$d min (scheduled)</string>
-    <string name="bus_arrival_secondary_format">" → arrives %1$s"</string>
+    <string name="bus_arrival_secondary_format">" ▶ arrives %1$s"</string>
     <!-- 노선버스 도착 정보 없음 -->
     <string name="bus_no_realtime_data">There are no buses scheduled to arrive.</string>
     <string name="bus_departure_log">Departure Log</string>
@@ -330,21 +330,21 @@
     <string name="subway_transfer_incheon_oido">Incheon·Oido</string>
     <string name="subway_transfer_ilsan_bucheon">Ilsan·Bucheon</string>
     <plurals name="subway_transfer_up_item_format">
-        <item quantity="one">[%1$s] %2$s\n→ [%3$s] %4$d min (Oido)</item>
-        <item quantity="other">[%1$s] %2$s\n→ [%3$s] %4$d mins (Oido)</item>
+        <item quantity="one">[%1$s] %2$s\n▶ [%3$s] %4$d min (Oido)</item>
+        <item quantity="other">[%1$s] %2$s\n▶ [%3$s] %4$d mins (Oido)</item>
     </plurals>
     <string name="subway_transfer_up_item_format_no_transfer">[%1$s] %2$s</string>
     <plurals name="subway_transfer_down_item_format">
-        <item quantity="one">[%1$s] %2$d min (%3$s)\n→ [%4$s] %5$d min (Oido)</item>
-        <item quantity="other">[%1$s] %2$d mins (%3$s)\n→ [%4$s] %5$d mins (Oido)</item>
+        <item quantity="one">[%1$s] %2$d min (%3$s)\n▶ [%4$s] %5$d min (Oido)</item>
+        <item quantity="other">[%1$s] %2$d mins (%3$s)\n▶ [%4$s] %5$d mins (Oido)</item>
     </plurals>
     <plurals name="subway_transfer_down_item_format_no_transfer">
         <item quantity="one">[%1$s] %2$d min (%3$s)</item>
         <item quantity="other">[%1$s] %2$d mins (%3$s)</item>
     </plurals>
     <plurals name="subway_transfer_choji_item_format">
-        <item quantity="one">[%1$s] %2$d min\n→ [%3$s] %4$d min (Choji)</item>
-        <item quantity="other">[%1$s] %2$d mins\n→ [%3$s] %4$d mins (Choji)</item>
+        <item quantity="one">[%1$s] %2$d min\n▶ [%3$s] %4$d min (Choji)</item>
+        <item quantity="other">[%1$s] %2$d mins\n▶ [%3$s] %4$d mins (Choji)</item>
     </plurals>
     <string name="subway_transfer_destination_format">To %1$s</string>
     <string name="subway_transfer_board_at_hanyang">Board at Hanyang Univ. at Ansan</string>
@@ -599,12 +599,12 @@
     <string name="shuttle_via_title">Route of shuttle bus</string>
     <string name="bus_timetable_empty">Timetable not provided</string>
     <string name="bus_stop_gwangmyeong_station">Gwangmyeong Stn.</string>
-    <string name="shuttle_via_format_6_stops">(→ %1$s → %2$s → %3$s → %4$s → %5$s → %6$s)</string>
-    <string name="shuttle_via_format_5_stops">(→ %1$s → %2$s → %3$s → %4$s → %5$s)</string>
-    <string name="shuttle_via_format_4_stops">(→ %1$s → %2$s → %3$s → %4$s)</string>
-    <string name="shuttle_via_format_3_stops">(→ %1$s → %2$s → %3$s)</string>
-    <string name="shuttle_via_format_2_stops">(→ %1$s → %2$s)</string>
-    <string name="shuttle_via_format_1_stop">(→ %1$s)</string>
+    <string name="shuttle_via_format_6_stops">(▶ %1$s ▶ %2$s ▶ %3$s ▶ %4$s ▶ %5$s ▶ %6$s)</string>
+    <string name="shuttle_via_format_5_stops">(▶ %1$s ▶ %2$s ▶ %3$s ▶ %4$s ▶ %5$s)</string>
+    <string name="shuttle_via_format_4_stops">(▶ %1$s ▶ %2$s ▶ %3$s ▶ %4$s)</string>
+    <string name="shuttle_via_format_3_stops">(▶ %1$s ▶ %2$s ▶ %3$s)</string>
+    <string name="shuttle_via_format_2_stops">(▶ %1$s ▶ %2$s)</string>
+    <string name="shuttle_via_format_1_stop">(▶ %1$s)</string>
     <string name="previous_day">Prev</string>
     <string name="next_day">Next</string>
     <string name="show_by_destination">By Destination/Time</string>

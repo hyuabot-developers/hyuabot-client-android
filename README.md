@@ -122,7 +122,7 @@ All data is fetched via **GraphQL** from the HYUabot backend.
 | Protocol | GraphQL                               |
 | Client   | Apollo Client 4.4.3                   |
 
-Custom scalar adapters are registered for `Date` → `LocalDate`, `LocalTime` → `LocalTime`, and `DateTime` → `ZonedDateTime`.
+Custom scalar adapters are registered for `Date` ▶ `LocalDate`, `LocalTime` ▶ `LocalTime`, and `DateTime` ▶ `ZonedDateTime`.
 
 GraphQL query files live in `app/src/main/graphql/` (shuttle, bus, subway, cafeteria, reading room, calendar, contact, building, etc.).
 
@@ -179,8 +179,8 @@ Two GitHub Actions workflows run on a **self-hosted** runner:
 
 | Workflow        | Trigger                                    | Steps                                                                                           |
 |-----------------|--------------------------------------------|-------------------------------------------------------------------------------------------------|
-| `build.yml`     | Push to `main`, merged PR, manual dispatch | JDK 17 setup → decode keystore & `google-services.json` → `bundleRelease` → upload AAB artifact |
-| `codecheck.yml` | Push to any non-main branch, PR            | JDK 17 setup → `ktlintCheck`                                                                    |
+| `build.yml`     | Push to `main`, merged PR, manual dispatch | JDK 17 setup ▶ decode keystore & `google-services.json` ▶ `bundleRelease` ▶ upload AAB artifact |
+| `codecheck.yml` | Push to any non-main branch, PR            | JDK 17 setup ▶ `ktlintCheck`                                                                    |
 
 Secrets required in the repository:
 - `BASE64_KEYSTORE` — base64-encoded `.jks` signing keystore

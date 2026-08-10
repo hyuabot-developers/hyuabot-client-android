@@ -88,7 +88,7 @@
     <string name="home_destination_terminal">ターミナル</string>
     <string name="home_destination_jungang">中央駅</string>
     <string name="home_destination_dormitory">寮</string>
-    <string name="home_route_format">%1$s → %2$s</string>
+    <string name="home_route_format">%1$s ▶ %2$s</string>
     <string name="home_departure_format">%1$s 発</string>
     <string name="home_minutes">%1$d分</string>
     <string name="home_check">確認</string>
@@ -212,7 +212,7 @@
     <string name="shuttle_help_departure_content">画面上部のスイッチをオンにしてください！各バスの出発時刻を確認できます。</string>
     <string name="shuttle_timetable_tab_weekdays">平日</string>
     <string name="shuttle_timetable_tab_weekends">週末</string>
-    <string name="timetable_route_title">%1$s → %2$s</string>
+    <string name="timetable_route_title">%1$s ▶ %2$s</string>
     <string name="shuttle_timetable_empty">運行予定のシャトルバスはありません。</string>
     <string name="shuttle_timetable_filter_title">シャトル時刻表を検索</string>
     <string name="shuttle_period">運行期間</string>
@@ -269,7 +269,7 @@
     </plurals>
     <string name="bus_timetable_format_last">%1$s時%2$s分発（終バス）</string>
     <string name="bus_arrival_estimated_format">%1$d分（予定）</string>
-    <string name="bus_arrival_secondary_format">" → %1$s到着"</string>
+    <string name="bus_arrival_secondary_format">" ▶ %1$s到着"</string>
     <string name="bus_no_realtime_data">到着予定のバスはありません。</string>
     <string name="bus_departure_log">到着記録</string>
     <string name="bus_log_title">路線バス通過情報</string>
@@ -302,26 +302,26 @@
     <string name="subway_blue_down">4号線 (安山・オイド)</string>
     <string name="subway_yellow_up">水仁線 (水原)</string>
     <string name="subway_yellow_down">水仁線 (仁川)</string>
-    <string name="subway_transfer_up">仁川→韓大前</string>
-    <string name="subway_transfer_down">韓大前→仁川</string>
+    <string name="subway_transfer_up">仁川▶韓大前</string>
+    <string name="subway_transfer_down">韓大前▶仁川</string>
     <string name="subway_transfer_incheon_oido">仁川・烏耳島</string>
     <string name="subway_transfer_ilsan_bucheon">一山・富川</string>
     <plurals name="subway_transfer_up_item_format">
-        <item quantity="one">[%1$s行] %2$s\n→ [%3$s行] %4$d分後（五耳島）</item>
-        <item quantity="other">[%1$s行] %2$s\n→ [%3$s行] %4$d分後（五耳島）</item>
+        <item quantity="one">[%1$s行] %2$s\n▶ [%3$s行] %4$d分後（五耳島）</item>
+        <item quantity="other">[%1$s行] %2$s\n▶ [%3$s行] %4$d分後（五耳島）</item>
     </plurals>
     <string name="subway_transfer_up_item_format_no_transfer">[%1$s行] %2$s</string>
     <plurals name="subway_transfer_down_item_format">
-        <item quantity="one">[%1$s行] %2$d分後（%3$s）\n→ [%4$s行] %5$d分後（五耳島）</item>
-        <item quantity="other">[%1$s行] %2$d分後（%3$s）\n→ [%4$s行] %5$d分後（五耳島）</item>
+        <item quantity="one">[%1$s行] %2$d分後（%3$s）\n▶ [%4$s行] %5$d分後（五耳島）</item>
+        <item quantity="other">[%1$s行] %2$d分後（%3$s）\n▶ [%4$s行] %5$d分後（五耳島）</item>
     </plurals>
     <plurals name="subway_transfer_down_item_format_no_transfer">
         <item quantity="one">[%1$s行] %2$d分後（%3$s）</item>
         <item quantity="other">[%1$s行] %2$d分後（%3$s）</item>
     </plurals>
     <plurals name="subway_transfer_choji_item_format">
-        <item quantity="one">[%1$s行] %2$d分後\n→ [%3$s行] %4$d分後（草芝）</item>
-        <item quantity="other">[%1$s行] %2$d分後\n→ [%3$s行] %4$d分後（草芝）</item>
+        <item quantity="one">[%1$s行] %2$d分後\n▶ [%3$s行] %4$d分後（草芝）</item>
+        <item quantity="other">[%1$s行] %2$d分後\n▶ [%3$s行] %4$d分後（草芝）</item>
     </plurals>
     <string name="subway_transfer_destination_format">%1$s行</string>
     <string name="subway_transfer_board_at_hanyang">漢大前で乗車</string>
@@ -578,11 +578,11 @@
     <string name="shuttle_via_title">車両別経路</string>
     <string name="bus_timetable_empty">時刻表が提供されていない路線です。</string>
     <string name="bus_stop_gwangmyeong_station">光明駅</string>
-    <string name="shuttle_via_format_6_stops">%1$s→%2$s→%3$s→%4$s→%5$s→%6$s</string>
-    <string name="shuttle_via_format_5_stops">%1$s→%2$s→%3$s→%4$s→%5$s</string>
-    <string name="shuttle_via_format_4_stops">%1$s→%2$s→%3$s→%4$s</string>
-    <string name="shuttle_via_format_3_stops">%1$s→%2$s→%3$s</string>
-    <string name="shuttle_via_format_2_stops">%1$s→%2$s</string>
+    <string name="shuttle_via_format_6_stops">%1$s▶%2$s▶%3$s▶%4$s▶%5$s▶%6$s</string>
+    <string name="shuttle_via_format_5_stops">%1$s▶%2$s▶%3$s▶%4$s▶%5$s</string>
+    <string name="shuttle_via_format_4_stops">%1$s▶%2$s▶%3$s▶%4$s</string>
+    <string name="shuttle_via_format_3_stops">%1$s▶%2$s▶%3$s</string>
+    <string name="shuttle_via_format_2_stops">%1$s▶%2$s</string>
     <string name="shuttle_via_format_1_stop">%1$s</string>
     <string name="previous_day">前へ</string>
     <string name="next_day">次へ</string>

@@ -89,7 +89,7 @@
     <string name="home_destination_terminal">예술인</string>
     <string name="home_destination_jungang">중앙역</string>
     <string name="home_destination_dormitory">기숙사</string>
-    <string name="home_route_format">%1$s → %2$s</string>
+    <string name="home_route_format">%1$s ▶ %2$s</string>
     <string name="home_departure_format">%1$s 출발</string>
     <string name="home_minutes">%1$d분</string>
     <string name="home_check">확인</string>
@@ -270,7 +270,7 @@
     <!-- 셔틀버스 시간표 -->
     <string name="shuttle_timetable_tab_weekdays">평일</string>
     <string name="shuttle_timetable_tab_weekends">주말</string>
-    <string name="timetable_route_title">%1$s → %2$s</string>
+    <string name="timetable_route_title">%1$s ▶ %2$s</string>
     <string name="shuttle_timetable_empty">운행 예정인 셔틀버스가 없습니다.</string>
     <!-- 셔틀버스 시간표 필터 -->
     <string name="shuttle_timetable_filter_title">셔틀 시간표 검색</string>
@@ -326,7 +326,7 @@
         <item quantity="other">%1$d분 (%2$d전)</item>
     </plurals>
     <string name="bus_arrival_estimated_format">%1$d분 (예정)</string>
-    <string name="bus_arrival_secondary_format">" → %1$s 도착"</string>
+    <string name="bus_arrival_secondary_format">" ▶ %1$s 도착"</string>
     <string name="bus_timetable_format">%1$s시 %2$s분 출발</string>
     <plurals name="bus_realtime_format_seats_last">
         <item quantity="one">%1$d분 (%2$d전, %3$d석, 막차)</item>
@@ -373,26 +373,26 @@
     <string name="subway_blue_down">4호선 (안산.오이도)</string>
     <string name="subway_yellow_up">수인선 (왕십리.수원)</string>
     <string name="subway_yellow_down">수인선 (오이도.인천)</string>
-    <string name="subway_transfer_up">인천→한대앞</string>
-    <string name="subway_transfer_down">한대앞→인천</string>
+    <string name="subway_transfer_up">인천▶한대앞</string>
+    <string name="subway_transfer_down">한대앞▶인천</string>
     <string name="subway_transfer_incheon_oido">인천·오이도</string>
     <string name="subway_transfer_ilsan_bucheon">일산·부천</string>
     <plurals name="subway_transfer_up_item_format">
-        <item quantity="one">[%1$s행] %2$s\n→ [%3$s행] %4$d분 후 (오이도)</item>
-        <item quantity="other">[%1$s행] %2$s\n→ [%3$s행] %4$d분 후 (오이도)</item>
+        <item quantity="one">[%1$s행] %2$s\n▶ [%3$s행] %4$d분 후 (오이도)</item>
+        <item quantity="other">[%1$s행] %2$s\n▶ [%3$s행] %4$d분 후 (오이도)</item>
     </plurals>
     <string name="subway_transfer_up_item_format_no_transfer">[%1$s행] %2$s</string>
     <plurals name="subway_transfer_down_item_format">
-        <item quantity="one">[%1$s행] %2$d분 후 (%3$s)\n→ [%4$s행] %5$d분 후 (오이도)</item>
-        <item quantity="other">[%1$s행] %2$d분 후 (%3$s)\n→ [%4$s행] %5$d분 후 (오이도)</item>
+        <item quantity="one">[%1$s행] %2$d분 후 (%3$s)\n▶ [%4$s행] %5$d분 후 (오이도)</item>
+        <item quantity="other">[%1$s행] %2$d분 후 (%3$s)\n▶ [%4$s행] %5$d분 후 (오이도)</item>
     </plurals>
     <plurals name="subway_transfer_down_item_format_no_transfer">
         <item quantity="one">[%1$s행] %2$d분 후 (%3$s)</item>
         <item quantity="other">[%1$s행] %2$d분 후 (%3$s)</item>
     </plurals>
     <plurals name="subway_transfer_choji_item_format">
-        <item quantity="one">[%1$s행] %2$d분 후\n→ [%3$s행] %4$d분 후 (초지)</item>
-        <item quantity="other">[%1$s행] %2$d분 후\n→ [%3$s행] %4$d분 후 (초지)</item>
+        <item quantity="one">[%1$s행] %2$d분 후\n▶ [%3$s행] %4$d분 후 (초지)</item>
+        <item quantity="other">[%1$s행] %2$d분 후\n▶ [%3$s행] %4$d분 후 (초지)</item>
     </plurals>
     <string name="subway_transfer_destination_format">%1$s행</string>
     <string name="subway_transfer_board_at_hanyang">한대앞 탑승</string>
@@ -663,11 +663,11 @@
     <string name="shuttle_via_title">차량별 경로 조회</string>
     <string name="bus_timetable_empty">시간표가 제공되지 않는 노선입니다.</string>
     <string name="bus_stop_gwangmyeong_station">광명역</string>
-    <string name="shuttle_via_format_6_stops">%1$s→%2$s→%3$s→%4$s→%5$s→%6$s</string>
-    <string name="shuttle_via_format_5_stops">%1$s→%2$s→%3$s→%4$s→%5$s</string>
-    <string name="shuttle_via_format_4_stops">%1$s→%2$s→%3$s→%4$s</string>
-    <string name="shuttle_via_format_3_stops">%1$s→%2$s→%3$s</string>
-    <string name="shuttle_via_format_2_stops">%1$s→%2$s</string>
+    <string name="shuttle_via_format_6_stops">%1$s▶%2$s▶%3$s▶%4$s▶%5$s▶%6$s</string>
+    <string name="shuttle_via_format_5_stops">%1$s▶%2$s▶%3$s▶%4$s▶%5$s</string>
+    <string name="shuttle_via_format_4_stops">%1$s▶%2$s▶%3$s▶%4$s</string>
+    <string name="shuttle_via_format_3_stops">%1$s▶%2$s▶%3$s</string>
+    <string name="shuttle_via_format_2_stops">%1$s▶%2$s</string>
     <string name="shuttle_via_format_1_stop">%1$s</string>
     <string name="previous_day">이전</string>
     <string name="next_day">다음</string>
