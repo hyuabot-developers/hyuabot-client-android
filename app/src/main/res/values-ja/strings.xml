@@ -490,7 +490,7 @@
     <string name="theme_settings">テーマ設定</string>
     <string name="theme_light">ライト</string>
     <string name="theme_dark">ダーク</string>
-    <string name="theme_system">システム</string>
+    <string name="theme_system">自動</string>
     <string name="campus_erica">ERICA</string>
     <string name="campus_seoul">ソウル</string>
     <string name="bus_low_floor">低床</string>
