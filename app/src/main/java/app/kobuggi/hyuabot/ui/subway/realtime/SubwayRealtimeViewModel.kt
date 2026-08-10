@@ -32,6 +32,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     private val _chojiSeohae = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _queryError = MutableLiveData<QueryError?>(null)
     private val _disposable = CompositeDisposable()
+    private var loadedLanguage: String? = null
 
     val isLoading get() = _isLoading
     val queryError get() = _queryError
@@ -52,10 +53,20 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
 
     fun fetchData() {
         val localDate = LocalDate.now()
+        val language = DynamicTextTranslator.currentAppLanguageTag()
+        if (loadedLanguage != language) {
+            _campusYellow.value = null
+            _campusBlue.value = null
+            _oidoYellow.value = null
+            _oidoBlue.value = null
+            _chojiSeohae.value = null
+            _isLoading.value = true
+            loadedLanguage = language
+        }
         viewModelScope.launch {
             val response = apolloClient.query(SubwayRealtimePageQuery(
                 weekday = if (localDate.dayOfWeek.value in 1..5) "weekdays" else "weekends",
-                language = DynamicTextTranslator.currentAppLanguageTag(),
+                language = language,
             )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR

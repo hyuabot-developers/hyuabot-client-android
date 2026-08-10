@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.service.ShuttlePresenceService
 import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
@@ -74,6 +75,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private var presencePreviewCount: Int? = null
     private var presencePreferenceLoaded = false
     private var isStarted = false
+    private var loadedSubwayLanguage: String? = null
 
     val result get() = _result
     val initialStopRules get() = _initialStopRules
@@ -137,9 +139,16 @@ class ShuttleRealtimeViewModel @Inject constructor(
         val locale = AppCompatDelegate.getApplicationLocales().get(0)
         val appLanguage = locale?.language ?: Locale.getDefault().language
         val language = if (appLanguage == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
+        val subwayLanguage = DynamicTextTranslator.currentAppLanguageTag()
+        if (loadedSubwayLanguage != subwayLanguage) {
+            _transfer.value = null
+            _isLoading.value = true
+            loadedSubwayLanguage = subwayLanguage
+        }
         viewModelScope.launch {
             val response = apolloClient.query(ShuttleRealtimePageQuery(
                 language,
+                subwayLanguage,
                 Optional.present(LocalTime.now()),
                 currentShuttleWeekday(),
                 Optional.present(shuttleBusLogReferenceDates()),
