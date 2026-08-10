@@ -623,7 +623,7 @@
     <string name="about">앱 정보</string>
     <string name="privacy_policy">개인정보처리방침</string>
     <string name="privacy_policy_description">수집 정보와 이용 목적을 확인합니다.</string>
-    <string name="privacy_policy_url" translatable="false">https://jil8885.github.io/privacy_policy</string>
+    <string name="privacy_policy_url" translatable="false">https://hyuabot-developers.github.io/privacy-policy</string>
     <string name="help">도움말</string>
     <string name="help_description">앱 사용법을 문서 사이트에서 확인합니다.</string>
     <string name="docs_site_base_url" translatable="false">https://hyuabot-developers.github.io</string>
