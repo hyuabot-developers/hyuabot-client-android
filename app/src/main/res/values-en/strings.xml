@@ -8,7 +8,6 @@
     <string name="shuttle_bus">Shuttle</string>
     <string name="bus">Bus</string>
     <string name="tabbar_bus">Bus</string>
-    <string name="tabbar_more">More</string>
     <string name="tabbar_campus">Campus</string>
     <!-- Home -->
     <string name="home_hero_title">Only what you need now</string>
@@ -35,7 +34,6 @@
     <string name="home_weather_confidence_low">Forecast may change</string>
     <string name="home_weather_attribution">Open-Meteo ↗</string>
     <string name="home_movement_title">Move now</string>
-    <string name="home_movement_detail">Shuttle details</string>
     <string name="home_movement_timetable">Full timetable</string>
     <string name="home_departure_selector_description">Select departure stop: %1$s</string>
     <string name="home_destination_summary">Toward %1$s</string>
@@ -43,8 +41,6 @@
     <string name="home_quick_settings_action_bar_title">Adjust what appears on Home</string>
     <string name="home_quick_settings_button">Settings</string>
     <string name="home_quick_settings_title">Settings</string>
-    <string name="home_quick_settings_legacy_title">Previous shuttle screen</string>
-    <string name="home_quick_settings_legacy_subtitle">Check full arrivals and timetables.</string>
     <string name="home_quick_settings_legacy_button">Previous shuttle screen</string>
     <string name="home_quick_settings_bus50_transfer_title">Show Bus 50 transfers</string>
     <string name="home_quick_settings_bus50_transfer_subtitle">Shows Bus 50 arrivals from Yesulin to Gwangmyeong Station.</string>
@@ -56,15 +52,9 @@
     <string name="home_quick_settings_subway_destination_oido">Oido</string>
     <string name="home_quick_settings_subway_destination_sosa">Ilsan/Bucheon</string>
     <string name="home_transfer_bus50_badge">50</string>
-    <string name="home_transfer_bus50_title">Expected at %1$s</string>
-    <string name="home_transfer_bus50_subtitle">Transfer to bus at Yesulin</string>
-    <string name="home_transfer_buffer">+%1$d min</string>
     <string name="home_transfer_subway_suin_bundang_badge">Suin</string>
     <string name="home_transfer_subway_seohae_badge">Seohae</string>
     <string name="home_transfer_subway_title">To %1$s</string>
-    <string name="home_transfer_subway_subtitle">Transfer at Hanyang Univ. at Ansan</string>
-    <string name="home_transfer_subway_oido_subtitle">Transfer at Oido Station</string>
-    <string name="home_transfer_subway_choji_subtitle">Transfer at Choji Station</string>
     <string name="home_transfer_bus50_connector">Yesulin</string>
     <string name="home_transfer_wait_minutes">%1$d min wait</string>
     <string name="home_transfer_wait_immediate">Board now</string>
@@ -89,15 +79,12 @@
     <string name="home_destination_terminal">Terminal</string>
     <string name="home_destination_jungang">Jungang Stn.</string>
     <string name="home_destination_dormitory">Dormitory</string>
-    <string name="home_route_format">%1$s ▶ %2$s</string>
     <string name="home_departure_format">Departs %1$s</string>
     <string name="home_minutes">%1$d min</string>
     <string name="home_check">Check</string>
     <string name="home_shuttle_last_run_subtitle">Last run · %1$s</string>
     <string name="home_no_data_title">No shuttle available now</string>
     <string name="home_no_data_message">Check again later or use an alternative route below.</string>
-    <string name="home_bus_title_format">Bus %1$s</string>
-    <string name="home_bus_subtitle_format">%1$s stop</string>
     <string name="home_alt_bus_direction">Toward %1$s</string>
     <string name="home_alt_dormitory_nearby">Hanyang Univ. Dormitory Front</string>
     <string name="home_alt_gyeonggi_technopark">Gyeonggi Techno Park</string>
@@ -115,7 +102,6 @@
     <string name="home_meal_dinner">Dinner</string>
     <string name="home_meal_period_selector_description">Select meal period: %1$s</string>
     <string name="home_meal_tomorrow_format">Tomorrow %1$s</string>
-    <string name="home_meal_tomorrow_breakfast">Tomorrow breakfast</string>
     <string name="home_meal_empty_title">%1$s menu is unavailable</string>
     <string name="home_meal_empty_message">Check other meal times in all menus.</string>
     <!-- 셔틀버스 도착 정보 탭 -->
@@ -138,11 +124,8 @@
     <string name="shuttle_footer_entire_timetable_jungang_station">Entire Timetable (Jungang Stn.)</string>
     <string name="shuttle_footer_stop_info">Location &amp; First/Last</string>
     <string name="shuttle_footer_help">Shuttle Help</string>
-    <string name="shuttle_action_bar_title">Shuttle display options</string>
     <string name="shuttle_quick_settings_button">Settings</string>
     <string name="shuttle_quick_settings_title">Settings</string>
-    <string name="shuttle_quick_settings_arrival_by_time_subtitle">Show shuttle arrivals by remaining time.</string>
-    <string name="shuttle_quick_settings_departure_time_subtitle">Show shuttle times by departure time.</string>
     <string name="shuttle_quick_settings_presence_title">Show fellow viewers</string>
     <string name="shuttle_quick_settings_presence_subtitle">Show how many people are viewing the same stop information.</string>
     <string name="shuttle_quick_settings_section_display">Shuttle display</string>
@@ -157,14 +140,6 @@
     <string name="shuttle_quick_settings_alternative_mode_hidden">Hide</string>
     <string name="shuttle_connection_transfer_format">Transfer at %1$s</string>
     <string name="shuttle_presence_viewer_count">Viewing together: %1$d</string>
-    <string name="shuttle_display_order_title">Display order</string>
-    <string name="shuttle_display_order_subtitle">Organize shuttle arrivals by time or destination.</string>
-    <string name="shuttle_display_time_order">By time</string>
-    <string name="shuttle_display_destination_order">By destination</string>
-    <string name="shuttle_time_display_title">Time display</string>
-    <string name="shuttle_time_display_subtitle">Show shuttle times as remaining time or departure time.</string>
-    <string name="shuttle_time_remaining">Remaining</string>
-    <string name="shuttle_time_departure">Departure</string>
     <string name="home_experience_new">Try the new home</string>
     <!-- 셔틀버스 도착 정보 없음 -->
     <string name="shuttle_no_realtime_data">Out out service</string>
@@ -192,7 +167,6 @@
     <string name="shuttle_type_dormitory_direct">Dormitory (Direct)</string>
     <string name="shuttle_type_shuttlecock_circular">Shuttlecock (Circular)</string>
     <string name="shuttle_type_dormitory_circular">Dormitory (Circular)</string>
-    <string name="shuttle_type_jungang_circular">Dormitory (Jungang Stn.)</string>
     <string name="shuttle_type_shuttlecock_finishing">Shuttlecock</string>
     <!-- 셔틀버스 첫막차 시간 -->
     <string name="shuttle_first_last_time_title">First &amp; Last</string>
@@ -277,7 +251,6 @@
         <item quantity="one">%1$d min (%2$d stops)</item>
         <item quantity="other">%1$d min (%2$d stops)</item>
     </plurals>
-    <string name="bus_timetable_format">Departs at %1$s:%2$s</string>
     <plurals name="bus_realtime_format_seats_last">
         <item quantity="one">%1$d min (%2$d stops, %3$d seats, Last)</item>
         <item quantity="other">%1$d min (%2$d stops, %3$d seats, Last)</item>
@@ -286,7 +259,6 @@
         <item quantity="one">%1$d min (%2$d stops, Last)</item>
         <item quantity="other">%1$d min (%2$d stops, Last)</item>
     </plurals>
-    <string name="bus_timetable_format_last">Departs at %1$s:%2$s (Last)</string>
     <string name="bus_arrival_estimated_format">%1$d min (scheduled)</string>
     <string name="bus_arrival_secondary_format">" ▶ arrives %1$s"</string>
     <!-- 노선버스 도착 정보 없음 -->
@@ -325,15 +297,12 @@
     <string name="subway_blue_down">Line 4 (Oido)</string>
     <string name="subway_yellow_up">Suin Line (Suwon)</string>
     <string name="subway_yellow_down">Suin Line (Incheon)</string>
-    <string name="subway_transfer_up">To Incheon</string>
-    <string name="subway_transfer_down">To Campus</string>
     <string name="subway_transfer_incheon_oido">Incheon·Oido</string>
     <string name="subway_transfer_ilsan_bucheon">Ilsan·Bucheon</string>
     <plurals name="subway_transfer_up_item_format">
         <item quantity="one">[%1$s] %2$s\n▶ [%3$s] %4$d min (Oido)</item>
         <item quantity="other">[%1$s] %2$s\n▶ [%3$s] %4$d mins (Oido)</item>
     </plurals>
-    <string name="subway_transfer_up_item_format_no_transfer">[%1$s] %2$s</string>
     <plurals name="subway_transfer_down_item_format">
         <item quantity="one">[%1$s] %2$d min (%3$s)\n▶ [%4$s] %5$d min (Oido)</item>
         <item quantity="other">[%1$s] %2$d mins (%3$s)\n▶ [%4$s] %5$d mins (Oido)</item>
@@ -358,7 +327,6 @@
         <item quantity="one">%1$d min wait</item>
         <item quantity="other">%1$d mins wait</item>
     </plurals>
-    <string name="subway_no_realtime_data">Out of service</string>
     <string name="subway_realtime_destination_format">To %1$s</string>
     <string name="subway_realtime_destination_format_last">To %1$s (Last train)</string>
     <plurals name="subway_realtime_format">
@@ -479,16 +447,12 @@
     <string name="menu_chat">Inquiries</string>
     <string name="menu_donate">Donate</string>
     <string name="inquiry_title">Inquiries</string>
-    <string name="inquiry_short">Inquiry</string>
     <string name="inquiry_input_hint">Type a message</string>
     <string name="inquiry_send">Send</string>
     <string name="inquiry_empty">No messages yet. Feel free to leave your question.</string>
     <string name="inquiry_read">Read</string>
     <string name="inquiry_load_failed">Failed to load the conversation.</string>
     <string name="menu_review">Rate this App</string>
-    <string name="menu_section_school_life">School life</string>
-    <string name="menu_section_support">Support and settings</string>
-    <string name="menu_section_external">External links</string>
     <string name="menu_map">Campus Map</string>
     <string name="campus_tools_title">Campus tools</string>
     <string name="campus_tools_subtitle">Quickly find the campus services you need.</string>
@@ -513,7 +477,6 @@
     <string name="reading_room_alarm_3_hour">3-hour alarm</string>
     <string name="reading_room_alarm_4_hour">4-hour alarm</string>
     <string name="reading_room_alarm_cancel">Cancel alarm</string>
-    <string name="reading_room_seat_format">%1$d/%2$d</string>
     <string name="reading_room_available_seat_format">%1$d seats available · %2$d total</string>
     <string name="reading_room_full_seat_format">Full · %1$d total seats</string>
     <string name="default_notification_channel_id">HYUabot Notification Channel ID</string>
@@ -545,11 +508,9 @@
     <string name="reading_room_extend_noti_content">Your reading room usage expires in 10 minutes. Please renew if needed.</string>
     <string name="reading_room_alarm_extend">Reading room extension notification!</string>
     <string name="reading_room_alarm_format">Alarm set for %1$s</string>
-    <string name="shuttle_realtime_location_error">Failed to find the nearest stop.</string>
     <string name="campus_settings">Campus Settings</string>
     <string name="language_settings">Language Settings</string>
     <string name="theme_settings">Theme Settings</string>
-    <string name="theme_settings_description">Please select a theme.</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_system">System</string>
@@ -568,21 +529,17 @@
     <string name="open_source_licenses_description">View the open source software used by the app.</string>
     <string name="developer_name">Developer: Jeongin Lee</string>
     <string name="developer_belong">Department: Software Studies, Class of \'17</string>
-    <string name="contact_loading">Loading contacts…</string>
     <string name="contact_search_guide">Search name / phone</string>
     <string name="month_header">%1$d/%2$d</string>
-    <string name="event_date_format">%1$d/%2$d</string>
     <string name="event_date_range_format">%1$d/%2$d - %3$d/%4$d</string>
     <string name="calendar_select_date_hint">Tap a date to see events</string>
     <string name="calendar_upcoming_empty">No upcoming events</string>
     <string name="calendar_previous_month">Previous month</string>
     <string name="calendar_next_month">Next month</string>
     <string name="calendar_event_ongoing">Ongoing</string>
-    <string name="calendar_loading">Loading academic calendar…</string>
     <string name="do_not_show_again_this_year">Do not show this year.</string>
     <string name="dialog_title">Developer\'s birthday</string>
     <string name="dialog_message">Hello, I\'m Jeongin Lee, developer of HYUABOT.\n\nToday is my birthday.\n\nPlease wish me a happy birthday!</string>
-    <string name="bus_departure_log_error">Failed to load departure log.</string>
     <string name="bus_realtime_error">Failed to load bus arrival information.</string>
     <string name="bus_route_info_error">Failed to load bus route information.</string>
     <string name="bus_timetable_error">Failed to load bus timetable.</string>
@@ -599,12 +556,6 @@
     <string name="shuttle_via_title">Route of shuttle bus</string>
     <string name="bus_timetable_empty">Timetable not provided</string>
     <string name="bus_stop_gwangmyeong_station">Gwangmyeong Stn.</string>
-    <string name="shuttle_via_format_6_stops">(▶ %1$s ▶ %2$s ▶ %3$s ▶ %4$s ▶ %5$s ▶ %6$s)</string>
-    <string name="shuttle_via_format_5_stops">(▶ %1$s ▶ %2$s ▶ %3$s ▶ %4$s ▶ %5$s)</string>
-    <string name="shuttle_via_format_4_stops">(▶ %1$s ▶ %2$s ▶ %3$s ▶ %4$s)</string>
-    <string name="shuttle_via_format_3_stops">(▶ %1$s ▶ %2$s ▶ %3$s)</string>
-    <string name="shuttle_via_format_2_stops">(▶ %1$s ▶ %2$s)</string>
-    <string name="shuttle_via_format_1_stop">(▶ %1$s)</string>
     <string name="previous_day">Prev</string>
     <string name="next_day">Next</string>
     <string name="show_by_destination">By Destination/Time</string>
@@ -731,7 +682,6 @@
     <string name="bus_help_departure_title">4. Checking Route Bus Departure Time</string>
     <string name="bus_help_departure_content">Provides the stop passing times for each route as provided by Gyeonggi-do. Even if real-time arrival information is not available, this can be referenced to estimate the bus arrival time.</string>
     <string name="bus_stop_info_title">Stop Information</string>
-    <string name="bus_stop_info_empty">Stop information is unavailable.</string>
     <string name="bus_stop_info_error">Failed to load information.</string>
     <string name="bus_first_last_up">Northbound: First %1$s / Last %2$s</string>
     <string name="bus_first_last_down">Southbound: First %1$s / Last %2$s</string>
@@ -747,19 +697,11 @@
     <string name="shuttle_alarm_alighting_live_arrival">Arrives at %1$s</string>
     <string name="shuttle_alarm_alighting_tracking">Checking distance</string>
     <string name="shuttle_alarm_boarding_initial">Departs in %1$d min</string>
-    <string name="shuttle_alarm_boarding_initial_checkpoint">Departs in %1$d min · passed %2$s</string>
-    <string name="shuttle_alarm_boarding_content">%1$d min · %2$s direction %3$s</string>
-    <string name="shuttle_alarm_boarding_content_checkpoint">%1$d min · passed %2$s · %3$s direction %4$s</string>
-    <string name="shuttle_alarm_boarding_short">%1$d min</string>
     <string name="shuttle_alarm_checkpoint_waiting">Waiting at %1$s</string>
     <string name="shuttle_alarm_checkpoint_departed">Departed %1$s</string>
     <string name="shuttle_alarm_checkpoint_approaching">Approaching %1$s</string>
-    <string name="shuttle_alarm_now">It\'s time to board.</string>
     <string name="shuttle_alarm_alighting_title">Shuttle Bus Alighting Alert</string>
-    <string name="shuttle_alarm_alighting_preparing">Monitoring alighting stop</string>
     <string name="shuttle_alarm_alighting_content">About %1$s to the stop</string>
-    <string name="shuttle_alarm_alighting_checkpoint_distance">%1$s, %3$s to %2$s</string>
-    <string name="shuttle_alarm_alighting_checkpoint_tracking">%1$s, checking distance to %2$s</string>
     <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">Tracking</string>
     <string name="shuttle_alarm_alighting_alert_title">Prepare to get off!</string>

@@ -8,7 +8,6 @@
     <string name="shuttle_bus">校车</string>
     <string name="bus">路线公交</string>
     <string name="tabbar_bus">公交</string>
-    <string name="tabbar_more">更多</string>
     <string name="tabbar_campus">校园</string>
     <string name="home_hero_title">只看现在需要的内容</string>
     <string name="home_hero_subtitle">从出行到用餐，显示适合当前情况的信息。</string>
@@ -34,7 +33,6 @@
     <string name="home_weather_confidence_low">预报可能会变化</string>
     <string name="home_weather_attribution">Open-Meteo ↗</string>
     <string name="home_movement_title">现在出发</string>
-    <string name="home_movement_detail">校车详情</string>
     <string name="home_movement_timetable">完整时刻表</string>
     <string name="home_departure_selector_description">选择出发站：%1$s</string>
     <string name="home_destination_summary">前往%1$s</string>
@@ -42,8 +40,6 @@
     <string name="home_quick_settings_action_bar_title">调整首页显示内容</string>
     <string name="home_quick_settings_button">设置</string>
     <string name="home_quick_settings_title">设置</string>
-    <string name="home_quick_settings_legacy_title">旧版校车页面</string>
-    <string name="home_quick_settings_legacy_subtitle">查看完整到达信息和时刻表。</string>
     <string name="home_quick_settings_legacy_button">旧版校车页面</string>
     <string name="home_quick_settings_bus50_transfer_title">显示50路换乘</string>
     <string name="home_quick_settings_bus50_transfer_subtitle">显示从艺术人前往光明站的50路到达信息。</string>
@@ -55,15 +51,9 @@
     <string name="home_quick_settings_subway_destination_oido">乌耳岛</string>
     <string name="home_quick_settings_subway_destination_sosa">一山·富川</string>
     <string name="home_transfer_bus50_badge">50路</string>
-    <string name="home_transfer_bus50_title">预计%1$s到达</string>
-    <string name="home_transfer_bus50_subtitle">在艺术人换乘公交</string>
-    <string name="home_transfer_buffer">+%1$d分</string>
     <string name="home_transfer_subway_suin_bundang_badge">水仁盆唐</string>
     <string name="home_transfer_subway_seohae_badge">西海线</string>
     <string name="home_transfer_subway_title">开往 %1$s</string>
-    <string name="home_transfer_subway_subtitle">在汉大前换乘地铁</string>
-    <string name="home_transfer_subway_oido_subtitle">在乌耳岛站换乘地铁</string>
-    <string name="home_transfer_subway_choji_subtitle">在草芝站换乘地铁</string>
     <string name="home_transfer_bus50_connector">艺术人</string>
     <string name="home_transfer_wait_minutes">等待%1$d分钟</string>
     <string name="home_transfer_wait_immediate">立即乘车</string>
@@ -88,15 +78,12 @@
     <string name="home_destination_terminal">客运站</string>
     <string name="home_destination_jungang">中央站</string>
     <string name="home_destination_dormitory">宿舍</string>
-    <string name="home_route_format">%1$s ▶ %2$s</string>
     <string name="home_departure_format">%1$s 出发</string>
     <string name="home_minutes">%1$d分钟</string>
     <string name="home_check">查看</string>
     <string name="home_shuttle_last_run_subtitle">末班 · %1$s</string>
     <string name="home_no_data_title">现在暂无可乘坐的校车</string>
     <string name="home_no_data_message">请稍后再确认，或查看下方替代路线。</string>
-    <string name="home_bus_title_format">%1$s路公交</string>
-    <string name="home_bus_subtitle_format">%1$s 站</string>
     <string name="home_alt_bus_direction">%1$s方向</string>
     <string name="home_alt_dormitory_nearby">汉阳大宿舍前</string>
     <string name="home_alt_gyeonggi_technopark">京畿科技园</string>
@@ -114,7 +101,6 @@
     <string name="home_meal_dinner">晚餐</string>
     <string name="home_meal_period_selector_description">选择餐次：%1$s</string>
     <string name="home_meal_tomorrow_format">明天%1$s</string>
-    <string name="home_meal_tomorrow_breakfast">明天早餐</string>
     <string name="home_meal_empty_title">暂无%1$s菜单</string>
     <string name="home_meal_empty_message">可在全部食堂中查看其他时段菜单。</string>
     <string name="shuttle_tab_dormitory_out">宿舍</string>
@@ -134,11 +120,8 @@
     <string name="shuttle_footer_entire_timetable_jungang_station">完整时刻表 (中央站)</string>
     <string name="shuttle_footer_stop_info">站点位置 &amp; 首/末班车</string>
     <string name="shuttle_footer_help">帮助</string>
-    <string name="shuttle_action_bar_title">校车显示选项</string>
     <string name="shuttle_quick_settings_button">设置</string>
     <string name="shuttle_quick_settings_title">设置</string>
-    <string name="shuttle_quick_settings_arrival_by_time_subtitle">按剩余时间显示校车到达信息。</string>
-    <string name="shuttle_quick_settings_departure_time_subtitle">按发车时间显示校车时刻。</string>
     <string name="shuttle_quick_settings_presence_title">显示同时查看的人</string>
     <string name="shuttle_quick_settings_presence_subtitle">显示正在查看同一站点信息的人数。</string>
     <string name="shuttle_quick_settings_section_display">校车显示</string>
@@ -153,14 +136,6 @@
     <string name="shuttle_quick_settings_alternative_mode_hidden">隐藏</string>
     <string name="shuttle_connection_transfer_format">在%1$s换乘</string>
     <string name="shuttle_presence_viewer_count">%1$d人同时查看</string>
-    <string name="shuttle_display_order_title">显示顺序</string>
-    <string name="shuttle_display_order_subtitle">按时间或目的地整理校车到达信息。</string>
-    <string name="shuttle_display_time_order">按时间</string>
-    <string name="shuttle_display_destination_order">按目的地</string>
-    <string name="shuttle_time_display_title">时间显示</string>
-    <string name="shuttle_time_display_subtitle">以剩余时间或发车时间显示校车时刻。</string>
-    <string name="shuttle_time_remaining">剩余时间</string>
-    <string name="shuttle_time_departure">发车时间</string>
     <string name="home_experience_new">体验新版首页</string>
     <string name="shuttle_no_realtime_data">暂无即将到达的校车。</string>
     <string name="shuttle_time_type_1">%1$s时%2$s分出发</string>
@@ -185,7 +160,6 @@
     <string name="shuttle_type_dormitory_direct">宿舍（直达）</string>
     <string name="shuttle_type_shuttlecock_circular">羽毛球场（循环）</string>
     <string name="shuttle_type_dormitory_circular">宿舍（循环）</string>
-    <string name="shuttle_type_jungang_circular">宿舍（中央站）</string>
     <string name="shuttle_type_shuttlecock_finishing">Shuttlecock (终点)</string>
     <string name="shuttle_first_last_time_title">首班 &amp; 末班</string>
     <string name="shuttle_first_last_time_no_data_weekdays">--:--（工作日）</string>
@@ -258,7 +232,6 @@
         <item quantity="one">%1$d分（%2$d前）</item>
         <item quantity="other">%1$d分（%2$d前）</item>
     </plurals>
-    <string name="bus_timetable_format">%1$s时%2$s分出发</string>
     <plurals name="bus_realtime_format_seats_last">
         <item quantity="one">%1$d分（%2$d前，%3$d席，末班）</item>
         <item quantity="other">%1$d分（%2$d前，%3$d席，末班）</item>
@@ -267,7 +240,6 @@
         <item quantity="one">%1$d分（%2$d前，末班）</item>
         <item quantity="other">%1$d分（%2$d前，末班）</item>
     </plurals>
-    <string name="bus_timetable_format_last">%1$s时%2$s分出发（末班）</string>
     <string name="bus_arrival_estimated_format">%1$d分（预计）</string>
     <string name="bus_arrival_secondary_format">" ▶ %1$s到达"</string>
     <string name="bus_no_realtime_data">暂无即将到达的公交。</string>
@@ -302,15 +274,12 @@
     <string name="subway_blue_down">4号线 (安山·오이도)</string>
     <string name="subway_yellow_up">水仁线 (水原)</string>
     <string name="subway_yellow_down">水仁线 (仁川)</string>
-    <string name="subway_transfer_up">仁川▶汉大前</string>
-    <string name="subway_transfer_down">汉大前▶仁川</string>
     <string name="subway_transfer_incheon_oido">仁川·五耳岛</string>
     <string name="subway_transfer_ilsan_bucheon">一山·富川</string>
     <plurals name="subway_transfer_up_item_format">
         <item quantity="one">[%1$s行] %2$s\n▶ [%3$s行] %4$d分钟后（五耳岛）</item>
         <item quantity="other">[%1$s行] %2$s\n▶ [%3$s行] %4$d分钟后（五耳岛）</item>
     </plurals>
-    <string name="subway_transfer_up_item_format_no_transfer">[%1$s行] %2$s</string>
     <plurals name="subway_transfer_down_item_format">
         <item quantity="one">[%1$s行] %2$d分钟后（%3$s）\n▶ [%4$s行] %5$d分钟后（五耳岛）</item>
         <item quantity="other">[%1$s行] %2$d分钟后（%3$s）\n▶ [%4$s行] %5$d分钟后（五耳岛）</item>
@@ -335,7 +304,6 @@
         <item quantity="one">等候%1$d分钟</item>
         <item quantity="other">等候%1$d分钟</item>
     </plurals>
-    <string name="subway_no_realtime_data">暂无即将到达的地铁信息。</string>
     <string name="subway_realtime_destination_format">%1$s方向</string>
     <string name="subway_realtime_destination_format_last">%1$s方向（末班）</string>
     <plurals name="subway_realtime_format">
@@ -456,16 +424,12 @@
     <string name="menu_chat">联系我们</string>
     <string name="menu_donate">捐赠</string>
     <string name="inquiry_title">联系我们</string>
-    <string name="inquiry_short">咨询</string>
     <string name="inquiry_input_hint">请输入消息</string>
     <string name="inquiry_send">发送</string>
     <string name="inquiry_empty">还没有对话。欢迎留下您的问题。</string>
     <string name="inquiry_read">已读</string>
     <string name="inquiry_load_failed">无法加载对话。</string>
     <string name="menu_review">评价应用</string>
-    <string name="menu_section_school_life">校园生活</string>
-    <string name="menu_section_support">支持与设置</string>
-    <string name="menu_section_external">外部链接</string>
     <string name="menu_map">校园地图</string>
     <string name="campus_tools_title">校园工具</string>
     <string name="campus_tools_subtitle">快速查找校园生活所需的功能。</string>
@@ -490,7 +454,6 @@
     <string name="reading_room_alarm_3_hour">3小时后提醒</string>
     <string name="reading_room_alarm_4_hour">4小时后提醒</string>
     <string name="reading_room_alarm_cancel">取消提醒</string>
-    <string name="reading_room_seat_format">%1$d/%2$d 席</string>
     <string name="reading_room_available_seat_format">剩余 %1$d 座 · 共 %2$d 座</string>
     <string name="reading_room_full_seat_format">已满 · 共 %1$d 座</string>
     <string name="default_notification_channel_id">HYUabot notification channel ID</string>
@@ -522,11 +485,9 @@
     <string name="reading_room_extend_noti_content">阅览室使用时间将在10分钟后到期，如需延长请确认。</string>
     <string name="reading_room_alarm_extend">阅览室延长提醒！</string>
     <string name="reading_room_alarm_format">已设置 %1$s 提醒</string>
-    <string name="shuttle_realtime_location_error">获取最近站点失败。</string>
     <string name="campus_settings">校区设置</string>
     <string name="language_settings">语言设置</string>
     <string name="theme_settings">主题设置</string>
-    <string name="theme_settings_description">请选择主题。</string>
     <string name="theme_light">浅色</string>
     <string name="theme_dark">深色</string>
     <string name="theme_system">系统</string>
@@ -547,21 +508,17 @@
     <string name="open_source_licenses_description">查看本应用使用的开源软件。</string>
     <string name="developer_name">开发者: 李正仁</string>
     <string name="developer_belong">所属: 软件学院 17届</string>
-    <string name="contact_loading">正在加载联系方式列表…</string>
     <string name="contact_search_guide">搜索姓名 / 电话号码</string>
     <string name="month_header">%1$d年%2$d月</string>
-    <string name="event_date_format">%1$d月%2$d日</string>
     <string name="event_date_range_format">%1$d月%2$d日 - %3$d月%4$d日</string>
     <string name="calendar_select_date_hint">点击日期查看日程</string>
     <string name="calendar_upcoming_empty">暂无即将到来的日程</string>
     <string name="calendar_previous_month">上个月</string>
     <string name="calendar_next_month">下个月</string>
     <string name="calendar_event_ongoing">进行中</string>
-    <string name="calendar_loading">正在加载学事历。</string>
     <string name="do_not_show_again_this_year">今年不再显示</string>
     <string name="dialog_title">开发者生日通知</string>
     <string name="dialog_message">今天（12/12）是开发者的生日。\n\n感谢您一直以来的使用。我们将继续努力提供更好的服务。\n\n谢谢。</string>
-    <string name="bus_departure_log_error">加载到站记录失败。</string>
     <string name="bus_realtime_error">加载公交到达信息失败。</string>
     <string name="bus_route_info_error">加载公交路线信息失败。</string>
     <string name="bus_timetable_error">加载公交时刻表失败。</string>
@@ -578,12 +535,6 @@
     <string name="shuttle_via_title">按车辆查看路线</string>
     <string name="bus_timetable_empty">该路线不提供时刻表。</string>
     <string name="bus_stop_gwangmyeong_station">光明站</string>
-    <string name="shuttle_via_format_6_stops">%1$s▶%2$s▶%3$s▶%4$s▶%5$s▶%6$s</string>
-    <string name="shuttle_via_format_5_stops">%1$s▶%2$s▶%3$s▶%4$s▶%5$s</string>
-    <string name="shuttle_via_format_4_stops">%1$s▶%2$s▶%3$s▶%4$s</string>
-    <string name="shuttle_via_format_3_stops">%1$s▶%2$s▶%3$s</string>
-    <string name="shuttle_via_format_2_stops">%1$s▶%2$s</string>
-    <string name="shuttle_via_format_1_stop">%1$s</string>
     <string name="previous_day">上一天</string>
     <string name="next_day">下一天</string>
     <string name="show_by_destination">目的地/时间顺序</string>
@@ -708,7 +659,6 @@
     <string name="bus_help_departure_title">4. 查看路线公交出发时刻</string>
     <string name="bus_help_departure_content">提供京畿道提供的各路线站点通过时间。即使没有实时到达信息，也可作为参考估算公交到达时间。</string>
     <string name="bus_stop_info_title">站点信息</string>
-    <string name="bus_stop_info_empty">无法加载站点信息。</string>
     <string name="bus_stop_info_error">信息加载失败。</string>
     <string name="bus_first_last_up">上行: 首班 %1$s / 末班 %2$s</string>
     <string name="bus_first_last_down">下行: 首班 %1$s / 末班 %2$s</string>
@@ -724,19 +674,11 @@
     <string name="shuttle_alarm_alighting_live_arrival">%1$s 到达</string>
     <string name="shuttle_alarm_alighting_tracking">正在确认距离</string>
     <string name="shuttle_alarm_boarding_initial">%1$d分钟后出发</string>
-    <string name="shuttle_alarm_boarding_initial_checkpoint">%1$d分钟后出发 · 已经过%2$s</string>
-    <string name="shuttle_alarm_boarding_content">%1$d分钟 · %2$s方向 %3$s</string>
-    <string name="shuttle_alarm_boarding_content_checkpoint">%1$d分钟 · 已经过%2$s · %3$s方向 %4$s</string>
-    <string name="shuttle_alarm_boarding_short">%1$d分钟</string>
     <string name="shuttle_alarm_checkpoint_waiting">%1$s等待</string>
     <string name="shuttle_alarm_checkpoint_departed">%1$s出发</string>
     <string name="shuttle_alarm_checkpoint_approaching">接近%1$s</string>
-    <string name="shuttle_alarm_now">已到上车时间。</string>
     <string name="shuttle_alarm_alighting_title">校车下车提醒</string>
-    <string name="shuttle_alarm_alighting_preparing">正在监控下车站</string>
     <string name="shuttle_alarm_alighting_content">距站点约%1$s</string>
-    <string name="shuttle_alarm_alighting_checkpoint_distance">%1$s，距%2$s %3$s</string>
-    <string name="shuttle_alarm_alighting_checkpoint_tracking">%1$s，正在确认到%2$s的距离</string>
     <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">追踪中</string>
     <string name="shuttle_alarm_alighting_alert_title">请准备下车！</string>

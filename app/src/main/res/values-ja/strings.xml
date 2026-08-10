@@ -8,7 +8,6 @@
     <string name="shuttle_bus">シャトルバス</string>
     <string name="bus">路線バス</string>
     <string name="tabbar_bus">バス</string>
-    <string name="tabbar_more">もっと見る</string>
     <string name="tabbar_campus">キャンパス</string>
     <string name="home_hero_title">今必要なものだけ</string>
     <string name="home_hero_subtitle">移動から食事まで、今の状況に合う情報を表示します。</string>
@@ -34,7 +33,6 @@
     <string name="home_weather_confidence_low">予報が変わる可能性があります</string>
     <string name="home_weather_attribution">Open-Meteo ↗</string>
     <string name="home_movement_title">今すぐ移動</string>
-    <string name="home_movement_detail">シャトル詳細</string>
     <string name="home_movement_timetable">全時刻表</string>
     <string name="home_departure_selector_description">出発停留所を選択：%1$s</string>
     <string name="home_destination_summary">%1$s方面</string>
@@ -42,8 +40,6 @@
     <string name="home_quick_settings_action_bar_title">ホームの表示を調整できます</string>
     <string name="home_quick_settings_button">設定</string>
     <string name="home_quick_settings_title">設定</string>
-    <string name="home_quick_settings_legacy_title">以前のシャトル画面</string>
-    <string name="home_quick_settings_legacy_subtitle">到着情報と時刻表を確認します。</string>
     <string name="home_quick_settings_legacy_button">以前のシャトル画面</string>
     <string name="home_quick_settings_bus50_transfer_title">50番乗り換えを表示</string>
     <string name="home_quick_settings_bus50_transfer_subtitle">芸術人から光明駅へ向かう50番の到着情報を表示します。</string>
@@ -55,15 +51,9 @@
     <string name="home_quick_settings_subway_destination_oido">烏耳島</string>
     <string name="home_quick_settings_subway_destination_sosa">一山・富川</string>
     <string name="home_transfer_bus50_badge">50番</string>
-    <string name="home_transfer_bus50_title">%1$s 到着予定</string>
-    <string name="home_transfer_bus50_subtitle">芸術人でバスに乗り換え</string>
-    <string name="home_transfer_buffer">+%1$d分</string>
     <string name="home_transfer_subway_suin_bundang_badge">水仁盆唐</string>
     <string name="home_transfer_subway_seohae_badge">西海線</string>
     <string name="home_transfer_subway_title">%1$s 行き</string>
-    <string name="home_transfer_subway_subtitle">韓大前で地下鉄に乗り換え</string>
-    <string name="home_transfer_subway_oido_subtitle">烏耳島駅で地下鉄に乗り換え</string>
-    <string name="home_transfer_subway_choji_subtitle">草芝駅で地下鉄に乗り換え</string>
     <string name="home_transfer_bus50_connector">芸術人</string>
     <string name="home_transfer_wait_minutes">待ち時間%1$d分</string>
     <string name="home_transfer_wait_immediate">すぐ乗車</string>
@@ -88,15 +78,12 @@
     <string name="home_destination_terminal">ターミナル</string>
     <string name="home_destination_jungang">中央駅</string>
     <string name="home_destination_dormitory">寮</string>
-    <string name="home_route_format">%1$s ▶ %2$s</string>
     <string name="home_departure_format">%1$s 発</string>
     <string name="home_minutes">%1$d分</string>
     <string name="home_check">確認</string>
     <string name="home_shuttle_last_run_subtitle">終車 · %1$s</string>
     <string name="home_no_data_title">今乗れるシャトルがありません</string>
     <string name="home_no_data_message">しばらくしてから再確認するか、下の代替ルートを確認してください。</string>
-    <string name="home_bus_title_format">%1$s番バス</string>
-    <string name="home_bus_subtitle_format">%1$s 停留所</string>
     <string name="home_alt_bus_direction">%1$s方面</string>
     <string name="home_alt_dormitory_nearby">漢陽大寄宿舎前</string>
     <string name="home_alt_gyeonggi_technopark">京畿テクノパーク</string>
@@ -114,7 +101,6 @@
     <string name="home_meal_dinner">夕食</string>
     <string name="home_meal_period_selector_description">食事時間帯を選択：%1$s</string>
     <string name="home_meal_tomorrow_format">明日の%1$s</string>
-    <string name="home_meal_tomorrow_breakfast">明日の朝食</string>
     <string name="home_meal_empty_title">%1$sメニューがありません</string>
     <string name="home_meal_empty_message">全ての学食で他の時間帯のメニューを確認できます。</string>
     <string name="shuttle_tab_dormitory_out">寮</string>
@@ -134,11 +120,8 @@
     <string name="shuttle_footer_entire_timetable_jungang_station">全時刻表 (中央駅)</string>
     <string name="shuttle_footer_stop_info">停留所位置 &amp; 始発/終発</string>
     <string name="shuttle_footer_help">ヘルプ</string>
-    <string name="shuttle_action_bar_title">シャトル表示オプション</string>
     <string name="shuttle_quick_settings_button">設定</string>
     <string name="shuttle_quick_settings_title">設定</string>
-    <string name="shuttle_quick_settings_arrival_by_time_subtitle">残り時間でシャトル到着を表示します。</string>
-    <string name="shuttle_quick_settings_departure_time_subtitle">出発時刻でシャトル時刻を表示します。</string>
     <string name="shuttle_quick_settings_presence_title">一緒に見ている人を表示</string>
     <string name="shuttle_quick_settings_presence_subtitle">同じ停留所の情報を見ている人数を表示します。</string>
     <string name="shuttle_quick_settings_section_display">シャトル表示</string>
@@ -153,14 +136,6 @@
     <string name="shuttle_quick_settings_alternative_mode_hidden">非表示</string>
     <string name="shuttle_connection_transfer_format">%1$sで乗り換え</string>
     <string name="shuttle_presence_viewer_count">%1$d人が一緒に閲覧中</string>
-    <string name="shuttle_display_order_title">表示順</string>
-    <string name="shuttle_display_order_subtitle">シャトル到着を時間順または行先別に整理します。</string>
-    <string name="shuttle_display_time_order">時間順</string>
-    <string name="shuttle_display_destination_order">行先別</string>
-    <string name="shuttle_time_display_title">時刻表示</string>
-    <string name="shuttle_time_display_subtitle">シャトル時刻を残り時間または出発時刻で表示します。</string>
-    <string name="shuttle_time_remaining">残り時間</string>
-    <string name="shuttle_time_departure">出発時刻</string>
     <string name="home_experience_new">新しいホームを体験</string>
     <string name="shuttle_no_realtime_data">到着予定のシャトルバスはありません。</string>
     <string name="shuttle_time_type_1">%1$s時%2$s分発</string>
@@ -185,7 +160,6 @@
     <string name="shuttle_type_dormitory_direct">寮（直行）</string>
     <string name="shuttle_type_shuttlecock_circular">シャトルコック（循環）</string>
     <string name="shuttle_type_dormitory_circular">寮（循環）</string>
-    <string name="shuttle_type_jungang_circular">寮（中央駅）</string>
     <string name="shuttle_type_shuttlecock_finishing">Shuttlecock (終着)</string>
     <string name="shuttle_first_last_time_title">始発 &amp; 終発</string>
     <string name="shuttle_first_last_time_no_data_weekdays">--:--（平日）</string>
@@ -258,7 +232,6 @@
         <item quantity="one">%1$d分（%2$d前）</item>
         <item quantity="other">%1$d分（%2$d前）</item>
     </plurals>
-    <string name="bus_timetable_format">%1$s時%2$s分発</string>
     <plurals name="bus_realtime_format_seats_last">
         <item quantity="one">%1$d分（%2$d前、%3$d席、終バス）</item>
         <item quantity="other">%1$d分（%2$d前、%3$d席、終バス）</item>
@@ -267,7 +240,6 @@
         <item quantity="one">%1$d分（%2$d前、終バス）</item>
         <item quantity="other">%1$d分（%2$d前、終バス）</item>
     </plurals>
-    <string name="bus_timetable_format_last">%1$s時%2$s分発（終バス）</string>
     <string name="bus_arrival_estimated_format">%1$d分（予定）</string>
     <string name="bus_arrival_secondary_format">" ▶ %1$s到着"</string>
     <string name="bus_no_realtime_data">到着予定のバスはありません。</string>
@@ -302,15 +274,12 @@
     <string name="subway_blue_down">4号線 (安山・オイド)</string>
     <string name="subway_yellow_up">水仁線 (水原)</string>
     <string name="subway_yellow_down">水仁線 (仁川)</string>
-    <string name="subway_transfer_up">仁川▶韓大前</string>
-    <string name="subway_transfer_down">韓大前▶仁川</string>
     <string name="subway_transfer_incheon_oido">仁川・烏耳島</string>
     <string name="subway_transfer_ilsan_bucheon">一山・富川</string>
     <plurals name="subway_transfer_up_item_format">
         <item quantity="one">[%1$s行] %2$s\n▶ [%3$s行] %4$d分後（五耳島）</item>
         <item quantity="other">[%1$s行] %2$s\n▶ [%3$s行] %4$d分後（五耳島）</item>
     </plurals>
-    <string name="subway_transfer_up_item_format_no_transfer">[%1$s行] %2$s</string>
     <plurals name="subway_transfer_down_item_format">
         <item quantity="one">[%1$s行] %2$d分後（%3$s）\n▶ [%4$s行] %5$d分後（五耳島）</item>
         <item quantity="other">[%1$s行] %2$d分後（%3$s）\n▶ [%4$s行] %5$d分後（五耳島）</item>
@@ -335,7 +304,6 @@
         <item quantity="one">%1$d分待ち</item>
         <item quantity="other">%1$d分待ち</item>
     </plurals>
-    <string name="subway_no_realtime_data">到着予定の電鉄情報がありません。</string>
     <string name="subway_realtime_destination_format">%1$s行</string>
     <string name="subway_realtime_destination_format_last">%1$s行（終電）</string>
     <plurals name="subway_realtime_format">
@@ -456,16 +424,12 @@
     <string name="menu_chat">お問い合わせ</string>
     <string name="menu_donate">寄付する</string>
     <string name="inquiry_title">お問い合わせ</string>
-    <string name="inquiry_short">問い合わせ</string>
     <string name="inquiry_input_hint">メッセージを入力してください</string>
     <string name="inquiry_send">送信</string>
     <string name="inquiry_empty">まだ会話がありません。ご質問をお気軽にどうぞ。</string>
     <string name="inquiry_read">既読</string>
     <string name="inquiry_load_failed">会話を読み込めませんでした。</string>
     <string name="menu_review">アプリ評価</string>
-    <string name="menu_section_school_life">学校生活</string>
-    <string name="menu_section_support">サポート・設定</string>
-    <string name="menu_section_external">外部リンク</string>
     <string name="menu_map">キャンパスマップ</string>
     <string name="campus_tools_title">キャンパスツール</string>
     <string name="campus_tools_subtitle">学校生活に必要な機能をすばやく見つけられます。</string>
@@ -490,7 +454,6 @@
     <string name="reading_room_alarm_3_hour">3時間後に通知</string>
     <string name="reading_room_alarm_4_hour">4時間後に通知</string>
     <string name="reading_room_alarm_cancel">通知をキャンセル</string>
-    <string name="reading_room_seat_format">%1$d/%2$d 席</string>
     <string name="reading_room_available_seat_format">残り %1$d 席 · 全 %2$d 席</string>
     <string name="reading_room_full_seat_format">満席 · 全 %1$d 席</string>
     <string name="default_notification_channel_id">HYUabot notification channel ID</string>
@@ -522,11 +485,9 @@
     <string name="reading_room_extend_noti_content">閲覧室の利用時間が10分後に終了します。延長が必要な場合はご確認ください。</string>
     <string name="reading_room_alarm_extend">閲覧室延長通知です！</string>
     <string name="reading_room_alarm_format">%1$s に通知が設定されています</string>
-    <string name="shuttle_realtime_location_error">最寄りバス停の取得に失敗しました。</string>
     <string name="campus_settings">キャンパス設定</string>
     <string name="language_settings">言語設定</string>
     <string name="theme_settings">テーマ設定</string>
-    <string name="theme_settings_description">テーマを選択してください。</string>
     <string name="theme_light">ライト</string>
     <string name="theme_dark">ダーク</string>
     <string name="theme_system">システム</string>
@@ -547,21 +508,17 @@
     <string name="open_source_licenses_description">アプリで使用しているオープンソースソフトウェアを確認します。</string>
     <string name="developer_name">開発者: イ・ジョンイン</string>
     <string name="developer_belong">所属: ソフトウェア学部 17期</string>
-    <string name="contact_loading">連絡先リストを読み込み中…</string>
     <string name="contact_search_guide">名前 / 電話番号を検索</string>
     <string name="month_header">%1$d年%2$d月</string>
-    <string name="event_date_format">%1$d月%2$d日</string>
     <string name="event_date_range_format">%1$d月%2$d日 〜 %3$d月%4$d日</string>
     <string name="calendar_select_date_hint">日付をタップすると日程が表示されます</string>
     <string name="calendar_upcoming_empty">今後の予定はありません</string>
     <string name="calendar_previous_month">前の月</string>
     <string name="calendar_next_month">次の月</string>
     <string name="calendar_event_ongoing">進行中</string>
-    <string name="calendar_loading">学事暦を読み込み中です。</string>
     <string name="do_not_show_again_this_year">今年は表示しない</string>
     <string name="dialog_title">開発者の誕生日のお知らせ</string>
     <string name="dialog_message">本日（12/12）は開発者の誕生日です。\n\nいつもご利用いただきありがとうございます。より良いサービスを提供できるよう努力してまいります。\n\nありがとうございます。</string>
-    <string name="bus_departure_log_error">到着記録の読み込みに失敗しました。</string>
     <string name="bus_realtime_error">バス到着情報の読み込みに失敗しました。</string>
     <string name="bus_route_info_error">バス路線情報の読み込みに失敗しました。</string>
     <string name="bus_timetable_error">バス時刻表の読み込みに失敗しました。</string>
@@ -578,12 +535,6 @@
     <string name="shuttle_via_title">車両別経路</string>
     <string name="bus_timetable_empty">時刻表が提供されていない路線です。</string>
     <string name="bus_stop_gwangmyeong_station">光明駅</string>
-    <string name="shuttle_via_format_6_stops">%1$s▶%2$s▶%3$s▶%4$s▶%5$s▶%6$s</string>
-    <string name="shuttle_via_format_5_stops">%1$s▶%2$s▶%3$s▶%4$s▶%5$s</string>
-    <string name="shuttle_via_format_4_stops">%1$s▶%2$s▶%3$s▶%4$s</string>
-    <string name="shuttle_via_format_3_stops">%1$s▶%2$s▶%3$s</string>
-    <string name="shuttle_via_format_2_stops">%1$s▶%2$s</string>
-    <string name="shuttle_via_format_1_stop">%1$s</string>
     <string name="previous_day">前へ</string>
     <string name="next_day">次へ</string>
     <string name="show_by_destination">目的地/時間順</string>
@@ -708,7 +659,6 @@
     <string name="bus_help_departure_title">4. 路線バス出発時刻の確認</string>
     <string name="bus_help_departure_content">京畿道が提供する各路線の停留所通過時間を提供します。リアルタイム到着情報がない場合でも、バス到着時間の目安として参考にできます。</string>
     <string name="bus_stop_info_title">停留所情報</string>
-    <string name="bus_stop_info_empty">停留所情報を読み込めません。</string>
     <string name="bus_stop_info_error">情報の読み込みに失敗しました。</string>
     <string name="bus_first_last_up">上り: 始発 %1$s / 終バス %2$s</string>
     <string name="bus_first_last_down">下り: 始発 %1$s / 終バス %2$s</string>
@@ -724,19 +674,11 @@
     <string name="shuttle_alarm_alighting_live_arrival">%1$s 到着</string>
     <string name="shuttle_alarm_alighting_tracking">距離確認中</string>
     <string name="shuttle_alarm_boarding_initial">%1$d分後に出発</string>
-    <string name="shuttle_alarm_boarding_initial_checkpoint">%1$d分後に出発 · %2$s通過</string>
-    <string name="shuttle_alarm_boarding_content">%1$d分 · %2$s方向 %3$s</string>
-    <string name="shuttle_alarm_boarding_content_checkpoint">%1$d分 · %2$s通過 · %3$s方向 %4$s</string>
-    <string name="shuttle_alarm_boarding_short">%1$d分</string>
     <string name="shuttle_alarm_checkpoint_waiting">%1$s待機</string>
     <string name="shuttle_alarm_checkpoint_departed">%1$s出発</string>
     <string name="shuttle_alarm_checkpoint_approaching">%1$s接近</string>
-    <string name="shuttle_alarm_now">乗車時刻です。</string>
     <string name="shuttle_alarm_alighting_title">シャトルバス降車アラート</string>
-    <string name="shuttle_alarm_alighting_preparing">降車停留所を監視中</string>
     <string name="shuttle_alarm_alighting_content">停留所まで約%1$s</string>
-    <string name="shuttle_alarm_alighting_checkpoint_distance">%1$s、%2$sまで%3$s</string>
-    <string name="shuttle_alarm_alighting_checkpoint_tracking">%1$s、%2$sまでの距離を確認中</string>
     <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">追跡中</string>
     <string name="shuttle_alarm_alighting_alert_title">降車準備をしてください！</string>
