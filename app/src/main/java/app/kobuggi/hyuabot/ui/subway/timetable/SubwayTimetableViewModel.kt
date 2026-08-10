@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.SubwayTimetablePageQuery
+import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.FetchPolicy
@@ -26,7 +27,13 @@ class SubwayTimetableViewModel @Inject constructor(private val apolloClient: Apo
     fun fetchData(stationID: String, heading: String) {
         _heading.value = heading
         viewModelScope.launch {
-            val response = apolloClient.query(SubwayTimetablePageQuery(stationID, listOf(heading))).fetchPolicy(FetchPolicy.CacheFirst).execute()
+            val response = apolloClient.query(
+                SubwayTimetablePageQuery(
+                    stationID,
+                    listOf(heading),
+                    DynamicTextTranslator.currentAppLanguageTag(),
+                ),
+            ).fetchPolicy(FetchPolicy.CacheFirst).execute()
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.subway != null) {

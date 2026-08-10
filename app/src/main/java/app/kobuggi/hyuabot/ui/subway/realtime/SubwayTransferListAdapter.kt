@@ -20,7 +20,7 @@ class SubwayTransferListAdapter(
         fun bind(transfer: SubwayTransferItem) {
             binding.firstDestinationText.text = context.getString(
                 R.string.subway_transfer_destination_format,
-                getTerminalString(transfer.take.terminal.stationID)
+                transfer.take.terminal.name
             )
             binding.firstTimeText.text = minutesAfter(transfer.take.minutes)
             binding.firstMetaText.text = if (transfer.transfer == null) {
@@ -50,7 +50,7 @@ class SubwayTransferListAdapter(
             )
             binding.secondDestinationText.text = context.getString(
                 R.string.subway_transfer_destination_format,
-                getTerminalString(secondLeg.terminal.stationID)
+                secondLeg.terminal.name
             )
             binding.secondTimeText.text = minutesAfter(secondLeg.minutes)
             binding.secondLineIndicator.backgroundTintList = ColorStateList.valueOf(getLineColor(secondLeg.terminal.stationID))
@@ -72,29 +72,6 @@ class SubwayTransferListAdapter(
     fun updateData(newArrivals: List<SubwayTransferItem>) {
         arrivals = newArrivals
         notifyDataSetChanged()
-    }
-
-    private fun getTerminalString(terminal: String): String {
-        return when (terminal) {
-            "K209" -> context.getString(R.string.subway_station_K209)
-            "K210" -> context.getString(R.string.subway_station_K210)
-            "K233" -> context.getString(R.string.subway_station_K233)
-            "K246" -> context.getString(R.string.subway_station_K246)
-            "K258" -> context.getString(R.string.subway_station_K258)
-            "K272" -> context.getString(R.string.subway_station_K272)
-            "K409" -> context.getString(R.string.subway_station_K409)
-            "K411" -> context.getString(R.string.subway_station_K411)
-            "K419" -> context.getString(R.string.subway_station_K419)
-            "K433" -> context.getString(R.string.subway_station_K433)
-            "K443" -> context.getString(R.string.subway_station_K443)
-            "K444" -> context.getString(R.string.subway_station_K444)
-            "K453" -> context.getString(R.string.subway_station_K453)
-            "K456" -> context.getString(R.string.subway_station_K456)
-            "S07" -> context.getString(R.string.subway_station_S07)
-            "S11" -> context.getString(R.string.subway_station_S11)
-            "S16" -> context.getString(R.string.subway_station_S16)
-            else -> terminal
-        }
     }
 
     private fun getTransferStationString(): String {
