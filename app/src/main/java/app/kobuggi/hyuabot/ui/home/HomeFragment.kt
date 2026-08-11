@@ -214,6 +214,7 @@ class HomeFragment : Fragment() {
             }
             if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_SEOUL_BUS_STOP)) {
                 showHomeSeoulBusStop = result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_SEOUL_BUS_STOP)
+                renderBusHomePreview(viewModel.data.value)
             }
             if (result.containsKey(HomeQuickSettingsDialog.KEY_SEOUL_BUS_STOP)) {
                 selectedHomeSeoulBusStop = BusSeoulTargetStop.from(
@@ -672,7 +673,9 @@ class HomeFragment : Fragment() {
                 }
                 requests.flatMap { (routeSeq, stopSeq) -> data.bus.filter { it.route.seq == routeSeq && it.stop.seq == stopSeq } }
             }
-            HomeBusGroup.KITECH -> data.bus.filter { it.stop.seq == 216000381 && it.route.seq == 216000061 }
+            HomeBusGroup.KITECH -> data.bus.filter {
+                it.stop.seq == 216000381 && it.route.seq in setOf(216000068, 216000061)
+            }
             HomeBusGroup.DORMITORY -> data.bus.filter {
                 it.stop.seq == 216000383 && it.route.seq in setOf(216000068, 216000061)
             }
@@ -697,7 +700,7 @@ class HomeFragment : Fragment() {
                 216000104 to 216000141,
                 200000015 to 216000141,
             )
-        } else if (group == HomeBusGroup.DORMITORY) {
+        } else if (group == HomeBusGroup.DORMITORY || group == HomeBusGroup.KITECH) {
             mapOf(
                 216000068 to 216000138,
                 216000061 to selectedHomeSeoulBusStop.stopID,
@@ -746,7 +749,7 @@ class HomeFragment : Fragment() {
         } else {
             allLiveArrivals.sortedBy { it.second }
         }
-        val liveArrivals = if (group == HomeBusGroup.DORMITORY) {
+        val liveArrivals = if (group == HomeBusGroup.DORMITORY || group == HomeBusGroup.KITECH) {
             sortedLiveArrivals
                 .groupBy { it.first.route.seq }
                 .values
@@ -767,30 +770,37 @@ class HomeFragment : Fragment() {
             val arrivalMinutes = minutes ?: return@forEachIndexed
             val (stops, seats, isRealtime) = stopData
             val route = item.route.name
-            val destinationEta = destinationArrivalTime(
-                route,
-                LocalTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(arrivalMinutes.toLong()),
-                item,
-                destinationItems[item.route.seq],
-            )
+            val showsDestinationEta = showsHomeBusDestinationEta(group, item.route.seq)
+            val destinationEta = if (showsDestinationEta) {
+                destinationArrivalTime(
+                    route,
+                    LocalTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(arrivalMinutes.toLong()),
+                    item,
+                    destinationItems[item.route.seq],
+                )
+            } else {
+                null
+            }
             val subtitle = if (isRealtime && seats != null && seats >= 0) {
-                getString(
+                if (destinationEta != null) getString(
                     R.string.home_bus_stops_seats_and_destination_eta,
                     stops ?: index + 2,
                     seats,
                     destinationEta,
-                )
+                ) else getString(R.string.home_bus_stops_and_seats, stops ?: index + 2, seats)
             } else if (isRealtime && stops != null) {
-                getString(
+                if (destinationEta != null) getString(
                     R.string.home_bus_stops_and_destination_eta,
                     stops,
                     destinationEta,
-                )
+                ) else getString(R.string.home_bus_stops_away, stops)
             } else {
-                getString(
+                destinationEta?.let {
+                    getString(
                     R.string.home_bus_destination_eta,
-                    destinationEta,
-                )
+                        it,
+                    )
+                }.orEmpty()
             }
             addHomeRow(
                 binding.busHomeContainer,
@@ -821,7 +831,7 @@ class HomeFragment : Fragment() {
                     } else items.sortedBy { it.second }
                 }
                 .let { items ->
-                    if (group == HomeBusGroup.DORMITORY) {
+                    if (group == HomeBusGroup.DORMITORY || group == HomeBusGroup.KITECH) {
                         items.groupBy { it.first.route.seq }
                             .values
                             .mapNotNull { it.minByOrNull { entry -> entry.second } }
@@ -855,21 +865,24 @@ class HomeFragment : Fragment() {
                 .take(missingCount)
                 .forEach { (item, time) ->
                     val minutesToStop = Duration.between(now, time).toMinutes().toInt()
-                    val destinationEta = destinationArrivalTime(
-                        item.route.name,
-                        time,
-                        item,
-                        destinationItems[item.route.seq],
-                    )
+                    val destinationEta = if (showsHomeBusDestinationEta(group, item.route.seq)) {
+                        destinationArrivalTime(
+                            item.route.name,
+                            time,
+                            item,
+                            destinationItems[item.route.seq],
+                        )
+                    } else {
+                        null
+                    }
                     addHomeRow(
                         binding.busHomeContainer,
                         HomeRow(
                             badge = item.route.name,
                             title = homeBusStopName(item.stop.seq, item.stop.name),
-                            subtitle = getString(
-                                R.string.home_bus_destination_eta,
-                                destinationEta,
-                            ),
+                            subtitle = destinationEta?.let {
+                                getString(R.string.home_bus_destination_eta, it)
+                            }.orEmpty(),
                             trailing = time.format(DateTimeFormatter.ofPattern("HH:mm")),
                             tint = requireContext().getColor(busHomeRouteColor(item.route.name)),
                         ),
@@ -882,6 +895,17 @@ class HomeFragment : Fragment() {
                 getString(R.string.home_bus_no_arrivals),
                 getString(R.string.home_bus_no_arrivals_message),
             )
+        }
+    }
+
+    private fun showsHomeBusDestinationEta(group: HomeBusGroup, routeSeq: Int): Boolean {
+        if (showHomeSeoulBusStop) return true
+        return when (group) {
+            HomeBusGroup.CAMPUS -> selectedBusHomeDestination != BusHomeDestination.GANGNAM ||
+                routeSeq !in setOf(216000061, 216000096)
+            HomeBusGroup.KITECH,
+            HomeBusGroup.DORMITORY -> routeSeq != 216000061
+            else -> true
         }
     }
 
