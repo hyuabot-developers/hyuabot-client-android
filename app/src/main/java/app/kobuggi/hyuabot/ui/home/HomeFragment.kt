@@ -899,14 +899,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showsHomeBusDestinationEta(group: HomeBusGroup, routeSeq: Int): Boolean {
-        if (showHomeSeoulBusStop) return true
-        return when (group) {
-            HomeBusGroup.CAMPUS -> selectedBusHomeDestination != BusHomeDestination.GANGNAM ||
-                routeSeq !in setOf(216000061, 216000096)
-            HomeBusGroup.KITECH,
-            HomeBusGroup.DORMITORY -> routeSeq != 216000061
-            else -> true
-        }
+        return showHomeSeoulBusStop
     }
 
     private fun selectBusHomeGroup(location: Location, data: HomePageQuery.Data?) {
