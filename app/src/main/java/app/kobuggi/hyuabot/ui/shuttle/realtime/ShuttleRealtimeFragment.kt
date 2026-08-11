@@ -277,6 +277,21 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        hasRequestedInitialStopLocation = false
+        binding.viewPager.post {
+            if (
+                isAdded &&
+                view != null &&
+                !honorDeepLinkStop &&
+                !hasManualStopSelection &&
+                viewModel.result.value?.isNotEmpty() == true
+            ) {
+                moveToInitialStop(
+                    LocationServices.getFusedLocationProviderClient(requireActivity()),
+                    viewModel.result.value.orEmpty(),
+                )
+            }
+        }
         viewModel.start()
         manuallyScrolled = false
         scheduleNoticeAutoScroll()

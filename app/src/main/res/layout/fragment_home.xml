@@ -263,6 +263,70 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/bus_home_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/home_card_background"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_card_stroke"
+                    app:strokeWidth="0.5dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingTop="18dp"
+                        android:paddingBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_marginEnd="10dp"
+                                android:contentDescription="@string/bus"
+                                android:src="@drawable/ic_home_movement"
+                                app:tint="@color/plain_button_text" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/bus_home_title"
+                                style="@style/Widget.App.HomeSelectorButton"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="@string/home_bus_destination_preview"
+                                app:icon="@drawable/ic_chevron_down"
+                                app:iconGravity="textEnd" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/bus_home_detail"
+                                style="@style/Widget.App.HomeHeaderButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:text="@string/home_bus_detail"
+                                app:icon="@drawable/ic_chevron_right"
+                                app:iconGravity="textEnd"
+                                app:iconPadding="2dp"
+                                app:iconTint="@color/home_detail_button_text" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/bus_home_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"

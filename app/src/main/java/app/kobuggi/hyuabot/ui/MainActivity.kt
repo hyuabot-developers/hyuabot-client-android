@@ -477,6 +477,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 showBus50Transfer = true,
                 showSubwayTransfer = true,
                 subwayTransferDestination = HomeSubwayTransferDestination.SEOUL,
+                showSeoulBusStop = true,
+                seoulBusStop = BusSeoulTargetStop.GANGNAM,
             ).show(supportFragmentManager, "debug-home-quick-settings")
 
             "bus-quick-settings" -> BusQuickSettingsDialog.newInstance(

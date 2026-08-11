@@ -50,6 +50,9 @@ import app.kobuggi.hyuabot.databinding.FragmentHomeBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
 import app.kobuggi.hyuabot.ui.MainActivity
+import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
+import app.kobuggi.hyuabot.ui.bus.realtime.BusTravelTimeEstimator
+import app.kobuggi.hyuabot.ui.bus.realtime.LogEntry
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
@@ -70,6 +73,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 import java.time.format.FormatStyle
 import java.util.Date
 import kotlin.math.ceil
@@ -81,6 +85,12 @@ class HomeFragment : Fragment() {
     private val homeTypeface by lazy { ResourcesCompat.getFont(requireContext(), R.font.godo) }
     private var selectedDeparture = HomeDeparture.DORMITORY
     private var selectedDestination = HomeDestination.STATION
+    private var selectedBusHomeDestination = BusHomeDestination.GANGNAM
+    private var selectedBusHomeGroup: HomeBusGroup? = null
+    private var selectedBusHomeStopSeq: Int? = null
+    private var lastHomeLocation: Location? = null
+    private var showHomeSeoulBusStop = true
+    private var selectedHomeSeoulBusStop = BusSeoulTargetStop.GANGNAM
     private var hasResolvedInitialDepartureLocation = false
     private var lockDepartureSelection = false
     private var isDepartureManuallySelected = false
@@ -146,6 +156,14 @@ class HomeFragment : Fragment() {
         binding.mealTitle.setOnClickListener {
             showMealPeriodMenu()
         }
+        binding.busHomeTitle.setOnClickListener {
+            if (binding.busHomeTitle.isEnabled) {
+                showBusHomeDestinationMenu()
+            }
+        }
+        binding.busHomeDetail.setOnClickListener {
+            findNavController().navigate(R.id.busRealtimeFragment)
+        }
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
             AnalyticsManager.logSelect(AnalyticsItem.HOME_REFRESH)
             refreshHome()
@@ -194,6 +212,15 @@ class HomeFragment : Fragment() {
                     HomeSubwayTransferDestination.from(result.getString(HomeQuickSettingsDialog.KEY_SUBWAY_TRANSFER_DESTINATION)),
                 )
             }
+            if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_SEOUL_BUS_STOP)) {
+                showHomeSeoulBusStop = result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_SEOUL_BUS_STOP)
+            }
+            if (result.containsKey(HomeQuickSettingsDialog.KEY_SEOUL_BUS_STOP)) {
+                selectedHomeSeoulBusStop = BusSeoulTargetStop.from(
+                    result.getString(HomeQuickSettingsDialog.KEY_SEOUL_BUS_STOP),
+                )
+                renderBusHomePreview(viewModel.data.value)
+            }
         }
         binding.mealDetail.setOnClickListener {
             AnalyticsManager.logSelect(AnalyticsItem.HOME_OPEN_CAFETERIA)
@@ -215,6 +242,7 @@ class HomeFragment : Fragment() {
         viewModel.data.observe(viewLifecycleOwner) {
             binding.homeSwipeRefreshLayout.isRefreshing = false
             renderNotices(it)
+            lastHomeLocation?.let { location -> selectBusHomeGroup(location, it) }
             render(it)
         }
         viewModel.initialStopRules.observe(viewLifecycleOwner) { rules ->
@@ -266,6 +294,8 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.startPresenceUpdates()
+        hasResolvedInitialDepartureLocation = false
+        refreshHome()
         refreshHandler.removeCallbacks(autoRefreshRunnable)
         refreshHandler.postDelayed(autoRefreshRunnable, AUTO_REFRESH_INTERVAL_MILLIS)
         scheduleNoticeAutoScroll()
@@ -396,6 +426,20 @@ class HomeFragment : Fragment() {
         popup.show()
     }
 
+    private fun showBusHomeDestinationMenu() {
+        val popup = PopupMenu(requireContext(), binding.busHomeTitle)
+        BusHomeDestination.entries.forEachIndexed { index, destination ->
+            popup.menu.add(0, index + 1, index, destination.titleRes)
+        }
+        popup.setOnMenuItemClickListener { item ->
+            selectedBusHomeDestination = BusHomeDestination.entries.getOrNull(item.itemId - 1)
+                ?: return@setOnMenuItemClickListener false
+            renderBusHomePreview(viewModel.data.value)
+            true
+        }
+        popup.show()
+    }
+
     private fun ensureDestinationButtons(visibleDestinations: List<HomeDestination>) {
         binding.destinationGroup.removeAllViews()
         val buttonContext = ContextThemeWrapper(requireContext(), R.style.Widget_App_HomeSegmentButton)
@@ -503,6 +547,8 @@ class HomeFragment : Fragment() {
         resolvedRules: List<ShuttleInitialStopRuleCandidate>? = null,
     ) {
         if (!isAdded || view == null) return
+        lastHomeLocation = location
+        selectBusHomeGroup(location, viewModel.data.value)
         if (lockDepartureSelection || isDepartureManuallySelected) return
         pendingDepartureLocation = location
         val rules = resolvedRules ?: viewModel.initialStopRules.value ?: return
@@ -549,6 +595,8 @@ class HomeFragment : Fragment() {
             showBus50Transfer = viewModel.showBus50Transfer.value ?: true,
             showSubwayTransfer = viewModel.showSubwayTransfer.value ?: true,
             subwayTransferDestination = selectedSubwayTransferDestination(),
+            showSeoulBusStop = showHomeSeoulBusStop,
+            seoulBusStop = selectedHomeSeoulBusStop,
         ).show(childFragmentManager, HOME_QUICK_SETTINGS_TAG)
     }
 
@@ -587,7 +635,350 @@ class HomeFragment : Fragment() {
         )
         binding.mealIcon.setImageResource(mealPeriod.iconRes)
         renderMovement(data)
+        renderBusHomePreview(data)
         renderMeals(data)
+    }
+
+    /** Temporary visual preview for the new home bus card. Live group data follows next. */
+    private fun renderBusHomePreview(data: HomePageQuery.Data?) {
+        val group = selectedBusHomeGroup
+        binding.busHomeCard.visibility = if (data == null || group == null) View.GONE else View.VISIBLE
+        if (data == null || group == null) return
+        binding.busHomeContainer.removeAllViews()
+        val title = if (group == HomeBusGroup.CAMPUS) {
+            getString(selectedBusHomeDestination.titleRes)
+        } else {
+            data.bus.firstOrNull { it.stop.seq == selectedBusHomeStopSeq }?.stop?.name
+                ?: getString(selectedBusHomeDestination.titleRes)
+        }
+        binding.busHomeTitle.text = title
+        val canChangeBusDestination = group == HomeBusGroup.CAMPUS
+        binding.busHomeTitle.isEnabled = canChangeBusDestination
+        binding.busHomeTitle.isClickable = canChangeBusDestination
+        binding.busHomeTitle.icon = if (canChangeBusDestination) {
+            ContextCompat.getDrawable(requireContext(), R.drawable.ic_chevron_down)
+        } else {
+            null
+        }
+        val campusDepartureStopSeq = 216000719
+        val matchingItems = when (group) {
+            HomeBusGroup.CAMPUS -> {
+                val requests = when (selectedBusHomeDestination) {
+                    BusHomeDestination.SANGNOKSU -> listOf(216000068 to 216000383)
+                    BusHomeDestination.GANGNAM -> listOf(216000061 to 216000379, 216000096 to campusDepartureStopSeq)
+                    BusHomeDestination.SUWON -> listOf(216000104 to 216000070, 200000015 to 216000070)
+                    BusHomeDestination.UIWANG -> listOf(216000026 to campusDepartureStopSeq, 216000096 to campusDepartureStopSeq)
+                    BusHomeDestination.GUNPO -> listOf(216000043 to campusDepartureStopSeq)
+                }
+                requests.flatMap { (routeSeq, stopSeq) -> data.bus.filter { it.route.seq == routeSeq && it.stop.seq == stopSeq } }
+            }
+            HomeBusGroup.KITECH -> data.bus.filter { it.stop.seq == 216000381 && it.route.seq == 216000061 }
+            HomeBusGroup.DORMITORY -> data.bus.filter {
+                it.stop.seq == 216000383 && it.route.seq in setOf(216000068, 216000061)
+            }
+            HomeBusGroup.SUWON -> data.bus.filter { it.stop.seq == 202000106 && it.route.seq in setOf(216000104, 200000015) }
+            HomeBusGroup.SEOCHO,
+            HomeBusGroup.GYODAE,
+            HomeBusGroup.GANGNAM,
+            HomeBusGroup.YANGJAE,
+            HomeBusGroup.YANGJAE_FOREST -> data.bus.filter {
+                it.stop.seq == group.stopSeq && it.route.seq in HOME_SEOUL_ROUTE_SEQS
+            }
+        }
+        val destinationStopByRoute = if (group.isSeoul) {
+            mapOf(
+                216000061 to 216000378,
+                216000026 to 216000048,
+                216000043 to 216000048,
+                216000096 to 216000048,
+            )
+        } else if (group == HomeBusGroup.SUWON) {
+            mapOf(
+                216000104 to 216000141,
+                200000015 to 216000141,
+            )
+        } else if (group == HomeBusGroup.DORMITORY) {
+            mapOf(
+                216000068 to 216000138,
+                216000061 to selectedHomeSeoulBusStop.stopID,
+            )
+        } else when (selectedBusHomeDestination) {
+            BusHomeDestination.SANGNOKSU -> mapOf(216000068 to 216000138)
+            BusHomeDestination.GANGNAM -> if (showHomeSeoulBusStop) {
+                mapOf(
+                    216000061 to selectedHomeSeoulBusStop.stopID,
+                    216000096 to selectedHomeSeoulBusStop.stopID,
+                )
+            } else {
+                emptyMap()
+            }
+            BusHomeDestination.UIWANG -> mapOf(
+                216000026 to 226000042,
+                216000096 to 226000042,
+            )
+            BusHomeDestination.GUNPO -> mapOf(216000043 to 225000116)
+            else -> emptyMap()
+        }
+        val destinationItems = destinationStopByRoute.mapValues { (routeSeq, stopSeq) ->
+            data.bus.firstOrNull { it.route.seq == routeSeq && it.stop.seq == stopSeq }
+        }
+        val allLiveArrivals = matchingItems
+            .flatMap { item ->
+                item.arrival.map { arrival ->
+                    Triple(item, arrival.minutes, Triple(arrival.stops, arrival.seats, arrival.isRealtime))
+                }
+            }
+            .filter { it.second != null }
+        val sortedLiveArrivals = if (group.isSeoul) {
+            allLiveArrivals.sortedWith(
+                compareBy(
+                    { (item, _, _) -> seoulRoutePriority(item.route.name) },
+                    { (item, minutes, _) ->
+                        destinationArrivalSortTime(
+                            item.route.name,
+                            LocalTime.now(ZoneId.of("Asia/Seoul")).plusMinutes((minutes ?: 0).toLong()),
+                            item,
+                            destinationItems[item.route.seq],
+                        )
+                    },
+                ),
+            )
+        } else {
+            allLiveArrivals.sortedBy { it.second }
+        }
+        val liveArrivals = if (group == HomeBusGroup.DORMITORY) {
+            sortedLiveArrivals
+                .groupBy { it.first.route.seq }
+                .values
+                .mapNotNull { it.minByOrNull { arrival -> arrival.second ?: Int.MAX_VALUE } }
+                .let { arrivals -> if (group.isSeoul) arrivals.sortedBy { (item, minutes, _) ->
+                            destinationArrivalSortTime(
+                                item.route.name,
+                                LocalTime.now(ZoneId.of("Asia/Seoul")).plusMinutes((minutes ?: 0).toLong()),
+                                item,
+                                destinationItems[item.route.seq],
+                            )
+                        } else arrivals.sortedBy { it.second } }
+                .take(2)
+        } else {
+            sortedLiveArrivals.take(2)
+        }
+        liveArrivals.forEachIndexed { index, (item, minutes, stopData) ->
+            val arrivalMinutes = minutes ?: return@forEachIndexed
+            val (stops, seats, isRealtime) = stopData
+            val route = item.route.name
+            val destinationEta = destinationArrivalTime(
+                route,
+                LocalTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(arrivalMinutes.toLong()),
+                item,
+                destinationItems[item.route.seq],
+            )
+            val subtitle = if (isRealtime && seats != null && seats >= 0) {
+                getString(
+                    R.string.home_bus_stops_seats_and_destination_eta,
+                    stops ?: index + 2,
+                    seats,
+                    destinationEta,
+                )
+            } else if (isRealtime && stops != null) {
+                getString(
+                    R.string.home_bus_stops_and_destination_eta,
+                    stops,
+                    destinationEta,
+                )
+            } else {
+                getString(
+                    R.string.home_bus_destination_eta,
+                    destinationEta,
+                )
+            }
+            addHomeRow(
+                binding.busHomeContainer,
+                HomeRow(
+                    badge = route,
+                    title = homeBusStopName(item.stop.seq, item.stop.name),
+                    subtitle = subtitle,
+                    trailing = getString(R.string.home_minutes, arrivalMinutes),
+                    tint = requireContext().getColor(busHomeRouteColor(route)),
+                ),
+            )
+        }
+        val missingCount = (2 - liveArrivals.size).coerceAtLeast(0)
+        if (missingCount > 0) {
+            val now = LocalTime.now(ZoneId.of("Asia/Seoul"))
+            val fallbackItems = matchingItems
+                .flatMap { item -> item.log.map { log -> item to log.time } }
+                .filter { (_, time) -> time.isAfter(now) }
+                .distinctBy { (item, time) -> item.route.seq to item.stop.seq to time }
+                .let { items ->
+                    if (group.isSeoul) {
+                        items.sortedWith(
+                            compareBy(
+                                { (item, _) -> seoulRoutePriority(item.route.name) },
+                                { (item, time) -> destinationArrivalSortTime(item.route.name, time, item, destinationItems[item.route.seq]) },
+                            ),
+                        )
+                    } else items.sortedBy { it.second }
+                }
+                .let { items ->
+                    if (group == HomeBusGroup.DORMITORY) {
+                        items.groupBy { it.first.route.seq }
+                            .values
+                            .mapNotNull { it.minByOrNull { entry -> entry.second } }
+                            .let { arrivals -> if (group.isSeoul) arrivals.sortedWith(
+                                compareBy(
+                                    { (item, _) -> seoulRoutePriority(item.route.name) },
+                                    { (item, time) -> destinationArrivalSortTime(item.route.name, time, item, destinationItems[item.route.seq]) },
+                                ),
+                            ) else arrivals.sortedBy { it.second } }
+                    } else items
+                }
+                .let { candidates ->
+                    val selected = mutableListOf<Pair<HomePageQuery.Bus, LocalTime>>()
+                    candidates.forEach { candidate ->
+                        val (item, time) = candidate
+                        val logMinutes = Duration.between(now, time).toMinutes().toInt()
+                        val liveTooClose = liveArrivals.any { (liveItem, liveMinutes, _) ->
+                            liveItem.route.seq == item.route.seq &&
+                                liveMinutes != null &&
+                                abs(liveMinutes - logMinutes) < HOME_BUS_SAME_ROUTE_MIN_GAP_MINUTES
+                        }
+                        val logTooClose = selected.any { (selectedItem, selectedTime) ->
+                            selectedItem.route.seq == item.route.seq &&
+                                abs(Duration.between(selectedTime, time).toMinutes().toInt()) <
+                                HOME_BUS_SAME_ROUTE_MIN_GAP_MINUTES
+                        }
+                        if (!liveTooClose && !logTooClose) selected += candidate
+                    }
+                    selected
+                }
+                .take(missingCount)
+                .forEach { (item, time) ->
+                    val minutesToStop = Duration.between(now, time).toMinutes().toInt()
+                    val destinationEta = destinationArrivalTime(
+                        item.route.name,
+                        time,
+                        item,
+                        destinationItems[item.route.seq],
+                    )
+                    addHomeRow(
+                        binding.busHomeContainer,
+                        HomeRow(
+                            badge = item.route.name,
+                            title = homeBusStopName(item.stop.seq, item.stop.name),
+                            subtitle = getString(
+                                R.string.home_bus_destination_eta,
+                                destinationEta,
+                            ),
+                            trailing = time.format(DateTimeFormatter.ofPattern("HH:mm")),
+                            tint = requireContext().getColor(busHomeRouteColor(item.route.name)),
+                        ),
+                    )
+                }
+        }
+        if (binding.busHomeContainer.childCount == 0) {
+            addEmptyRow(
+                binding.busHomeContainer,
+                getString(R.string.home_bus_no_arrivals),
+                getString(R.string.home_bus_no_arrivals_message),
+            )
+        }
+    }
+
+    private fun selectBusHomeGroup(location: Location, data: HomePageQuery.Data?) {
+        val candidates = HomeBusGroup.entries.mapNotNull { group ->
+            val stop = data?.bus
+                ?.filter { it.stop.seq in group.stopSeqs }
+                ?.minByOrNull { item ->
+                    distanceMeters(location.latitude, location.longitude, item.stop.latitude, item.stop.longitude)
+                }
+                ?.stop ?: return@mapNotNull null
+            Triple(group, stop.seq, distanceMeters(location.latitude, location.longitude, stop.latitude, stop.longitude))
+        }
+        val nearest = candidates.minByOrNull { it.third } ?: return
+        val nextGroup = nearest.first.takeIf { nearest.third <= HOME_BUS_GROUP_MAX_DISTANCE_METERS }
+        val nextStopSeq = nextGroup?.let { nearest.second }
+        if (selectedBusHomeGroup == nextGroup && selectedBusHomeStopSeq == nextStopSeq) return
+        selectedBusHomeGroup = nextGroup
+        selectedBusHomeStopSeq = nextStopSeq
+        renderBusHomePreview(data)
+    }
+
+    private fun distanceMeters(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
+        val result = FloatArray(1)
+        Location.distanceBetween(lat1, lng1, lat2, lng2, result)
+        return result[0].toDouble()
+    }
+
+    private fun destinationArrivalTime(route: String, minutes: Int): String {
+        val estimatedTravelMinutes = routeTravelMinutes(route)
+        return LocalTime.now(ZoneId.of("Asia/Seoul"))
+            .plusMinutes((minutes + estimatedTravelMinutes).toLong())
+            .format(DateTimeFormatter.ofPattern("HH:mm"))
+    }
+
+    private fun destinationArrivalSortTime(
+        route: String,
+        primaryArrivalTime: LocalTime,
+        primaryItem: HomePageQuery.Bus,
+        destinationItem: HomePageQuery.Bus?,
+    ): LocalTime {
+        return destinationItem?.let {
+            BusTravelTimeEstimator.secondaryArrivalTime(
+                primaryArrivalTime,
+                primaryItem.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
+                it.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
+            )
+        } ?: primaryArrivalTime.plusMinutes(routeTravelMinutes(route).toLong())
+    }
+
+    private fun routeTravelMinutes(route: String): Int = when (route) {
+        "10-1" -> 20
+        "3102" -> 55
+        "3100N" -> 75
+        "3100" -> 65
+        "3101" -> 60
+        "7070" -> 35
+        "9090" -> 40
+        else -> 60
+    }
+
+    private fun seoulRoutePriority(route: String): Int = if (route == "3102") 0 else 1
+
+    private fun destinationArrivalTime(
+        route: String,
+        primaryArrivalTime: LocalTime,
+        primaryItem: HomePageQuery.Bus,
+        destinationItem: HomePageQuery.Bus?,
+    ): String {
+        val estimated = destinationItem?.let {
+            BusTravelTimeEstimator.secondaryArrivalTime(
+                primaryArrivalTime,
+                primaryItem.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
+                it.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
+            )
+        }
+        return estimated?.format(DateTimeFormatter.ofPattern("HH:mm"))
+            ?: destinationArrivalTime(
+                route,
+                Duration.between(LocalTime.now(ZoneId.of("Asia/Seoul")), primaryArrivalTime)
+                    .toMinutes()
+                    .toInt()
+                    .coerceAtLeast(0),
+            )
+    }
+
+    private fun homeBusStopName(stopSeq: Int, fallback: String): String {
+        return if (stopSeq == 216000379) {
+            getString(R.string.home_bus_stop_convention_short)
+        } else {
+            fallback
+        }
+    }
+
+    private fun busHomeRouteColor(route: String): Int {
+        val colorRes = if (route in RED_BUS_ROUTES) R.color.red_bus else R.color.green_bus
+        return colorRes
     }
 
     private fun renderWeather(weather: HomePageQuery.HomeWeather?) {
@@ -1782,6 +2173,10 @@ class HomeFragment : Fragment() {
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
 
     companion object {
+        private const val HOME_BUS_SAME_ROUTE_MIN_GAP_MINUTES = 10
+        private const val HOME_BUS_GROUP_MAX_DISTANCE_METERS = 1_500.0
+        private val HOME_SEOUL_ROUTE_SEQS = setOf(216000026, 216000043, 216000061, 216000096)
+        private val RED_BUS_ROUTES = setOf("3100", "3100N", "3101", "3102", "7070", "9090")
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
         private const val DEPARTURE_SWITCH_HYSTERESIS_METERS = 75f
         private const val ROW_BACKGROUND_ALPHA = 24
@@ -1866,6 +2261,25 @@ private enum class HomeDeparture(
                 "jungang_stn" -> JUNGANG
                 else -> null
             }
+    }
+}
+
+private enum class HomeBusGroup(val stopSeqs: Set<Int>, val stopSeq: Int? = null) {
+    CAMPUS(setOf(216000379, 216000719, 216000070)),
+    KITECH(setOf(216000381)),
+    DORMITORY(setOf(216000383)),
+    SUWON(setOf(202000106)),
+    SEOCHO(setOf(121000060), 121000060),
+    GYODAE(setOf(121000929), 121000929),
+    GANGNAM(setOf(121000974), 121000974),
+    YANGJAE(setOf(121000970), 121000970),
+    YANGJAE_FOREST(setOf(121000220), 121000220);
+
+    val isSeoul: Boolean
+        get() = this in setOf(SEOCHO, GYODAE, GANGNAM, YANGJAE, YANGJAE_FOREST)
+
+    companion object {
+        const val MAIN_GATE_STOP_SEQ = 216000719
     }
 }
 

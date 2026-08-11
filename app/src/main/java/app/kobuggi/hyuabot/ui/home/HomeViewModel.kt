@@ -13,11 +13,13 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
+import app.kobuggi.hyuabot.ui.bus.realtime.BusRecentDates
 import app.kobuggi.hyuabot.type.BusRouteStopInput
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.apollographql.cache.normalized.FetchPolicy
+import com.apollographql.cache.normalized.doNotStore
 import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -119,7 +121,7 @@ class HomeViewModel @Inject constructor(
                         campusID = userPreferencesRepository.campusID.first(),
                         busInput = homeBusInput(),
                     )
-                ).fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                ).fetchPolicy(FetchPolicy.NetworkOnly).doNotStore(true).execute()
 
                 if (response.data == null || response.exception != null) {
                     _initialStopRules.value = emptyList()
@@ -264,9 +266,13 @@ class HomeViewModel @Inject constructor(
         return if (language == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
     }
 
-    private fun homeBusInput(): List<BusRouteStopInput> = listOf(
+    private fun homeBusInput(): List<BusRouteStopInput> {
+        val dates = BusRecentDates.sameWeekdayType(count = 4)
+        return listOf(
         BusRouteStopInput(route = 216000068, stop = 216000383, limit = Optional.present(1)),
         BusRouteStopInput(route = 216000068, stop = 216000138, limit = Optional.present(1)),
+        BusRouteStopInput(route = 216000104, stop = 216000141, limit = Optional.present(2)),
+        BusRouteStopInput(route = 200000015, stop = 216000141, limit = Optional.present(2)),
         BusRouteStopInput(route = 216000081, stop = 216000028, limit = Optional.present(1)),
         BusRouteStopInput(route = 216000101, stop = 216000028, limit = Optional.present(1)),
         BusRouteStopInput(route = 216000016, stop = 216000152, limit = Optional.present(1)),
@@ -276,7 +282,54 @@ class HomeViewModel @Inject constructor(
         BusRouteStopInput(route = 216000082, stop = 217000140, limit = Optional.present(1)),
         BusRouteStopInput(route = 216000102, stop = 217000140, limit = Optional.present(1)),
         BusRouteStopInput(route = 216000016, stop = 217000264, limit = Optional.present(1)),
-    )
+        BusRouteStopInput(route = 216000068, stop = 216000379, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000068, stop = 216000719, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000068, stop = 216000070, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000061, stop = 216000379, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000061, stop = 216000378, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000061, stop = 216000381, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000061, stop = 216000383, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000061, stop = 216000719, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000026, stop = 216000719, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000043, stop = 216000719, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000096, stop = 216000719, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000096, stop = 216000048, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000026, stop = 216000048, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000043, stop = 216000048, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000026, stop = 226000042, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000096, stop = 226000042, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000043, stop = 225000116, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000104, stop = 216000070, limit = Optional.present(2)),
+        BusRouteStopInput(route = 200000015, stop = 216000070, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000104, stop = 202000106, limit = Optional.present(2)),
+        BusRouteStopInput(route = 200000015, stop = 202000106, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000061, stop = 121000060, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000061, stop = 121000929, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000061, stop = 121000974, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000061, stop = 121000970, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000061, stop = 121000220, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000026, stop = 121000060, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000026, stop = 121000929, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000026, stop = 121000974, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000026, stop = 121000970, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000026, stop = 121000220, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000043, stop = 121000060, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000043, stop = 121000929, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000043, stop = 121000974, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000043, stop = 121000970, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000043, stop = 121000220, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000096, stop = 121000060, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000096, stop = 121000929, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000096, stop = 121000974, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000096, stop = 121000970, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000096, stop = 121000220, limit = Optional.present(2)),
+        ).map { input ->
+            input.copy(
+                limit = Optional.present(3),
+                dates = Optional.present(dates),
+            )
+        }
+    }
 
     private suspend fun fetchBus50TerminalLogTimes(today: LocalDate): List<LocalTime> {
         val dates = listOf(

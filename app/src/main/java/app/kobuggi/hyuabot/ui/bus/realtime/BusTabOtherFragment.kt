@@ -77,6 +77,9 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                 adapter = busFirstAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
+                setHasFixedSize(true)
+                isNestedScrollingEnabled = false
+                itemAnimator = null
             }
             headerFirstStopBtn.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000759, 216000075).also { direction ->
@@ -100,6 +103,9 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
+                setHasFixedSize(true)
+                isNestedScrollingEnabled = false
+                itemAnimator = null
             }
             headerSecondStopBtn.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(213000487, 216000075).also { direction ->

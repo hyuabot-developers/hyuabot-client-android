@@ -126,9 +126,19 @@ query HomePageQuery(
         stop {
             seq
             name
+            latitude
+            longitude
         }
         arrival {
             minutes
+            stops
+            seats
+            isRealtime
+        }
+        log {
+            date
+            time
+            vehicle
         }
     }
     cafeteria(input: { date: $date, campus: $campusID }) {

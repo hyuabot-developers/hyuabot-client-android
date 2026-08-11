@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_home_quick_settings_sheet"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
     android:paddingTop="12dp"
@@ -23,6 +29,204 @@
         android:textColor="@color/primary_text"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_home_row"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="12dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/home_quick_settings_bus_destination_title"
+            android:textColor="@color/primary_text"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/home_quick_settings_bus_destination_subtitle"
+            android:textColor="@color/secondary_text"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/bus_home_destination_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bus_home_destination_sangnoksu"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="11sp"
+                android:autoSizeMinTextSize="7sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:text="@string/home_bus_destination_sangnoksu_button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bus_home_destination_gangnam"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="11sp"
+                android:autoSizeMinTextSize="7sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:text="@string/home_bus_destination_gangnam_button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bus_home_destination_suwon"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="11sp"
+                android:autoSizeMinTextSize="7sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:text="@string/home_bus_destination_suwon_button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bus_home_destination_uiwang"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="11sp"
+                android:autoSizeMinTextSize="7sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:text="@string/home_bus_destination_uiwang_button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bus_home_destination_gunpo"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="11sp"
+                android:autoSizeMinTextSize="7sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:text="@string/home_bus_destination_gunpo_button" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/seoul_bus_stop_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_home_row"
+        android:orientation="vertical"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_quick_settings_seoul_bus_stop_title"
+                    android:textColor="@color/primary_text"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/home_quick_settings_seoul_bus_stop_subtitle"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/show_seoul_bus_stop_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/home_quick_settings_seoul_bus_stop_title"
+                app:thumbTint="@color/shuttle_switch_thumb"
+                app:trackTint="@color/shuttle_switch_track" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/seoul_bus_stop_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/seoul_bus_stop_seocho"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:text="@string/bus_stop_seocho" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/seoul_bus_stop_gyodae"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:text="@string/bus_stop_gyodae" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/seoul_bus_stop_gangnam"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:text="@string/bus_stop_gangnam" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/seoul_bus_stop_yangjae"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:text="@string/bus_stop_yangjae" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/seoul_bus_stop_yangjae_forest"
+                style="@style/Widget.App.SegmentedButton"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="11sp"
+                android:autoSizeMinTextSize="7sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:text="@string/bus_stop_yangjae_forest" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/presence_status_row"
@@ -285,3 +489,4 @@
         android:textSize="17sp"
         android:textStyle="bold" />
 </LinearLayout>
+</androidx.core.widget.NestedScrollView>

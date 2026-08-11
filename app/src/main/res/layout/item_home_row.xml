@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/badge"
-        android:layout_width="82dp"
+        android:layout_width="64dp"
         android:layout_height="24dp"
         android:background="@drawable/bg_home_badge"
         android:gravity="center"
