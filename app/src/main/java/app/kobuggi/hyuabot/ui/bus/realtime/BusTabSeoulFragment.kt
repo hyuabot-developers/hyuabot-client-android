@@ -52,6 +52,8 @@ private const val SEOUL_SECOND_RETURN_STOP = 216000048
 class BusTabSeoulFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentBusRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: BusRealtimeViewModel by viewModels({ requireParentFragment() })
+    private var configuredFirstStop: Int? = null
+    private var configuredSecondStop: Int? = null
 
     private fun logsFor(route: Int, stop: Int) =
         parentViewModel.logResult.value?.firstOrNull { it.route.seq == route && it.stop.seq == stop }?.log ?: emptyList()
@@ -70,6 +72,8 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
         }
         parentViewModel.seoulFirstStopID.observe(viewLifecycleOwner) { stopRes ->
             if (stopRes == null) return@observe
+            if (configuredFirstStop == stopRes) return@observe
+            configuredFirstStop = stopRes
             val stopSeq = FIRST_SECTION_STOP_BY_RES[stopRes] ?: return@observe
             val stopName = getString(stopRes)
             binding.apply {
@@ -113,6 +117,8 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
         }
         parentViewModel.seoulSecondStopID.observe(viewLifecycleOwner) { stopRes ->
             if (stopRes == null) return@observe
+            if (configuredSecondStop == stopRes) return@observe
+            configuredSecondStop = stopRes
             val stopSeq = SECOND_SECTION_STOP_BY_RES[stopRes] ?: return@observe
             val stopName = getString(stopRes)
             val isRemote = stopRes in SEOUL_REMOTE_RES_IDS
@@ -170,11 +176,17 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 adapter = busFirstAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
+                setHasFixedSize(true)
+                isNestedScrollingEnabled = false
+                itemAnimator = null
             }
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(requireContext())
+                setHasFixedSize(true)
+                isNestedScrollingEnabled = false
+                itemAnimator = null
             }
             headerThird.visibility = View.GONE
             realtimeViewThird.visibility = View.GONE

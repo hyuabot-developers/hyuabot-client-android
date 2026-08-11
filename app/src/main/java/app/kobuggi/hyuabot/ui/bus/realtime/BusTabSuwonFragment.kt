@@ -27,6 +27,7 @@ private val SUWON_STOP_BY_RES = mapOf(
 class BusTabSuwonFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentBusRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: BusRealtimeViewModel by viewModels({ requireParentFragment() })
+    private var configuredStop: Int? = null
 
     private fun logsFor(route: Int, stop: Int) =
         parentViewModel.logResult.value?.firstOrNull { it.route.seq == route && it.stop.seq == stop }?.log ?: emptyList()
@@ -43,6 +44,8 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
         }
         parentViewModel.suwonStopID.observe(viewLifecycleOwner) { stopRes ->
             if (stopRes == null) return@observe
+            if (configuredStop == stopRes) return@observe
+            configuredStop = stopRes
             val stopSeq = SUWON_STOP_BY_RES[stopRes] ?: return@observe
             val secondaryTargetSeq = if (stopRes == R.string.bus_stop_suwon_station) 216000141 else 202000208
             val stopName = getString(stopRes)
@@ -85,6 +88,9 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
                 layoutManager = LinearLayoutManager(context)
+                setHasFixedSize(true)
+                isNestedScrollingEnabled = false
+                itemAnimator = null
             }
             entireTimetableFirst.isEnabled = false
             headerSecond.visibility = View.GONE

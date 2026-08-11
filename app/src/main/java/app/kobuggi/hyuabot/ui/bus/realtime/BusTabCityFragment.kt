@@ -24,6 +24,7 @@ import app.kobuggi.hyuabot.util.disableViewStateSaving
 class BusTabCityFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentBusRealtimeTabBinding.inflate(layoutInflater) }
     private val parentViewModel: BusRealtimeViewModel by viewModels({ requireParentFragment() })
+    private var configuredStop: Int? = null
 
     private fun logsFor(route: Int, stop: Int) =
         parentViewModel.logResult.value?.firstOrNull { it.route.seq == route && it.stop.seq == stop }?.log ?: emptyList()
@@ -42,6 +43,8 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
         }
         parentViewModel.selectedStopID.observe(viewLifecycleOwner) {
             if (it == null) return@observe
+            if (configuredStop == it) return@observe
+            configuredStop = it
             when (it) {
                 R.string.bus_stop_convention -> {
                     binding.apply {
@@ -197,12 +200,18 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 adapter = busFirstAdapter
                 layoutManager = LinearLayoutManager(context)
                 addItemDecoration(decoration)
+                setHasFixedSize(true)
+                isNestedScrollingEnabled = false
+                itemAnimator = null
             }
             headerSecondTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_sangnoksu_station))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 layoutManager = LinearLayoutManager(context)
                 addItemDecoration(decoration)
+                setHasFixedSize(true)
+                isNestedScrollingEnabled = false
+                itemAnimator = null
             }
             headerSecondStopBtn.setOnClickListener {
                 BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000138, 216000068).also { direction ->

@@ -95,6 +95,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             R.string.bus_tab_other
         )
         binding.viewPager.adapter = viewpagerAdapter
+        binding.viewPager.offscreenPageLimit = 1
         binding.busQuickSettingsButton.setOnClickListener { openQuickSettings() }
         childFragmentManager.setFragmentResultListener(
             BusQuickSettingsDialog.REQUEST_KEY,
@@ -258,6 +259,12 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        setClosestStop = false
+        binding.viewPager.post {
+            if (isAdded && view != null && viewModel.result.value?.isNotEmpty() == true) {
+                moveToNearestStop(LocationServices.getFusedLocationProviderClient(requireActivity()))
+            }
+        }
         viewModel.start()
         manuallyScrolled = false
         scheduleNoticeAutoScroll()
