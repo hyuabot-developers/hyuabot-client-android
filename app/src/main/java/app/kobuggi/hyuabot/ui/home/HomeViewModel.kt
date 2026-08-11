@@ -285,6 +285,7 @@ class HomeViewModel @Inject constructor(
         BusRouteStopInput(route = 216000068, stop = 216000379, limit = Optional.present(2)),
         BusRouteStopInput(route = 216000068, stop = 216000719, limit = Optional.present(2)),
         BusRouteStopInput(route = 216000068, stop = 216000070, limit = Optional.present(2)),
+        BusRouteStopInput(route = 216000068, stop = 216000381, limit = Optional.present(2)),
         BusRouteStopInput(route = 216000061, stop = 216000379, limit = Optional.present(2)),
         BusRouteStopInput(route = 216000061, stop = 216000378, limit = Optional.present(2)),
         BusRouteStopInput(route = 216000061, stop = 216000381, limit = Optional.present(2)),
