@@ -16,7 +16,9 @@ import com.apollographql.cache.normalized.FetchPolicy
 import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -63,16 +65,18 @@ class CalendarViewModel @Inject constructor(
             } else if (response.data?.calendar != null) {
                 dao.deleteAll()
                 response.data?.calendar?.let { calendar ->
-                    val events = calendar.categories.flatMap { category ->
-                        category.events.map {
-                            Event(
-                                eventID = it.seq,
-                                title = it.title,
-                                description = it.description,
-                                startDate = it.start.toString(),
-                                endDate = it.end.toString(),
-                                category = category.name
-                            )
+                    val events = withContext(Dispatchers.Default) {
+                        calendar.categories.flatMap { category ->
+                            category.events.map {
+                                Event(
+                                    eventID = it.seq,
+                                    title = it.title,
+                                    description = it.description,
+                                    startDate = it.start.toString(),
+                                    endDate = it.end.toString(),
+                                    category = category.name
+                                )
+                            }
                         }
                     }
                     dao.insertAll(*events.toTypedArray())
@@ -88,11 +92,13 @@ class CalendarViewModel @Inject constructor(
     }
 
     private suspend fun translateEventsInCache(events: List<Event>) {
-        val translatedEvents = events.map {
-            it.copy(
-                title = DynamicTextTranslator.translateForCurrentAppLocale(it.title),
-                description = DynamicTextTranslator.translateForCurrentAppLocale(it.description),
-            )
+        val translatedEvents = withContext(Dispatchers.Default) {
+            events.map {
+                it.copy(
+                    title = DynamicTextTranslator.translateForCurrentAppLocale(it.title),
+                    description = DynamicTextTranslator.translateForCurrentAppLocale(it.description),
+                )
+            }
         }
         database.calendarDao().insertAll(*translatedEvents.toTypedArray())
     }
