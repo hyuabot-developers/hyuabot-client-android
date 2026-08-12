@@ -818,7 +818,11 @@ class HomeFragment : Fragment() {
             val now = LocalTime.now(ZoneId.of("Asia/Seoul"))
             val fallbackItems = matchingItems
                 .flatMap { item -> item.log.map { log -> item to log.time } }
-                .filter { (_, time) -> time.isAfter(now) }
+                .filter { (item, time) ->
+                    val minimumLeadMinutes = (routeTravelMinutes(item.route.name) - HOME_BUS_LOG_TIME_MARGIN_MINUTES)
+                        .coerceAtLeast(0)
+                    !time.isBefore(now.plusMinutes(minimumLeadMinutes.toLong()))
+                }
                 .distinctBy { (item, time) -> item.route.seq to item.stop.seq to time }
                 .let { items ->
                     if (group.isSeoul) {
@@ -2191,6 +2195,7 @@ class HomeFragment : Fragment() {
 
     companion object {
         private const val HOME_BUS_SAME_ROUTE_MIN_GAP_MINUTES = 10
+        private const val HOME_BUS_LOG_TIME_MARGIN_MINUTES = 5
         private const val HOME_BUS_GROUP_MAX_DISTANCE_METERS = 1_500.0
         private val HOME_SEOUL_ROUTE_SEQS = setOf(216000026, 216000043, 216000061, 216000096)
         private val RED_BUS_ROUTES = setOf("3100", "3100N", "3101", "3102", "7070", "9090")
