@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.AnalyticsManager
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import app.kobuggi.hyuabot.util.CrashlyticsManager
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +32,7 @@ class GlobalApplication : Application() {
         applicationScope.launch {
             val enabled = userPreferencesRepository.analyticsConsent.first()
             AnalyticsManager.setCollectionEnabled(enabled)
-            FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = enabled
+            CrashlyticsManager.setCollectionEnabled(enabled)
         }
     }
 

@@ -1,7 +1,4 @@
 package app.kobuggi.hyuabot.ui.setting
-import app.kobuggi.hyuabot.util.AnalyticsContentType
-import app.kobuggi.hyuabot.util.AnalyticsItem
-import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -24,7 +21,10 @@ import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.CrashlyticsManager
 import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -84,7 +84,7 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
                 viewLifecycleOwner.lifecycleScope.launch {
                     userPreferencesRepository.setAnalyticsConsent(isChecked)
                     AnalyticsManager.setCollectionEnabled(isChecked)
-                    FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = isChecked
+                    CrashlyticsManager.setCollectionEnabled(isChecked)
                 }
             }
         }
