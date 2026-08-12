@@ -61,6 +61,9 @@ import app.kobuggi.hyuabot.util.setSkeletonLoading
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopResolver
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -100,6 +103,7 @@ class HomeFragment : Fragment() {
     private var noticePosition = 0
     private var noticeManuallyScrolled = false
     private var locationCancellationTokenSource: CancellationTokenSource? = null
+    private var locationCallback: LocationCallback? = null
     private var pendingDepartureLocation: Location? = null
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
@@ -214,6 +218,7 @@ class HomeFragment : Fragment() {
             }
             if (result.containsKey(HomeQuickSettingsDialog.KEY_SHOW_SEOUL_BUS_STOP)) {
                 showHomeSeoulBusStop = result.getBoolean(HomeQuickSettingsDialog.KEY_SHOW_SEOUL_BUS_STOP)
+                renderBusHomePreview(viewModel.data.value)
             }
             if (result.containsKey(HomeQuickSettingsDialog.KEY_SEOUL_BUS_STOP)) {
                 selectedHomeSeoulBusStop = BusSeoulTargetStop.from(
@@ -312,6 +317,11 @@ class HomeFragment : Fragment() {
         stopNoticeAutoScroll()
         locationCancellationTokenSource?.cancel()
         locationCancellationTokenSource = null
+        locationCallback?.let { callback ->
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+                .removeLocationUpdates(callback)
+        }
+        locationCallback = null
         pendingDepartureLocation = null
         binding.noticeViewPager.adapter = null
         super.onDestroyView()
@@ -398,6 +408,11 @@ class HomeFragment : Fragment() {
     private fun selectDepartureManually(departure: HomeDeparture) {
         locationCancellationTokenSource?.cancel()
         locationCancellationTokenSource = null
+        locationCallback?.let { callback ->
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+                .removeLocationUpdates(callback)
+        }
+        locationCallback = null
         pendingDepartureLocation = null
         isDepartureManuallySelected = true
         shouldRestoreAutomaticDepartureOnForeground = false
@@ -518,26 +533,29 @@ class HomeFragment : Fragment() {
     private fun requestCurrentLocation(client: FusedLocationProviderClient) {
         if (!hasLocationPermission()) return
         locationCancellationTokenSource?.cancel()
-        val tokenSource = CancellationTokenSource()
-        locationCancellationTokenSource = tokenSource
-        client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
-            .addOnSuccessListener { location ->
-                if (locationCancellationTokenSource === tokenSource) {
-                    locationCancellationTokenSource = null
-                }
-                if (!isAdded || view == null) return@addOnSuccessListener
-                if (location != null) {
-                    selectInitialDeparture(location)
-                } else {
-                    selectLastKnownLocation(client)
-                }
+        locationCallback?.let { client.removeLocationUpdates(it) }
+        val callback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                client.removeLocationUpdates(this)
+                if (locationCallback === this) locationCallback = null
+                if (!isAdded || view == null) return
+                result.lastLocation?.let(::selectInitialDeparture)
+                    ?: selectLastKnownLocation(client)
             }
-            .addOnFailureListener {
-                if (locationCancellationTokenSource === tokenSource) {
-                    locationCancellationTokenSource = null
-                }
+        }
+        locationCallback = callback
+        val request = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            LOCATION_REQUEST_INTERVAL_MILLIS,
+        )
+            .setWaitForAccurateLocation(true)
+            .setMaxUpdates(1)
+            .build()
+        client.requestLocationUpdates(request, callback, Looper.getMainLooper())
+            .addOnFailureListener { error ->
+                if (locationCallback === callback) locationCallback = null
                 if (!isAdded || view == null) return@addOnFailureListener
-                Log.e("HomeFragment", "Failed to get user location", it)
+                Log.e("HomeFragment", "Failed to request user location", error)
                 selectLastKnownLocation(client)
             }
     }
@@ -672,7 +690,9 @@ class HomeFragment : Fragment() {
                 }
                 requests.flatMap { (routeSeq, stopSeq) -> data.bus.filter { it.route.seq == routeSeq && it.stop.seq == stopSeq } }
             }
-            HomeBusGroup.KITECH -> data.bus.filter { it.stop.seq == 216000381 && it.route.seq == 216000061 }
+            HomeBusGroup.KITECH -> data.bus.filter {
+                it.stop.seq == 216000381 && it.route.seq in setOf(216000068, 216000061)
+            }
             HomeBusGroup.DORMITORY -> data.bus.filter {
                 it.stop.seq == 216000383 && it.route.seq in setOf(216000068, 216000061)
             }
@@ -697,7 +717,7 @@ class HomeFragment : Fragment() {
                 216000104 to 216000141,
                 200000015 to 216000141,
             )
-        } else if (group == HomeBusGroup.DORMITORY) {
+        } else if (group == HomeBusGroup.DORMITORY || group == HomeBusGroup.KITECH) {
             mapOf(
                 216000068 to 216000138,
                 216000061 to selectedHomeSeoulBusStop.stopID,
@@ -746,7 +766,7 @@ class HomeFragment : Fragment() {
         } else {
             allLiveArrivals.sortedBy { it.second }
         }
-        val liveArrivals = if (group == HomeBusGroup.DORMITORY) {
+        val liveArrivals = if (group == HomeBusGroup.DORMITORY || group == HomeBusGroup.KITECH) {
             sortedLiveArrivals
                 .groupBy { it.first.route.seq }
                 .values
@@ -767,30 +787,37 @@ class HomeFragment : Fragment() {
             val arrivalMinutes = minutes ?: return@forEachIndexed
             val (stops, seats, isRealtime) = stopData
             val route = item.route.name
-            val destinationEta = destinationArrivalTime(
-                route,
-                LocalTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(arrivalMinutes.toLong()),
-                item,
-                destinationItems[item.route.seq],
-            )
+            val showsDestinationEta = showsHomeBusDestinationEta(group, item.route.seq)
+            val destinationEta = if (showsDestinationEta) {
+                destinationArrivalTime(
+                    route,
+                    LocalTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(arrivalMinutes.toLong()),
+                    item,
+                    destinationItems[item.route.seq],
+                )
+            } else {
+                null
+            }
             val subtitle = if (isRealtime && seats != null && seats >= 0) {
-                getString(
+                if (destinationEta != null) getString(
                     R.string.home_bus_stops_seats_and_destination_eta,
                     stops ?: index + 2,
                     seats,
                     destinationEta,
-                )
+                ) else getString(R.string.home_bus_stops_and_seats, stops ?: index + 2, seats)
             } else if (isRealtime && stops != null) {
-                getString(
+                if (destinationEta != null) getString(
                     R.string.home_bus_stops_and_destination_eta,
                     stops,
                     destinationEta,
-                )
+                ) else getString(R.string.home_bus_stops_away, stops)
             } else {
-                getString(
+                destinationEta?.let {
+                    getString(
                     R.string.home_bus_destination_eta,
-                    destinationEta,
-                )
+                        it,
+                    )
+                }.orEmpty()
             }
             addHomeRow(
                 binding.busHomeContainer,
@@ -808,7 +835,13 @@ class HomeFragment : Fragment() {
             val now = LocalTime.now(ZoneId.of("Asia/Seoul"))
             val fallbackItems = matchingItems
                 .flatMap { item -> item.log.map { log -> item to log.time } }
-                .filter { (_, time) -> time.isAfter(now) }
+                .filter { (item, time) ->
+                    val minimumLeadMinutes = homeBusLogLeadMinutes(item.route.name, item.stop.seq)
+                        ?.minus(HOME_BUS_LOG_TIME_MARGIN_MINUTES)
+                        ?.coerceAtLeast(0)
+                    time.isAfter(now) &&
+                        (minimumLeadMinutes == null || !time.isBefore(now.plusMinutes(minimumLeadMinutes.toLong())))
+                }
                 .distinctBy { (item, time) -> item.route.seq to item.stop.seq to time }
                 .let { items ->
                     if (group.isSeoul) {
@@ -821,7 +854,7 @@ class HomeFragment : Fragment() {
                     } else items.sortedBy { it.second }
                 }
                 .let { items ->
-                    if (group == HomeBusGroup.DORMITORY) {
+                    if (group == HomeBusGroup.DORMITORY || group == HomeBusGroup.KITECH) {
                         items.groupBy { it.first.route.seq }
                             .values
                             .mapNotNull { it.minByOrNull { entry -> entry.second } }
@@ -855,21 +888,24 @@ class HomeFragment : Fragment() {
                 .take(missingCount)
                 .forEach { (item, time) ->
                     val minutesToStop = Duration.between(now, time).toMinutes().toInt()
-                    val destinationEta = destinationArrivalTime(
-                        item.route.name,
-                        time,
-                        item,
-                        destinationItems[item.route.seq],
-                    )
+                    val destinationEta = if (showsHomeBusDestinationEta(group, item.route.seq)) {
+                        destinationArrivalTime(
+                            item.route.name,
+                            time,
+                            item,
+                            destinationItems[item.route.seq],
+                        )
+                    } else {
+                        null
+                    }
                     addHomeRow(
                         binding.busHomeContainer,
                         HomeRow(
                             badge = item.route.name,
                             title = homeBusStopName(item.stop.seq, item.stop.name),
-                            subtitle = getString(
-                                R.string.home_bus_destination_eta,
-                                destinationEta,
-                            ),
+                            subtitle = destinationEta?.let {
+                                getString(R.string.home_bus_destination_eta, it)
+                            }.orEmpty(),
                             trailing = time.format(DateTimeFormatter.ofPattern("HH:mm")),
                             tint = requireContext().getColor(busHomeRouteColor(item.route.name)),
                         ),
@@ -883,6 +919,10 @@ class HomeFragment : Fragment() {
                 getString(R.string.home_bus_no_arrivals_message),
             )
         }
+    }
+
+    private fun showsHomeBusDestinationEta(group: HomeBusGroup, routeSeq: Int): Boolean {
+        return showHomeSeoulBusStop
     }
 
     private fun selectBusHomeGroup(location: Location, data: HomePageQuery.Data?) {
@@ -941,6 +981,18 @@ class HomeFragment : Fragment() {
         "7070" -> 35
         "9090" -> 40
         else -> 60
+    }
+
+    private fun homeBusLogLeadMinutes(route: String, stopSeq: Int): Int? = when (route to stopSeq) {
+        "10-1" to 216000383 -> 21
+        "10-1" to 216000381 -> 21
+        "10-1" to 216000379 -> 22
+        "3102" to 216000383 -> 27
+        "3102" to 216000381 -> 28
+        "3102" to 216000379 -> 29
+        "7070" to 216000070 -> 40
+        "7070" to 202000106 -> 76
+        else -> null
     }
 
     private fun seoulRoutePriority(route: String): Int = if (route == "3102") 0 else 1
@@ -2174,10 +2226,12 @@ class HomeFragment : Fragment() {
 
     companion object {
         private const val HOME_BUS_SAME_ROUTE_MIN_GAP_MINUTES = 10
+        private const val HOME_BUS_LOG_TIME_MARGIN_MINUTES = 5
         private const val HOME_BUS_GROUP_MAX_DISTANCE_METERS = 1_500.0
         private val HOME_SEOUL_ROUTE_SEQS = setOf(216000026, 216000043, 216000061, 216000096)
         private val RED_BUS_ROUTES = setOf("3100", "3100N", "3101", "3102", "7070", "9090")
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
+        private const val LOCATION_REQUEST_INTERVAL_MILLIS = 1_000L
         private const val DEPARTURE_SWITCH_HYSTERESIS_METERS = 75f
         private const val ROW_BACKGROUND_ALPHA = 24
         private const val TRANSFER_ROW_BACKGROUND_ALPHA = 20
