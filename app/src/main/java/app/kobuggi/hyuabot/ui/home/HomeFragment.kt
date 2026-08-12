@@ -819,9 +819,11 @@ class HomeFragment : Fragment() {
             val fallbackItems = matchingItems
                 .flatMap { item -> item.log.map { log -> item to log.time } }
                 .filter { (item, time) ->
-                    val minimumLeadMinutes = (routeTravelMinutes(item.route.name) - HOME_BUS_LOG_TIME_MARGIN_MINUTES)
-                        .coerceAtLeast(0)
-                    !time.isBefore(now.plusMinutes(minimumLeadMinutes.toLong()))
+                    val minimumLeadMinutes = homeBusLogLeadMinutes(item.route.name, item.stop.seq)
+                        ?.minus(HOME_BUS_LOG_TIME_MARGIN_MINUTES)
+                        ?.coerceAtLeast(0)
+                    time.isAfter(now) &&
+                        (minimumLeadMinutes == null || !time.isBefore(now.plusMinutes(minimumLeadMinutes.toLong())))
                 }
                 .distinctBy { (item, time) -> item.route.seq to item.stop.seq to time }
                 .let { items ->
@@ -962,6 +964,18 @@ class HomeFragment : Fragment() {
         "7070" -> 35
         "9090" -> 40
         else -> 60
+    }
+
+    private fun homeBusLogLeadMinutes(route: String, stopSeq: Int): Int? = when (route to stopSeq) {
+        "10-1" to 216000383 -> 21
+        "10-1" to 216000381 -> 21
+        "10-1" to 216000379 -> 22
+        "3102" to 216000383 -> 27
+        "3102" to 216000381 -> 28
+        "3102" to 216000379 -> 29
+        "7070" to 216000070 -> 40
+        "7070" to 202000106 -> 76
+        else -> null
     }
 
     private fun seoulRoutePriority(route: String): Int = if (route == "3102") 0 else 1
