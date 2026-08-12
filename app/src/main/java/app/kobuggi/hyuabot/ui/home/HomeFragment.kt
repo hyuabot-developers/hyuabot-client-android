@@ -61,6 +61,9 @@ import app.kobuggi.hyuabot.util.setSkeletonLoading
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopResolver
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -100,6 +103,7 @@ class HomeFragment : Fragment() {
     private var noticePosition = 0
     private var noticeManuallyScrolled = false
     private var locationCancellationTokenSource: CancellationTokenSource? = null
+    private var locationCallback: LocationCallback? = null
     private var pendingDepartureLocation: Location? = null
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
@@ -313,6 +317,11 @@ class HomeFragment : Fragment() {
         stopNoticeAutoScroll()
         locationCancellationTokenSource?.cancel()
         locationCancellationTokenSource = null
+        locationCallback?.let { callback ->
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+                .removeLocationUpdates(callback)
+        }
+        locationCallback = null
         pendingDepartureLocation = null
         binding.noticeViewPager.adapter = null
         super.onDestroyView()
@@ -399,6 +408,11 @@ class HomeFragment : Fragment() {
     private fun selectDepartureManually(departure: HomeDeparture) {
         locationCancellationTokenSource?.cancel()
         locationCancellationTokenSource = null
+        locationCallback?.let { callback ->
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+                .removeLocationUpdates(callback)
+        }
+        locationCallback = null
         pendingDepartureLocation = null
         isDepartureManuallySelected = true
         shouldRestoreAutomaticDepartureOnForeground = false
@@ -519,26 +533,29 @@ class HomeFragment : Fragment() {
     private fun requestCurrentLocation(client: FusedLocationProviderClient) {
         if (!hasLocationPermission()) return
         locationCancellationTokenSource?.cancel()
-        val tokenSource = CancellationTokenSource()
-        locationCancellationTokenSource = tokenSource
-        client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
-            .addOnSuccessListener { location ->
-                if (locationCancellationTokenSource === tokenSource) {
-                    locationCancellationTokenSource = null
-                }
-                if (!isAdded || view == null) return@addOnSuccessListener
-                if (location != null) {
-                    selectInitialDeparture(location)
-                } else {
-                    selectLastKnownLocation(client)
-                }
+        locationCallback?.let { client.removeLocationUpdates(it) }
+        val callback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                client.removeLocationUpdates(this)
+                if (locationCallback === this) locationCallback = null
+                if (!isAdded || view == null) return
+                result.lastLocation?.let(::selectInitialDeparture)
+                    ?: selectLastKnownLocation(client)
             }
-            .addOnFailureListener {
-                if (locationCancellationTokenSource === tokenSource) {
-                    locationCancellationTokenSource = null
-                }
+        }
+        locationCallback = callback
+        val request = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            LOCATION_REQUEST_INTERVAL_MILLIS,
+        )
+            .setWaitForAccurateLocation(true)
+            .setMaxUpdates(1)
+            .build()
+        client.requestLocationUpdates(request, callback, Looper.getMainLooper())
+            .addOnFailureListener { error ->
+                if (locationCallback === callback) locationCallback = null
                 if (!isAdded || view == null) return@addOnFailureListener
-                Log.e("HomeFragment", "Failed to get user location", it)
+                Log.e("HomeFragment", "Failed to request user location", error)
                 selectLastKnownLocation(client)
             }
     }
@@ -2214,6 +2231,7 @@ class HomeFragment : Fragment() {
         private val HOME_SEOUL_ROUTE_SEQS = setOf(216000026, 216000043, 216000061, 216000096)
         private val RED_BUS_ROUTES = setOf("3100", "3100N", "3101", "3102", "7070", "9090")
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
+        private const val LOCATION_REQUEST_INTERVAL_MILLIS = 1_000L
         private const val DEPARTURE_SWITCH_HYSTERESIS_METERS = 75f
         private const val ROW_BACKGROUND_ALPHA = 24
         private const val TRANSFER_ROW_BACKGROUND_ALPHA = 20
