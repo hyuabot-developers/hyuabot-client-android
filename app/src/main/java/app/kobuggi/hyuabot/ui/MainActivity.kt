@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.CheckBox
 import androidx.activity.SystemBarStyle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
@@ -76,6 +77,17 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     private val homeExperiencePreferences by lazy {
         getSharedPreferences(HOME_EXPERIENCE_PREFERENCES, MODE_PRIVATE)
     }
+    private var pendingBackgroundLocationRequest = false
+    private var foregroundLocationDisclosureShown = false
+    private val foregroundLocationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions.values.any { it }) {
+            maybeRequestBackgroundLocation()
+        } else {
+            pendingBackgroundLocationRequest = false
+        }
+    }
 
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager
@@ -113,6 +125,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         openBirthDayDialog()
         requestInAppReview()
         syncShuttleServiceNotices()
+        pendingBackgroundLocationRequest = intent.getBooleanExtra(EXTRA_REQUEST_BACKGROUND_LOCATION, false)
         val handledDeepLink = handleDebugDeepLink(intent) || navController.handleDeepLink(intent)
         if (
             savedInstanceState == null &&
@@ -276,8 +289,15 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     override fun onResume() {
         super.onResume()
         updatePrimaryNavigationItem(navController.currentDestination?.id)
+        handlePendingBackgroundLocationRequest()
+    }
+
+    private fun handlePendingBackgroundLocationRequest() {
+        if (!pendingBackgroundLocationRequest) return
         if (hasLocationPermission()) {
             maybeRequestBackgroundLocation()
+        } else {
+            showForegroundLocationDisclosure()
         }
     }
 
@@ -400,6 +420,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             appWidgetManager.getAppWidgetIds(ComponentName(this, provider)).isNotEmpty()
         }
         if (!hasShuttleWidget) {
+            pendingBackgroundLocationRequest = false
             return
         }
         AlertDialog.Builder(this)
@@ -407,6 +428,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             .setMessage(getString(R.string.widget_shuttle_background_location_message))
             .setPositiveButton(getString(R.string.widget_shuttle_background_location_allow)) { dialog, _ ->
                 dialog.dismiss()
+                pendingBackgroundLocationRequest = false
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(ACCESS_BACKGROUND_LOCATION),
@@ -415,26 +437,40 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             }
             .setNegativeButton(getString(R.string.widget_shuttle_background_location_later)) { dialog, _ ->
                 dialog.dismiss()
+                pendingBackgroundLocationRequest = false
             }
             .show()
             .applyGodoTypography()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE && hasLocationPermission()) {
-            maybeRequestBackgroundLocation()
-        }
+    private fun showForegroundLocationDisclosure() {
+        if (foregroundLocationDisclosureShown || isFinishing || isDestroyed) return
+        foregroundLocationDisclosureShown = true
+        AlertDialog.Builder(this)
+            .setTitle(R.string.location_permission_disclosure_title)
+            .setMessage(R.string.location_permission_disclosure_message)
+            .setPositiveButton(R.string.location_permission_disclosure_allow) { dialog, _ ->
+                dialog.dismiss()
+                foregroundLocationPermissionLauncher.launch(
+                    arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)
+                )
+            }
+            .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
+                dialog.dismiss()
+                pendingBackgroundLocationRequest = false
+            }
+            .show()
+            .applyGodoTypography()
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_REQUEST_BACKGROUND_LOCATION, false)) {
+            pendingBackgroundLocationRequest = true
+        }
         handleDebugDeepLink(intent) || navController.handleDeepLink(intent)
+        binding.root.post(::handlePendingBackgroundLocationRequest)
     }
 
     private fun handleDebugDeepLink(intent: Intent): Boolean {
@@ -608,8 +644,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     companion object {
         const val HOME_EXPERIENCE_PREFERENCES = "home_experience"
         const val HOME_EXPERIENCE_ENABLED = "enabled"
+        const val EXTRA_REQUEST_BACKGROUND_LOCATION = "request_background_location"
         private const val STATUS_BAR_BACKGROUND_TAG = "status_bar_background"
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 2
     }
 }

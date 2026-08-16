@@ -224,7 +224,7 @@
     <string name="confirm">确认</string>
     <string name="location_permission_nearest_stop">需要位置权限才能查找最近的站点。</string>
     <string name="location_permission_disclosure_title">位置使用说明</string>
-    <string name="location_permission_disclosure_message">HYUabot使用您的位置信息查找附近的校车和公交车站，显示附近的公交信息，并在地图上显示当前位置。位置信息仅在设备本地处理，不会传输或存储至服务器。即使不授予位置权限，也可以手动选择站点。</string>
+    <string name="location_permission_disclosure_message">使用应用时，HYUabot会使用您的位置查找附近的校车和公交车站，显示附近的公交信息，并在地图上显示当前位置。位置信息仅为提供这些功能在设备本地处理，不会传输或存储至服务器。即使不授予位置权限，也可以手动选择站点或使用地图。</string>
     <string name="location_permission_disclosure_allow">同意并允许位置权限</string>
     <string name="location_permission_disclosure_later">稍后</string>
     <string name="map_location_permission_denied">位置权限未被允许。</string>
@@ -427,7 +427,7 @@
     <string name="widget_shuttle_no_location">位置不可用</string>
     <string name="widget_shuttle_permission_required">需要位置权限</string>
     <string name="widget_shuttle_background_location_title">后台位置权限说明</string>
-    <string name="widget_shuttle_background_location_message">校车小组件即使在不使用应用时，也会在后台使用位置信息来显示离您最近的站点。请在下一页面将位置权限设置为「始终允许」。</string>
+    <string name="widget_shuttle_background_location_message">即使应用已关闭或未在使用，HYUabot也会在后台收集位置信息，使校车小组件能够查找最近的校车站并显示该站点的到站信息。位置信息仅为提供此功能在设备本地处理，不会传输或存储至服务器，也不会用于广告或分析。在下一个 Android 设置页面选择「始终允许」，小组件即可无需打开应用自动更新。即使不允许后台位置权限，也可以在应用中直接查看校车信息。</string>
     <string name="widget_shuttle_background_location_allow">允许</string>
     <string name="widget_shuttle_background_location_later">稍后</string>
     <string name="widget_preview_shuttle_stop_station">· 汉大前站</string>

@@ -224,7 +224,7 @@
     <string name="confirm">確認</string>
     <string name="location_permission_nearest_stop">最寄りのバス停を探すには位置情報の権限が必要です。</string>
     <string name="location_permission_disclosure_title">位置情報の使用について</string>
-    <string name="location_permission_disclosure_message">HYUabotは、近くのシャトルバス・路線バスの停留所を探し、周辺の路線バス情報と地図上の現在地を表示するために位置情報を使用します。位置情報は端末内でのみ処理され、サーバーへ送信・保存されません。位置情報を許可しなくても停留所を手動で選択できます。</string>
+    <string name="location_permission_disclosure_message">アプリの使用中、HYUabotは近くのシャトルバス・路線バスの停留所を探し、周辺の路線バス情報と地図上の現在地を表示するために位置情報を使用します。位置情報はこれらの機能を提供するため端末内でのみ処理され、サーバーへ送信・保存されません。位置情報を許可しなくても停留所を手動で選択したり、地図を利用したりできます。</string>
     <string name="location_permission_disclosure_allow">同意して位置情報を許可</string>
     <string name="location_permission_disclosure_later">後で</string>
     <string name="map_location_permission_denied">位置情報が許可されませんでした。</string>
@@ -427,7 +427,7 @@
     <string name="widget_shuttle_no_location">位置情報使用不可</string>
     <string name="widget_shuttle_permission_required">位置情報が必要です</string>
     <string name="widget_shuttle_background_location_title">バックグラウンド位置情報の許可</string>
-    <string name="widget_shuttle_background_location_message">シャトルウィジェットがアプリを使用していない時も、現在地から最寄りのバス停を表示するため、バックグラウンドで位置情報を使用します。次の画面で位置情報の権限を「常に許可」に設定してください。</string>
+    <string name="widget_shuttle_background_location_message">HYUabotは、アプリを閉じている時や使用していない時も、シャトルウィジェットが現在地から最寄りのシャトル停留所を探し、その停留所の到着情報を表示できるよう、バックグラウンドで位置情報を収集します。位置情報はこの機能の提供のため端末内で処理され、サーバーへ送信・保存されず、広告や分析にも使用されません。次のAndroid設定画面で「常に許可」を選ぶと、アプリを開かなくてもウィジェットが更新されます。バックグラウンド位置情報を許可しなくても、アプリでシャトル情報を直接確認できます。</string>
     <string name="widget_shuttle_background_location_allow">許可</string>
     <string name="widget_shuttle_background_location_later">後で</string>
     <string name="widget_preview_shuttle_stop_station">· 韓大前駅</string>
