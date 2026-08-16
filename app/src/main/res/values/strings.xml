@@ -186,7 +186,7 @@
     <string name="shuttle_alarm_alighting">하차 알림 · 여정 공유</string>
     <string name="shuttle_alarm_start">알림 시작</string>
     <string name="shuttle_alarm_cancel">알림 취소</string>
-    <string name="shuttle_alarm_boarding_title">셔틀버스 승차 알림</string>
+    <string name="shuttle_alarm_boarding_title">셔틀버스 승차 알림: %1$s</string>
     <string name="shuttle_alarm_boarding_live_departure">%1$s 출발</string>
     <string name="shuttle_alarm_boarding_live_direction_distance">%1$s방향 %2$s</string>
     <string name="shuttle_alarm_alighting_live_arrival">%1$s 도착</string>
@@ -195,7 +195,7 @@
     <string name="shuttle_alarm_checkpoint_waiting">%1$s 대기</string>
     <string name="shuttle_alarm_checkpoint_departed">%1$s 출발</string>
     <string name="shuttle_alarm_checkpoint_approaching">%1$s 접근</string>
-    <string name="shuttle_alarm_alighting_title">셔틀버스 하차 알림</string>
+    <string name="shuttle_alarm_alighting_title">셔틀버스 하차 알림: %1$s</string>
     <string name="shuttle_alarm_alighting_content">정류장까지 약 %1$s</string>
     <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">추적 중</string>

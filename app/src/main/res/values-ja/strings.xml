@@ -706,7 +706,7 @@
     <string name="shuttle_alarm_alighting">降車アラート · 行程を共有</string>
     <string name="shuttle_alarm_start">アラート開始</string>
     <string name="shuttle_alarm_cancel">アラートキャンセル</string>
-    <string name="shuttle_alarm_boarding_title">シャトルバス乗車アラート</string>
+    <string name="shuttle_alarm_boarding_title">シャトルバス乗車アラート：%1$s</string>
     <string name="shuttle_alarm_boarding_live_departure">%1$s 出発</string>
     <string name="shuttle_alarm_boarding_live_direction_distance">%1$s方向 %2$s</string>
     <string name="shuttle_alarm_alighting_live_arrival">%1$s 到着</string>
@@ -715,7 +715,7 @@
     <string name="shuttle_alarm_checkpoint_waiting">%1$s待機</string>
     <string name="shuttle_alarm_checkpoint_departed">%1$s出発</string>
     <string name="shuttle_alarm_checkpoint_approaching">%1$s接近</string>
-    <string name="shuttle_alarm_alighting_title">シャトルバス降車アラート</string>
+    <string name="shuttle_alarm_alighting_title">シャトルバス降車アラート：%1$s</string>
     <string name="shuttle_alarm_alighting_content">停留所まで約%1$s</string>
     <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">追跡中</string>

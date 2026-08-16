@@ -729,7 +729,7 @@
     <string name="shuttle_alarm_alighting">Alighting Alert · Share Trip</string>
     <string name="shuttle_alarm_start">Start Alert</string>
     <string name="shuttle_alarm_cancel">Cancel Alert</string>
-    <string name="shuttle_alarm_boarding_title">Shuttle Bus Boarding Alert</string>
+    <string name="shuttle_alarm_boarding_title">Shuttle Bus Boarding Alert: %1$s</string>
     <string name="shuttle_alarm_boarding_live_departure">Departs at %1$s</string>
     <string name="shuttle_alarm_boarding_live_direction_distance">%1$s %2$s</string>
     <string name="shuttle_alarm_alighting_live_arrival">Arrives at %1$s</string>
@@ -738,7 +738,7 @@
     <string name="shuttle_alarm_checkpoint_waiting">Waiting at %1$s</string>
     <string name="shuttle_alarm_checkpoint_departed">Departed %1$s</string>
     <string name="shuttle_alarm_checkpoint_approaching">Approaching %1$s</string>
-    <string name="shuttle_alarm_alighting_title">Shuttle Bus Alighting Alert</string>
+    <string name="shuttle_alarm_alighting_title">Shuttle Bus Alighting Alert: %1$s</string>
     <string name="shuttle_alarm_alighting_content">About %1$s to the stop</string>
     <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">Tracking</string>
