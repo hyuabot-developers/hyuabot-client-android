@@ -77,12 +77,16 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     private val homeExperiencePreferences by lazy {
         getSharedPreferences(HOME_EXPERIENCE_PREFERENCES, MODE_PRIVATE)
     }
+    private val locationDisclosurePreferences by lazy {
+        getSharedPreferences(LOCATION_DISCLOSURE_PREFERENCES, MODE_PRIVATE)
+    }
     private var pendingBackgroundLocationRequest = false
     private var foregroundLocationDisclosureShown = false
     private val foregroundLocationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         if (permissions.values.any { it }) {
+            resetLocationDisclosureDeclineCount(FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
             maybeRequestBackgroundLocation()
         } else {
             pendingBackgroundLocationRequest = false
@@ -413,6 +417,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     private fun maybeRequestBackgroundLocation() {
         if (ActivityCompat.checkSelfPermission(this, ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            resetLocationDisclosureDeclineCount(BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
             return
         }
         val appWidgetManager = AppWidgetManager.getInstance(this)
@@ -420,6 +425,14 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             appWidgetManager.getAppWidgetIds(ComponentName(this, provider)).isNotEmpty()
         }
         if (!hasShuttleWidget) {
+            pendingBackgroundLocationRequest = false
+            return
+        }
+        if (locationDisclosurePreferences.getInt(
+                BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT,
+                0,
+            ) >= MAX_LOCATION_DISCLOSURE_DECLINES
+        ) {
             pendingBackgroundLocationRequest = false
             return
         }
@@ -438,13 +451,25 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             .setNegativeButton(getString(R.string.widget_shuttle_background_location_later)) { dialog, _ ->
                 dialog.dismiss()
                 pendingBackgroundLocationRequest = false
+                recordLocationDisclosureDecline(BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
             }
             .show()
             .applyGodoTypography()
     }
 
     private fun showForegroundLocationDisclosure() {
-        if (foregroundLocationDisclosureShown || isFinishing || isDestroyed) return
+        if (
+            foregroundLocationDisclosureShown ||
+            isFinishing ||
+            isDestroyed ||
+            locationDisclosurePreferences.getInt(
+                FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT,
+                0,
+            ) >= MAX_LOCATION_DISCLOSURE_DECLINES
+        ) {
+            pendingBackgroundLocationRequest = false
+            return
+        }
         foregroundLocationDisclosureShown = true
         AlertDialog.Builder(this)
             .setTitle(R.string.location_permission_disclosure_title)
@@ -458,9 +483,19 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
                 dialog.dismiss()
                 pendingBackgroundLocationRequest = false
+                recordLocationDisclosureDecline(FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
             }
             .show()
             .applyGodoTypography()
+    }
+
+    private fun recordLocationDisclosureDecline(key: String) {
+        val count = locationDisclosurePreferences.getInt(key, 0)
+        locationDisclosurePreferences.edit().putInt(key, count + 1).apply()
+    }
+
+    private fun resetLocationDisclosureDeclineCount(key: String) {
+        locationDisclosurePreferences.edit().putInt(key, 0).apply()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -645,6 +680,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         const val HOME_EXPERIENCE_PREFERENCES = "home_experience"
         const val HOME_EXPERIENCE_ENABLED = "enabled"
         const val EXTRA_REQUEST_BACKGROUND_LOCATION = "request_background_location"
+        const val LOCATION_DISCLOSURE_PREFERENCES = "location_disclosure"
+        const val FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT = "foreground_decline_count"
+        const val BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT = "background_decline_count"
+        const val MAX_LOCATION_DISCLOSURE_DECLINES = 3
         private const val STATUS_BAR_BACKGROUND_TAG = "status_bar_background"
         private const val BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 2
     }
