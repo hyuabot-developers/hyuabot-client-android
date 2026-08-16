@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initializeLocationDisclosureSession()
         setContentView(binding.root)
         applyStatusBarStyle(navController.currentDestination?.id)
         binding.bottomNavigation.apply {
@@ -464,10 +465,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             foregroundLocationDisclosureShown ||
             isFinishing ||
             isDestroyed ||
-            locationDisclosurePreferences.getInt(
-                FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT,
-                0,
-            ) >= MAX_LOCATION_DISCLOSURE_DECLINES
+            !canShowForegroundLocationDisclosure()
         ) {
             pendingBackgroundLocationRequest = false
             return
@@ -485,7 +483,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
                 dialog.dismiss()
                 pendingBackgroundLocationRequest = false
-                recordLocationDisclosureDecline(FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
+                deferForegroundLocationDisclosure()
             }
             .show()
             .applyGodoTypography()
@@ -495,6 +493,32 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     private fun recordLocationDisclosureDecline(key: String) {
         val count = locationDisclosurePreferences.getInt(key, 0)
         locationDisclosurePreferences.edit().putInt(key, count + 1).apply()
+    }
+
+    fun canShowForegroundLocationDisclosure(): Boolean {
+        return !locationDisclosurePreferences.getBoolean(
+            FOREGROUND_LOCATION_DISCLOSURE_DEFERRED,
+            false,
+        ) &&
+            locationDisclosurePreferences.getInt(
+                FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT,
+                0,
+            ) < MAX_LOCATION_DISCLOSURE_DECLINES
+    }
+
+    fun deferForegroundLocationDisclosure() {
+        locationDisclosurePreferences.edit()
+            .putBoolean(FOREGROUND_LOCATION_DISCLOSURE_DEFERRED, true)
+            .apply()
+        recordLocationDisclosureDecline(FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
+    }
+
+    private fun initializeLocationDisclosureSession() {
+        if (locationDisclosureSessionInitialized) return
+        locationDisclosurePreferences.edit()
+            .remove(FOREGROUND_LOCATION_DISCLOSURE_DEFERRED)
+            .apply()
+        locationDisclosureSessionInitialized = true
     }
 
     private fun resetLocationDisclosureDeclineCount(key: String) {
@@ -685,8 +709,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         const val EXTRA_REQUEST_BACKGROUND_LOCATION = "request_background_location"
         const val LOCATION_DISCLOSURE_PREFERENCES = "location_disclosure"
         const val FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT = "foreground_decline_count"
+        const val FOREGROUND_LOCATION_DISCLOSURE_DEFERRED = "foreground_deferred"
         const val BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT = "background_decline_count"
         const val MAX_LOCATION_DISCLOSURE_DECLINES = 3
+        private var locationDisclosureSessionInitialized = false
         private const val STATUS_BAR_BACKGROUND_TAG = "status_bar_background"
         private const val BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 2
     }

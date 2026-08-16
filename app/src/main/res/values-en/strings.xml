@@ -237,6 +237,7 @@
     <string name="location_permission_nearest_stop">Location permission is required to find the nearest stop.</string>
     <string name="location_permission_disclosure_title">Location access notice</string>
     <string name="location_permission_disclosure_message">While you use the app, HYUabot uses your location to find nearby shuttle and city bus stops, show nearby bus information, and show your current position on the map. Your location is processed only on your device to provide these features and is not sent to or stored on a server. You can choose a stop manually or use the map without location access.</string>
+    <string name="shuttle_alarm_location_disclosure_message">While a shuttle alarm is active, HYUabot uses your location to calculate your distance from stops and destinations and provide boarding and alighting alerts. Your location is processed only on your device and is not sent to or stored on a server. You can view shuttle information without using the alarm.</string>
     <string name="location_permission_disclosure_allow">Agree and allow location</string>
     <string name="location_permission_disclosure_later">Later</string>
     <string name="map_location_permission_denied">Location access was not allowed.</string>

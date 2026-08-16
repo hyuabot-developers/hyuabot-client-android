@@ -1,5 +1,7 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.AlertDialog
 import android.content.Intent
@@ -18,6 +20,8 @@ import androidx.core.content.res.ResourcesCompat
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogShuttleAlarmBinding
 import app.kobuggi.hyuabot.service.alarm.ShuttleAlarmService
+import app.kobuggi.hyuabot.ui.MainActivity
+import app.kobuggi.hyuabot.ui.common.applyPermissionDialogButtonColors
 import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.time.Instant
@@ -28,6 +32,16 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
 
     private val binding by lazy { DialogShuttleAlarmBinding.inflate(layoutInflater) }
     private var pendingAlarmStart: (() -> Unit)? = null
+    private var pendingLocationPermissionStart: (() -> Unit)? = null
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val action = pendingLocationPermissionStart
+        pendingLocationPermissionStart = null
+        if (permissions.values.any { it }) {
+            action?.invoke()
+        }
+    }
     private val notificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -120,7 +134,7 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
         } else {
             binding.boardingStartButton.text = getString(R.string.shuttle_alarm_start)
             binding.boardingStartButton.setOnClickListener {
-                startWithNotificationPermission {
+                startWithLocationPermission {
                     startBoardingAlarm(alarmKey, boardingName, boardingLat, boardingLng, minutes, departureTimeMillis, checkpointNames, checkpointTimes)
                     dismiss()
                 }
@@ -147,11 +161,11 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
             } else {
                 binding.alightingStartButton.text = getString(R.string.shuttle_alarm_start)
                 binding.alightingStartButton.setOnClickListener {
-                    startWithNotificationPermission {
+                    startWithLocationPermission {
                         val selectedId = binding.destinationRadioGroup.checkedRadioButtonId
                         val selectedIndex = (0 until binding.destinationRadioGroup.childCount).firstOrNull {
                             binding.destinationRadioGroup.getChildAt(it).id == selectedId
-                        } ?: return@startWithNotificationPermission
+                        } ?: return@startWithLocationPermission
                         if (selectedIndex < destLats.size && selectedIndex < destTimes.size) {
                             val alightingCheckpointNames = arrayOf(boardingName) + destNames.take(selectedIndex + 1)
                             val alightingCheckpointTimes = longArrayOf(departureTimeMillis) + destTimes.take(selectedIndex + 1)
@@ -248,6 +262,39 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
             }
             .show()
             .applyGodoTypography()
+    }
+
+    private fun startWithLocationPermission(action: () -> Unit) {
+        if (hasLocationPermission()) {
+            startWithNotificationPermission(action)
+            return
+        }
+        if ((activity as? MainActivity)?.canShowForegroundLocationDisclosure() == false) {
+            pendingLocationPermissionStart = null
+            return
+        }
+        pendingLocationPermissionStart = action
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.location_permission_disclosure_title)
+            .setMessage(R.string.shuttle_alarm_location_disclosure_message)
+            .setPositiveButton(R.string.location_permission_disclosure_allow) { dialog, _ ->
+                dialog.dismiss()
+                locationPermissionLauncher.launch(arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION))
+            }
+            .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
+                dialog.dismiss()
+                pendingLocationPermissionStart = null
+                (activity as? MainActivity)?.deferForegroundLocationDisclosure()
+            }
+            .show()
+            .applyGodoTypography()
+            .applyPermissionDialogButtonColors()
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        val context = requireContext()
+        return ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(context, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun startBoardingAlarm(

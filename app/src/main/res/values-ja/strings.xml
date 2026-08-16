@@ -225,6 +225,7 @@
     <string name="location_permission_nearest_stop">最寄りのバス停を探すには位置情報の権限が必要です。</string>
     <string name="location_permission_disclosure_title">位置情報の使用について</string>
     <string name="location_permission_disclosure_message">アプリの使用中、HYUabotは近くのシャトルバス・路線バスの停留所を探し、周辺の路線バス情報と地図上の現在地を表示するために位置情報を使用します。位置情報はこれらの機能を提供するため端末内でのみ処理され、サーバーへ送信・保存されません。位置情報を許可しなくても停留所を手動で選択したり、地図を利用したりできます。</string>
+    <string name="shuttle_alarm_location_disclosure_message">シャトルアラームの実行中、HYUabotは停留所や目的地までの距離を計算し、乗車・降車通知を提供するために位置情報を使用します。位置情報は端末内でのみ処理され、サーバーへ送信・保存されません。アラームを使用しなくてもシャトル情報を確認できます。</string>
     <string name="location_permission_disclosure_allow">同意して位置情報を許可</string>
     <string name="location_permission_disclosure_later">後で</string>
     <string name="map_location_permission_denied">位置情報が許可されませんでした。</string>

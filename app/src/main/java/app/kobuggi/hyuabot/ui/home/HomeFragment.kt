@@ -530,10 +530,7 @@ class HomeFragment : Fragment() {
             locationDisclosureShown ||
             !isAdded ||
             view == null ||
-            locationDisclosurePreferences().getInt(
-                MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT,
-                0,
-            ) >= MainActivity.MAX_LOCATION_DISCLOSURE_DECLINES
+            (activity as? MainActivity)?.canShowForegroundLocationDisclosure() == false
         ) return
         locationDisclosureShown = true
         AlertDialog.Builder(requireContext())
@@ -550,11 +547,7 @@ class HomeFragment : Fragment() {
             }
             .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
                 dialog.dismiss()
-                val preferences = locationDisclosurePreferences()
-                val count = preferences.getInt(MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT, 0)
-                preferences.edit()
-                    .putInt(MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT, count + 1)
-                    .apply()
+                (activity as? MainActivity)?.deferForegroundLocationDisclosure()
             }
             .show()
             .applyGodoTypography()
