@@ -54,6 +54,7 @@ import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
 import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.ui.common.applyGodoTypography
+import app.kobuggi.hyuabot.ui.common.applyPermissionDialogButtonColors
 import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
 import app.kobuggi.hyuabot.ui.bus.realtime.BusTravelTimeEstimator
 import app.kobuggi.hyuabot.ui.bus.realtime.LogEntry
@@ -557,6 +558,7 @@ class HomeFragment : Fragment() {
             }
             .show()
             .applyGodoTypography()
+            .applyPermissionDialogButtonColors()
     }
 
     private fun locationDisclosurePreferences() = requireContext().getSharedPreferences(

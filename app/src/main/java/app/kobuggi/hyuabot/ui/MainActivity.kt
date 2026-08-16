@@ -46,6 +46,7 @@ import app.kobuggi.hyuabot.util.AnalyticsScreen
 import app.kobuggi.hyuabot.util.AnalyticsScreenDispatcher
 import app.kobuggi.hyuabot.util.InAppReviewManager
 import app.kobuggi.hyuabot.ui.common.applyGodoTypography
+import app.kobuggi.hyuabot.ui.common.applyPermissionDialogButtonColors
 import app.kobuggi.hyuabot.ui.bus.realtime.BusQuickSettingsDialog
 import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
 import app.kobuggi.hyuabot.ui.home.HomeQuickSettingsDialog
@@ -455,6 +456,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             }
             .show()
             .applyGodoTypography()
+            .applyPermissionDialogButtonColors()
     }
 
     private fun showForegroundLocationDisclosure() {
@@ -487,6 +489,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             }
             .show()
             .applyGodoTypography()
+            .applyPermissionDialogButtonColors()
     }
 
     private fun recordLocationDisclosureDecline(key: String) {
