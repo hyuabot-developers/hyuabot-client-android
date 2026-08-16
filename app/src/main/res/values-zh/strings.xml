@@ -224,7 +224,7 @@
     <string name="confirm">确认</string>
     <string name="location_permission_nearest_stop">需要位置权限才能查找最近的站点。</string>
     <string name="location_permission_disclosure_title">位置使用说明</string>
-    <string name="location_permission_disclosure_message">HYUabot使用您的位置信息查找最近的校车站点，并在地图上显示当前位置。位置信息仅在设备本地处理，不会传输或存储至服务器。即使不授予位置权限，也可以手动选择站点。</string>
+    <string name="location_permission_disclosure_message">HYUabot使用您的位置信息查找附近的校车和公交车站，显示附近的公交信息，并在地图上显示当前位置。位置信息仅在设备本地处理，不会传输或存储至服务器。即使不授予位置权限，也可以手动选择站点。</string>
     <string name="location_permission_disclosure_allow">同意并允许位置权限</string>
     <string name="location_permission_disclosure_later">稍后</string>
     <string name="map_location_permission_denied">位置权限未被允许。</string>

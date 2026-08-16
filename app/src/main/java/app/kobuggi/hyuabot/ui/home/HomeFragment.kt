@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -30,6 +31,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
@@ -50,6 +52,7 @@ import app.kobuggi.hyuabot.databinding.FragmentHomeBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
 import app.kobuggi.hyuabot.ui.MainActivity
+import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
 import app.kobuggi.hyuabot.ui.bus.realtime.BusTravelTimeEstimator
 import app.kobuggi.hyuabot.ui.bus.realtime.LogEntry
@@ -105,6 +108,14 @@ class HomeFragment : Fragment() {
     private var locationCancellationTokenSource: CancellationTokenSource? = null
     private var locationCallback: LocationCallback? = null
     private var pendingDepartureLocation: Location? = null
+    private var locationDisclosureShown = false
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions.values.any { it }) {
+            moveToNearestDeparture()
+        }
+    }
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
     private val noticeAutoScrollRunnable = Runnable {
@@ -500,9 +511,33 @@ class HomeFragment : Fragment() {
     }
 
     private fun moveToNearestDeparture() {
-        if (lockDepartureSelection || isDepartureManuallySelected || !hasLocationPermission()) return
+        if (lockDepartureSelection || isDepartureManuallySelected) return
+        if (!hasLocationPermission()) {
+            showLocationDisclosure()
+            return
+        }
         val client = LocationServices.getFusedLocationProviderClient(requireActivity())
         requestCurrentLocation(client)
+    }
+
+    private fun showLocationDisclosure() {
+        if (locationDisclosureShown || !isAdded || view == null) return
+        locationDisclosureShown = true
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.location_permission_disclosure_title)
+            .setMessage(R.string.location_permission_disclosure_message)
+            .setPositiveButton(R.string.location_permission_disclosure_allow) { dialog, _ ->
+                dialog.dismiss()
+                locationPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                    )
+                )
+            }
+            .setNegativeButton(R.string.location_permission_disclosure_later, null)
+            .show()
+            .applyGodoTypography()
     }
 
     @SuppressLint("MissingPermission")

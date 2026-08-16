@@ -236,7 +236,7 @@
     <string name="confirm">Apply</string>
     <string name="location_permission_nearest_stop">Location permission is required to find the nearest stop.</string>
     <string name="location_permission_disclosure_title">Location access notice</string>
-    <string name="location_permission_disclosure_message">HYUabot uses your location to find the nearest shuttle stop and show your current position on the map. Your location is processed only on your device and is not sent to or stored on a server. You can choose a stop manually without location access.</string>
+    <string name="location_permission_disclosure_message">HYUabot uses your location to find nearby shuttle and city bus stops, show nearby bus information, and show your current position on the map. Your location is processed only on your device and is not sent to or stored on a server. You can choose a stop manually without location access.</string>
     <string name="location_permission_disclosure_allow">Agree and allow location</string>
     <string name="location_permission_disclosure_later">Later</string>
     <string name="map_location_permission_denied">Location access was not allowed.</string>
