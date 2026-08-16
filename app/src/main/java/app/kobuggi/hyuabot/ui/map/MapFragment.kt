@@ -6,6 +6,7 @@ import app.kobuggi.hyuabot.util.UIUtility
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Canvas
@@ -25,6 +26,7 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -37,6 +39,7 @@ import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
+import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -69,6 +72,15 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private var isMapViewCreated = false
     private val buildingMarkerIconCache = mutableMapOf<String, OverlayImage>()
     private val markerTranslationRequests = mutableSetOf<String>()
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions.values.any { it }) {
+            centerOnCurrentLocation()
+        } else {
+            Toast.makeText(requireContext(), R.string.map_location_permission_denied, Toast.LENGTH_SHORT).show()
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -141,16 +153,34 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
         return binding.root
     }
 
-    @SuppressLint("MissingPermission")
     private fun moveToCurrentLocation() {
         if (!this::naverMap.isInitialized) return
         val hasLocationPermission =
             ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         if (!hasLocationPermission) {
-            Toast.makeText(requireContext(), R.string.map_location_permission_required, Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.location_permission_disclosure_title)
+                .setMessage(R.string.location_permission_disclosure_message)
+                .setPositiveButton(R.string.location_permission_disclosure_allow) { dialog, _ ->
+                    dialog.dismiss()
+                    locationPermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                        )
+                    )
+                }
+                .setNegativeButton(R.string.location_permission_disclosure_later, null)
+                .show()
+                .applyGodoTypography()
             return
         }
+        centerOnCurrentLocation()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun centerOnCurrentLocation() {
         LocationServices.getFusedLocationProviderClient(requireActivity())
             .getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, CancellationTokenSource().token)
             .addOnSuccessListener { location ->

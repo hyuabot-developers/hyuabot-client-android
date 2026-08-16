@@ -17,7 +17,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.CheckBox
-import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -111,7 +110,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             }
         }
         suggestLanguageIfNeeded()
-        checkLocationPermission()
         openBirthDayDialog()
         requestInAppReview()
         syncShuttleServiceNotices()
@@ -278,6 +276,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     override fun onResume() {
         super.onResume()
         updatePrimaryNavigationItem(navController.currentDestination?.id)
+        if (hasLocationPermission()) {
+            maybeRequestBackgroundLocation()
+        }
     }
 
     private fun updateBottomNavigationLabels() {
@@ -385,35 +386,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         }
     }
 
-    private fun checkLocationPermission() {
-        if (
-            ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        ) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
-                Toast.makeText(
-                    this,
-                    getString(R.string.location_permission_nearest_stop),
-                    Toast.LENGTH_SHORT
-                ).show()
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
-                    LOCATION_PERMISSION_REQUEST_CODE
-                )
-            } else {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(
-                        ACCESS_FINE_LOCATION,
-                        ACCESS_COARSE_LOCATION
-                    ),
-                    LOCATION_PERMISSION_REQUEST_CODE
-                )
-            }
-        } else {
-            maybeRequestBackgroundLocation()
-        }
+    private fun hasLocationPermission(): Boolean {
+        return ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun maybeRequestBackgroundLocation() {
@@ -451,11 +426,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (
-            requestCode == LOCATION_PERMISSION_REQUEST_CODE &&
-            grantResults.isNotEmpty() &&
-            grantResults.any { it == PackageManager.PERMISSION_GRANTED }
-        ) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE && hasLocationPermission()) {
             maybeRequestBackgroundLocation()
         }
     }

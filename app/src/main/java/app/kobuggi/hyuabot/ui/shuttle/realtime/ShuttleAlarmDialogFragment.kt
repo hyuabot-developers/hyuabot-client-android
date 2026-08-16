@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -17,6 +18,7 @@ import androidx.core.content.res.ResourcesCompat
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.DialogShuttleAlarmBinding
 import app.kobuggi.hyuabot.service.alarm.ShuttleAlarmService
+import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.time.Instant
 import java.time.ZoneId
@@ -234,7 +236,18 @@ class ShuttleAlarmDialogFragment : BottomSheetDialogFragment() {
         }
 
         pendingAlarmStart = action
-        notificationPermissionLauncher.launch(POST_NOTIFICATIONS)
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.notification_permission_disclosure_title)
+            .setMessage(R.string.shuttle_notification_permission_disclosure_message)
+            .setPositiveButton(R.string.notification_permission_disclosure_allow) { dialog, _ ->
+                dialog.dismiss()
+                notificationPermissionLauncher.launch(POST_NOTIFICATIONS)
+            }
+            .setNegativeButton(R.string.notification_permission_disclosure_later) { _, _ ->
+                pendingAlarmStart = null
+            }
+            .show()
+            .applyGodoTypography()
     }
 
     private fun startBoardingAlarm(

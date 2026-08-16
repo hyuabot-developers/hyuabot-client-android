@@ -223,6 +223,11 @@
     <string name="shuttle_period_vacation_session">小学期</string>
     <string name="confirm">确认</string>
     <string name="location_permission_nearest_stop">需要位置权限才能查找最近的站点。</string>
+    <string name="location_permission_disclosure_title">位置使用说明</string>
+    <string name="location_permission_disclosure_message">HYUabot使用您的位置信息查找附近的校车和公交车站，显示附近的公交信息，并在地图上显示当前位置。位置信息仅在设备本地处理，不会传输或存储至服务器。即使不授予位置权限，也可以手动选择站点。</string>
+    <string name="location_permission_disclosure_allow">同意并允许位置权限</string>
+    <string name="location_permission_disclosure_later">稍后</string>
+    <string name="map_location_permission_denied">位置权限未被允许。</string>
     <string name="shuttle_realtime_toast">上下学高峰时段，部分校车可能不从羽毛球场出发。</string>
     <string name="shuttle_realtime_duration_format">%1$d分钟</string>
     <string name="bus_tab_city">市内公交</string>
@@ -488,6 +493,11 @@
     <string name="reading_room_noti_allowed">通知权限已允许。</string>
     <string name="reading_room_noti_denied">通知权限已拒绝。</string>
     <string name="reading_room_noti_rationale">需要权限才能发送剩余座位通知。请在设置中允许权限。</string>
+    <string name="notification_permission_disclosure_title">通知权限说明</string>
+    <string name="reading_room_notification_permission_disclosure_message">需要通知权限才能发送自习室剩余座位和使用时间提醒。不允许通知也可以继续使用其他功能。</string>
+    <string name="shuttle_notification_permission_disclosure_message">需要通知权限才能发送校车提醒。不允许通知也可以继续使用其他功能。</string>
+    <string name="notification_permission_disclosure_allow">同意并允许通知</string>
+    <string name="notification_permission_disclosure_later">稍后</string>
     <string name="reading_room_noti_settings">设置</string>
     <string name="reading_room_update_time">更新时间: %1$s</string>
     <string name="reading_room_noti_on">已设置阅览室提醒。</string>
@@ -587,7 +597,7 @@
     <string name="shuttle_service_notice_period_unknown">新期间</string>
     <string name="info_button_shuttle">校车信息按钮</string>
     <string name="analytics_settings">应用分析数据收集</string>
-    <string name="analytics_settings_description">为改善应用，将收集匿名使用数据及广告标识符（AD ID）。可随时关闭。</string>
+    <string name="analytics_settings_description">为改善应用并检测崩溃，将收集匿名使用数据、广告标识符（AD ID）以及崩溃和诊断信息。可随时关闭。</string>
     <string name="coachmark_skip">跳过</string>
     <string name="coachmark_next">下一步</string>
     <string name="coachmark_done">完成</string>
@@ -696,7 +706,7 @@
     <string name="shuttle_alarm_alighting">下车提醒 · 分享行程</string>
     <string name="shuttle_alarm_start">开始提醒</string>
     <string name="shuttle_alarm_cancel">取消提醒</string>
-    <string name="shuttle_alarm_boarding_title">校车上车提醒</string>
+    <string name="shuttle_alarm_boarding_title">校车上车提醒：%1$s</string>
     <string name="shuttle_alarm_boarding_live_departure">%1$s 出发</string>
     <string name="shuttle_alarm_boarding_live_direction_distance">%1$s方向 %2$s</string>
     <string name="shuttle_alarm_alighting_live_arrival">%1$s 到达</string>
@@ -705,7 +715,7 @@
     <string name="shuttle_alarm_checkpoint_waiting">%1$s等待</string>
     <string name="shuttle_alarm_checkpoint_departed">%1$s出发</string>
     <string name="shuttle_alarm_checkpoint_approaching">接近%1$s</string>
-    <string name="shuttle_alarm_alighting_title">校车下车提醒</string>
+    <string name="shuttle_alarm_alighting_title">校车下车提醒：%1$s</string>
     <string name="shuttle_alarm_alighting_content">距站点约%1$s</string>
     <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">追踪中</string>

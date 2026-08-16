@@ -186,7 +186,7 @@
     <string name="shuttle_alarm_alighting">하차 알림 · 여정 공유</string>
     <string name="shuttle_alarm_start">알림 시작</string>
     <string name="shuttle_alarm_cancel">알림 취소</string>
-    <string name="shuttle_alarm_boarding_title">셔틀버스 승차 알림</string>
+    <string name="shuttle_alarm_boarding_title">셔틀버스 승차 알림: %1$s</string>
     <string name="shuttle_alarm_boarding_live_departure">%1$s 출발</string>
     <string name="shuttle_alarm_boarding_live_direction_distance">%1$s방향 %2$s</string>
     <string name="shuttle_alarm_alighting_live_arrival">%1$s 도착</string>
@@ -195,7 +195,7 @@
     <string name="shuttle_alarm_checkpoint_waiting">%1$s 대기</string>
     <string name="shuttle_alarm_checkpoint_departed">%1$s 출발</string>
     <string name="shuttle_alarm_checkpoint_approaching">%1$s 접근</string>
-    <string name="shuttle_alarm_alighting_title">셔틀버스 하차 알림</string>
+    <string name="shuttle_alarm_alighting_title">셔틀버스 하차 알림: %1$s</string>
     <string name="shuttle_alarm_alighting_content">정류장까지 약 %1$s</string>
     <string name="shuttle_alarm_distance_short">%1$s</string>
     <string name="shuttle_alarm_tracking_short">추적 중</string>
@@ -275,6 +275,11 @@
     <string name="shuttle_period_vacation_session">계절학기</string>
     <string name="confirm">확인</string>
     <string name="location_permission_nearest_stop">가까운 정류장을 찾기 위해 위치 권한이 필요합니다.</string>
+    <string name="location_permission_disclosure_title">위치 정보 사용 안내</string>
+    <string name="location_permission_disclosure_message">휴아봇은 현재 위치를 사용해 가까운 셔틀버스·노선버스 정류장을 찾고, 주변 노선버스 정보를 보여주며 지도에서 현재 위치를 표시합니다. 위치 정보는 기기에서만 처리되며 서버에 전송하거나 저장하지 않습니다. 위치 권한 없이도 정류장을 직접 선택할 수 있습니다.</string>
+    <string name="location_permission_disclosure_allow">동의하고 위치 허용</string>
+    <string name="location_permission_disclosure_later">나중에</string>
+    <string name="map_location_permission_denied">위치 권한이 허용되지 않았습니다.</string>
     <!-- 셔틀버스 등하교 팝업 -->
     <string name="shuttle_realtime_toast">등하교 집중 시간대에는 셔틀콕에서 일부 셔틀버스가 운행하지 않을 수 있습니다.</string>
     <!-- 셔틀버스 소요 시간 -->
@@ -559,6 +564,11 @@
     <string name="reading_room_noti_allowed">알림 권한이 허용되었습니다.</string>
     <string name="reading_room_noti_denied">알림 권한이 거부되었습니다.</string>
     <string name="reading_room_noti_rationale">잔여 좌석 알림을 위해서는 권한이 필요합니다. 설정에서 권한을 허용해주세요.</string>
+    <string name="notification_permission_disclosure_title">알림 권한 안내</string>
+    <string name="reading_room_notification_permission_disclosure_message">열람실 잔여 좌석과 이용 시간 안내를 보내기 위해 알림 권한이 필요합니다. 알림을 허용하지 않아도 다른 기능은 계속 사용할 수 있습니다.</string>
+    <string name="shuttle_notification_permission_disclosure_message">셔틀버스 알람을 보내기 위해 알림 권한이 필요합니다. 알림을 허용하지 않아도 다른 기능은 계속 사용할 수 있습니다.</string>
+    <string name="notification_permission_disclosure_allow">동의하고 알림 허용</string>
+    <string name="notification_permission_disclosure_later">나중에</string>
     <string name="reading_room_noti_settings">설정</string>
     <string name="reading_room_update_time">업데이트 시간: %1$s</string>
     <string name="reading_room_noti_on">열람실 알람을 설정했습니다.</string>
@@ -664,7 +674,7 @@
     <string name="shuttle_service_notice_period_unknown">새 기간</string>
     <string name="info_button_shuttle">셔틀 정보 버튼</string>
     <string name="analytics_settings">앱 분석 데이터 수집</string>
-    <string name="analytics_settings_description">앱 개선을 위해 익명의 사용 데이터 및 광고 식별자(AD ID)를 수집합니다. 언제든지 해제할 수 있습니다.</string>
+    <string name="analytics_settings_description">앱 개선과 충돌 감지를 위해 익명의 사용 데이터, 광고 식별자(AD ID), 충돌·진단 정보를 수집합니다. 언제든지 해제할 수 있습니다.</string>
     <string name="coachmark_skip">건너뛰기</string>
     <string name="coachmark_next">다음</string>
     <string name="coachmark_done">완료</string>
