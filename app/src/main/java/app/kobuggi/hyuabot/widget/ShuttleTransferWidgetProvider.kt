@@ -177,6 +177,7 @@ class ShuttleTransferWidgetProvider : AppWidgetProvider() {
             MainActivity::class.java
         ).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(MainActivity.EXTRA_REQUEST_BACKGROUND_LOCATION, true)
         }
         views.setOnClickPendingIntent(
             R.id.widget_transfer_root,

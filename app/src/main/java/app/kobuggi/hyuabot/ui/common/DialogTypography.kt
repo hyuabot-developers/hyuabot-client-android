@@ -5,12 +5,21 @@ import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import app.kobuggi.hyuabot.R
 
-fun AlertDialog.applyGodoTypography() {
-    val godo = ResourcesCompat.getFont(context, R.font.godo) ?: return
+fun AlertDialog.applyGodoTypography(): AlertDialog {
+    val godo = ResourcesCompat.getFont(context, R.font.godo) ?: return this
     window?.decorView?.applyGodoTypeface(godo)
+    return this
+}
+
+fun AlertDialog.applyPermissionDialogButtonColors(): AlertDialog {
+    val buttonColor = ContextCompat.getColor(context, R.color.location_permission_dialog_button)
+    getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(buttonColor)
+    getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(buttonColor)
+    return this
 }
 
 private fun View.applyGodoTypeface(typeface: Typeface) {

@@ -236,7 +236,7 @@
     <string name="confirm">Apply</string>
     <string name="location_permission_nearest_stop">Location permission is required to find the nearest stop.</string>
     <string name="location_permission_disclosure_title">Location access notice</string>
-    <string name="location_permission_disclosure_message">HYUabot uses your location to find nearby shuttle and city bus stops, show nearby bus information, and show your current position on the map. Your location is processed only on your device and is not sent to or stored on a server. You can choose a stop manually without location access.</string>
+    <string name="location_permission_disclosure_message">While you use the app, HYUabot uses your location to find nearby shuttle and city bus stops, show nearby bus information, and show your current position on the map. Your location is processed only on your device to provide these features and is not sent to or stored on a server. You can choose a stop manually or use the map without location access.</string>
     <string name="location_permission_disclosure_allow">Agree and allow location</string>
     <string name="location_permission_disclosure_later">Later</string>
     <string name="map_location_permission_denied">Location access was not allowed.</string>
@@ -450,7 +450,7 @@
     <string name="widget_shuttle_no_location">Location Unavailable</string>
     <string name="widget_shuttle_permission_required">Location Access Required</string>
     <string name="widget_shuttle_background_location_title">Background location access</string>
-    <string name="widget_shuttle_background_location_message">The shuttle widget uses your location in the background, even when the app is closed, to show the nearest stop. Please set location permission to \'Allow all the time\' on the next screen.</string>
+    <string name="widget_shuttle_background_location_message">HYUabot collects location data in the background, even when the app is closed or not in use, so the shuttle widget can find the nearest shuttle stop and show arrival information for that stop. Your location is processed on your device to provide this feature and is not sent to or stored on a server or used for advertising or analytics. On the next Android settings screen, choose \'Allow all the time\' to let the widget update without opening the app. You can still check shuttle information directly in the app without allowing background location.</string>
     <string name="widget_shuttle_background_location_allow">Allow</string>
     <string name="widget_shuttle_background_location_later">Later</string>
     <string name="widget_preview_shuttle_stop_station">· Hanyang Univ. at Ansan</string>

@@ -3,6 +3,7 @@ package app.kobuggi.hyuabot.ui.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -53,6 +54,7 @@ import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
 import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.ui.common.applyGodoTypography
+import app.kobuggi.hyuabot.ui.common.applyPermissionDialogButtonColors
 import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
 import app.kobuggi.hyuabot.ui.bus.realtime.BusTravelTimeEstimator
 import app.kobuggi.hyuabot.ui.bus.realtime.LogEntry
@@ -113,6 +115,9 @@ class HomeFragment : Fragment() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         if (permissions.values.any { it }) {
+            locationDisclosurePreferences().edit()
+                .putInt(MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT, 0)
+                .apply()
             moveToNearestDeparture()
         }
     }
@@ -521,7 +526,15 @@ class HomeFragment : Fragment() {
     }
 
     private fun showLocationDisclosure() {
-        if (locationDisclosureShown || !isAdded || view == null) return
+        if (
+            locationDisclosureShown ||
+            !isAdded ||
+            view == null ||
+            locationDisclosurePreferences().getInt(
+                MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT,
+                0,
+            ) >= MainActivity.MAX_LOCATION_DISCLOSURE_DECLINES
+        ) return
         locationDisclosureShown = true
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.location_permission_disclosure_title)
@@ -535,10 +548,23 @@ class HomeFragment : Fragment() {
                     )
                 )
             }
-            .setNegativeButton(R.string.location_permission_disclosure_later, null)
+            .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
+                dialog.dismiss()
+                val preferences = locationDisclosurePreferences()
+                val count = preferences.getInt(MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT, 0)
+                preferences.edit()
+                    .putInt(MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT, count + 1)
+                    .apply()
+            }
             .show()
             .applyGodoTypography()
+            .applyPermissionDialogButtonColors()
     }
+
+    private fun locationDisclosurePreferences() = requireContext().getSharedPreferences(
+        MainActivity.LOCATION_DISCLOSURE_PREFERENCES,
+        Context.MODE_PRIVATE,
+    )
 
     @SuppressLint("MissingPermission")
     private fun selectLastKnownLocation(client: FusedLocationProviderClient) {

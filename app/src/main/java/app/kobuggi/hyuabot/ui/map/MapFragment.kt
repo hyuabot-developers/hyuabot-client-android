@@ -40,6 +40,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import app.kobuggi.hyuabot.ui.common.applyGodoTypography
+import app.kobuggi.hyuabot.ui.common.applyPermissionDialogButtonColors
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -174,6 +175,7 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
                 .setNegativeButton(R.string.location_permission_disclosure_later, null)
                 .show()
                 .applyGodoTypography()
+                .applyPermissionDialogButtonColors()
             return
         }
         centerOnCurrentLocation()
