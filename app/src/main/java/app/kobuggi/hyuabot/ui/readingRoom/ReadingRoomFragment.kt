@@ -4,6 +4,7 @@ import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.AlertDialog
 import android.app.AlarmManager
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,7 +30,7 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
-import com.google.android.material.snackbar.Snackbar
+import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -148,16 +149,17 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
 
     private fun askNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(requireContext(), POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                // FCM SDK (and your app) can post notifications.
-            } else if (shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)) {
-                Snackbar.make(binding.root, R.string.reading_room_noti_rationale, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.reading_room_noti_settings) {
+            if (ContextCompat.checkSelfPermission(requireContext(), POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.notification_permission_disclosure_title)
+                    .setMessage(R.string.reading_room_notification_permission_disclosure_message)
+                    .setPositiveButton(R.string.notification_permission_disclosure_allow) { dialog, _ ->
+                        dialog.dismiss()
                         requestPermissionLauncher.launch(POST_NOTIFICATIONS)
                     }
+                    .setNegativeButton(R.string.notification_permission_disclosure_later, null)
                     .show()
-            } else {
-                requestPermissionLauncher.launch(POST_NOTIFICATIONS)
+                    .applyGodoTypography()
             }
         }
     }

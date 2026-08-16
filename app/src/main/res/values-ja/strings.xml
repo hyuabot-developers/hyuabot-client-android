@@ -223,6 +223,11 @@
     <string name="shuttle_period_vacation_session">季節学期</string>
     <string name="confirm">確認</string>
     <string name="location_permission_nearest_stop">最寄りのバス停を探すには位置情報の権限が必要です。</string>
+    <string name="location_permission_disclosure_title">位置情報の使用について</string>
+    <string name="location_permission_disclosure_message">HYUabotは、最寄りのシャトルバス停留所を探し、地図に現在地を表示するために位置情報を使用します。位置情報は端末内でのみ処理され、サーバーへ送信・保存されません。位置情報を許可しなくても停留所を手動で選択できます。</string>
+    <string name="location_permission_disclosure_allow">同意して位置情報を許可</string>
+    <string name="location_permission_disclosure_later">後で</string>
+    <string name="map_location_permission_denied">位置情報が許可されませんでした。</string>
     <string name="shuttle_realtime_toast">通学ラッシュ時は、シャトルコックから一部シャトルが運行しない場合があります。</string>
     <string name="shuttle_realtime_duration_format">%1$d分</string>
     <string name="bus_tab_city">市内バス</string>
@@ -488,6 +493,11 @@
     <string name="reading_room_noti_allowed">通知権限が許可されました。</string>
     <string name="reading_room_noti_denied">通知権限が拒否されました。</string>
     <string name="reading_room_noti_rationale">残席通知のためには権限が必要です。設定から権限を許可してください。</string>
+    <string name="notification_permission_disclosure_title">通知権限の使用について</string>
+    <string name="reading_room_notification_permission_disclosure_message">自習室の空席状況と利用時間のお知らせを送るため、通知権限が必要です。通知を許可しなくても他の機能は利用できます。</string>
+    <string name="shuttle_notification_permission_disclosure_message">シャトルバスのアラームを送るため、通知権限が必要です。通知を許可しなくても他の機能は利用できます。</string>
+    <string name="notification_permission_disclosure_allow">同意して通知を許可</string>
+    <string name="notification_permission_disclosure_later">後で</string>
     <string name="reading_room_noti_settings">設定</string>
     <string name="reading_room_update_time">更新時間: %1$s</string>
     <string name="reading_room_noti_on">閲覧室アラームを設定しました。</string>
@@ -587,7 +597,7 @@
     <string name="shuttle_service_notice_period_unknown">新しい期間</string>
     <string name="info_button_shuttle">シャトル情報ボタン</string>
     <string name="analytics_settings">アプリ分析データの収集</string>
-    <string name="analytics_settings_description">アプリ改善のため、匿名の使用データおよび広告識別子（AD ID）を収集します。いつでも無効にできます。</string>
+    <string name="analytics_settings_description">アプリの改善とクラッシュ検知のため、匿名の利用データ、広告識別子（AD ID）、クラッシュ・診断情報を収集します。いつでも無効にできます。</string>
     <string name="coachmark_skip">スキップ</string>
     <string name="coachmark_next">次へ</string>
     <string name="coachmark_done">完了</string>

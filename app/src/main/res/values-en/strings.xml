@@ -235,6 +235,11 @@
     <string name="shuttle_period_vacation_session">Seasonal Semester</string>
     <string name="confirm">Apply</string>
     <string name="location_permission_nearest_stop">Location permission is required to find the nearest stop.</string>
+    <string name="location_permission_disclosure_title">Location access notice</string>
+    <string name="location_permission_disclosure_message">HYUabot uses your location to find the nearest shuttle stop and show your current position on the map. Your location is processed only on your device and is not sent to or stored on a server. You can choose a stop manually without location access.</string>
+    <string name="location_permission_disclosure_allow">Agree and allow location</string>
+    <string name="location_permission_disclosure_later">Later</string>
+    <string name="map_location_permission_denied">Location access was not allowed.</string>
     <!-- 셔틀버스 등하교 팝업 -->
     <string name="shuttle_realtime_toast">During peak school commute hours, some shuttle may not depart from Shuttlecock.</string>
     <!-- 셔틀버스 소요 시간 -->
@@ -511,6 +516,11 @@
     <string name="reading_room_noti_allowed">Notifications enabled.</string>
     <string name="reading_room_noti_denied">Notifications disabled.</string>
     <string name="reading_room_noti_rationale">Permission is required for seat availability notifications. Please enable it in settings.</string>
+    <string name="notification_permission_disclosure_title">Notification permission notice</string>
+    <string name="reading_room_notification_permission_disclosure_message">Notification permission is required to send reading room seat availability and usage-time notices. You can continue using other features without allowing notifications.</string>
+    <string name="shuttle_notification_permission_disclosure_message">Notification permission is required to send shuttle bus alarms. You can continue using other features without allowing notifications.</string>
+    <string name="notification_permission_disclosure_allow">Agree and allow notifications</string>
+    <string name="notification_permission_disclosure_later">Later</string>
     <string name="reading_room_noti_settings">Settings</string>
     <string name="reading_room_update_time">Updated: %1$s</string>
     <string name="reading_room_noti_on">Reading room notifications set.</string>
@@ -608,7 +618,7 @@
     <string name="shuttle_service_notice_period_unknown">a new period</string>
     <string name="info_button_shuttle">Information button for shuttle</string>
     <string name="analytics_settings">App Analytics</string>
-    <string name="analytics_settings_description">We collect anonymous usage data and your Advertising ID (AD ID) to improve the app. You can disable this at any time.</string>
+    <string name="analytics_settings_description">We collect anonymous usage data, your Advertising ID (AD ID), and crash and diagnostic information to improve the app and detect crashes. You can disable this at any time.</string>
     <string name="coachmark_skip">Skip</string>
     <string name="coachmark_next">Next</string>
     <string name="coachmark_done">Done</string>
