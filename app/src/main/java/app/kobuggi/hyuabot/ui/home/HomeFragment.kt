@@ -111,6 +111,7 @@ class HomeFragment : Fragment() {
     private var locationCallback: LocationCallback? = null
     private var pendingDepartureLocation: Location? = null
     private var locationDisclosureShown = false
+    private var locationDisclosureDialog: AlertDialog? = null
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -314,6 +315,11 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        if (hasLocationPermission()) {
+            locationDisclosureDialog?.dismiss()
+            locationDisclosureDialog = null
+            locationDisclosureShown = false
+        }
         viewModel.startPresenceUpdates()
         hasResolvedInitialDepartureLocation = false
         refreshHome()
@@ -518,7 +524,9 @@ class HomeFragment : Fragment() {
     private fun moveToNearestDeparture() {
         if (lockDepartureSelection || isDepartureManuallySelected) return
         if (!hasLocationPermission()) {
-            showLocationDisclosure()
+            (activity as? MainActivity)?.requestForegroundLocationPermission {
+                if (isAdded) moveToNearestDeparture()
+            }
             return
         }
         val client = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -527,6 +535,7 @@ class HomeFragment : Fragment() {
 
     private fun showLocationDisclosure() {
         if (
+            hasLocationPermission() ||
             locationDisclosureShown ||
             !isAdded ||
             view == null ||
@@ -550,6 +559,7 @@ class HomeFragment : Fragment() {
                 (activity as? MainActivity)?.deferForegroundLocationDisclosure()
             }
             .show()
+            .also { locationDisclosureDialog = it }
             .applyGodoTypography()
             .applyPermissionDialogButtonColors()
     }

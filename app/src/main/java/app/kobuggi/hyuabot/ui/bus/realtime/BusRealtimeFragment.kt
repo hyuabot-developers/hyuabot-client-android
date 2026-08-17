@@ -58,6 +58,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
     private var manuallyScrolled = false
     private var setClosestStop = false
     private var locationDisclosureShown = false
+    private var locationDisclosureDialog: AlertDialog? = null
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -201,7 +202,11 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
     @SuppressLint("MissingPermission")
     private fun moveToNearestStop(client: FusedLocationProviderClient) {
         if (!hasLocationPermission()) {
-            showLocationDisclosure()
+            (activity as? MainActivity)?.requestForegroundLocationPermission {
+                if (isAdded) {
+                    moveToNearestStop(LocationServices.getFusedLocationProviderClient(requireActivity()))
+                }
+            }
             return
         }
         val allStops = viewModel.result.value?.distinctBy { it.stop.seq } ?: emptyList()
@@ -277,6 +282,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
 
     private fun showLocationDisclosure() {
         if (
+            hasLocationPermission() ||
             locationDisclosureShown ||
             !isAdded ||
             view == null ||
@@ -300,6 +306,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                 (activity as? MainActivity)?.deferForegroundLocationDisclosure()
             }
             .show()
+            .also { locationDisclosureDialog = it }
             .applyGodoTypography()
             .applyPermissionDialogButtonColors()
     }
@@ -323,6 +330,11 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        if (hasLocationPermission()) {
+            locationDisclosureDialog?.dismiss()
+            locationDisclosureDialog = null
+            locationDisclosureShown = false
+        }
         setClosestStop = false
         binding.viewPager.post {
             if (isAdded && view != null && viewModel.result.value?.isNotEmpty() == true) {

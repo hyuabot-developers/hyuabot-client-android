@@ -161,26 +161,9 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         if (!hasLocationPermission) {
-            if ((activity as? MainActivity)?.canShowForegroundLocationDisclosure() == false) return
-            AlertDialog.Builder(requireContext())
-                .setTitle(R.string.location_permission_disclosure_title)
-                .setMessage(R.string.location_permission_disclosure_message)
-                .setPositiveButton(R.string.location_permission_disclosure_allow) { dialog, _ ->
-                    dialog.dismiss()
-                    locationPermissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                        )
-                    )
-                }
-                .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
-                    dialog.dismiss()
-                    (activity as? MainActivity)?.deferForegroundLocationDisclosure()
-                }
-                .show()
-                .applyGodoTypography()
-                .applyPermissionDialogButtonColors()
+            (activity as? MainActivity)?.requestForegroundLocationPermission {
+                if (isAdded) centerOnCurrentLocation()
+            }
             return
         }
         centerOnCurrentLocation()

@@ -72,6 +72,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private var isApplyingInitialLocationSelection = false
     private var coachmarkShown = false
     private var locationDisclosureShown = false
+    private var locationDisclosureDialog: AlertDialog? = null
     private var pendingInitialStops: List<ShuttleRealtimePageQuery.Stop> = emptyList()
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -302,6 +303,11 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        if (hasLocationPermission()) {
+            locationDisclosureDialog?.dismiss()
+            locationDisclosureDialog = null
+            locationDisclosureShown = false
+        }
         hasRequestedInitialStopLocation = false
         binding.viewPager.post {
             if (
@@ -363,7 +369,17 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     ) {
         if (!hasLocationPermission()) {
             pendingInitialStops = stops
-            showLocationDisclosure()
+            (activity as? MainActivity)?.requestForegroundLocationPermission {
+                if (isAdded) {
+                    pendingInitialStops.takeIf { it.isNotEmpty() }?.let { pendingStops ->
+                        moveToInitialStop(
+                            LocationServices.getFusedLocationProviderClient(requireActivity()),
+                            pendingStops,
+                        )
+                    }
+                    pendingInitialStops = emptyList()
+                }
+            }
             return
         }
         requestCurrentLocation(client, stops)
@@ -390,6 +406,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
 
     private fun showLocationDisclosure() {
         if (
+            hasLocationPermission() ||
             locationDisclosureShown ||
             !isAdded ||
             view == null ||
@@ -414,6 +431,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 (activity as? MainActivity)?.deferForegroundLocationDisclosure()
             }
             .show()
+            .also { locationDisclosureDialog = it }
             .applyGodoTypography()
             .applyPermissionDialogButtonColors()
     }
