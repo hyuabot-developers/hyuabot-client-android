@@ -2,7 +2,6 @@ package app.kobuggi.hyuabot.ui.shuttle.realtime
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -16,7 +15,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -31,8 +29,6 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ui.MainActivity
-import app.kobuggi.hyuabot.ui.common.applyGodoTypography
-import app.kobuggi.hyuabot.ui.common.applyPermissionDialogButtonColors
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
@@ -71,25 +67,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private var hasManualStopSelection = false
     private var isApplyingInitialLocationSelection = false
     private var coachmarkShown = false
-    private var locationDisclosureShown = false
-    private var locationDisclosureDialog: AlertDialog? = null
     private var pendingInitialStops: List<ShuttleRealtimePageQuery.Stop> = emptyList()
-    private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (permissions.values.any { it }) {
-            locationDisclosurePreferences().edit()
-                .putInt(MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT, 0)
-                .apply()
-            pendingInitialStops.takeIf { it.isNotEmpty() }?.let { stops ->
-                moveToInitialStop(
-                    LocationServices.getFusedLocationProviderClient(requireActivity()),
-                    stops,
-                )
-            }
-        }
-        pendingInitialStops = emptyList()
-    }
     private val scrollHandler = Handler(Looper.getMainLooper())
     private val autoScrollRunnable = Runnable {
         val adapter = binding.noticeViewPager.adapter
@@ -303,11 +281,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (hasLocationPermission()) {
-            locationDisclosureDialog?.dismiss()
-            locationDisclosureDialog = null
-            locationDisclosureShown = false
-        }
         hasRequestedInitialStopLocation = false
         binding.viewPager.post {
             if (
@@ -404,38 +377,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         return ageMillis in 0..LOCATION_MAX_AGE_MILLIS
     }
 
-    private fun showLocationDisclosure() {
-        if (
-            hasLocationPermission() ||
-            locationDisclosureShown ||
-            !isAdded ||
-            view == null ||
-            (activity as? MainActivity)?.canShowForegroundLocationDisclosure() == false
-        ) return
-        locationDisclosureShown = true
-        AlertDialog.Builder(requireContext())
-            .setTitle(R.string.location_permission_disclosure_title)
-            .setMessage(R.string.location_permission_disclosure_message)
-            .setPositiveButton(R.string.location_permission_disclosure_allow) { dialog, _ ->
-                dialog.dismiss()
-                locationPermissionLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                    )
-                )
-            }
-            .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
-                dialog.dismiss()
-                pendingInitialStops = emptyList()
-                (activity as? MainActivity)?.deferForegroundLocationDisclosure()
-            }
-            .show()
-            .also { locationDisclosureDialog = it }
-            .applyGodoTypography()
-            .applyPermissionDialogButtonColors()
-    }
-
     private fun hasLocationPermission(): Boolean {
         val context = context ?: return false
         return ContextCompat.checkSelfPermission(
@@ -447,11 +388,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 Manifest.permission.ACCESS_COARSE_LOCATION,
             ) == PackageManager.PERMISSION_GRANTED
     }
-
-    private fun locationDisclosurePreferences() = requireContext().getSharedPreferences(
-        MainActivity.LOCATION_DISCLOSURE_PREFERENCES,
-        Context.MODE_PRIVATE,
-    )
 
     @SuppressLint("MissingPermission")
     private fun requestCurrentLocation(

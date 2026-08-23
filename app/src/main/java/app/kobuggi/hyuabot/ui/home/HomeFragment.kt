@@ -2,7 +2,6 @@ package app.kobuggi.hyuabot.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -32,7 +31,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
@@ -53,8 +51,6 @@ import app.kobuggi.hyuabot.databinding.FragmentHomeBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
 import app.kobuggi.hyuabot.ui.MainActivity
-import app.kobuggi.hyuabot.ui.common.applyGodoTypography
-import app.kobuggi.hyuabot.ui.common.applyPermissionDialogButtonColors
 import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
@@ -108,18 +104,6 @@ class HomeFragment : Fragment() {
     private var locationCancellationTokenSource: CancellationTokenSource? = null
     private var locationCallback: LocationCallback? = null
     private var pendingDepartureLocation: Location? = null
-    private var locationDisclosureShown = false
-    private var locationDisclosureDialog: AlertDialog? = null
-    private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (permissions.values.any { it }) {
-            locationDisclosurePreferences().edit()
-                .putInt(MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT, 0)
-                .apply()
-            moveToNearestDeparture()
-        }
-    }
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
     private val noticeAutoScrollRunnable = Runnable {
@@ -313,11 +297,6 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (hasLocationPermission()) {
-            locationDisclosureDialog?.dismiss()
-            locationDisclosureDialog = null
-            locationDisclosureShown = false
-        }
         viewModel.startPresenceUpdates()
         hasResolvedInitialDepartureLocation = false
         refreshHome()
@@ -530,42 +509,6 @@ class HomeFragment : Fragment() {
         val client = LocationServices.getFusedLocationProviderClient(requireActivity())
         requestCurrentLocation(client)
     }
-
-    private fun showLocationDisclosure() {
-        if (
-            hasLocationPermission() ||
-            locationDisclosureShown ||
-            !isAdded ||
-            view == null ||
-            (activity as? MainActivity)?.canShowForegroundLocationDisclosure() == false
-        ) return
-        locationDisclosureShown = true
-        AlertDialog.Builder(requireContext())
-            .setTitle(R.string.location_permission_disclosure_title)
-            .setMessage(R.string.location_permission_disclosure_message)
-            .setPositiveButton(R.string.location_permission_disclosure_allow) { dialog, _ ->
-                dialog.dismiss()
-                locationPermissionLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                    )
-                )
-            }
-            .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
-                dialog.dismiss()
-                (activity as? MainActivity)?.deferForegroundLocationDisclosure()
-            }
-            .show()
-            .also { locationDisclosureDialog = it }
-            .applyGodoTypography()
-            .applyPermissionDialogButtonColors()
-    }
-
-    private fun locationDisclosurePreferences() = requireContext().getSharedPreferences(
-        MainActivity.LOCATION_DISCLOSURE_PREFERENCES,
-        Context.MODE_PRIVATE,
-    )
 
     @SuppressLint("MissingPermission")
     private fun selectLastKnownLocation(client: FusedLocationProviderClient) {
