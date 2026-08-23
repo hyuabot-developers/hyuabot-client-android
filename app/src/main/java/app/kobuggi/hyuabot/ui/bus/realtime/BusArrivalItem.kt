@@ -7,7 +7,20 @@ data class BusArrivalItem(
     val route: String,
     val item: BusRealtimePageQuery.Arrival,
     val secondaryArrivalTime: LocalTime? = null,
+    val destinationStopID: Int? = null,
+    val minimumDispatchMinutes: Int? = null,
 ) {
+    val destinationArrivalTime: LocalTime?
+        get() {
+            val travelMinutes = destinationStopID?.let { destinationID ->
+                item.destinationTravelMinutes.firstOrNull { it.destinationStopId == destinationID }?.minutes
+            } ?: return null
+            val sourceArrival = item.arrivalTime
+                ?: item.minutes?.let { LocalTime.now().plusMinutes(it.toLong()) }
+                ?: return null
+            return sourceArrival.plusMinutes(travelMinutes.toLong())
+        }
+
     /**
      * Minutes from now until arrival, computed the same way regardless of whether the estimate
      * came from live GPS (`minutes`) or a timetable/log clock time (`arrivalTime`) — sorting by

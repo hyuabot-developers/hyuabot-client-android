@@ -16,14 +16,16 @@ object BusSecondaryEta {
     fun secondaryArrivalTime(
         arrival: BusRealtimePageQuery.Arrival,
         primaryLogs: List<BusSecondaryEtaLogQuery.Log>,
-        secondaryLogs: List<BusSecondaryEtaLogQuery.Log>?
+        secondaryLogs: List<BusSecondaryEtaLogQuery.Log>?,
+        destinationStopID: Int? = null,
     ): LocalTime? {
-        if (secondaryLogs == null) return null
-        val primaryArrivalTime = estimatedArrivalTime(arrival) ?: return null
-        return BusTravelTimeEstimator.secondaryArrivalTime(
-            primaryArrivalTime,
-            primaryLogs.map { LogEntry(it.date, it.time, it.vehicle) },
-            secondaryLogs.map { LogEntry(it.date, it.time, it.vehicle) }
-        )
+        if (destinationStopID == null) return null
+        val travelMinutes = arrival.destinationTravelMinutes
+            .firstOrNull { it.destinationStopId == destinationStopID }
+            ?.minutes ?: return null
+        val sourceArrivalTime = arrival.arrivalTime
+            ?: arrival.minutes?.let { LocalTime.now().plusMinutes(it.toLong()) }
+            ?: return null
+        return sourceArrivalTime.plusMinutes(travelMinutes.toLong())
     }
 }

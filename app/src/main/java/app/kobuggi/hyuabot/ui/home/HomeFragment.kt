@@ -56,8 +56,6 @@ import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import app.kobuggi.hyuabot.ui.common.applyPermissionDialogButtonColors
 import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
-import app.kobuggi.hyuabot.ui.bus.realtime.BusTravelTimeEstimator
-import app.kobuggi.hyuabot.ui.bus.realtime.LogEntry
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
@@ -1027,13 +1025,10 @@ class HomeFragment : Fragment() {
         primaryItem: HomePageQuery.Bus,
         destinationItem: HomePageQuery.Bus?,
     ): LocalTime {
-        return destinationItem?.let {
-            BusTravelTimeEstimator.secondaryArrivalTime(
-                primaryArrivalTime,
-                primaryItem.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
-                it.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
-            )
-        } ?: primaryArrivalTime.plusMinutes(routeTravelMinutes(route).toLong())
+        serverDestinationTravelMinutes(primaryItem, destinationItem)?.let { travelMinutes ->
+            return primaryArrivalTime.plusMinutes(travelMinutes.toLong())
+        }
+        return primaryArrivalTime.plusMinutes(routeTravelMinutes(route).toLong())
     }
 
     private fun routeTravelMinutes(route: String): Int = when (route) {
@@ -1067,21 +1062,28 @@ class HomeFragment : Fragment() {
         primaryItem: HomePageQuery.Bus,
         destinationItem: HomePageQuery.Bus?,
     ): String {
-        val estimated = destinationItem?.let {
-            BusTravelTimeEstimator.secondaryArrivalTime(
-                primaryArrivalTime,
-                primaryItem.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
-                it.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
-            )
+        serverDestinationTravelMinutes(primaryItem, destinationItem)?.let { travelMinutes ->
+            return primaryArrivalTime.plusMinutes(travelMinutes.toLong())
+                .format(DateTimeFormatter.ofPattern("HH:mm"))
         }
-        return estimated?.format(DateTimeFormatter.ofPattern("HH:mm"))
-            ?: destinationArrivalTime(
-                route,
-                Duration.between(LocalTime.now(ZoneId.of("Asia/Seoul")), primaryArrivalTime)
-                    .toMinutes()
-                    .toInt()
-                    .coerceAtLeast(0),
-            )
+        return destinationArrivalTime(
+            route,
+            Duration.between(LocalTime.now(ZoneId.of("Asia/Seoul")), primaryArrivalTime)
+                .toMinutes()
+                .toInt()
+                .coerceAtLeast(0),
+        )
+    }
+
+    private fun serverDestinationTravelMinutes(
+        primaryItem: HomePageQuery.Bus,
+        destinationItem: HomePageQuery.Bus?,
+    ): Int? {
+        val destinationStopID = destinationItem?.stop?.seq ?: return null
+        return primaryItem.arrival
+            .flatMap { it.destinationTravelMinutes }
+            .firstOrNull { it.destinationStopId == destinationStopID }
+            ?.minutes
     }
 
     private fun homeBusStopName(stopSeq: Int, fallback: String): String {
