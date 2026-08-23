@@ -15,6 +15,8 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.min
 
+private const val DEFAULT_MINIMUM_DISPATCH_MINUTES = 10
+
 class BusRealtimeListAdapter(
     private var arrivalList: List<BusArrivalItem> = emptyList(),
     private val maxCount: Int = 5,
@@ -137,7 +139,8 @@ class BusRealtimeListAdapter(
             .filter { item ->
                 val remaining = item.remainingMinutes ?: return@filter false
                 val previous = acceptedByRoute[item.route]
-                val interval = item.minimumDispatchMinutes?.toDouble() ?: 0.0
+                val interval = item.minimumDispatchMinutes?.toDouble()
+                    ?: DEFAULT_MINIMUM_DISPATCH_MINUTES.toDouble()
                 val valid = previous == null || remaining - previous >= interval
                 if (valid) acceptedByRoute[item.route] = remaining
                 valid
