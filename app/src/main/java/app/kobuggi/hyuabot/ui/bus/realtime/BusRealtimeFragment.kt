@@ -3,7 +3,9 @@ package app.kobuggi.hyuabot.ui.bus.realtime
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -22,6 +25,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeBinding
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.safeNavigate
+import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
@@ -180,6 +184,14 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
 
     @SuppressLint("MissingPermission")
     private fun moveToNearestStop(client: FusedLocationProviderClient) {
+        if (!hasLocationPermission()) {
+            (activity as? MainActivity)?.requestForegroundLocationPermission {
+                if (isAdded) {
+                    moveToNearestStop(LocationServices.getFusedLocationProviderClient(requireActivity()))
+                }
+            }
+            return
+        }
         val allStops = viewModel.result.value?.distinctBy { it.stop.seq } ?: emptyList()
 
         fun candidates(seqToRes: Map<Int, Int>): List<Triple<Int, Double, Double>> {
@@ -249,6 +261,12 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
     private fun isFresh(location: Location): Boolean {
         val ageMillis = (SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos) / 1_000_000
         return ageMillis in 0..LOCATION_MAX_AGE_MILLIS
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        val context = context ?: return false
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onPause() {

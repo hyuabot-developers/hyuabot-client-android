@@ -36,6 +36,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentMapBinding
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
+import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
@@ -160,22 +161,9 @@ class MapFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
             ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         if (!hasLocationPermission) {
-            AlertDialog.Builder(requireContext())
-                .setTitle(R.string.location_permission_disclosure_title)
-                .setMessage(R.string.location_permission_disclosure_message)
-                .setPositiveButton(R.string.location_permission_disclosure_allow) { dialog, _ ->
-                    dialog.dismiss()
-                    locationPermissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                        )
-                    )
-                }
-                .setNegativeButton(R.string.location_permission_disclosure_later, null)
-                .show()
-                .applyGodoTypography()
-                .applyPermissionDialogButtonColors()
+            (activity as? MainActivity)?.requestForegroundLocationPermission {
+                if (isAdded) centerOnCurrentLocation()
+            }
             return
         }
         centerOnCurrentLocation()

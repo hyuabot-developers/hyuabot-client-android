@@ -79,7 +79,9 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                             BusArrivalItem(
                                 firstBusList.route.name,
                                 arrival,
-                                BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs)
+                                secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs),
+                                destinationStopID = 216000138,
+                                minimumDispatchMinutes = BusDispatchInterval.forToday(firstBusList.minimumDispatchIntervals),
                             )
                         })
                         binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
@@ -118,7 +120,9 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                             BusArrivalItem(
                                 firstBusList.route.name,
                                 arrival,
-                                BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs)
+                                secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs),
+                                destinationStopID = 216000138,
+                                minimumDispatchMinutes = BusDispatchInterval.forToday(firstBusList.minimumDispatchIntervals),
                             )
                         })
                         binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
@@ -157,7 +161,9 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                             BusArrivalItem(
                                 firstBusList.route.name,
                                 arrival,
-                                BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs)
+                                secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs),
+                                destinationStopID = 216000138,
+                                minimumDispatchMinutes = BusDispatchInterval.forToday(firstBusList.minimumDispatchIntervals),
                             )
                         })
                         binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
@@ -188,7 +194,9 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                     BusArrivalItem(
                         secondBusList.route.name,
                         arrival,
-                        BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(secondBusList.route.seq, secondBusList.stop.seq), secondaryReturnLogs)
+                        secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(secondBusList.route.seq, secondBusList.stop.seq), secondaryReturnLogs),
+                        destinationStopID = 216000378,
+                        minimumDispatchMinutes = BusDispatchInterval.forToday(secondBusList.minimumDispatchIntervals),
                     )
                 }
             )

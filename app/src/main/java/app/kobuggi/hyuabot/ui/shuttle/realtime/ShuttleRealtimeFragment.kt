@@ -1,6 +1,9 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -64,6 +67,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private var hasManualStopSelection = false
     private var isApplyingInitialLocationSelection = false
     private var coachmarkShown = false
+    private var pendingInitialStops: List<ShuttleRealtimePageQuery.Stop> = emptyList()
     private val scrollHandler = Handler(Looper.getMainLooper())
     private val autoScrollRunnable = Runnable {
         val adapter = binding.noticeViewPager.adapter
@@ -336,6 +340,21 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         client: FusedLocationProviderClient,
         stops: List<ShuttleRealtimePageQuery.Stop>,
     ) {
+        if (!hasLocationPermission()) {
+            pendingInitialStops = stops
+            (activity as? MainActivity)?.requestForegroundLocationPermission {
+                if (isAdded) {
+                    pendingInitialStops.takeIf { it.isNotEmpty() }?.let { pendingStops ->
+                        moveToInitialStop(
+                            LocationServices.getFusedLocationProviderClient(requireActivity()),
+                            pendingStops,
+                        )
+                    }
+                    pendingInitialStops = emptyList()
+                }
+            }
+            return
+        }
         requestCurrentLocation(client, stops)
     }
 
@@ -356,6 +375,18 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private fun isFresh(location: Location): Boolean {
         val ageMillis = (SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos) / 1_000_000
         return ageMillis in 0..LOCATION_MAX_AGE_MILLIS
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        val context = context ?: return false
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        ) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            ) == PackageManager.PERMISSION_GRANTED
     }
 
     @SuppressLint("MissingPermission")

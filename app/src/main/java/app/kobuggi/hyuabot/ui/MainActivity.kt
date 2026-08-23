@@ -9,7 +9,11 @@ import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -56,6 +60,7 @@ import app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleAlternativeDisplayMode
 import app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleQuickSettingsDialog
 import app.kobuggi.hyuabot.ui.shuttle.via.ShuttleViaSheetDialog
 import app.kobuggi.hyuabot.widget.ShuttleWidgetProvider
+import app.kobuggi.hyuabot.widget.refreshHyuabotWidgets
 import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -63,6 +68,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import androidx.core.content.edit
+import app.kobuggi.hyuabot.BuildConfig
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedListener, NavigationBarView.OnItemSelectedListener, DialogInterface.OnDismissListener {
@@ -82,14 +88,30 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         getSharedPreferences(LOCATION_DISCLOSURE_PREFERENCES, MODE_PRIVATE)
     }
     private var pendingBackgroundLocationRequest = false
+    private var backgroundLocationSettingsOpened = false
+    private var backgroundLocationDisclosureDeferredThisSession = false
+    private var backgroundLocationDisclosureDialog: AlertDialog? = null
+    private var foregroundLocationPermissionAction: (() -> Unit)? = null
     private var foregroundLocationDisclosureShown = false
+
+    private fun logLocationFlow(message: String) {
+        if (BuildConfig.DEBUG) Log.d("LocationFlow", message)
+    }
+
     private val foregroundLocationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         if (permissions.values.any { it }) {
             resetLocationDisclosureDeclineCount(FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
-            maybeRequestBackgroundLocation()
+            foregroundLocationPermissionAction?.invoke()
+            foregroundLocationPermissionAction = null
+            logLocationFlow("foreground granted; pending=$pendingBackgroundLocationRequest widget=${hasShuttleWidget()}")
+            if (pendingBackgroundLocationRequest || hasShuttleWidget()) {
+                pendingBackgroundLocationRequest = true
+                maybeRequestBackgroundLocation()
+            }
         } else {
+            foregroundLocationPermissionAction = null
             pendingBackgroundLocationRequest = false
         }
     }
@@ -102,6 +124,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        backgroundLocationSettingsOpened =
+            savedInstanceState?.getBoolean(BACKGROUND_LOCATION_SETTINGS_OPENED_STATE) == true
+        initializeLocationDisclosureSession()
         setContentView(binding.root)
         applyStatusBarStyle(navController.currentDestination?.id)
         binding.bottomNavigation.apply {
@@ -130,7 +155,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         openBirthDayDialog()
         requestInAppReview()
         syncShuttleServiceNotices()
-        pendingBackgroundLocationRequest = intent.getBooleanExtra(EXTRA_REQUEST_BACKGROUND_LOCATION, false)
+        pendingBackgroundLocationRequest =
+            intent.getBooleanExtra(EXTRA_REQUEST_BACKGROUND_LOCATION, false) ||
+                hasShuttleWidget()
+        logLocationFlow("onCreate; pending=$pendingBackgroundLocationRequest widget=${hasShuttleWidget()} foreground=${hasLocationPermission()} background=${hasBackgroundLocationPermission()}")
         val handledDeepLink = handleDebugDeepLink(intent) || navController.handleDeepLink(intent)
         if (
             savedInstanceState == null &&
@@ -294,10 +322,27 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     override fun onResume() {
         super.onResume()
         updatePrimaryNavigationItem(navController.currentDestination?.id)
+        logLocationFlow("onResume; settingsOpened=$backgroundLocationSettingsOpened pending=$pendingBackgroundLocationRequest foreground=${hasLocationPermission()} background=${hasBackgroundLocationPermission()} deferred=$backgroundLocationDisclosureDeferredThisSession")
+        if (backgroundLocationSettingsOpened) {
+            backgroundLocationDisclosureDialog?.dismiss()
+            backgroundLocationDisclosureDialog = null
+            backgroundLocationSettingsOpened = false
+            if (ActivityCompat.checkSelfPermission(this, ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                resetLocationDisclosureDeclineCount(BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
+                refreshHyuabotWidgets(this)
+            }
+            return
+        }
         handlePendingBackgroundLocationRequest()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(BACKGROUND_LOCATION_SETTINGS_OPENED_STATE, backgroundLocationSettingsOpened)
+        super.onSaveInstanceState(outState)
+    }
+
     private fun handlePendingBackgroundLocationRequest() {
+        logLocationFlow("handlePending; pending=$pendingBackgroundLocationRequest foreground=${hasLocationPermission()} background=${hasBackgroundLocationPermission()} widget=${hasShuttleWidget()}")
         if (!pendingBackgroundLocationRequest) return
         if (hasLocationPermission()) {
             maybeRequestBackgroundLocation()
@@ -416,43 +461,65 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
+    private fun hasBackgroundLocationPermission(): Boolean {
+        return ActivityCompat.checkSelfPermission(this, ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun hasShuttleWidget(): Boolean {
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        return ShuttleWidgetProvider.providerClasses.any { provider ->
+            appWidgetManager.getAppWidgetIds(ComponentName(this, provider)).isNotEmpty()
+        }
+    }
+
     private fun maybeRequestBackgroundLocation() {
+        if (backgroundLocationDisclosureDialog?.isShowing == true) {
+            logLocationFlow("maybeBackground skipped; disclosure already showing")
+            return
+        }
+        logLocationFlow("maybeBackground; pending=$pendingBackgroundLocationRequest background=${hasBackgroundLocationPermission()} widget=${hasShuttleWidget()} deferred=$backgroundLocationDisclosureDeferredThisSession")
         if (ActivityCompat.checkSelfPermission(this, ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             resetLocationDisclosureDeclineCount(BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
             return
         }
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-        val hasShuttleWidget = ShuttleWidgetProvider.providerClasses.any { provider ->
-            appWidgetManager.getAppWidgetIds(ComponentName(this, provider)).isNotEmpty()
-        }
-        if (!hasShuttleWidget) {
+        if (!hasShuttleWidget()) {
             pendingBackgroundLocationRequest = false
             return
         }
-        if (locationDisclosurePreferences.getInt(
-                BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT,
-                0,
-            ) >= MAX_LOCATION_DISCLOSURE_DECLINES
-        ) {
+        if (backgroundLocationDisclosureDeferredThisSession) {
             pendingBackgroundLocationRequest = false
             return
         }
-        AlertDialog.Builder(this)
+        backgroundLocationDisclosureDialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.widget_shuttle_background_location_title))
             .setMessage(getString(R.string.widget_shuttle_background_location_message))
             .setPositiveButton(getString(R.string.widget_shuttle_background_location_allow)) { dialog, _ ->
-                dialog.dismiss()
+                backgroundLocationDisclosureDialog?.dismiss()
+                backgroundLocationDisclosureDialog = null
                 pendingBackgroundLocationRequest = false
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(ACCESS_BACKGROUND_LOCATION),
-                    BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE
-                )
+                backgroundLocationDisclosureDeferredThisSession = true
+                logLocationFlow("background disclosure accepted; opening settings")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    backgroundLocationSettingsOpened = true
+                    startActivity(
+                        Intent(
+                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:$packageName"),
+                        ),
+                    )
+                } else {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(ACCESS_BACKGROUND_LOCATION),
+                        BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE,
+                    )
+                }
             }
             .setNegativeButton(getString(R.string.widget_shuttle_background_location_later)) { dialog, _ ->
                 dialog.dismiss()
+                backgroundLocationDisclosureDialog = null
                 pendingBackgroundLocationRequest = false
-                recordLocationDisclosureDecline(BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
+                backgroundLocationDisclosureDeferredThisSession = true
             }
             .show()
             .applyGodoTypography()
@@ -464,10 +531,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             foregroundLocationDisclosureShown ||
             isFinishing ||
             isDestroyed ||
-            locationDisclosurePreferences.getInt(
-                FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT,
-                0,
-            ) >= MAX_LOCATION_DISCLOSURE_DECLINES
+            !canShowForegroundLocationDisclosure()
         ) {
             pendingBackgroundLocationRequest = false
             return
@@ -485,16 +549,52 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
                 dialog.dismiss()
                 pendingBackgroundLocationRequest = false
-                recordLocationDisclosureDecline(FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
+                deferForegroundLocationDisclosure()
             }
             .show()
             .applyGodoTypography()
             .applyPermissionDialogButtonColors()
     }
 
+    fun requestForegroundLocationPermission(onGranted: () -> Unit) {
+        if (hasLocationPermission()) {
+            onGranted()
+            return
+        }
+        foregroundLocationPermissionAction = onGranted
+        showForegroundLocationDisclosure()
+    }
+
     private fun recordLocationDisclosureDecline(key: String) {
         val count = locationDisclosurePreferences.getInt(key, 0)
         locationDisclosurePreferences.edit().putInt(key, count + 1).apply()
+    }
+
+    fun canShowForegroundLocationDisclosure(): Boolean {
+        return !locationDisclosurePreferences.getBoolean(
+            FOREGROUND_LOCATION_DISCLOSURE_DEFERRED,
+            false,
+        ) &&
+            locationDisclosurePreferences.getInt(
+                FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT,
+                0,
+            ) < MAX_LOCATION_DISCLOSURE_DECLINES
+    }
+
+    fun deferForegroundLocationDisclosure() {
+        locationDisclosurePreferences.edit()
+            .putBoolean(FOREGROUND_LOCATION_DISCLOSURE_DEFERRED, true)
+            .apply()
+        recordLocationDisclosureDecline(FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
+    }
+
+    private fun initializeLocationDisclosureSession() {
+        if (locationDisclosureSessionInitialized) return
+        locationDisclosurePreferences.edit()
+            .remove(FOREGROUND_LOCATION_DISCLOSURE_DEFERRED)
+            .remove(BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT)
+            .apply()
+        locationDisclosureSessionInitialized = true
     }
 
     private fun resetLocationDisclosureDeclineCount(key: String) {
@@ -683,10 +783,14 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         const val HOME_EXPERIENCE_PREFERENCES = "home_experience"
         const val HOME_EXPERIENCE_ENABLED = "enabled"
         const val EXTRA_REQUEST_BACKGROUND_LOCATION = "request_background_location"
+        private const val BACKGROUND_LOCATION_SETTINGS_OPENED_STATE =
+            "background_location_settings_opened"
         const val LOCATION_DISCLOSURE_PREFERENCES = "location_disclosure"
         const val FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT = "foreground_decline_count"
+        const val FOREGROUND_LOCATION_DISCLOSURE_DEFERRED = "foreground_deferred"
         const val BACKGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT = "background_decline_count"
         const val MAX_LOCATION_DISCLOSURE_DECLINES = 3
+        private var locationDisclosureSessionInitialized = false
         private const val STATUS_BAR_BACKGROUND_TAG = "status_bar_background"
         private const val BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 2
     }

@@ -2,7 +2,6 @@ package app.kobuggi.hyuabot.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -32,7 +31,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
@@ -53,11 +51,7 @@ import app.kobuggi.hyuabot.databinding.FragmentHomeBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
 import app.kobuggi.hyuabot.ui.MainActivity
-import app.kobuggi.hyuabot.ui.common.applyGodoTypography
-import app.kobuggi.hyuabot.ui.common.applyPermissionDialogButtonColors
 import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
-import app.kobuggi.hyuabot.ui.bus.realtime.BusTravelTimeEstimator
-import app.kobuggi.hyuabot.ui.bus.realtime.LogEntry
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
@@ -110,17 +104,6 @@ class HomeFragment : Fragment() {
     private var locationCancellationTokenSource: CancellationTokenSource? = null
     private var locationCallback: LocationCallback? = null
     private var pendingDepartureLocation: Location? = null
-    private var locationDisclosureShown = false
-    private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (permissions.values.any { it }) {
-            locationDisclosurePreferences().edit()
-                .putInt(MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT, 0)
-                .apply()
-            moveToNearestDeparture()
-        }
-    }
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val noticeScrollHandler = Handler(Looper.getMainLooper())
     private val noticeAutoScrollRunnable = Runnable {
@@ -518,53 +501,14 @@ class HomeFragment : Fragment() {
     private fun moveToNearestDeparture() {
         if (lockDepartureSelection || isDepartureManuallySelected) return
         if (!hasLocationPermission()) {
-            showLocationDisclosure()
+            (activity as? MainActivity)?.requestForegroundLocationPermission {
+                if (isAdded) moveToNearestDeparture()
+            }
             return
         }
         val client = LocationServices.getFusedLocationProviderClient(requireActivity())
         requestCurrentLocation(client)
     }
-
-    private fun showLocationDisclosure() {
-        if (
-            locationDisclosureShown ||
-            !isAdded ||
-            view == null ||
-            locationDisclosurePreferences().getInt(
-                MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT,
-                0,
-            ) >= MainActivity.MAX_LOCATION_DISCLOSURE_DECLINES
-        ) return
-        locationDisclosureShown = true
-        AlertDialog.Builder(requireContext())
-            .setTitle(R.string.location_permission_disclosure_title)
-            .setMessage(R.string.location_permission_disclosure_message)
-            .setPositiveButton(R.string.location_permission_disclosure_allow) { dialog, _ ->
-                dialog.dismiss()
-                locationPermissionLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                    )
-                )
-            }
-            .setNegativeButton(R.string.location_permission_disclosure_later) { dialog, _ ->
-                dialog.dismiss()
-                val preferences = locationDisclosurePreferences()
-                val count = preferences.getInt(MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT, 0)
-                preferences.edit()
-                    .putInt(MainActivity.FOREGROUND_LOCATION_DISCLOSURE_DECLINE_COUNT, count + 1)
-                    .apply()
-            }
-            .show()
-            .applyGodoTypography()
-            .applyPermissionDialogButtonColors()
-    }
-
-    private fun locationDisclosurePreferences() = requireContext().getSharedPreferences(
-        MainActivity.LOCATION_DISCLOSURE_PREFERENCES,
-        Context.MODE_PRIVATE,
-    )
 
     @SuppressLint("MissingPermission")
     private fun selectLastKnownLocation(client: FusedLocationProviderClient) {
@@ -1024,13 +968,10 @@ class HomeFragment : Fragment() {
         primaryItem: HomePageQuery.Bus,
         destinationItem: HomePageQuery.Bus?,
     ): LocalTime {
-        return destinationItem?.let {
-            BusTravelTimeEstimator.secondaryArrivalTime(
-                primaryArrivalTime,
-                primaryItem.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
-                it.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
-            )
-        } ?: primaryArrivalTime.plusMinutes(routeTravelMinutes(route).toLong())
+        serverDestinationTravelMinutes(primaryItem, destinationItem)?.let { travelMinutes ->
+            return primaryArrivalTime.plusMinutes(travelMinutes.toLong())
+        }
+        return primaryArrivalTime.plusMinutes(routeTravelMinutes(route).toLong())
     }
 
     private fun routeTravelMinutes(route: String): Int = when (route) {
@@ -1064,21 +1005,28 @@ class HomeFragment : Fragment() {
         primaryItem: HomePageQuery.Bus,
         destinationItem: HomePageQuery.Bus?,
     ): String {
-        val estimated = destinationItem?.let {
-            BusTravelTimeEstimator.secondaryArrivalTime(
-                primaryArrivalTime,
-                primaryItem.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
-                it.log.map { log -> LogEntry(log.date, log.time, log.vehicle) },
-            )
+        serverDestinationTravelMinutes(primaryItem, destinationItem)?.let { travelMinutes ->
+            return primaryArrivalTime.plusMinutes(travelMinutes.toLong())
+                .format(DateTimeFormatter.ofPattern("HH:mm"))
         }
-        return estimated?.format(DateTimeFormatter.ofPattern("HH:mm"))
-            ?: destinationArrivalTime(
-                route,
-                Duration.between(LocalTime.now(ZoneId.of("Asia/Seoul")), primaryArrivalTime)
-                    .toMinutes()
-                    .toInt()
-                    .coerceAtLeast(0),
-            )
+        return destinationArrivalTime(
+            route,
+            Duration.between(LocalTime.now(ZoneId.of("Asia/Seoul")), primaryArrivalTime)
+                .toMinutes()
+                .toInt()
+                .coerceAtLeast(0),
+        )
+    }
+
+    private fun serverDestinationTravelMinutes(
+        primaryItem: HomePageQuery.Bus,
+        destinationItem: HomePageQuery.Bus?,
+    ): Int? {
+        val destinationStopID = destinationItem?.stop?.seq ?: return null
+        return primaryItem.arrival
+            .flatMap { it.destinationTravelMinutes }
+            .firstOrNull { it.destinationStopId == destinationStopID }
+            ?.minutes
     }
 
     private fun homeBusStopName(stopSeq: Int, fallback: String): String {

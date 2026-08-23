@@ -75,7 +75,9 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                         BusArrivalItem(
                             route.route.name,
                             arrival,
-                            BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(route.route.seq, route.stop.seq), secondaryLogs)
+                            secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(route.route.seq, route.stop.seq), secondaryLogs),
+                            destinationStopID = secondaryTargetSeq,
+                            minimumDispatchMinutes = BusDispatchInterval.forToday(route.minimumDispatchIntervals),
                         )
                     }
                 }

@@ -15,6 +15,8 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.min
 
+private const val DEFAULT_MINIMUM_DISPATCH_MINUTES = 10
+
 class BusRealtimeListAdapter(
     private var arrivalList: List<BusArrivalItem> = emptyList(),
     private val maxCount: Int = 5,
@@ -41,7 +43,7 @@ class BusRealtimeListAdapter(
             val routeName = item.route
             val arrival = item.item
             val secondarySuffix = if (showSecondaryEta) {
-                item.secondaryArrivalTime?.let {
+                (item.destinationArrivalTime ?: item.secondaryArrivalTime)?.let {
                     binding.root.context.getString(
                         R.string.bus_arrival_secondary_format,
                         it.format(secondaryTimeFormatter)
@@ -126,7 +128,24 @@ class BusRealtimeListAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newArrivalList: List<BusArrivalItem>) {
-        arrivalList = newArrivalList
+        val acceptedByRoute = mutableMapOf<String, Double>()
+        val realtime = newArrivalList
+            .filter { it.item.isRealtime && (it.remainingMinutes ?: Double.MAX_VALUE) >= 0.0 }
+            .sortedBy { it.remainingMinutes ?: Double.MAX_VALUE }
+            .onEach { item -> acceptedByRoute[item.route] = item.remainingMinutes ?: Double.MAX_VALUE }
+        val logs = newArrivalList
+            .filter { !it.item.isRealtime && (it.remainingMinutes ?: Double.MAX_VALUE) >= 0.0 }
+            .sortedBy { it.remainingMinutes ?: Double.MAX_VALUE }
+            .filter { item ->
+                val remaining = item.remainingMinutes ?: return@filter false
+                val previous = acceptedByRoute[item.route]
+                val interval = item.minimumDispatchMinutes?.toDouble()
+                    ?: DEFAULT_MINIMUM_DISPATCH_MINUTES.toDouble()
+                val valid = previous == null || remaining - previous >= interval
+                if (valid) acceptedByRoute[item.route] = remaining
+                valid
+            }
+        arrivalList = realtime + logs
         notifyDataSetChanged()
     }
 
