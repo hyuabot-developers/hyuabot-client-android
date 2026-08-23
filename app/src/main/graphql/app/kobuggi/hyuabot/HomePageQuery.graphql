@@ -134,6 +134,13 @@ query HomePageQuery(
             stops
             seats
             isRealtime
+            time
+            arrivalTime
+            destinationTravelMinutes {
+                destinationStopId
+                minutes
+            }
+            destinationArrivalTime
         }
         log {
             date

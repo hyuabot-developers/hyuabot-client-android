@@ -83,6 +83,11 @@ type BusArrival {
   time: LocalTime
 
   arrivalTime: LocalTime
+
+  destinationTravelMinutes: [BusDestinationTravelMinutes!]!
+
+  """Deprecated. Use destinationTravelMinutes instead."""
+  destinationArrivalTime: LocalTime
 }
 
 type BusCompany {
@@ -101,6 +106,12 @@ type BusDepartureLog {
   time: LocalTime!
 
   vehicle: String!
+}
+
+type BusDestinationTravelMinutes {
+  destinationStopId: Int!
+
+  minutes: Int!
 }
 
 type BusRealtime {
@@ -147,6 +158,8 @@ type BusRouteStop {
   arrival: [BusArrival!]!
 
   log: [BusDepartureLog!]!
+
+  minimumDispatchIntervals: [BusMinimumDispatchInterval!]!
 }
 
 """
@@ -157,6 +170,8 @@ input BusRouteStopInput {
 
   stop: Int!
 
+  destinationStops: [Int!]
+
   after: LocalTime
 
   limit: Int
@@ -164,6 +179,12 @@ input BusRouteStopInput {
   dates: [Date!]
 
   weekdays: [String!]
+}
+
+type BusMinimumDispatchInterval {
+  weekday: String!
+
+  minutes: Int!
 }
 
 type BusRouteType {

@@ -326,6 +326,13 @@ class HomeViewModel @Inject constructor(
         BusRouteStopInput(route = 216000096, stop = 121000220, limit = Optional.present(2)),
         ).map { input ->
             input.copy(
+                destinationStops = when (input.route) {
+                    216000068 -> Optional.present(listOf(216000138))
+                    216000061 -> Optional.present(listOf(216000378, 121000060, 121000929, 121000974, 121000970, 121000220))
+                    216000026, 216000043, 216000096 -> Optional.present(listOf(216000048, 121000060, 121000929, 121000974, 121000970, 121000220))
+                    216000104, 200000015 -> Optional.present(listOf(216000141))
+                    else -> Optional.Absent
+                },
                 limit = Optional.present(3),
                 dates = Optional.present(dates),
             )

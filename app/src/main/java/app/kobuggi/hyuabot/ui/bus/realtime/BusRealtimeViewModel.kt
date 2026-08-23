@@ -7,11 +7,13 @@ import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.BusRealtimePageQuery
 import app.kobuggi.hyuabot.BusSecondaryEtaLogQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.type.BusRouteStopInput
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.FetchPolicy
 import com.apollographql.cache.normalized.doNotStore
 import com.apollographql.cache.normalized.fetchPolicy
+import com.apollographql.apollo.api.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -112,6 +114,7 @@ class BusRealtimeViewModel @Inject constructor(
 
     fun setSeoulTarget(target: BusSeoulTargetStop) {
         _seoulTarget.value = target
+        _result.value = _result.value
         viewModelScope.launch { userPreferencesRepository.setBusSeoulTargetStop(target.value) }
     }
 
@@ -134,7 +137,7 @@ class BusRealtimeViewModel @Inject constructor(
         val language = if (appLanguage == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
         val dates = BusRecentDates.sameWeekdayType(count = 4)
         viewModelScope.launch {
-            val response = apolloClient.query(BusRealtimePageQuery(language, dates))
+            val response = apolloClient.query(BusRealtimePageQuery(language, busInput(dates)))
                 .fetchPolicy(FetchPolicy.NetworkOnly)
                 .doNotStore(true)
                 .execute()
@@ -172,5 +175,39 @@ class BusRealtimeViewModel @Inject constructor(
 
     override fun onCleared() {
         stop()
+    }
+
+    private fun busInput(dates: List<java.time.LocalDate>): List<BusRouteStopInput> {
+        val requests = listOf(
+            216000068 to listOf(216000138, 216000383, 216000381, 216000379, 216000378),
+            216000061 to listOf(216000383, 216000381, 216000379, 216000378, 121000060, 121000929, 121000974, 121000970, 121000220),
+            216000043 to listOf(216000719, 216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
+            216000026 to listOf(216000719, 216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
+            216000096 to listOf(216000719, 216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
+            216000104 to listOf(216000070, 216000141, 202000208, 202000106),
+            200000015 to listOf(216000070, 216000141, 202000208, 202000106),
+            216000075 to listOf(216000759, 213000487, 216000117),
+            216000016 to listOf(216000152),
+        )
+        val destinationStops = mapOf(
+            216000068 to listOf(216000138),
+            216000061 to listOf(216000378, 121000060, 121000929, 121000974, 121000970, 121000220),
+            216000043 to listOf(216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
+            216000026 to listOf(216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
+            216000096 to listOf(216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
+            216000104 to listOf(216000141),
+            200000015 to listOf(216000141),
+        )
+        return requests.flatMap { (route, stops) ->
+            stops.map { stop ->
+                BusRouteStopInput(
+                    route = route,
+                    stop = stop,
+                    destinationStops = destinationStops[route]?.let { Optional.present(it) } ?: Optional.Absent,
+                    limit = Optional.present(3),
+                    dates = Optional.present(dates),
+                )
+            }
+        }
     }
 }
