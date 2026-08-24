@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.BusRealtimePageQuery
-import app.kobuggi.hyuabot.BusSecondaryEtaLogQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.type.BusRouteStopInput
 import app.kobuggi.hyuabot.util.QueryError
@@ -30,7 +29,6 @@ class BusRealtimeViewModel @Inject constructor(
 ): ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _result = MutableLiveData<List<BusRealtimePageQuery.Bus>>()
-    private val _logResult = MutableLiveData<List<BusSecondaryEtaLogQuery.Bus>>()
     private val _notices = MutableLiveData<List<BusRealtimePageQuery.Notice1>>()
 
     private val _disposable = CompositeDisposable()
@@ -43,7 +41,6 @@ class BusRealtimeViewModel @Inject constructor(
     private val _suwonStopID = MutableLiveData<Int?>(null)
 
     val result get() = _result
-    val logResult get() = _logResult
     val notices get() = _notices
     val isLoading get() = _isLoading
     val selectedStopID get() = _selectedStopID
@@ -55,7 +52,6 @@ class BusRealtimeViewModel @Inject constructor(
     val suwonStopID get() = _suwonStopID
 
     fun initSelectedStopID() {
-        fetchLogDataOnce()
         viewModelScope.launch {
             userPreferencesRepository.getBusStop().collect {
                 _selectedStopID.value = it
@@ -116,18 +112,6 @@ class BusRealtimeViewModel @Inject constructor(
         _seoulTarget.value = target
         _result.value = _result.value
         viewModelScope.launch { userPreferencesRepository.setBusSeoulTargetStop(target.value) }
-    }
-
-    private fun fetchLogDataOnce() {
-        if (_logResult.value != null) return
-        val dates = BusRecentDates.sameWeekdayType(count = 4)
-        viewModelScope.launch {
-            val response = apolloClient.query(BusSecondaryEtaLogQuery(dates))
-                .fetchPolicy(FetchPolicy.NetworkOnly)
-                .doNotStore(true)
-                .execute()
-            response.data?.bus?.let { _logResult.value = it }
-        }
     }
 
     fun fetchData() {

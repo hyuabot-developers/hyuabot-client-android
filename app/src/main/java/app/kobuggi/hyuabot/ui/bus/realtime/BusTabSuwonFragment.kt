@@ -29,9 +29,6 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
     private val parentViewModel: BusRealtimeViewModel by viewModels({ requireParentFragment() })
     private var configuredStop: Int? = null
 
-    private fun logsFor(route: Int, stop: Int) =
-        parentViewModel.logResult.value?.firstOrNull { it.route.seq == route && it.stop.seq == stop }?.log ?: emptyList()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -70,12 +67,11 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
             parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                 val routes = busList.filter { route -> route.stop.seq == stopSeq && (route.route.seq == 216000104 || route.route.seq == 200000015) }
                 val arrivalList = routes.flatMap { route ->
-                    val secondaryLogs = logsFor(route.route.seq, secondaryTargetSeq)
                     route.arrival.map { arrival ->
                         BusArrivalItem(
                             route.route.name,
                             arrival,
-                            secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(route.route.seq, route.stop.seq), secondaryLogs),
+                            secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, destinationStopID = secondaryTargetSeq),
                             destinationStopID = secondaryTargetSeq,
                             minimumDispatchMinutes = BusDispatchInterval.forToday(route.minimumDispatchIntervals),
                         )

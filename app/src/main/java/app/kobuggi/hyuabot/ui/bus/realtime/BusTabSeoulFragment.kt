@@ -55,9 +55,6 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
     private var configuredFirstStop: Int? = null
     private var configuredSecondStop: Int? = null
 
-    private fun logsFor(route: Int, stop: Int) =
-        parentViewModel.logResult.value?.firstOrNull { it.route.seq == route && it.stop.seq == stop }?.log ?: emptyList()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -104,12 +101,11 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                     return@observe
                 }
                 val secondaryTargetSeq = if (stopRes in SEOUL_REMOTE_RES_IDS) SEOUL_FIRST_RETURN_STOP else currentSeoulTargetStopID()
-                val secondaryLogs = logsFor(216000061, secondaryTargetSeq)
                 busFirstAdapter.updateData(firstBusList.arrival.map { arrival ->
                     BusArrivalItem(
                         firstBusList.route.name,
                         arrival,
-                        secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs),
+                        secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, destinationStopID = secondaryTargetSeq),
                         destinationStopID = secondaryTargetSeq,
                         minimumDispatchMinutes = BusDispatchInterval.forToday(firstBusList.minimumDispatchIntervals),
                     )
@@ -156,12 +152,11 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 }
                 val arrivalList = routes.flatMap { route ->
                     val secondaryTargetSeq = if (isRemote) SEOUL_SECOND_RETURN_STOP else currentSeoulTargetStopID()
-                    val secondaryLogs = logsFor(route.route.seq, secondaryTargetSeq)
                     route.arrival.map { arrival ->
                         BusArrivalItem(
                             route.route.name,
                             arrival,
-                            secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(route.route.seq, route.stop.seq), secondaryLogs),
+                        secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, destinationStopID = secondaryTargetSeq),
                             destinationStopID = secondaryTargetSeq,
                             minimumDispatchMinutes = BusDispatchInterval.forToday(route.minimumDispatchIntervals),
                         )

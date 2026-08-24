@@ -1,10 +1,9 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
 
 import app.kobuggi.hyuabot.BusRealtimePageQuery
-import app.kobuggi.hyuabot.BusSecondaryEtaLogQuery
 import java.time.LocalTime
 
-/** Estimates a bus's clock arrival time from either live GPS data or a historical-log-derived duration. */
+/** Estimates a bus's clock arrival time from live GPS data and destination travel duration. */
 object BusSecondaryEta {
     fun estimatedArrivalTime(arrival: BusRealtimePageQuery.Arrival): LocalTime? {
         arrival.arrivalTime?.let { return it }
@@ -15,8 +14,6 @@ object BusSecondaryEta {
 
     fun secondaryArrivalTime(
         arrival: BusRealtimePageQuery.Arrival,
-        primaryLogs: List<BusSecondaryEtaLogQuery.Log>,
-        secondaryLogs: List<BusSecondaryEtaLogQuery.Log>?,
         destinationStopID: Int? = null,
     ): LocalTime? {
         if (destinationStopID == null) return null
