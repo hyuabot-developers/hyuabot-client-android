@@ -145,13 +145,13 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/home_quick_settings_seoul_bus_stop_title"
+                    android:text="@string/home_quick_settings_destination_eta_title"
                     android:textColor="@color/primary_text"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -160,7 +160,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/home_quick_settings_seoul_bus_stop_subtitle"
+                    android:text="@string/home_quick_settings_destination_eta_subtitle"
                     android:textColor="@color/secondary_text"
                     android:textSize="13sp" />
             </LinearLayout>
@@ -169,10 +169,27 @@
                 android:id="@+id/show_seoul_bus_stop_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/home_quick_settings_seoul_bus_stop_title"
+                android:contentDescription="@string/home_quick_settings_destination_eta_title"
                 app:thumbTint="@color/shuttle_switch_thumb"
                 app:trackTint="@color/shuttle_switch_track" />
         </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/home_quick_settings_seoul_bus_stop_title"
+            android:textColor="@color/primary_text"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/home_quick_settings_seoul_bus_stop_subtitle"
+            android:textColor="@color/secondary_text"
+            android:textSize="13sp" />
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/seoul_bus_stop_group"
