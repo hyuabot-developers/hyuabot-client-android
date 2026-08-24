@@ -26,9 +26,6 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
     private val parentViewModel: BusRealtimeViewModel by viewModels({ requireParentFragment() })
     private var configuredStop: Int? = null
 
-    private fun logsFor(route: Int, stop: Int) =
-        parentViewModel.logResult.value?.firstOrNull { it.route.seq == route && it.stop.seq == stop }?.log ?: emptyList()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,12 +71,11 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                             binding.noRealtimeDataFirst.visibility = View.VISIBLE
                             return@observe
                         }
-                        val secondaryLogs = logsFor(216000068, 216000138)
                         busFirstAdapter.updateData(firstBusList.arrival.map { arrival ->
                             BusArrivalItem(
                                 firstBusList.route.name,
                                 arrival,
-                                secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs),
+                                secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival,  destinationStopID = 216000138),
                                 destinationStopID = 216000138,
                                 minimumDispatchMinutes = BusDispatchInterval.forToday(firstBusList.minimumDispatchIntervals),
                             )
@@ -115,12 +111,11 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                             binding.noRealtimeDataFirst.visibility = View.VISIBLE
                             return@observe
                         }
-                        val secondaryLogs = logsFor(216000068, 216000138)
                         busFirstAdapter.updateData(firstBusList.arrival.map { arrival ->
                             BusArrivalItem(
                                 firstBusList.route.name,
                                 arrival,
-                                secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs),
+                                secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, destinationStopID = 216000138),
                                 destinationStopID = 216000138,
                                 minimumDispatchMinutes = BusDispatchInterval.forToday(firstBusList.minimumDispatchIntervals),
                             )
@@ -156,12 +151,11 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                             binding.noRealtimeDataFirst.visibility = View.VISIBLE
                             return@observe
                         }
-                        val secondaryLogs = logsFor(216000068, 216000138)
                         busFirstAdapter.updateData(firstBusList.arrival.map { arrival ->
                             BusArrivalItem(
                                 firstBusList.route.name,
                                 arrival,
-                                secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(firstBusList.route.seq, firstBusList.stop.seq), secondaryLogs),
+                                secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, destinationStopID = 216000138),
                                 destinationStopID = 216000138,
                                 minimumDispatchMinutes = BusDispatchInterval.forToday(firstBusList.minimumDispatchIntervals),
                             )
@@ -188,13 +182,12 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
             } else {
                 secondBusList.arrival.filter { arrival -> !arrival.isRealtime }
             }
-            val secondaryReturnLogs = logsFor(216000068, 216000378)
             busSecondAdapter.updateData(
                 (secondBusRealtime + secondBusTimetable).map { arrival ->
                     BusArrivalItem(
                         secondBusList.route.name,
                         arrival,
-                        secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, logsFor(secondBusList.route.seq, secondBusList.stop.seq), secondaryReturnLogs),
+                        secondaryArrivalTime = BusSecondaryEta.secondaryArrivalTime(arrival, destinationStopID = 216000378),
                         destinationStopID = 216000378,
                         minimumDispatchMinutes = BusDispatchInterval.forToday(secondBusList.minimumDispatchIntervals),
                     )
