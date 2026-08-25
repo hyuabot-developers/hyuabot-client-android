@@ -47,7 +47,6 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
         binding.showSeoulBusStopSwitch.isChecked = requireArguments().getBoolean(ARG_SHOW_SEOUL_BUS_STOP, true)
         val seoulBusStop = BusSeoulTargetStop.from(requireArguments().getString(ARG_SEOUL_BUS_STOP))
         binding.seoulBusStopGroup.check(buttonIdFor(seoulBusStop))
-        updateSeoulBusStopEnabled(binding.showSeoulBusStopSwitch.isChecked)
         reorderHomeSettingsSections()
         updateSubwayDestinationEnabled(binding.showSubwayTransferSwitch.isChecked)
         return binding.root
@@ -59,6 +58,7 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
             binding.presenceStatusRow,
             binding.subwayTransferRow,
             binding.bus50TransferRow,
+            binding.destinationEtaRow,
             binding.seoulBusStopRow,
         )
         sections.forEach(content::removeView)
@@ -97,7 +97,6 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
             )
         }
         binding.showSeoulBusStopSwitch.setOnCheckedChangeListener { _, isChecked ->
-            updateSeoulBusStopEnabled(isChecked)
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
                 Bundle().apply { putBoolean(KEY_SHOW_SEOUL_BUS_STOP, isChecked) },
@@ -143,14 +142,6 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
         binding.subwayDestinationGroup.alpha = if (isEnabled) 1f else 0.45f
         for (index in 0 until binding.subwayDestinationGroup.childCount) {
             binding.subwayDestinationGroup.getChildAt(index).isEnabled = isEnabled
-        }
-    }
-
-    private fun updateSeoulBusStopEnabled(isEnabled: Boolean) {
-        binding.seoulBusStopGroup.isEnabled = isEnabled
-        binding.seoulBusStopGroup.alpha = if (isEnabled) 1f else 0.45f
-        for (index in 0 until binding.seoulBusStopGroup.childCount) {
-            binding.seoulBusStopGroup.getChildAt(index).isEnabled = isEnabled
         }
     }
 

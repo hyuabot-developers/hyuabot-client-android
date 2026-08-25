@@ -729,13 +729,11 @@ class HomeFragment : Fragment() {
             )
         } else when (selectedBusHomeDestination) {
             BusHomeDestination.SANGNOKSU -> mapOf(216000068 to 216000138)
-            BusHomeDestination.GANGNAM -> if (showHomeSeoulBusStop) {
+            BusHomeDestination.GANGNAM -> {
                 mapOf(
                     216000061 to selectedHomeSeoulBusStop.stopID,
                     216000096 to selectedHomeSeoulBusStop.stopID,
                 )
-            } else {
-                emptyMap()
             }
             BusHomeDestination.UIWANG -> mapOf(
                 216000026 to 226000042,

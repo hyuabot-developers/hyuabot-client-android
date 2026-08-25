@@ -112,8 +112,10 @@
     <string name="home_bus_destination_gunpo_button">군포</string>
     <string name="home_quick_settings_bus_destination_title">노선버스 행선지</string>
     <string name="home_quick_settings_bus_destination_subtitle">홈에서 보여줄 행선지를 선택해요.</string>
-    <string name="home_quick_settings_seoul_bus_stop_title">광역버스 도착 정류장</string>
-    <string name="home_quick_settings_seoul_bus_stop_subtitle">홈에서 보여줄 도착 기준 정류장을 선택해요.</string>
+    <string name="home_quick_settings_destination_eta_title">목적지 도착 예정 시간 표시</string>
+    <string name="home_quick_settings_destination_eta_subtitle">홈에서 목적지 도착 예정 시간을 표시해요.</string>
+    <string name="home_quick_settings_seoul_bus_stop_title">서울 방면 목적지</string>
+    <string name="home_quick_settings_seoul_bus_stop_subtitle">서울 방면 버스의 도착 기준 정류장을 선택해요.</string>
     <string name="home_alt_dormitory_nearby">한양대기숙사앞</string>
     <string name="home_alt_gyeonggi_technopark">경기테크노파크</string>
     <string name="home_alt_sangnoksu">상록수역</string>
@@ -304,7 +306,7 @@
     <string name="bus_stop_gyodae">교대역</string>
     <string name="bus_stop_gangnam">강남역</string>
     <string name="bus_stop_yangjae">양재역</string>
-    <string name="bus_stop_yangjae_forest">양재시민의숲역</string>
+    <string name="bus_stop_yangjae_forest">매헌역</string>
     <string name="bus_stop_suwon_station">수원역</string>
     <string name="bus_quick_settings_title">버스 설정</string>
     <string name="bus_quick_settings_show_secondary_eta">도착 시간 표시</string>
