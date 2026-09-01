@@ -2143,6 +2143,7 @@ class HomeFragment : Fragment() {
             "shuttlecock_o" to "JUNGANG",
             "station" to "JUNGANG" -> HomeRouteDisplay(getString(R.string.shuttle_type_jungang), green)
             "station" to "CAMPUS" -> when {
+                routeName.endsWith("S") -> HomeRouteDisplay(getString(R.string.shuttle_type_shuttlecock), red)
                 routeTag == "DH" -> HomeRouteDisplay(getString(R.string.shuttle_type_direct), red)
                 routeTag == "DJ" -> HomeRouteDisplay(getString(R.string.shuttle_type_jungang), green)
                 routeTag == "C" -> HomeRouteDisplay(getString(R.string.shuttle_type_circular), blue)
@@ -2287,11 +2288,20 @@ private enum class HomeDeparture(
         SHUTTLECOCK to HomeDestination.TERMINAL -> HomeShuttleRoute("shuttlecock_o", "TERMINAL")
         SHUTTLECOCK to HomeDestination.JUNGANG -> HomeShuttleRoute("shuttlecock_o", "JUNGANG")
         SHUTTLECOCK to HomeDestination.DORMITORY -> HomeShuttleRoute("shuttlecock_i", "CAMPUS") { it.route.name.endsWith("D") }
-        STATION to HomeDestination.DORMITORY -> HomeShuttleRoute("station", "CAMPUS") { it.route.name.endsWith("D") }
+        // A route name ending in "D" terminates at the dormitory and one ending in "S"
+        // terminates at shuttlecock. Both serve riders from stops located before
+        // shuttlecock_i; only "D" routes remain usable when boarding at shuttlecock_i.
+        STATION to HomeDestination.DORMITORY -> HomeShuttleRoute("station", "CAMPUS") {
+            it.route.name.endsWith("D") || it.route.name.endsWith("S")
+        }
         STATION to HomeDestination.TERMINAL -> HomeShuttleRoute("station", "TERMINAL")
         STATION to HomeDestination.JUNGANG -> HomeShuttleRoute("station", "JUNGANG")
-        TERMINAL to HomeDestination.DORMITORY -> HomeShuttleRoute("terminal", "CAMPUS") { it.route.name.endsWith("D") }
-        JUNGANG to HomeDestination.DORMITORY -> HomeShuttleRoute("jungang_stn", "CAMPUS") { it.route.name.endsWith("D") }
+        TERMINAL to HomeDestination.DORMITORY -> HomeShuttleRoute("terminal", "CAMPUS") {
+            it.route.name.endsWith("D") || it.route.name.endsWith("S")
+        }
+        JUNGANG to HomeDestination.DORMITORY -> HomeShuttleRoute("jungang_stn", "CAMPUS") {
+            it.route.name.endsWith("D") || it.route.name.endsWith("S")
+        }
         else -> HomeShuttleRoute("dormitory_o", "STATION")
     }
 
