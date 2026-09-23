@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.BusStopCoordinatesQuery
 import app.kobuggi.hyuabot.BusRealtimePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.type.BusRouteStopInput
@@ -39,6 +41,11 @@ class BusRealtimeViewModel @Inject constructor(
     private val _seoulFirstStopID = MutableLiveData<Int?>(null)
     private val _seoulSecondStopID = MutableLiveData<Int?>(null)
     private val _suwonStopID = MutableLiveData<Int?>(null)
+    private val _stopCoordinates = MutableLiveData<List<BusStopCoordinatesQuery.Bus>>()
+    private var coordinatesLoading = false
+    private var latestRequestGeneration = 0L
+    private var lastAppliedGeneration = 0L
+    val stopCoordinates get() = _stopCoordinates
 
     val result get() = _result
     val notices get() = _notices
@@ -54,37 +61,45 @@ class BusRealtimeViewModel @Inject constructor(
     fun initSelectedStopID() {
         viewModelScope.launch {
             userPreferencesRepository.getBusStop().collect {
-                _selectedStopID.value = it
+                updateRequestSetting(_selectedStopID, it)
             }
         }
         viewModelScope.launch {
             userPreferencesRepository.getShowBusSecondaryEta().collect {
-                _showSecondaryEta.value = it
+                updateRequestSetting(_showSecondaryEta, it)
             }
         }
         viewModelScope.launch {
             userPreferencesRepository.getBusSeoulTargetStop().collect {
-                _seoulTarget.value = BusSeoulTargetStop.from(it)
+                updateRequestSetting(_seoulTarget, BusSeoulTargetStop.from(it))
             }
         }
         viewModelScope.launch {
             userPreferencesRepository.getBusSeoulFirstStop().collect {
-                _seoulFirstStopID.value = it
+                updateRequestSetting(_seoulFirstStopID, it)
             }
         }
         viewModelScope.launch {
             userPreferencesRepository.getBusSeoulSecondStop().collect {
-                _seoulSecondStopID.value = it
+                updateRequestSetting(_seoulSecondStopID, it)
             }
         }
         viewModelScope.launch {
             userPreferencesRepository.getBusSuwonStop().collect {
-                _suwonStopID.value = it
+                updateRequestSetting(_suwonStopID, it)
             }
         }
     }
 
+    /** Saved selections usually arrive after the first poll; refetch so the shown tab is not left without data until the next tick. */
+    private fun <T> updateRequestSetting(target: MutableLiveData<T>, value: T) {
+        if (target.value == value) return
+        target.value = value
+        if (latestRequestGeneration > 0) fetchData()
+    }
+
     fun setSelectedStopID(stopID: Int) {
+        _selectedStopID.value = stopID
         viewModelScope.launch { userPreferencesRepository.setBusStop(stopID) }
     }
 
@@ -110,21 +125,28 @@ class BusRealtimeViewModel @Inject constructor(
 
     fun setSeoulTarget(target: BusSeoulTargetStop) {
         _seoulTarget.value = target
-        _result.value = _result.value
         viewModelScope.launch { userPreferencesRepository.setBusSeoulTargetStop(target.value) }
     }
 
     fun fetchData() {
+        fetchStopCoordinates()
+        val requestGeneration = ++latestRequestGeneration
         if (_result.value == null) _isLoading.value = true
         val locale = AppCompatDelegate.getApplicationLocales().get(0)
         val appLanguage = locale?.language ?: Locale.getDefault().language
         val language = if (appLanguage == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
         val dates = BusRecentDates.sameWeekdayType(count = 4)
+        val busInput = selectedBusInput(dates)
         viewModelScope.launch {
-            val response = apolloClient.query(BusRealtimePageQuery(language, busInput(dates)))
+            // Notices are only shown from the first successful response, so later polls skip them.
+            val response = apolloClient.query(BusRealtimePageQuery(language, busInput, includeNotices = _notices.value == null))
                 .fetchPolicy(FetchPolicy.NetworkOnly)
                 .doNotStore(true)
                 .execute()
+            // Timer ticks issue newer requests with identical inputs; keep applying a slow response unless the
+            // selected stops changed or a newer response was already rendered.
+            if (requestGeneration <= lastAppliedGeneration || busInput != selectedBusInput(dates)) return@launch
+            lastAppliedGeneration = requestGeneration
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {
@@ -134,7 +156,8 @@ class BusRealtimeViewModel @Inject constructor(
                 _queryError.value = QueryError.UNKNOWN_ERROR
             }
             if (_notices.value == null) {
-                _notices.value = response.data?.notices?.flatMap { it.notices } ?: emptyList()
+                // Left null on failure so the next poll requests notices again.
+                response.data?.notices?.let { notices -> _notices.value = notices.flatMap { it.notices } }
             }
             _isLoading.value = false
         }
@@ -161,37 +184,83 @@ class BusRealtimeViewModel @Inject constructor(
         stop()
     }
 
-    private fun busInput(dates: List<java.time.LocalDate>): List<BusRouteStopInput> {
-        val requests = listOf(
-            216000068 to listOf(216000138, 216000383, 216000381, 216000379, 216000378),
-            216000061 to listOf(216000383, 216000381, 216000379, 216000378, 121000060, 121000929, 121000974, 121000970, 121000220),
-            216000043 to listOf(216000719, 216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
-            216000026 to listOf(216000719, 216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
-            216000096 to listOf(216000719, 216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
-            216000104 to listOf(216000070, 216000141, 202000208, 202000106),
-            200000015 to listOf(216000070, 216000141, 202000208, 202000106),
-            216000075 to listOf(216000759, 213000487, 216000117),
-            216000016 to listOf(216000152),
-        )
-        val destinationStops = mapOf(
-            216000068 to listOf(216000138),
-            216000061 to listOf(216000378, 121000060, 121000929, 121000974, 121000970, 121000220),
-            216000043 to listOf(216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
-            216000026 to listOf(216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
-            216000096 to listOf(216000048, 121000060, 121000929, 121000974, 121000970, 121000220),
-            216000104 to listOf(216000141),
-            200000015 to listOf(216000141),
-        )
-        return requests.flatMap { (route, stops) ->
-            stops.map { stop ->
-                BusRouteStopInput(
-                    route = route,
-                    stop = stop,
-                    destinationStops = destinationStops[route]?.let { Optional.present(it) } ?: Optional.Absent,
-                    limit = Optional.present(3),
-                    dates = Optional.present(dates),
-                )
+    private fun fetchStopCoordinates() {
+        if (coordinatesLoading || _stopCoordinates.value != null) return
+        coordinatesLoading = true
+        viewModelScope.launch {
+            try {
+                val inputs = busLocationInputs()
+                val response = apolloClient.query(BusStopCoordinatesQuery(inputs))
+                    .fetchPolicy(FetchPolicy.NetworkOnly)
+                    .doNotStore(true)
+                    .execute()
+                response.data?.bus?.takeIf { it.isNotEmpty() }?.let { _stopCoordinates.value = it }
+            } finally {
+                coordinatesLoading = false
             }
         }
     }
+
+    private fun selectedBusInput(dates: List<java.time.LocalDate>): List<BusRouteStopInput> {
+        val seoulRemoteStops = setOf(121000060, 121000929, 121000974, 121000970, 121000220)
+        val cityStop = busStopSequence(_selectedStopID.value) ?: 216000379
+        val seoulFirstStop = busStopSequence(_seoulFirstStopID.value) ?: 216000379
+        val seoulSecondStop = busStopSequence(_seoulSecondStopID.value) ?: 216000719
+        val suwonStop = busStopSequence(_suwonStopID.value) ?: 216000070
+        val showSecondary = _showSecondaryEta.value ?: true
+
+        fun input(route: Int, stop: Int, destinations: List<Int> = emptyList()) = BusRouteStopInput(
+            route = route,
+            stop = stop,
+            destinationStops = destinations.takeIf { showSecondary && it.isNotEmpty() }?.let { Optional.present(it) } ?: Optional.Absent,
+            limit = Optional.present(3),
+            dates = Optional.present(dates),
+        )
+
+        val inputs = mutableListOf(
+            input(216000068, cityStop, listOf(216000138)),
+            input(216000068, 216000138, listOf(216000378)),
+            input(
+                216000061,
+                seoulFirstStop,
+                listOf(if (seoulFirstStop in seoulRemoteStops) 216000378 else (_seoulTarget.value ?: BusSeoulTargetStop.GANGNAM).stopID),
+            ),
+            input(
+                216000104,
+                suwonStop,
+                listOf(if (suwonStop == 202000106) 216000141 else 202000208),
+            ),
+            input(
+                200000015,
+                suwonStop,
+                listOf(if (suwonStop == 202000106) 216000141 else 202000208),
+            ),
+            input(216000075, 216000759, listOf(213000487)),
+            input(216000075, 213000487, listOf(216000117)),
+        )
+        val secondSeoulDestination = if (seoulSecondStop in seoulRemoteStops) {
+            216000048
+        } else {
+            (_seoulTarget.value ?: BusSeoulTargetStop.GANGNAM).stopID
+        }
+        inputs += listOf(216000043, 216000026, 216000096).map {
+            input(it, seoulSecondStop, listOf(secondSeoulDestination))
+        }
+        return inputs
+    }
+}
+
+internal fun busStopSequence(stopResource: Int?): Int? = when (stopResource) {
+    R.string.bus_stop_convention -> 216000379
+    R.string.bus_stop_cluster -> 216000381
+    R.string.bus_stop_dormitory -> 216000383
+    R.string.bus_stop_main_gate -> 216000719
+    R.string.bus_stop_seocho -> 121000060
+    R.string.bus_stop_gyodae -> 121000929
+    R.string.bus_stop_gangnam -> 121000974
+    R.string.bus_stop_yangjae -> 121000970
+    R.string.bus_stop_yangjae_forest -> 121000220
+    R.string.bus_stop_entrance -> 216000070
+    R.string.bus_stop_suwon_station -> 202000106
+    else -> null
 }

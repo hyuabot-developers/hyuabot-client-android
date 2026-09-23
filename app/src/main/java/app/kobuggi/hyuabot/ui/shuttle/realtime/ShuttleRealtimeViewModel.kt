@@ -6,6 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import app.kobuggi.hyuabot.ShuttleLocationQuery
+import app.kobuggi.hyuabot.type.ShuttleStopInput
+import app.kobuggi.hyuabot.type.ShuttleLimitInput
+import app.kobuggi.hyuabot.type.BusRouteStopInput
+import app.kobuggi.hyuabot.type.SubwayStationInput
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
@@ -75,6 +80,10 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private var presencePreviewCount: Int? = null
     private var presencePreferenceLoaded = false
     private var isStarted = false
+    private var latestRequest = 0L
+    private var lastAppliedRequest = 0L
+    private var loadingLocations = false
+    val locationStops = MutableLiveData<List<ShuttleLocationQuery.Stop>>()
     private var loadedSubwayLanguage: String? = null
 
     val result get() = _result
@@ -106,24 +115,31 @@ class ShuttleRealtimeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userPreferencesRepository.getShowHomeBus50Transfer().collect {
-                _showBusTransfer.value = it
+                updateRequestSetting(_showBusTransfer, it)
             }
         }
         viewModelScope.launch {
             userPreferencesRepository.getShowHomeSubwayTransfer().collect {
-                _showSubwayTransfer.value = it
+                updateRequestSetting(_showSubwayTransfer, it)
             }
         }
         viewModelScope.launch {
             userPreferencesRepository.getHomeSubwayTransferDestination().collect {
-                _subwayTransferDestination.value = HomeSubwayTransferDestination.from(it)
+                updateRequestSetting(_subwayTransferDestination, HomeSubwayTransferDestination.from(it))
             }
         }
         viewModelScope.launch {
             userPreferencesRepository.getShuttleAlternativeDisplayMode().collect {
-                _alternativeDisplayMode.value = ShuttleAlternativeDisplayMode.from(it)
+                updateRequestSetting(_alternativeDisplayMode, ShuttleAlternativeDisplayMode.from(it))
             }
         }
+    }
+
+    /** Stores a setting that shapes the request and refetches once polling has started, so a response built from defaults is replaced. */
+    private fun <T> updateRequestSetting(target: MutableLiveData<T>, value: T) {
+        if (target.value == value) return
+        target.value = value
+        if (latestRequest > 0) fetchData()
     }
 
     fun setForceShowBusAlternative(show: Boolean) {
@@ -134,7 +150,16 @@ class ShuttleRealtimeViewModel @Inject constructor(
     }.onStart { emit(ShuttleTabData(listOf(), false)) }.asLiveData()
 
 
+    private fun requestSelection() = ShuttleRequestSelection(
+        selectedPresenceStop, _showByDestination.value ?: false, _showBusTransfer.value ?: true,
+        _showSubwayTransfer.value ?: true, _subwayTransferDestination.value ?: HomeSubwayTransferDestination.SEOUL,
+        _alternativeDisplayMode.value ?: ShuttleAlternativeDisplayMode.AUTOMATIC,
+    )
+
     fun fetchData() {
+        fetchLocations()
+        val selection = requestSelection()
+        val request = ++latestRequest
         if (_result.value == null) _isLoading.value = true
         val locale = AppCompatDelegate.getApplicationLocales().get(0)
         val appLanguage = locale?.language ?: Locale.getDefault().language
@@ -150,27 +175,34 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 language,
                 subwayLanguage,
                 Optional.present(LocalTime.now()),
-                currentShuttleWeekday(),
-                Optional.present(shuttleBusLogReferenceDates()),
+                shuttleStops = listOf(ShuttleStopInput(
+                    name = selection.stop,
+                    limit = ShuttleLimitInput(order = Optional.present(100), destination = Optional.present(100)),
+                )),
+                subwayKeys = selection.subwayPairs().filter { it.first != "S26" }.map { (station, direction) ->
+                    SubwayStationInput(station, listOf(direction), listOf(currentShuttleWeekday()),
+                        Optional.present(12))
+                },
+                subwayTimetableKeys = selection.subwayPairs().filter { it.first == "S26" }.map { (station, direction) ->
+                    SubwayStationInput(station, listOf(direction), listOf(currentShuttleWeekday()))
+                },
+                transferBusInput = if (selection.needsBus) listOf(BusRouteStopInput(
+                    route = 216000075, stop = 216000759, limit = Optional.present(12),
+                    dates = Optional.present(shuttleBusLogReferenceDates()),
+                )) else emptyList(),
+                alternativeInput = selection.alternativePairs().map { (route, stop) ->
+                    BusRouteStopInput(route = route, stop = stop, limit = Optional.present(1))
+                },
+                // Notices are only shown from the first successful response, so later polls skip them.
+                includeNotices = _notices.value == null,
             )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
+            // Timer ticks issue newer requests with the same selection; a slow response is still applied unless the
+            // selection changed or a newer response has already been rendered.
+            if (request <= lastAppliedRequest || selection != requestSelection()) return@launch
+            lastAppliedRequest = request
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.shuttle?.stops != null) {
-                _initialStopRules.value =
-                    response.data?.shuttle?.initialStopRules.orEmpty().map { rule ->
-                        ShuttleInitialStopRuleCandidate(
-                            sequence = rule.seq,
-                            stopName = rule.stopName,
-                            priority = rule.priority,
-                            polygon =
-                                rule.polygon.map { point ->
-                                    ShuttleGeoCoordinate(
-                                        latitude = point.latitude,
-                                        longitude = point.longitude,
-                                    )
-                                },
-                        )
-                    }
                 _result.value = response.data?.shuttle?.stops
                 _transfer.value = response.data
                 updateBusAlternatives(response.data?.busAlternative.orEmpty())
@@ -179,9 +211,29 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 _queryError.value = QueryError.UNKNOWN_ERROR
             }
             if (_notices.value == null) {
-                _notices.value = response.data?.notices?.flatMap { it.notices } ?: emptyList()
+                // Left null on failure so the next poll requests notices again.
+                response.data?.notices?.let { notices -> _notices.value = notices.flatMap { it.notices } }
             }
             _isLoading.value = false
+        }
+    }
+
+    private fun fetchLocations() {
+        if (loadingLocations || locationStops.value != null) return
+        loadingLocations = true
+        viewModelScope.launch {
+            try {
+                val response = apolloClient.query(ShuttleLocationQuery()).fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                response.data?.shuttle?.let { shuttle ->
+                    _initialStopRules.value = shuttle.initialStopRules.map { rule ->
+                        ShuttleInitialStopRuleCandidate(rule.seq, rule.stopName, rule.priority,
+                            rule.polygon.map { ShuttleGeoCoordinate(it.latitude, it.longitude) })
+                    }
+                    if (shuttle.stops.isNotEmpty()) locationStops.value = shuttle.stops
+                }
+            } finally {
+                loadingLocations = false
+            }
         }
     }
 
@@ -274,6 +326,8 @@ class ShuttleRealtimeViewModel @Inject constructor(
     }
 
     fun setShowByDestination(isVisible: Boolean) {
+        _showByDestination.value = isVisible
+        fetchData()
         viewModelScope.launch { userPreferencesRepository.setShowShuttleByDestination(isVisible) }
     }
 
@@ -291,16 +345,19 @@ class ShuttleRealtimeViewModel @Inject constructor(
 
     fun setShowBusTransfer(show: Boolean) {
         _showBusTransfer.value = show
+        fetchData()
         viewModelScope.launch { userPreferencesRepository.setShowHomeBus50Transfer(show) }
     }
 
     fun setShowSubwayTransfer(show: Boolean) {
         _showSubwayTransfer.value = show
+        fetchData()
         viewModelScope.launch { userPreferencesRepository.setShowHomeSubwayTransfer(show) }
     }
 
     fun setSubwayTransferDestination(destination: HomeSubwayTransferDestination) {
         _subwayTransferDestination.value = destination
+        fetchData()
         viewModelScope.launch {
             userPreferencesRepository.setHomeSubwayTransferDestination(destination.value)
         }
@@ -308,6 +365,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
 
     fun setAlternativeDisplayMode(mode: ShuttleAlternativeDisplayMode) {
         _alternativeDisplayMode.value = mode
+        fetchData()
         viewModelScope.launch { userPreferencesRepository.setShuttleAlternativeDisplayMode(mode.value) }
     }
 
@@ -336,6 +394,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
         val stopId = PRESENCE_STOP_IDS.getOrNull(position) ?: return
         if (selectedPresenceStop == stopId) return
         selectedPresenceStop = stopId
+        fetchData()
         restartPresenceUpdates()
     }
 

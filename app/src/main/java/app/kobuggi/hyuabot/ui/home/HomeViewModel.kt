@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.appcompat.app.AppCompatDelegate
 import app.kobuggi.hyuabot.BusDepartureLogDialogQuery
+import app.kobuggi.hyuabot.BusStopCoordinatesQuery
+import app.kobuggi.hyuabot.ui.bus.realtime.busLocationInputs
 import app.kobuggi.hyuabot.HomePageQuery
 import app.kobuggi.hyuabot.service.ShuttlePresenceService
 import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
@@ -14,6 +16,9 @@ import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import app.kobuggi.hyuabot.ui.bus.realtime.BusRecentDates
+import app.kobuggi.hyuabot.type.ShuttleStopInput
+import app.kobuggi.hyuabot.type.ShuttleLimitInput
+import app.kobuggi.hyuabot.type.SubwayStationInput
 import app.kobuggi.hyuabot.type.BusRouteStopInput
 import app.kobuggi.hyuabot.util.QueryError
 import com.apollographql.apollo.ApolloClient
@@ -54,6 +59,8 @@ class HomeViewModel @Inject constructor(
     private val _presenceViewerCount = MutableLiveData<Int?>(null)
     private val _presenceAvailableSeats = MutableLiveData<Int?>(null)
     private var isFetching = false
+    private var pendingRefresh = false
+    private var requestSelection = HomeRequestSelection()
     private var loadedSubwayLanguage: String? = null
     private var presenceJob: Job? = null
     private var selectedPresenceStop = "dormitory_o"
@@ -62,6 +69,11 @@ class HomeViewModel @Inject constructor(
     private var presencePreviewCount: Int? = null
     private var presencePreferenceLoaded = false
     private var presenceUpdatesStarted = false
+    private var selectedHomeBusGroup: HomeBusGroup? = null
+    private val _stopCoordinates = MutableLiveData<List<BusStopCoordinatesQuery.Bus>>()
+    val stopCoordinates: LiveData<List<BusStopCoordinatesQuery.Bus>> get() = _stopCoordinates
+    private var coordinatesLoading = false
+    private var selectedHomeBusDestination = BusHomeDestination.GANGNAM
 
     val isLoading: LiveData<Boolean> get() = _isLoading
     val data: LiveData<HomePageQuery.Data?> get() = _data
@@ -99,9 +111,17 @@ class HomeViewModel @Inject constructor(
     }
 
     fun fetchData() {
+        fetchStopCoordinates()
         viewModelScope.launch {
-            if (isFetching) return@launch
+            if (isFetching) {
+                pendingRefresh = true
+                return@launch
+            }
             isFetching = true
+            pendingRefresh = false
+            val requestedSelection = requestSelection
+            val requestedBusGroup = selectedHomeBusGroup
+            val requestedBusDestination = selectedHomeBusDestination
             val subwayLanguage = DynamicTextTranslator.currentAppLanguageTag()
             if (loadedSubwayLanguage != subwayLanguage) {
                 _data.value = null
@@ -116,13 +136,35 @@ class HomeViewModel @Inject constructor(
                         language = currentNoticeLanguage(),
                         subwayLanguage = subwayLanguage,
                         after = Optional.present(LocalTime.now(ZoneId.of("Asia/Seoul"))),
-                        weekday = currentSubwayWeekday(now),
+                        shuttleStops = listOf(ShuttleStopInput(
+                            name = requestedSelection.stop,
+                            destinations = Optional.present(listOf(requestedSelection.destination)),
+                            limit = ShuttleLimitInput(destination = Optional.present(100)),
+                        )),
+                        transferBusInput = if (requestedSelection.needsBus50) listOf(
+                            BusRouteStopInput(route = 216000075, stop = 216000759, limit = Optional.present(2)),
+                        ) else emptyList(),
+                        subwayKeys = requestedSelection.subwayPairs().filter { it.first != "S26" }.map { (station, direction) ->
+                            SubwayStationInput(
+                                stationID = station,
+                                direction = listOf(direction),
+                                weekdays = listOf(currentSubwayWeekday(now)),
+                                limit = if (station == "S26") Optional.Absent else Optional.present(12),
+                            )
+                        },
+                        subwayTimetableKeys = requestedSelection.subwayPairs().filter { it.first == "S26" }.map { (station, direction) ->
+                            SubwayStationInput(station, listOf(direction), listOf(currentSubwayWeekday(now)))
+                        },
                         date = mealDate,
                         campusID = userPreferencesRepository.campusID.first(),
                         busInput = homeBusInput(),
                     )
                 ).fetchPolicy(FetchPolicy.NetworkOnly).doNotStore(true).execute()
 
+                if (requestedSelection != requestSelection || requestedBusGroup != selectedHomeBusGroup || requestedBusDestination != selectedHomeBusDestination) {
+                    pendingRefresh = true
+                    return@launch
+                }
                 if (response.data == null || response.exception != null) {
                     _initialStopRules.value = emptyList()
                     _queryError.value = QueryError.SERVER_ERROR
@@ -143,8 +185,8 @@ class HomeViewModel @Inject constructor(
                             )
                         }
                     _data.value = response.data
-                    _bus50TerminalLogTimes.value = fetchBus50TerminalLogTimes(now.toLocalDate())
-                    shuttleServiceNoticeScheduler.sync()
+                    _bus50TerminalLogTimes.value = if (requestedSelection.needsBus50) fetchBus50TerminalLogTimes(now.toLocalDate()) else emptyList()
+                    viewModelScope.launch { shuttleServiceNoticeScheduler.syncIfStale() }
                     _queryError.value = null
                 }
             } catch (_: Exception) {
@@ -153,8 +195,20 @@ class HomeViewModel @Inject constructor(
             } finally {
                 _isLoading.value = false
                 isFetching = false
+                if (pendingRefresh) fetchData()
             }
         }
+    }
+
+    internal fun setRequestSelection(selection: HomeRequestSelection) {
+        if (requestSelection == selection) return
+        requestSelection = selection
+        fetchData()
+    }
+
+    fun setHomeBusSelection(group: HomeBusGroup?, destination: BusHomeDestination) {
+        selectedHomeBusGroup = group
+        selectedHomeBusDestination = destination
     }
 
     fun invalidateInitialStopRules() {
@@ -268,74 +322,96 @@ class HomeViewModel @Inject constructor(
 
     private fun homeBusInput(): List<BusRouteStopInput> {
         val dates = BusRecentDates.sameWeekdayType(count = 4)
-        return listOf(
-        BusRouteStopInput(route = 216000068, stop = 216000383, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000068, stop = 216000138, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000104, stop = 216000141, limit = Optional.present(2)),
-        BusRouteStopInput(route = 200000015, stop = 216000141, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000081, stop = 216000028, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000101, stop = 216000028, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000016, stop = 216000152, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000082, stop = 216000077, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000102, stop = 216000077, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000016, stop = 216000074, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000082, stop = 217000140, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000102, stop = 217000140, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000016, stop = 217000264, limit = Optional.present(1)),
-        BusRouteStopInput(route = 216000068, stop = 216000379, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000068, stop = 216000719, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000068, stop = 216000070, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000068, stop = 216000381, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000061, stop = 216000379, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000061, stop = 216000378, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000061, stop = 216000381, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000061, stop = 216000383, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000061, stop = 216000719, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000026, stop = 216000719, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000043, stop = 216000719, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000096, stop = 216000719, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000096, stop = 216000048, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000026, stop = 216000048, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000043, stop = 216000048, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000026, stop = 226000042, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000096, stop = 226000042, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000043, stop = 225000116, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000104, stop = 216000070, limit = Optional.present(2)),
-        BusRouteStopInput(route = 200000015, stop = 216000070, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000104, stop = 202000106, limit = Optional.present(2)),
-        BusRouteStopInput(route = 200000015, stop = 202000106, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000061, stop = 121000060, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000061, stop = 121000929, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000061, stop = 121000974, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000061, stop = 121000970, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000061, stop = 121000220, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000026, stop = 121000060, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000026, stop = 121000929, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000026, stop = 121000974, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000026, stop = 121000970, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000026, stop = 121000220, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000043, stop = 121000060, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000043, stop = 121000929, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000043, stop = 121000974, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000043, stop = 121000970, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000043, stop = 121000220, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000096, stop = 121000060, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000096, stop = 121000929, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000096, stop = 121000974, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000096, stop = 121000970, limit = Optional.present(2)),
-        BusRouteStopInput(route = 216000096, stop = 121000220, limit = Optional.present(2)),
-        ).map { input ->
-            input.copy(
-                destinationStops = when (input.route) {
-                    216000068 -> Optional.present(listOf(216000138))
-                    216000061 -> Optional.present(listOf(216000378, 121000060, 121000929, 121000974, 121000970, 121000220))
-                    216000026, 216000043, 216000096 -> Optional.present(listOf(216000048, 121000060, 121000929, 121000974, 121000970, 121000220))
-                    216000104, 200000015 -> Optional.present(listOf(216000141))
-                    else -> Optional.Absent
-                },
+        return (homeBusPairs(selectedHomeBusGroup, selectedHomeBusDestination) + requestSelection.alternativeBusPairs()).map { (route, stop) ->
+            BusRouteStopInput(
+                route = route,
+                stop = stop,
+                destinationStops = homeBusDestinationStopIDs(route, stop),
                 limit = Optional.present(3),
                 dates = Optional.present(dates),
             )
+        }
+    }
+
+    private fun homeBusDestinationStopIDs(route: Int, stop: Int): Optional<List<Int>> {
+        // Destination travel minutes feed the destination ETA (hidden when the setting is off) and, for Seoul
+        // origin groups, the row ordering; skip them when neither applies.
+        if (!requestSelection.showSeoulBusStop && stop !in HOME_SEOUL_ORIGIN_STOPS) return Optional.Absent
+        val destinations = when {
+            route == 216000061 && stop in setOf(216000383, 216000381, 216000379) ->
+                if (requestSelection.showSeoulBusStop) listOf(requestSelection.seoulBusStop) else emptyList()
+            route == 216000096 && stop == 216000719 ->
+                if (selectedHomeBusDestination == BusHomeDestination.UIWANG) listOf(226000042)
+                else if (requestSelection.showSeoulBusStop) listOf(requestSelection.seoulBusStop) else emptyList()
+            else -> homeBusDestinationStops(route, stop)
+        }
+        return if (destinations.isEmpty()) Optional.Absent else Optional.present(destinations)
+    }
+
+    companion object {
+        private val HOME_SEOUL_ORIGIN_STOPS = setOf(121000060, 121000929, 121000974, 121000970, 121000220)
+
+        internal fun homeBusPairsForTest(
+            group: HomeBusGroup?,
+            destination: BusHomeDestination,
+        ): Set<Pair<Int, Int>> = homeBusPairs(group, destination)
+
+        internal fun homeBusDestinationStopsForTest(route: Int, stop: Int): List<Int> =
+            homeBusDestinationStops(route, stop)
+
+        private fun homeBusDestinationStops(route: Int, stop: Int): List<Int> {
+            val seoulStops = listOf(121000060, 121000929, 121000974, 121000970, 121000220)
+            return when {
+                route == 216000068 && stop in setOf(216000383, 216000381, 216000379) -> listOf(216000138)
+                route == 216000061 && stop in setOf(216000383, 216000381, 216000379) -> seoulStops
+                route == 216000096 && stop == 216000719 -> seoulStops + 226000042
+                route == 216000026 && stop == 216000719 -> listOf(226000042)
+                route == 216000043 && stop == 216000719 -> listOf(225000116)
+                route in setOf(216000104, 200000015) && stop == 216000070 -> listOf(202000208)
+                route in setOf(216000104, 200000015) && stop == 202000106 -> listOf(216000141)
+                stop in seoulStops -> listOf(if (route == 216000061) 216000378 else 216000048)
+                else -> emptyList()
+            }
+        }
+
+        private fun homeBusPairs(
+            group: HomeBusGroup?,
+            destination: BusHomeDestination,
+        ): Set<Pair<Int, Int>> {
+            val pairs = linkedSetOf<Pair<Int, Int>>()
+            if (group == null) return pairs
+            pairs += when (group) {
+                HomeBusGroup.CAMPUS -> when (destination) {
+                    BusHomeDestination.SANGNOKSU -> setOf(216000068 to 216000379)
+                    BusHomeDestination.GANGNAM -> setOf(216000061 to 216000379, 216000096 to 216000719)
+                    BusHomeDestination.SUWON -> setOf(216000104 to 216000070, 200000015 to 216000070)
+                    BusHomeDestination.UIWANG -> setOf(216000026 to 216000719, 216000096 to 216000719)
+                    BusHomeDestination.GUNPO -> setOf(216000043 to 216000719)
+                }
+                HomeBusGroup.KITECH -> setOf(216000068 to 216000381, 216000061 to 216000381)
+                HomeBusGroup.DORMITORY -> setOf(216000068 to 216000383, 216000061 to 216000383)
+                HomeBusGroup.SUWON -> setOf(216000104 to 202000106, 200000015 to 202000106)
+                else -> group.stopSeq?.let { stop ->
+                    setOf(216000061 to stop, 216000026 to stop, 216000043 to stop, 216000096 to stop)
+                }.orEmpty()
+            }
+            return pairs
+        }
+
+        const val PRESENCE_REFRESH_INTERVAL_MILLIS = 30_000L
+    }
+
+    private fun fetchStopCoordinates() {
+        if (coordinatesLoading || _stopCoordinates.value != null) return
+        coordinatesLoading = true
+        viewModelScope.launch {
+            try {
+                val response = apolloClient.query(BusStopCoordinatesQuery(busLocationInputs()))
+                    .fetchPolicy(FetchPolicy.NetworkOnly).doNotStore(true).execute()
+                response.data?.bus?.takeIf { it.isNotEmpty() }?.let { _stopCoordinates.value = it }
+            } finally {
+                coordinatesLoading = false
+            }
         }
     }
 
@@ -369,9 +445,5 @@ class HomeViewModel @Inject constructor(
 
     override fun onCleared() {
         stopPresenceUpdates()
-    }
-
-    private companion object {
-        const val PRESENCE_REFRESH_INTERVAL_MILLIS = 30_000L
     }
 }

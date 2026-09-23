@@ -65,9 +65,8 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
         parentViewModel.campusBlue.observe(viewLifecycleOwner) {
-            if (it == null) return@observe
-            val upEntries = it.arrival.firstOrNull { arrival -> arrival.direction == "up" }?.entries ?: emptyList()
-            val downEntries = it.arrival.firstOrNull { arrival -> arrival.direction == "down" }?.entries ?: emptyList()
+            val upEntries = it?.arrival?.firstOrNull { arrival -> arrival.direction == "up" }?.entries ?: emptyList()
+            val downEntries = it?.arrival?.firstOrNull { arrival -> arrival.direction == "down" }?.entries ?: emptyList()
             upAdapter.updateData(upEntries)
             downAdapter.updateData(downEntries)
             if (upEntries.isEmpty()) {

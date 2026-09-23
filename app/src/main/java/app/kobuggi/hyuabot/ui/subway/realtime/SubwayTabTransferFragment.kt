@@ -55,6 +55,8 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
         parentViewModel.combinedData.observe(viewLifecycleOwner) {
             if (it == null) return@observe
             if (it.oidoYellow == null || it.campusBlue == null || it.campusYellow == null || it.chojiSeohae == null) {
+                incheonAdapter.updateData(emptyList())
+                chojiAdapter.updateData(emptyList())
                 return@observe
             }
             val incheonDirect = (it.campusYellow.arrival.firstOrNull { arrival -> arrival.direction == "down" }?.entries ?: emptyList()).filter {

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.viewpager2.widget.ViewPager2
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentSubwayRealtimeBinding
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
@@ -23,6 +24,10 @@ import app.kobuggi.hyuabot.util.setSkeletonLoading
 class SubwayRealtimeFragment @Inject constructor() : Fragment() {
     private val binding by lazy { FragmentSubwayRealtimeBinding.inflate(layoutInflater) }
     private val viewModel: SubwayRealtimeViewModel by viewModels()
+
+    private val pageCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) { viewModel.selectTab(position) }
+    }
 
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
@@ -46,6 +51,8 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
             R.string.subway_tab_transfer
         )
         binding.viewPager.adapter = viewpagerAdapter
+        binding.viewPager.setCurrentItem(viewModel.selectedTab, false)
+        binding.viewPager.registerOnPageChangeCallback(pageCallback)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
@@ -80,6 +87,7 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
         childFragmentManager.fragments.toList().forEach {
             childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
         }
+        binding.viewPager.unregisterOnPageChangeCallback(pageCallback)
         binding.viewPager.adapter = null
     }
 }

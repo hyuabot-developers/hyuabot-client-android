@@ -7,6 +7,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,10 +18,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeBinding
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
@@ -52,6 +55,8 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
     private var currentPosition = 0
     private var manuallyScrolled = false
     private var setClosestStop = false
+    private var lastSelectedLocation: Location? = null
+    private var lastResultLocationCheckAt = 0L
     private val scrollHandler = Handler(Looper.getMainLooper())
     private val autoScrollRunnable = Runnable {
         val adapter = binding.noticeViewPager.adapter
@@ -85,8 +90,18 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                 stopNoticeAutoScroll()
             }
         }
-        viewModel.result.observe(viewLifecycleOwner) { buses ->
-            if (!setClosestStop && buses.isNotEmpty()) {
+        viewModel.stopCoordinates.observe(viewLifecycleOwner) { buses ->
+            if (buses.isNotEmpty()) {
+                moveToNearestStop(LocationServices.getFusedLocationProviderClient(requireActivity()))
+            }
+        }
+        viewModel.result.observe(viewLifecycleOwner) {
+            // Re-evaluate the nearest stop while polling, but not a high-accuracy fix on every 15 s response.
+            val now = SystemClock.elapsedRealtime()
+            if (hasLocationPermission() && !viewModel.stopCoordinates.value.isNullOrEmpty() &&
+                now - lastResultLocationCheckAt >= RESULT_LOCATION_CHECK_INTERVAL_MILLIS
+            ) {
+                lastResultLocationCheckAt = now
                 moveToNearestStop(LocationServices.getFusedLocationProviderClient(requireActivity()))
             }
         }
@@ -107,9 +122,11 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         ) { _, result ->
             if (result.containsKey(BusQuickSettingsDialog.KEY_SHOW_SECONDARY_ETA)) {
                 viewModel.setShowSecondaryEta(result.getBoolean(BusQuickSettingsDialog.KEY_SHOW_SECONDARY_ETA))
+                viewModel.fetchData()
             }
             result.getString(BusQuickSettingsDialog.KEY_SEOUL_TARGET)?.let {
                 viewModel.setSeoulTarget(BusSeoulTargetStop.from(it))
+                viewModel.fetchData()
             }
             if (result.getBoolean(BusQuickSettingsDialog.KEY_OPEN_HELP, false)) {
                 AnalyticsManager.logSelect(AnalyticsItem.BUS_OPEN_HELP)
@@ -192,7 +209,8 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             }
             return
         }
-        val allStops = viewModel.result.value?.distinctBy { it.stop.seq } ?: emptyList()
+
+        val allStops = viewModel.stopCoordinates.value?.distinctBy { it.stop.seq } ?: emptyList()
 
         fun candidates(seqToRes: Map<Int, Int>): List<Triple<Int, Double, Double>> {
             return allStops.filter { it.stop.seq in seqToRes.keys }.map { item ->
@@ -232,29 +250,61 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         }
 
         fun selectNearest(location: Location) {
-            if (setClosestStop) return
+            if (setClosestStop && (lastSelectedLocation?.distanceTo(location) ?: Float.MAX_VALUE) < DEPARTURE_SWITCH_HYSTERESIS_METERS) return
             setClosestStop = true
-            nearestKey(cityCandidates, location)?.let { viewModel.setSelectedStopID(it) }
-            nearestKey(seoulFirstCandidates, location)?.let { viewModel.setSeoulFirstStopID(it) }
-            nearestKey(seoulSecondCandidates, location)?.let { viewModel.setSeoulSecondStopID(it) }
-            nearestKey(suwonCandidates, location)?.let { viewModel.setSuwonStopID(it) }
+            lastSelectedLocation = Location(location)
+            var changed = false
+            nearestKey(cityCandidates, location)?.takeIf { it != viewModel.selectedStopID.value }?.let {
+                viewModel.setSelectedStopID(it)
+                changed = true
+            }
+            nearestKey(seoulFirstCandidates, location)?.takeIf { it != viewModel.seoulFirstStopID.value }?.let {
+                viewModel.setSeoulFirstStopID(it)
+                changed = true
+            }
+            nearestKey(seoulSecondCandidates, location)?.takeIf { it != viewModel.seoulSecondStopID.value }?.let {
+                viewModel.setSeoulSecondStopID(it)
+                changed = true
+            }
+            nearestKey(suwonCandidates, location)?.takeIf { it != viewModel.suwonStopID.value }?.let {
+                viewModel.setSuwonStopID(it)
+                changed = true
+            }
+            // Only a different stop needs new data; the regular 15 s poll keeps the current stops fresh.
+            if (changed) viewModel.fetchData()
         }
 
-        client.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null && isFresh(location)) {
-                    selectNearest(location)
-                } else {
-                    val tokenSource = CancellationTokenSource()
-                    client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token)
-                        .addOnSuccessListener { loc -> loc?.let { selectNearest(it) } }
-                        .addOnFailureListener { Log.e("BusRealtimeFragment", "Failed to get location", it) }
+        fun selectFromLastLocation() {
+            client.lastLocation
+                .addOnSuccessListener { location ->
+                    if (location != null && isFresh(location)) selectNearest(location)
                 }
+                .addOnFailureListener { Log.e("BusRealtimeFragment", "Failed to read last location", it) }
+        }
+
+        // Debug-only emulator support: a mock provider location wins so location-driven stop switching can be exercised.
+        val locationManager = requireContext().getSystemService(LocationManager::class.java)
+        val mockLocation = if (!BuildConfig.DEBUG) null else listOf(
+            LocationManager.GPS_PROVIDER,
+            LocationManager.NETWORK_PROVIDER,
+            "fused",
+        ).mapNotNull { provider ->
+            runCatching { locationManager.getLastKnownLocation(provider) }.getOrNull()
+        }.filter { LocationCompat.isMock(it) }
+            .maxByOrNull { it.elapsedRealtimeNanos }
+        if (mockLocation != null) {
+            selectNearest(mockLocation)
+            return
+        }
+
+        val tokenSource = CancellationTokenSource()
+        client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
+            .addOnSuccessListener { location ->
+                if (location != null) selectNearest(location) else selectFromLastLocation()
             }
             .addOnFailureListener {
-                val tokenSource = CancellationTokenSource()
-                client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, tokenSource.token)
-                    .addOnSuccessListener { loc -> loc?.let { selectNearest(it) } }
+                Log.e("BusRealtimeFragment", "Failed to get current location", it)
+                selectFromLastLocation()
             }
     }
 
@@ -278,8 +328,9 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
     override fun onResume() {
         super.onResume()
         setClosestStop = false
+        lastSelectedLocation = null
         binding.viewPager.post {
-            if (isAdded && view != null && viewModel.result.value?.isNotEmpty() == true) {
+            if (isAdded && view != null && viewModel.stopCoordinates.value?.isNotEmpty() == true) {
                 moveToNearestStop(LocationServices.getFusedLocationProviderClient(requireActivity()))
             }
         }
@@ -311,6 +362,8 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
 
     companion object {
         private const val LOCATION_MAX_AGE_MILLIS = 60_000L
+        private const val DEPARTURE_SWITCH_HYSTERESIS_METERS = 75f
+        private const val RESULT_LOCATION_CHECK_INTERVAL_MILLIS = 60_000L
         private const val NOTICE_AUTO_SCROLL_INTERVAL_MILLIS = 5_000L
         private const val BUS_QUICK_SETTINGS_TAG = "BusQuickSettingsDialog"
     }
