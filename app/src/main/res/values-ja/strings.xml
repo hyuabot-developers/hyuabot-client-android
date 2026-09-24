@@ -111,8 +111,10 @@
     <string name="home_bus_destination_gunpo_button">軍浦</string>
     <string name="home_quick_settings_bus_destination_title">路線バスの行き先</string>
     <string name="home_quick_settings_bus_destination_subtitle">ホームに表示する行き先を選択します。</string>
-    <string name="home_quick_settings_seoul_bus_stop_title">広域バスの到着停留所</string>
-    <string name="home_quick_settings_seoul_bus_stop_subtitle">ホームに表示する到着停留所を選択します。</string>
+    <string name="home_quick_settings_destination_eta_title">目的地の到着時刻を表示</string>
+    <string name="home_quick_settings_destination_eta_subtitle">ホームに目的地の到着時刻を表示します。</string>
+    <string name="home_quick_settings_seoul_bus_stop_title">ソウル方面の目的地</string>
+    <string name="home_quick_settings_seoul_bus_stop_subtitle">ソウル方面バスの到着基準停留所を選択します。</string>
     <string name="home_alt_dormitory_nearby">漢陽大寄宿舎前</string>
     <string name="home_alt_gyeonggi_technopark">京畿テクノパーク</string>
     <string name="home_alt_sangnoksu">常緑樹駅</string>
@@ -247,7 +249,7 @@
     <string name="bus_stop_gyodae">教大駅</string>
     <string name="bus_stop_gangnam">江南駅</string>
     <string name="bus_stop_yangjae">良才駅</string>
-    <string name="bus_stop_yangjae_forest">良才市民の森駅</string>
+    <string name="bus_stop_yangjae_forest">メホン駅</string>
     <string name="bus_stop_suwon_station">水原駅</string>
     <string name="bus_quick_settings_title">バス設定</string>
     <string name="bus_quick_settings_show_secondary_eta">到着時刻を表示</string>

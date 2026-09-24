@@ -12,6 +12,8 @@ import com.apollographql.cache.normalized.FetchPolicy
 import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalTime
@@ -27,7 +29,24 @@ class ShuttleServiceNoticeScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
     private val apolloClient: ApolloClient,
 ) {
-    suspend fun sync() = withContext(Dispatchers.IO) {
+    private val syncMutex = Mutex()
+
+    @Volatile
+    private var lastSyncedAtMillis = 0L
+
+    @Volatile
+    private var lastSyncedDate: LocalDate? = null
+
+    suspend fun sync() = syncMutex.withLock { syncLocked() }
+
+    /** Skips the network round trip when notices were already synced for today within [SYNC_MIN_INTERVAL_MILLIS]. */
+    suspend fun syncIfStale() = syncMutex.withLock {
+        val elapsed = System.currentTimeMillis() - lastSyncedAtMillis
+        if (lastSyncedDate == LocalDate.now(SERVICE_ZONE) && elapsed in 0 until SYNC_MIN_INTERVAL_MILLIS) return@withLock
+        syncLocked()
+    }
+
+    private suspend fun syncLocked() = withContext(Dispatchers.IO) {
         val today = LocalDate.now(SERVICE_ZONE)
         val response =
             try {
@@ -47,6 +66,8 @@ class ShuttleServiceNoticeScheduler @Inject constructor(
         prefs.getStringSet(KEY_NOTICE_IDS, emptySet()).orEmpty().forEach(::cancel)
         notices.forEach(::schedule)
         prefs.edit().putStringSet(KEY_NOTICE_IDS, notices.map { it.id }.toSet()).apply()
+        lastSyncedDate = today
+        lastSyncedAtMillis = System.currentTimeMillis()
     }
 
     private fun schedule(notice: ShuttleServiceNoticeQuery.ServiceNotice) {
@@ -122,6 +143,7 @@ class ShuttleServiceNoticeScheduler @Inject constructor(
     companion object {
         private val SERVICE_ZONE: ZoneId = ZoneId.of("Asia/Seoul")
         private const val LOOKAHEAD_DAYS = 30L
+        private const val SYNC_MIN_INTERVAL_MILLIS = 30 * 60 * 1000L
         private const val PREF_NAME = "shuttle_service_notice"
         private const val KEY_NOTICE_IDS = "notice_ids"
     }

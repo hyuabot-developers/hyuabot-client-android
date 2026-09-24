@@ -33,6 +33,26 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     private val _queryError = MutableLiveData<QueryError?>(null)
     private val _disposable = CompositeDisposable()
     private var loadedLanguage: String? = null
+    private var requestGeneration = 0
+    private var lastAppliedGeneration = 0
+    var selectedTab: Int = 0
+        private set
+
+    fun selectTab(tab: Int) {
+        if (selectedTab == tab) return
+        selectedTab = tab
+        clearData()
+        _isLoading.value = true
+        fetchData()
+    }
+
+    private fun clearData() {
+        _campusYellow.value = null
+        _campusBlue.value = null
+        _oidoYellow.value = null
+        _oidoBlue.value = null
+        _chojiSeohae.value = null
+    }
 
     val isLoading get() = _isLoading
     val queryError get() = _queryError
@@ -55,22 +75,27 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
         val localDate = LocalDate.now()
         val language = DynamicTextTranslator.currentAppLanguageTag()
         if (loadedLanguage != language) {
-            _campusYellow.value = null
-            _campusBlue.value = null
-            _oidoYellow.value = null
-            _oidoBlue.value = null
-            _chojiSeohae.value = null
+            clearData()
             _isLoading.value = true
             loadedLanguage = language
         }
+        val generation = ++requestGeneration
+        val keys = subwayRequestKeys(selectedTab, if (localDate.dayOfWeek.value in 1..5) "weekdays" else "weekends")
         viewModelScope.launch {
             val response = apolloClient.query(SubwayRealtimePageQuery(
-                weekday = if (localDate.dayOfWeek.value in 1..5) "weekdays" else "weekends",
+                keys = keys,
                 language = language,
             )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
+            val currentDate = LocalDate.now()
+            val currentWeekday = if (currentDate.dayOfWeek.value in 1..5) "weekdays" else "weekends"
+            if (generation <= lastAppliedGeneration ||
+                keys != subwayRequestKeys(selectedTab, currentWeekday) ||
+                language != DynamicTextTranslator.currentAppLanguageTag()
+            ) return@launch
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.subway != null) {
+                lastAppliedGeneration = generation
                 _campusYellow.value = response.data?.subway?.firstOrNull { it.stationID == "K251" }
                 _campusBlue.value = response.data?.subway?.firstOrNull { it.stationID == "K449" }
                 _oidoYellow.value = response.data?.subway?.firstOrNull { it.stationID == "K258" }

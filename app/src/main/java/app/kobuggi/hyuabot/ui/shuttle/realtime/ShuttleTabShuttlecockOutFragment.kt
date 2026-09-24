@@ -388,13 +388,13 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
     }
 
     private fun showAlarmDialogForStop(boardingStopId: String, boardingLabelRes: Int, timetableSeq: Int, time: java.time.LocalTime, routeStops: List<Pair<String, java.time.LocalTime>>) {
-        val boardingStop = parentViewModel.result.value?.firstOrNull { it.name == boardingStopId } ?: return
+        val boardingStop = parentViewModel.locationStops.value?.firstOrNull { it.name == boardingStopId } ?: return
         val now = java.time.ZonedDateTime.now()
         var departureTime = now.toLocalDate().atTime(time).atZone(java.time.ZoneId.systemDefault())
         if (departureTime.isBefore(now)) departureTime = departureTime.plusDays(1)
         val departureTimeMillis = departureTime.toInstant().toEpochMilli()
         val minutes = kotlin.math.ceil((departureTimeMillis - System.currentTimeMillis()) / 60_000.0).toInt().coerceAtLeast(0)
-        val allStops = parentViewModel.result.value ?: return
+        val allStops = parentViewModel.locationStops.value ?: return
         val destStops = buildShuttleAlarmDestinationStopIds(routeStops, boardingStopId).mapNotNull { name ->
             allStops.firstOrNull { it.name == shuttleAlarmLocationStopId(name) }?.let {
                 ShuttleAlarmDestinationStop(name, ShuttleWidgetSupport.stopDisplayName(requireContext(), it.name), it.latitude, it.longitude)
@@ -486,7 +486,7 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             button.setOnClickListener(null)
             return
         }
-        val shuttleStop = parentViewModel.result.value?.firstOrNull { it.name == shuttleStopId }
+        val shuttleStop = parentViewModel.locationStops.value?.firstOrNull { it.name == shuttleStopId }
         button.setOnClickListener {
             BusAlternativeStopSheet.newInstance(
                 shuttleStopName,

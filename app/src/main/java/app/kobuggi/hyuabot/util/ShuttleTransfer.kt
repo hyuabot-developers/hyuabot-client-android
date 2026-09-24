@@ -713,6 +713,12 @@ private fun ShuttleRealtimePageQuery.Data.toTransferData(): TransferData =
                         },
                     )
                 },
+                timetable = emptyList(),
+            )
+        } + subwayTimetable.map { station ->
+            TransferSubwayStation(
+                stationID = station.stationID,
+                arrival = emptyList(),
                 timetable = station.timetable.map {
                     TransferSubwayTimetable(
                         direction = it.direction,

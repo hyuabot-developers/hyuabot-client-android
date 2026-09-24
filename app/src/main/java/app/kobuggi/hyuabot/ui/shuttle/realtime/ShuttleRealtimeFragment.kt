@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ui.MainActivity
+import app.kobuggi.hyuabot.ShuttleLocationQuery
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeBinding
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
@@ -67,7 +68,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     private var hasManualStopSelection = false
     private var isApplyingInitialLocationSelection = false
     private var coachmarkShown = false
-    private var pendingInitialStops: List<ShuttleRealtimePageQuery.Stop> = emptyList()
+    private var pendingInitialStops: List<ShuttleLocationQuery.Stop> = emptyList()
     private val scrollHandler = Handler(Looper.getMainLooper())
     private val autoScrollRunnable = Runnable {
         val adapter = binding.noticeViewPager.adapter
@@ -214,7 +215,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 }
             }
         })
-        viewModel.result.observe(viewLifecycleOwner) { stops ->
+        viewModel.locationStops.observe(viewLifecycleOwner) { stops ->
             if (honorDeepLinkStop || hasManualStopSelection || hasRequestedInitialStopLocation) {
                 return@observe
             }
@@ -241,7 +242,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
             launch {
                 viewModel.userPreferencesRepository.getShowShuttleByDestination().collect {
+                    val changed = viewModel.showByDestination.value != it
                     viewModel.showByDestination.value = it
+                    if (changed) viewModel.fetchData()
                 }
             }
             launch {
@@ -288,11 +291,11 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 view != null &&
                 !honorDeepLinkStop &&
                 !hasManualStopSelection &&
-                viewModel.result.value?.isNotEmpty() == true
+                viewModel.locationStops.value?.isNotEmpty() == true
             ) {
                 moveToInitialStop(
                     LocationServices.getFusedLocationProviderClient(requireActivity()),
-                    viewModel.result.value.orEmpty(),
+                    viewModel.locationStops.value.orEmpty(),
                 )
             }
         }
@@ -338,7 +341,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     @SuppressLint("MissingPermission")
     private fun moveToInitialStop(
         client: FusedLocationProviderClient,
-        stops: List<ShuttleRealtimePageQuery.Stop>,
+        stops: List<ShuttleLocationQuery.Stop>,
     ) {
         if (!hasLocationPermission()) {
             pendingInitialStops = stops
@@ -361,7 +364,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     @SuppressLint("MissingPermission")
     private fun selectLastKnownLocation(
         client: FusedLocationProviderClient,
-        stops: List<ShuttleRealtimePageQuery.Stop>,
+        stops: List<ShuttleLocationQuery.Stop>,
     ) {
         client.lastLocation
             .addOnSuccessListener { location ->
@@ -392,7 +395,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
     @SuppressLint("MissingPermission")
     private fun requestCurrentLocation(
         client: FusedLocationProviderClient,
-        stops: List<ShuttleRealtimePageQuery.Stop>,
+        stops: List<ShuttleLocationQuery.Stop>,
     ) {
         val tokenSource = CancellationTokenSource()
         client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
@@ -409,7 +412,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             }
     }
 
-    private fun selectInitialStop(stops: List<ShuttleRealtimePageQuery.Stop>, location: Location) {
+    private fun selectInitialStop(stops: List<ShuttleLocationQuery.Stop>, location: Location) {
         if (!isAdded || view == null || honorDeepLinkStop || hasManualStopSelection) {
             return
         }
@@ -611,7 +614,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         else -> null
     }
 
-    private fun calculateDistance(stopItem: ShuttleRealtimePageQuery.Stop, location: Location): Double {
+    private fun calculateDistance(stopItem: ShuttleLocationQuery.Stop, location: Location): Double {
         val distance = sqrt(
         (stopItem.latitude - location.latitude) * (stopItem.latitude - location.latitude) +
             (stopItem.longitude - location.longitude) * (stopItem.longitude - location.longitude)
