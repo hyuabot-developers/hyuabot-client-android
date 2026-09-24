@@ -1,5 +1,5 @@
-query BusRealtimePageQuery($language: String!, $busInput: [BusRouteStopInput!]!, $includeNotices: Boolean!) {
-    notices(input: {language: $language, category: "버스"}) @include(if: $includeNotices) {
+query BusRealtimePageQuery($language: String!, $busInput: [BusRouteStopInput!]!) {
+    notices(input: {language: $language, category: "버스"}) {
         notices {
             title
             url

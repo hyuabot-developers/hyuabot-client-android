@@ -34,6 +34,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     private val _disposable = CompositeDisposable()
     private var loadedLanguage: String? = null
     private var requestGeneration = 0
+    private var lastAppliedGeneration = 0
     var selectedTab: Int = 0
         private set
 
@@ -85,10 +86,16 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
                 keys = keys,
                 language = language,
             )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
-            if (generation != requestGeneration) return@launch
+            val currentDate = LocalDate.now()
+            val currentWeekday = if (currentDate.dayOfWeek.value in 1..5) "weekdays" else "weekends"
+            if (generation <= lastAppliedGeneration ||
+                keys != subwayRequestKeys(selectedTab, currentWeekday) ||
+                language != DynamicTextTranslator.currentAppLanguageTag()
+            ) return@launch
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.subway != null) {
+                lastAppliedGeneration = generation
                 _campusYellow.value = response.data?.subway?.firstOrNull { it.stationID == "K251" }
                 _campusBlue.value = response.data?.subway?.firstOrNull { it.stationID == "K449" }
                 _oidoYellow.value = response.data?.subway?.firstOrNull { it.stationID == "K258" }

@@ -193,16 +193,14 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 alternativeInput = selection.alternativePairs().map { (route, stop) ->
                     BusRouteStopInput(route = route, stop = stop, limit = Optional.present(1))
                 },
-                // Notices are only shown from the first successful response, so later polls skip them.
-                includeNotices = _notices.value == null,
             )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
             // Timer ticks issue newer requests with the same selection; a slow response is still applied unless the
             // selection changed or a newer response has already been rendered.
             if (request <= lastAppliedRequest || selection != requestSelection()) return@launch
-            lastAppliedRequest = request
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.shuttle?.stops != null) {
+                lastAppliedRequest = request
                 _result.value = response.data?.shuttle?.stops
                 _transfer.value = response.data
                 updateBusAlternatives(response.data?.busAlternative.orEmpty())
@@ -210,9 +208,9 @@ class ShuttleRealtimeViewModel @Inject constructor(
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
             }
-            if (_notices.value == null) {
-                // Left null on failure so the next poll requests notices again.
-                response.data?.notices?.let { notices -> _notices.value = notices.flatMap { it.notices } }
+            // Notices refresh with every poll; the list is only replaced when it changed so the pager is not redrawn.
+            if (response.exception == null) {
+                response.data?.notices?.flatMap { it.notices }?.takeIf { it != _notices.value }?.let { _notices.value = it }
             }
             _isLoading.value = false
         }

@@ -138,26 +138,25 @@ class BusRealtimeViewModel @Inject constructor(
         val dates = BusRecentDates.sameWeekdayType(count = 4)
         val busInput = selectedBusInput(dates)
         viewModelScope.launch {
-            // Notices are only shown from the first successful response, so later polls skip them.
-            val response = apolloClient.query(BusRealtimePageQuery(language, busInput, includeNotices = _notices.value == null))
+            val response = apolloClient.query(BusRealtimePageQuery(language, busInput))
                 .fetchPolicy(FetchPolicy.NetworkOnly)
                 .doNotStore(true)
                 .execute()
             // Timer ticks issue newer requests with identical inputs; keep applying a slow response unless the
             // selected stops changed or a newer response was already rendered.
             if (requestGeneration <= lastAppliedGeneration || busInput != selectedBusInput(dates)) return@launch
-            lastAppliedGeneration = requestGeneration
             if (response.data == null || response.exception != null) {
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {
+                lastAppliedGeneration = requestGeneration
                 _result.value = response.data?.bus
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
             }
-            if (_notices.value == null) {
-                // Left null on failure so the next poll requests notices again.
-                response.data?.notices?.let { notices -> _notices.value = notices.flatMap { it.notices } }
+            // Notices refresh with every poll; the list is only replaced when it changed so the pager is not redrawn.
+            if (response.exception == null) {
+                response.data?.notices?.flatMap { it.notices }?.takeIf { it != _notices.value }?.let { _notices.value = it }
             }
             _isLoading.value = false
         }

@@ -7,9 +7,8 @@ query ShuttleRealtimePageQuery(
     $subwayTimetableKeys: [SubwayStationInput!]!
     $transferBusInput: [BusRouteStopInput!]!
     $alternativeInput: [BusRouteStopInput!]!
-    $includeNotices: Boolean!
 ) {
-    notices(input: {language: $language, category: "셔틀,날씨"}) @include(if: $includeNotices) {
+    notices(input: {language: $language, category: "셔틀,날씨"}) {
         notices {
             title
             url
