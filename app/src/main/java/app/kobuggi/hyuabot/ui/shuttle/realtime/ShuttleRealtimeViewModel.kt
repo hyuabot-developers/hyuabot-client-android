@@ -82,6 +82,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private var isStarted = false
     private var latestRequest = 0L
     private var lastAppliedRequest = 0L
+    private var lastAppliedRequestKey: Pair<ShuttleRequestSelection, Pair<String, String>>? = null
     private var loadingLocations = false
     val locationStops = MutableLiveData<List<ShuttleLocationQuery.Stop>>()
     private var loadedSubwayLanguage: String? = null
@@ -151,7 +152,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
 
 
     private fun requestSelection() = ShuttleRequestSelection(
-        selectedPresenceStop, _showByDestination.value ?: false, _showBusTransfer.value ?: true,
+        _showByDestination.value ?: false, _showBusTransfer.value ?: true,
         _showSubwayTransfer.value ?: true, _subwayTransferDestination.value ?: HomeSubwayTransferDestination.SEOUL,
         _alternativeDisplayMode.value ?: ShuttleAlternativeDisplayMode.AUTOMATIC,
     )
@@ -160,11 +161,12 @@ class ShuttleRealtimeViewModel @Inject constructor(
         fetchLocations()
         val selection = requestSelection()
         val request = ++latestRequest
-        if (_result.value == null) _isLoading.value = true
         val locale = AppCompatDelegate.getApplicationLocales().get(0)
         val appLanguage = locale?.language ?: Locale.getDefault().language
         val language = if (appLanguage == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
         val subwayLanguage = DynamicTextTranslator.currentAppLanguageTag()
+        val requestKey = selection to (language to subwayLanguage)
+        if (_result.value == null || requestKey != lastAppliedRequestKey) _isLoading.value = true
         if (loadedSubwayLanguage != subwayLanguage) {
             _transfer.value = null
             _isLoading.value = true
@@ -175,10 +177,12 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 language,
                 subwayLanguage,
                 Optional.present(LocalTime.now()),
-                shuttleStops = listOf(ShuttleStopInput(
-                    name = selection.stop,
-                    limit = ShuttleLimitInput(order = Optional.present(100), destination = Optional.present(100)),
-                )),
+                shuttleStops = PRESENCE_STOP_IDS.map { stop ->
+                    ShuttleStopInput(
+                        name = stop,
+                        limit = ShuttleLimitInput(order = Optional.present(100), destination = Optional.present(100)),
+                    )
+                },
                 subwayKeys = selection.subwayPairs().filter { it.first != "S26" }.map { (station, direction) ->
                     SubwayStationInput(station, listOf(direction), listOf(currentShuttleWeekday()),
                         Optional.present(12))
@@ -201,6 +205,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.shuttle?.stops != null) {
                 lastAppliedRequest = request
+                lastAppliedRequestKey = requestKey
                 _result.value = response.data?.shuttle?.stops
                 _transfer.value = response.data
                 updateBusAlternatives(response.data?.busAlternative.orEmpty())
@@ -392,7 +397,6 @@ class ShuttleRealtimeViewModel @Inject constructor(
         val stopId = PRESENCE_STOP_IDS.getOrNull(position) ?: return
         if (selectedPresenceStop == stopId) return
         selectedPresenceStop = stopId
-        fetchData()
         restartPresenceUpdates()
     }
 

@@ -317,6 +317,34 @@
                                 app:iconTint="@color/home_detail_button_text" />
                         </LinearLayout>
 
+                        <com.faltenreich.skeletonlayout.SkeletonLayout
+                            android:id="@+id/bus_home_loading"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:visibility="gone"
+                            app:maskColor="@color/skeleton_placeholder"
+                            app:maskCornerRadius="8dp"
+                            app:shimmerColor="@color/skeleton_placeholder_highlight">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="58dp"
+                                    android:background="@drawable/bg_home_row" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="58dp"
+                                    android:layout_marginTop="8dp"
+                                    android:background="@drawable/bg_home_row" />
+                            </LinearLayout>
+                        </com.faltenreich.skeletonlayout.SkeletonLayout>
+
                         <LinearLayout
                             android:id="@+id/bus_home_container"
                             android:layout_width="match_parent"
