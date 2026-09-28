@@ -97,11 +97,13 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
                 entry -> entry.terminal.stationID <= "S16" && entry.terminal.stationID.startsWith("S")
             }
             val chojiTransfers = chojiFirstLegs.mapNotNull { firstLeg ->
+                val transfer = chojiSecondLegs.firstOrNull { secondLeg ->
+                    secondLeg.minutes > firstLeg.minutes + CHOJI_TRAVEL_MINUTES + CHOJI_TRANSFER_BUFFER_MINUTES
+                } ?: return@mapNotNull null
                 SubwayTransferItem(
                     take = firstLeg,
-                    transfer = chojiSecondLegs.firstOrNull { secondLeg ->
-                        secondLeg.minutes > firstLeg.minutes + CHOJI_TRANSFER_BUFFER_MINUTES
-                    } ?: return@mapNotNull null
+                    transfer = transfer,
+                    transferWaitMinutes = transfer.minutes - firstLeg.minutes - CHOJI_TRAVEL_MINUTES,
                 )
             }
             val incheonEntries = (incheonDirect + incheonViaOido).sortedBy { entry -> entry.take.minutes }.take(MAX_TRANSFER_ITEMS_PER_SECTION)
@@ -126,7 +128,8 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
     }
 
     companion object {
-        private const val CHOJI_TRANSFER_BUFFER_MINUTES = 16
+        private const val CHOJI_TRAVEL_MINUTES = 8
+        private const val CHOJI_TRANSFER_BUFFER_MINUTES = 8
         private const val MAX_TRANSFER_ITEMS_PER_SECTION = 2
     }
 

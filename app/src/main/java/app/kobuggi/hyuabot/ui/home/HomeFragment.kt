@@ -80,6 +80,15 @@ import java.time.format.FormatStyle
 import java.util.Date
 import kotlin.math.ceil
 
+private data class HomeBusArrivalCandidate(
+    val item: HomePageQuery.Bus,
+    val minutes: Int,
+    val arrivalTime: LocalTime,
+    val stops: Int?,
+    val seats: Int?,
+    val isRealtime: Boolean,
+)
+
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private val binding by lazy { FragmentHomeBinding.inflate(layoutInflater) }
@@ -758,56 +767,77 @@ class HomeFragment : Fragment() {
             BusHomeDestination.GUNPO -> mapOf(216000043 to 225000116)
             else -> emptyMap()
         }
-        val allLiveArrivals = matchingItems
+        val now = LocalTime.now(ZoneId.of("Asia/Seoul"))
+        val allArrivals = matchingItems
             .flatMap { item ->
-                item.arrival.map { arrival ->
-                    Triple(item, arrival.minutes, Triple(arrival.stops, arrival.seats, arrival.isRealtime))
+                item.arrival.mapNotNull { arrival ->
+                    val arrivalMinutes = if (arrival.minutes != null) {
+                        arrival.minutes.takeIf { it > 0 }
+                    } else {
+                        arrival.arrivalTime?.let { homeBusArrivalMinutes(now, it) }
+                            ?.takeIf { it > 0 }
+                    } ?: return@mapNotNull null
+                    val arrivalTime = if (arrival.isRealtime) {
+                        now.plusMinutes(arrivalMinutes.toLong())
+                    } else {
+                        arrival.arrivalTime ?: now.plusMinutes(arrivalMinutes.toLong())
+                    }
+                    HomeBusArrivalCandidate(
+                        item = item,
+                        minutes = arrivalMinutes,
+                        arrivalTime = arrivalTime,
+                        stops = arrival.stops,
+                        seats = arrival.seats,
+                        isRealtime = arrival.isRealtime,
+                    )
                 }
             }
-            .filter { it.second != null }
-        val sortedLiveArrivals = if (group.isSeoul) {
-            allLiveArrivals.sortedWith(
+        val sortedArrivals = if (group.isSeoul) {
+            allArrivals.sortedWith(
                 compareBy(
-                    { (item, _, _) -> seoulRoutePriority(item.route.name) },
-                    { (item, minutes, _) ->
+                    { arrival -> seoulRoutePriority(arrival.item.route.name) },
+                    { arrival ->
                         destinationArrivalSortTime(
-                            item.route.name,
-                            LocalTime.now(ZoneId.of("Asia/Seoul")).plusMinutes((minutes ?: 0).toLong()),
-                            item,
-                            destinationStopByRoute[item.route.seq],
+                            arrival.item.route.name,
+                            arrival.arrivalTime,
+                            arrival.item,
+                            destinationStopByRoute[arrival.item.route.seq],
                         )
                     },
                 ),
             )
         } else {
-            allLiveArrivals.sortedBy { it.second }
+            allArrivals.sortedBy { it.arrivalTime }
         }
-        val liveArrivals = if (group == HomeBusGroup.DORMITORY || group == HomeBusGroup.KITECH) {
-            sortedLiveArrivals
-                .groupBy { it.first.route.seq }
+        val homeArrivals = if (group == HomeBusGroup.DORMITORY || group == HomeBusGroup.KITECH) {
+            sortedArrivals
+                .groupBy { it.item.route.seq }
                 .values
-                .mapNotNull { it.minByOrNull { arrival -> arrival.second ?: Int.MAX_VALUE } }
-                .let { arrivals -> if (group.isSeoul) arrivals.sortedBy { (item, minutes, _) ->
+                .mapNotNull { it.minByOrNull { arrival -> arrival.arrivalTime } }
+                .let { arrivals -> if (group.isSeoul) arrivals.sortedBy { arrival ->
                             destinationArrivalSortTime(
-                                item.route.name,
-                                LocalTime.now(ZoneId.of("Asia/Seoul")).plusMinutes((minutes ?: 0).toLong()),
-                                item,
-                                destinationStopByRoute[item.route.seq],
+                                arrival.item.route.name,
+                                arrival.arrivalTime,
+                                arrival.item,
+                                destinationStopByRoute[arrival.item.route.seq],
                             )
-                        } else arrivals.sortedBy { it.second } }
+                        } else arrivals.sortedBy { it.arrivalTime } }
                 .take(2)
         } else {
-            sortedLiveArrivals.take(2)
+            sortedArrivals.take(2)
         }
-        liveArrivals.forEachIndexed { index, (item, minutes, stopData) ->
-            val arrivalMinutes = minutes ?: return@forEachIndexed
-            val (stops, seats, isRealtime) = stopData
+        homeArrivals.forEachIndexed { index, arrival ->
+            val item = arrival.item
+            val arrivalMinutes = arrival.minutes
+            val stops = arrival.stops
+            val seats = arrival.seats
+            val isRealtime = arrival.isRealtime
             val route = item.route.name
             val showsDestinationEta = showsHomeBusDestinationEta(group, item.route.seq)
             val destinationEta = if (showsDestinationEta) {
                 destinationArrivalTime(
                     route,
-                    LocalTime.now(ZoneId.of("Asia/Seoul")).plusMinutes(arrivalMinutes.toLong()),
+                    arrival.arrivalTime,
                     item,
                     destinationStopByRoute[item.route.seq],
                 )
@@ -841,12 +871,16 @@ class HomeFragment : Fragment() {
                     badge = route,
                     title = homeBusStopName(item.stop.seq, item.stop.name),
                     subtitle = subtitle,
-                    trailing = getString(R.string.home_minutes, arrivalMinutes),
+                    trailing = if (isRealtime) {
+                        getString(R.string.home_minutes, arrivalMinutes)
+                    } else {
+                        arrival.arrivalTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+                    },
                     tint = requireContext().getColor(busHomeRouteColor(route)),
                 ),
             )
         }
-        val missingCount = (2 - liveArrivals.size).coerceAtLeast(0)
+        val missingCount = (2 - homeArrivals.size).coerceAtLeast(0)
         if (missingCount > 0) {
             val now = LocalTime.now(ZoneId.of("Asia/Seoul"))
             val fallbackItems = matchingItems
@@ -887,17 +921,16 @@ class HomeFragment : Fragment() {
                     candidates.forEach { candidate ->
                         val (item, time) = candidate
                         val logMinutes = Duration.between(now, time).toMinutes().toInt()
-                        val liveTooClose = liveArrivals.any { (liveItem, liveMinutes, _) ->
-                            liveItem.route.seq == item.route.seq &&
-                                liveMinutes != null &&
-                                abs(liveMinutes - logMinutes) < HOME_BUS_SAME_ROUTE_MIN_GAP_MINUTES
+                        val arrivalTooClose = homeArrivals.any { arrival ->
+                            arrival.item.route.seq == item.route.seq &&
+                                abs(arrival.minutes - logMinutes) < HOME_BUS_SAME_ROUTE_MIN_GAP_MINUTES
                         }
                         val logTooClose = selected.any { (selectedItem, selectedTime) ->
                             selectedItem.route.seq == item.route.seq &&
                                 abs(Duration.between(selectedTime, time).toMinutes().toInt()) <
                                 HOME_BUS_SAME_ROUTE_MIN_GAP_MINUTES
                         }
-                        if (!liveTooClose && !logTooClose) selected += candidate
+                        if (!arrivalTooClose && !logTooClose) selected += candidate
                     }
                     selected
                 }
@@ -939,6 +972,16 @@ class HomeFragment : Fragment() {
 
     private fun showsHomeBusDestinationEta(group: HomeBusGroup, routeSeq: Int): Boolean {
         return showHomeSeoulBusStop
+    }
+
+    private fun homeBusArrivalMinutes(now: LocalTime, arrivalTime: LocalTime): Int {
+        val secondsUntilArrival = arrivalTime.toSecondOfDay() - now.toSecondOfDay()
+        val serviceDaySeconds = if (secondsUntilArrival < 0 && now.hour >= 4 && arrivalTime.hour < 4) {
+            secondsUntilArrival + 24 * 60 * 60
+        } else {
+            secondsUntilArrival
+        }
+        return ceil(serviceDaySeconds / 60.0).toInt()
     }
 
     private fun selectBusHomeGroup(location: Location, data: HomePageQuery.Data?) {

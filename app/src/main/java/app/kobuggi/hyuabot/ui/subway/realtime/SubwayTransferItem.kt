@@ -4,5 +4,6 @@ import app.kobuggi.hyuabot.SubwayRealtimePageQuery
 
 data class SubwayTransferItem(
     val take: SubwayRealtimePageQuery.Entry,
-    val transfer: SubwayRealtimePageQuery.Entry?
+    val transfer: SubwayRealtimePageQuery.Entry?,
+    val transferWaitMinutes: Int? = null,
 )
