@@ -15,7 +15,7 @@ import app.kobuggi.hyuabot.databinding.ItemSubwayRealtimeBinding
 
 class SubwayRealtimeListAdapter(
     private val context: Context,
-    @ColorRes private val destinationColor: Int,
+    @param:ColorRes private val destinationColor: Int,
     private var arrivals: List<SubwayRealtimePageQuery.Entry> = emptyList(),
 ) : RecyclerView.Adapter<SubwayRealtimeListAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemSubwayRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {

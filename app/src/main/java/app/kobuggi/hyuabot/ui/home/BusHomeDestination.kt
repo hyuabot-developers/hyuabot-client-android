@@ -5,7 +5,7 @@ import app.kobuggi.hyuabot.R
 
 enum class BusHomeDestination(
     val value: String,
-    @StringRes val titleRes: Int,
+    @param:StringRes val titleRes: Int,
 ) {
     SANGNOKSU("sangnoksu", R.string.home_bus_destination_sangnoksu),
     GANGNAM("gangnam", R.string.home_bus_destination_gangnam),

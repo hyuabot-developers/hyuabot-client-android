@@ -26,7 +26,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ShuttleServiceNoticeScheduler @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val apolloClient: ApolloClient,
 ) {
     private val syncMutex = Mutex()
