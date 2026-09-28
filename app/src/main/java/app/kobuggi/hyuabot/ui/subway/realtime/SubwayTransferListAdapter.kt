@@ -39,14 +39,15 @@ class SubwayTransferListAdapter(
 
             binding.transferRow.visibility = View.VISIBLE
             binding.secondLegRow.visibility = View.VISIBLE
+            val transferWaitMinutes = transfer.transferWaitMinutes ?: (secondLeg.minutes - transfer.take.minutes)
             binding.transferStationText.text = context.getString(
                 R.string.subway_transfer_station_format,
                 getTransferStationString()
             )
             binding.transferWaitText.text = context.resources.getQuantityString(
                 R.plurals.subway_transfer_wait_time_format,
-                secondLeg.minutes - transfer.take.minutes,
-                secondLeg.minutes - transfer.take.minutes
+                transferWaitMinutes,
+                transferWaitMinutes
             )
             binding.secondDestinationText.text = context.getString(
                 R.string.subway_transfer_destination_format,
