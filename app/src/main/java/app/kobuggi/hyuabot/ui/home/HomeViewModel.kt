@@ -48,6 +48,7 @@ class HomeViewModel @Inject constructor(
     private val shuttlePresenceService: ShuttlePresenceService,
 ) : ViewModel() {
     private val _isLoading = MutableLiveData(false)
+    private val _isHomeBusLoading = MutableLiveData(false)
     private val _data = MutableLiveData<HomePageQuery.Data?>()
     private val _initialStopRules = MutableLiveData<List<ShuttleInitialStopRuleCandidate>?>(null)
     private val _queryError = MutableLiveData<QueryError?>(null)
@@ -61,11 +62,7 @@ class HomeViewModel @Inject constructor(
     private var isFetching = false
     private var pendingRefresh = false
     private var requestSelection = HomeRequestSelection()
-    private var lastAppliedRequestKey: Triple<
-        HomeRequestSelection,
-        Pair<HomeBusGroup?, BusHomeDestination>,
-        Pair<String, String>,
-    >? = null
+    private var lastAppliedMovementRequestKey: Pair<HomeRequestSelection, Pair<String, String>>? = null
     private var loadedSubwayLanguage: String? = null
     private var presenceJob: Job? = null
     private var selectedPresenceStop = "dormitory_o"
@@ -81,6 +78,7 @@ class HomeViewModel @Inject constructor(
     private var selectedHomeBusDestination = BusHomeDestination.GANGNAM
 
     val isLoading: LiveData<Boolean> get() = _isLoading
+    val isHomeBusLoading: LiveData<Boolean> get() = _isHomeBusLoading
     val data: LiveData<HomePageQuery.Data?> get() = _data
     val initialStopRules: LiveData<List<ShuttleInitialStopRuleCandidate>?> get() = _initialStopRules
     val queryError: LiveData<QueryError?> get() = _queryError
@@ -129,16 +127,12 @@ class HomeViewModel @Inject constructor(
             val requestedBusDestination = selectedHomeBusDestination
             val subwayLanguage = DynamicTextTranslator.currentAppLanguageTag()
             val noticeLanguage = currentNoticeLanguage()
-            val requestKey = Triple(
-                requestedSelection,
-                requestedBusGroup to requestedBusDestination,
-                noticeLanguage to subwayLanguage,
-            )
+            val movementRequestKey = requestedSelection to (noticeLanguage to subwayLanguage)
             if (loadedSubwayLanguage != subwayLanguage) {
                 _data.value = null
                 loadedSubwayLanguage = subwayLanguage
             }
-            if (_data.value == null || requestKey != lastAppliedRequestKey) _isLoading.value = true
+            if (_data.value == null || movementRequestKey != lastAppliedMovementRequestKey) _isLoading.value = true
             try {
                 val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
                 val mealDate = if (now.hour >= 20) now.toLocalDate().plusDays(1) else now.toLocalDate()
@@ -196,7 +190,7 @@ class HomeViewModel @Inject constructor(
                             )
                         }
                     _data.value = response.data
-                    lastAppliedRequestKey = requestKey
+                    lastAppliedMovementRequestKey = movementRequestKey
                     _bus50TerminalLogTimes.value = if (requestedSelection.needsBus50) fetchBus50TerminalLogTimes(now.toLocalDate()) else emptyList()
                     viewModelScope.launch { shuttleServiceNoticeScheduler.syncIfStale() }
                     _queryError.value = null
@@ -211,6 +205,9 @@ class HomeViewModel @Inject constructor(
                     subwayLanguage != DynamicTextTranslator.currentAppLanguageTag() ||
                     noticeLanguage != currentNoticeLanguage()
                 if (!pendingRefresh || !selectionChangedWhileFetching) _isLoading.value = false
+                if (requestedBusGroup == selectedHomeBusGroup && requestedBusDestination == selectedHomeBusDestination) {
+                    _isHomeBusLoading.value = false
+                }
                 isFetching = false
                 if (pendingRefresh) fetchData()
             }
@@ -226,7 +223,7 @@ class HomeViewModel @Inject constructor(
 
     fun setHomeBusSelection(group: HomeBusGroup?, destination: BusHomeDestination) {
         if (selectedHomeBusGroup != group || selectedHomeBusDestination != destination) {
-            _isLoading.value = true
+            _isHomeBusLoading.value = group != null
         }
         selectedHomeBusGroup = group
         selectedHomeBusDestination = destination

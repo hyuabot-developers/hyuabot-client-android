@@ -253,6 +253,11 @@ class HomeFragment : Fragment() {
             binding.movementLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.mealLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
+        viewModel.isHomeBusLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.busHomeLoading.setSkeletonLoading(isLoading)
+            binding.busHomeLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.busHomeContainer.visibility = if (isLoading) View.GONE else View.VISIBLE
+        }
         viewModel.data.observe(viewLifecycleOwner) {
             binding.homeSwipeRefreshLayout.isRefreshing = false
             renderNotices(it)

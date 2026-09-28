@@ -21,3 +21,18 @@ internal fun subwayRequestKeys(tab: Int, weekday: String): List<SubwayStationInp
         else -> listOf(station("K449", listOf("up", "down"), 4))
     }
 }
+
+internal fun subwayRequestKeys(weekday: String): List<SubwayStationInput> {
+    fun station(id: String, directions: List<String>, limit: Int?) = SubwayStationInput(
+        stationID = id,
+        direction = directions,
+        weekdays = listOf(weekday),
+        limit = Optional.present(limit),
+    )
+    return listOf(
+        station("K449", listOf("up", "down"), 4),
+        station("K251", listOf("up", "down"), 4),
+        station("K258", listOf("down"), null),
+        station("S26", listOf("up"), null),
+    )
+}

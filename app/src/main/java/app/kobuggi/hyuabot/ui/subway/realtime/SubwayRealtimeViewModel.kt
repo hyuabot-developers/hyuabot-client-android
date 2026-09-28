@@ -35,16 +35,6 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     private var loadedLanguage: String? = null
     private var requestGeneration = 0
     private var lastAppliedGeneration = 0
-    var selectedTab: Int = 0
-        private set
-
-    fun selectTab(tab: Int) {
-        if (selectedTab == tab) return
-        selectedTab = tab
-        _isLoading.value = true
-        clearData()
-        fetchData()
-    }
 
     private fun clearData() {
         _campusYellow.value = null
@@ -80,7 +70,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
             loadedLanguage = language
         }
         val generation = ++requestGeneration
-        val keys = subwayRequestKeys(selectedTab, if (localDate.dayOfWeek.value in 1..5) "weekdays" else "weekends")
+        val keys = subwayRequestKeys(if (localDate.dayOfWeek.value in 1..5) "weekdays" else "weekends")
         viewModelScope.launch {
             val response = apolloClient.query(SubwayRealtimePageQuery(
                 keys = keys,
@@ -89,7 +79,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
             val currentDate = LocalDate.now()
             val currentWeekday = if (currentDate.dayOfWeek.value in 1..5) "weekdays" else "weekends"
             if (generation <= lastAppliedGeneration ||
-                keys != subwayRequestKeys(selectedTab, currentWeekday) ||
+                keys != subwayRequestKeys(currentWeekday) ||
                 language != DynamicTextTranslator.currentAppLanguageTag()
             ) return@launch
             if (response.data == null || response.exception != null) {
