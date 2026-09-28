@@ -40,6 +40,7 @@ class BusRealtimeListAdapter(
 
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: BusArrivalItem) {
+            binding.busTimeText.textSize = 15f
             val routeName = item.route
             val arrival = item.item
             val secondarySuffix = if (showSecondaryEta) {

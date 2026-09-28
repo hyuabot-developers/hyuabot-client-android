@@ -95,7 +95,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bus_alternative_station"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_station">
                 <View
@@ -121,7 +121,7 @@
                 <ImageButton
                     android:id="@+id/bus_alternative_station_info"
                     android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_height="40dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -225,7 +225,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bus_alternative_dormitory"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_dormitory">
                 <View
@@ -251,7 +251,7 @@
                 <ImageButton
                     android:id="@+id/bus_alternative_dormitory_info"
                     android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_height="40dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -275,7 +275,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bus_alternative_dormitory_2"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/bus_alternative_dormitory">
                 <View
@@ -300,7 +300,7 @@
                 <ImageButton
                     android:id="@+id/bus_alternative_dormitory_2_info"
                     android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_height="40dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -404,7 +404,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bus_alternative_terminal"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_terminal">
                 <View
@@ -429,7 +429,7 @@
                 <ImageButton
                     android:id="@+id/bus_alternative_terminal_info"
                     android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_height="40dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
@@ -533,7 +533,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bus_alternative_jungang_station"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/no_realtime_data_bound_for_jungang_station">
                 <View
@@ -558,7 +558,7 @@
                 <ImageButton
                     android:id="@+id/bus_alternative_jungang_station_info"
                     android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_height="40dp"
                     android:alpha="0.38"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/bus_alternative_stop_info"
