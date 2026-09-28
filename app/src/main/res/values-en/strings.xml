@@ -488,8 +488,8 @@
     <string name="inquiry_empty">No messages yet. Feel free to leave your question.</string>
     <string name="inquiry_read">Read</string>
     <string name="inquiry_load_failed">Failed to load the conversation.</string>
-    <string name="inquiry_shuttle_lost_title">Lost items on the shuttle</string>
-    <string name="inquiry_shuttle_lost_detail">Shuttle bus office, 1F Education Building behind the dormitory\n031-400-4412</string>
+    <string name="inquiry_shuttle_lost_title">Did you leave something on the shuttle?</string>
+    <string name="inquiry_shuttle_lost_detail">Please visit the shuttle bus office on the first floor of the Education Building behind the dormitory, or call 031-400-4412.</string>
     <string name="inquiry_shuttle_lost_office">Shuttle bus office</string>
     <string name="inquiry_shuttle_lost_map">View map</string>
     <string name="inquiry_shuttle_lost_call">Call office</string>

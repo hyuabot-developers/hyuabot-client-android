@@ -465,8 +465,8 @@
     <string name="inquiry_empty">まだ会話がありません。ご質問をお気軽にどうぞ。</string>
     <string name="inquiry_read">既読</string>
     <string name="inquiry_load_failed">会話を読み込めませんでした。</string>
-    <string name="inquiry_shuttle_lost_title">シャトルバスの忘れ物</string>
-    <string name="inquiry_shuttle_lost_detail">寮の裏にある教育棟1階・シャトルバス事務所\n031-400-4412</string>
+    <string name="inquiry_shuttle_lost_title">シャトルバスに忘れ物をしましたか？</string>
+    <string name="inquiry_shuttle_lost_detail">寮の裏にある教育棟1階のシャトルバス事務所へお越しいただくか、031-400-4412にお電話ください。</string>
     <string name="inquiry_shuttle_lost_office">シャトルバス事務所</string>
     <string name="inquiry_shuttle_lost_map">地図を見る</string>
     <string name="inquiry_shuttle_lost_call">電話する</string>

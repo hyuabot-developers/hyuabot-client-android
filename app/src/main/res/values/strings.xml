@@ -536,8 +536,8 @@
     <string name="inquiry_empty">아직 대화가 없습니다. 궁금한 점을 남겨주세요.</string>
     <string name="inquiry_read">읽음</string>
     <string name="inquiry_load_failed">대화를 불러오지 못했습니다.</string>
-    <string name="inquiry_shuttle_lost_title">셔틀버스 분실물 안내</string>
-    <string name="inquiry_shuttle_lost_detail">기숙사 뒤 교육동 1층 · 셔틀버스 사무실\n031-400-4412</string>
+    <string name="inquiry_shuttle_lost_title">셔틀버스에 물건을 두고 내리셨나요?</string>
+    <string name="inquiry_shuttle_lost_detail">기숙사 뒤 교육동 1층 셔틀버스 사무실에 방문하시거나, 031-400-4412로 전화해 주세요.</string>
     <string name="inquiry_shuttle_lost_office">셔틀버스 사무실</string>
     <string name="inquiry_shuttle_lost_map">지도 보기</string>
     <string name="inquiry_shuttle_lost_call">전화하기</string>
