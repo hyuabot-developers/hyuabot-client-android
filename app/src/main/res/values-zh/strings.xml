@@ -465,6 +465,13 @@
     <string name="inquiry_empty">还没有对话。欢迎留下您的问题。</string>
     <string name="inquiry_read">已读</string>
     <string name="inquiry_load_failed">无法加载对话。</string>
+    <string name="inquiry_shuttle_lost_title">校车失物招领</string>
+    <string name="inquiry_shuttle_lost_detail">宿舍后方教育楼1层·校车办公室\n031-400-4412</string>
+    <string name="inquiry_shuttle_lost_office">校车办公室</string>
+    <string name="inquiry_shuttle_lost_map">查看地图</string>
+    <string name="inquiry_shuttle_lost_call">拨打电话</string>
+    <string name="inquiry_shuttle_lost_close">关闭提示</string>
+    <string name="inquiry_phone_unavailable">无法打开电话应用。</string>
     <string name="menu_review">评价应用</string>
     <string name="menu_map">校园地图</string>
     <string name="campus_tools_title">校园工具</string>
