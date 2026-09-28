@@ -45,6 +45,7 @@ class BusRealtimeViewModel @Inject constructor(
     private var coordinatesLoading = false
     private var latestRequestGeneration = 0L
     private var lastAppliedGeneration = 0L
+    private var lastAppliedRequestKey: Pair<List<BusRouteStopInput>, String>? = null
     val stopCoordinates get() = _stopCoordinates
 
     val result get() = _result
@@ -131,12 +132,13 @@ class BusRealtimeViewModel @Inject constructor(
     fun fetchData() {
         fetchStopCoordinates()
         val requestGeneration = ++latestRequestGeneration
-        if (_result.value == null) _isLoading.value = true
         val locale = AppCompatDelegate.getApplicationLocales().get(0)
         val appLanguage = locale?.language ?: Locale.getDefault().language
         val language = if (appLanguage == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
         val dates = BusRecentDates.sameWeekdayType(count = 4)
         val busInput = selectedBusInput(dates)
+        val requestKey = busInput to language
+        if (_result.value == null || requestKey != lastAppliedRequestKey) _isLoading.value = true
         viewModelScope.launch {
             val response = apolloClient.query(BusRealtimePageQuery(language, busInput))
                 .fetchPolicy(FetchPolicy.NetworkOnly)
@@ -149,6 +151,7 @@ class BusRealtimeViewModel @Inject constructor(
                 _queryError.value = QueryError.SERVER_ERROR
             } else if (response.data?.bus != null) {
                 lastAppliedGeneration = requestGeneration
+                lastAppliedRequestKey = requestKey
                 _result.value = response.data?.bus
                 _queryError.value = null
             } else {

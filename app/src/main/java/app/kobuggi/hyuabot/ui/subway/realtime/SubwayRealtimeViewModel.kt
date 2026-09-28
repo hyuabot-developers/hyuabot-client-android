@@ -41,8 +41,8 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     fun selectTab(tab: Int) {
         if (selectedTab == tab) return
         selectedTab = tab
-        clearData()
         _isLoading.value = true
+        clearData()
         fetchData()
     }
 

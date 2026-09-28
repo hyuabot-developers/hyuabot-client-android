@@ -61,6 +61,11 @@ class HomeViewModel @Inject constructor(
     private var isFetching = false
     private var pendingRefresh = false
     private var requestSelection = HomeRequestSelection()
+    private var lastAppliedRequestKey: Triple<
+        HomeRequestSelection,
+        Pair<HomeBusGroup?, BusHomeDestination>,
+        Pair<String, String>,
+    >? = null
     private var loadedSubwayLanguage: String? = null
     private var presenceJob: Job? = null
     private var selectedPresenceStop = "dormitory_o"
@@ -123,17 +128,23 @@ class HomeViewModel @Inject constructor(
             val requestedBusGroup = selectedHomeBusGroup
             val requestedBusDestination = selectedHomeBusDestination
             val subwayLanguage = DynamicTextTranslator.currentAppLanguageTag()
+            val noticeLanguage = currentNoticeLanguage()
+            val requestKey = Triple(
+                requestedSelection,
+                requestedBusGroup to requestedBusDestination,
+                noticeLanguage to subwayLanguage,
+            )
             if (loadedSubwayLanguage != subwayLanguage) {
                 _data.value = null
                 loadedSubwayLanguage = subwayLanguage
             }
-            if (_data.value == null) _isLoading.value = true
+            if (_data.value == null || requestKey != lastAppliedRequestKey) _isLoading.value = true
             try {
                 val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
                 val mealDate = if (now.hour >= 20) now.toLocalDate().plusDays(1) else now.toLocalDate()
                 val response = apolloClient.query(
                     HomePageQuery(
-                        language = currentNoticeLanguage(),
+                        language = noticeLanguage,
                         subwayLanguage = subwayLanguage,
                         after = Optional.present(LocalTime.now(ZoneId.of("Asia/Seoul"))),
                         shuttleStops = listOf(ShuttleStopInput(
@@ -185,6 +196,7 @@ class HomeViewModel @Inject constructor(
                             )
                         }
                     _data.value = response.data
+                    lastAppliedRequestKey = requestKey
                     _bus50TerminalLogTimes.value = if (requestedSelection.needsBus50) fetchBus50TerminalLogTimes(now.toLocalDate()) else emptyList()
                     viewModelScope.launch { shuttleServiceNoticeScheduler.syncIfStale() }
                     _queryError.value = null
@@ -193,7 +205,12 @@ class HomeViewModel @Inject constructor(
                 _initialStopRules.value = emptyList()
                 _queryError.value = QueryError.SERVER_ERROR
             } finally {
-                _isLoading.value = false
+                val selectionChangedWhileFetching = requestedSelection != requestSelection ||
+                    requestedBusGroup != selectedHomeBusGroup ||
+                    requestedBusDestination != selectedHomeBusDestination ||
+                    subwayLanguage != DynamicTextTranslator.currentAppLanguageTag() ||
+                    noticeLanguage != currentNoticeLanguage()
+                if (!pendingRefresh || !selectionChangedWhileFetching) _isLoading.value = false
                 isFetching = false
                 if (pendingRefresh) fetchData()
             }
@@ -203,10 +220,14 @@ class HomeViewModel @Inject constructor(
     internal fun setRequestSelection(selection: HomeRequestSelection) {
         if (requestSelection == selection) return
         requestSelection = selection
+        _isLoading.value = true
         fetchData()
     }
 
     fun setHomeBusSelection(group: HomeBusGroup?, destination: BusHomeDestination) {
+        if (selectedHomeBusGroup != group || selectedHomeBusDestination != destination) {
+            _isLoading.value = true
+        }
         selectedHomeBusGroup = group
         selectedHomeBusDestination = destination
     }
