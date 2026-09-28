@@ -7,6 +7,7 @@ import android.graphics.RectF
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -279,7 +280,8 @@ class CalendarTimelineView @JvmOverloads constructor(
 
     private fun dp(value: Float): Float = value * resources.displayMetrics.density
 
-    private fun sp(value: Float): Float = value * resources.displayMetrics.scaledDensity
+    private fun sp(value: Float): Float =
+        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, resources.displayMetrics)
 
     private data class EventSegment(
         val event: Event,
