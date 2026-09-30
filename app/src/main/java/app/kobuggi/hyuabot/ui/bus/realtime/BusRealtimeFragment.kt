@@ -8,6 +8,8 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -34,6 +36,7 @@ import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import app.kobuggi.hyuabot.util.setSkeletonLoading
+import app.kobuggi.hyuabot.util.TransitFreshnessChecker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -41,6 +44,9 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Runnable
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import app.kobuggi.hyuabot.util.disableViewStateSaving
 
@@ -75,10 +81,14 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         viewModel.initSelectedStopID()
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.bus_realtime_error), Toast.LENGTH_SHORT).show() }
+            updateTransitStatus()
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.loadingLayout.setSkeletonLoading(it)
+            updateTransitStatus()
         }
+        viewModel.lastSuccessfulCheckAt.observe(viewLifecycleOwner) { updateTransitStatus() }
+        binding.transitRetryButton.setOnClickListener { viewModel.fetchData() }
         viewModel.notices.observe(viewLifecycleOwner) { notices ->
             if (notices.isNotEmpty()) {
                 binding.noticeLayout.visibility = View.VISIBLE
@@ -96,6 +106,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             }
         }
         viewModel.result.observe(viewLifecycleOwner) {
+            updateTransitStatus()
             // Re-evaluate the nearest stop while polling, but not a high-accuracy fix on every 15 s response.
             val now = SystemClock.elapsedRealtime()
             if (hasLocationPermission() && !viewModel.stopCoordinates.value.isNullOrEmpty() &&
@@ -115,6 +126,12 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         )
         binding.viewPager.adapter = viewpagerAdapter
         binding.viewPager.offscreenPageLimit = 1
+        binding.viewPager.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                updateTransitStatus()  // Update status when tab changes
+            }
+        })
         binding.busQuickSettingsButton.setOnClickListener { openQuickSettings() }
         childFragmentManager.setFragmentResultListener(
             BusQuickSettingsDialog.REQUEST_KEY,
@@ -180,6 +197,47 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             )
         }
         return binding.root.also { disableViewStateSaving(it) }
+    }
+
+    private fun updateTransitStatus() {
+        if (!isAdded) return
+        val hasError = viewModel.queryError.value != null
+        binding.transitRetryButton.visibility = if (hasError) View.VISIBLE else View.GONE
+        val lastCheck = viewModel.lastSuccessfulCheckAt.value
+        val buses = viewModel.result.value.orEmpty()
+        val now = Instant.now()
+
+        val visibleRoutes = when (binding.viewPager.currentItem) {
+            0 -> setOf(216000068)
+            1 -> setOf(216000061, 216000043, 216000026, 216000096)
+            2 -> setOf(216000104, 200000015)
+            else -> setOf(216000075)
+        }
+        val filteredBuses = buses.filter { it.route.seq in visibleRoutes }
+        val stationUpdates = filteredBuses.map { bus -> bus.realtime.map { it.updatedAt } }
+        val updates = stationUpdates.mapNotNull(TransitFreshnessChecker::latestUpdate)
+        val oldestStale = TransitFreshnessChecker.staleBusUpdates(stationUpdates, now).minOrNull()
+        binding.transitStatusText.text = when {
+            hasError -> getString(if (isOffline()) R.string.transit_offline else R.string.transit_error)
+            viewModel.isLoading.value == true && lastCheck == null -> getString(R.string.transit_loading)
+            lastCheck == null || filteredBuses.none { it.arrival.isNotEmpty() } -> getString(R.string.transit_empty)
+            oldestStale != null -> getString(
+                R.string.freshness_stale_format,
+                TransitFreshnessChecker.ageMinutes(oldestStale, now),
+            )
+            updates.isEmpty() -> getString(R.string.freshness_scheduled_format)
+            else -> getString(
+                R.string.freshness_fresh_format,
+                lastCheck.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm")),
+            )
+        }
+    }
+
+    private fun isOffline(): Boolean {
+        val manager = requireContext().getSystemService(ConnectivityManager::class.java)
+        val network = manager.activeNetwork ?: return true
+        val capabilities = manager.getNetworkCapabilities(network) ?: return true
+        return !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     private fun openQuickSettings() {

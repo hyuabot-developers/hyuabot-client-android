@@ -1,10 +1,8 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -43,13 +41,20 @@ class BusRealtimeListAdapter(
             binding.busTimeText.textSize = 15f
             val routeName = item.route
             val arrival = item.item
+            binding.busRouteIndicator.backgroundTintList = ColorStateList.valueOf(
+                binding.root.context.getColor(getRouteColor(routeName)),
+            )
             val secondarySuffix = if (showSecondaryEta) {
-                (item.destinationArrivalTime ?: item.secondaryArrivalTime)?.let {
+                val destinationStopName = busDestinationStopNameResource(item.destinationStopID)
+                    ?.let(binding.root.context::getString)
+                val destinationArrivalTime = item.destinationArrivalTime ?: item.secondaryArrivalTime
+                if (destinationStopName != null && destinationArrivalTime != null) {
                     binding.root.context.getString(
-                        R.string.bus_arrival_secondary_format,
-                        it.format(secondaryTimeFormatter)
+                        R.string.bus_arrival_secondary_format_with_stop,
+                        destinationStopName,
+                        destinationArrivalTime.format(secondaryTimeFormatter),
                     )
-                } ?: ""
+                } else ""
             } else {
                 ""
             }
@@ -58,7 +63,7 @@ class BusRealtimeListAdapter(
             if (item.isRealtime) {
                 binding.busRouteText.apply {
                     text = routeName
-                    setTextColor(ResourcesCompat.getColor(resources, getRouteColor(routeName), null))
+                    setTextColor(binding.root.context.getColor(R.color.primary_text))
                 }
                 val realtimeText = if (item.seats!! >= 0) {
                     binding.root.context.resources.getQuantityString(
@@ -76,11 +81,11 @@ class BusRealtimeListAdapter(
                         item.stops
                     )
                 }
-                binding.busTimeText.applyRealtimeColor(realtimeText + secondarySuffix)
+                binding.busTimeText.applyRealtimeColor(listOf(realtimeText, secondarySuffix).filter(String::isNotEmpty).joinToString("\n"))
             } else {
                 binding.busRouteText.apply {
                     text = routeName
-                    setTextColor(ResourcesCompat.getColor(resources, getRouteColor(routeName), null))
+                    setTextColor(binding.root.context.getColor(R.color.primary_text))
                 }
                 binding.busTimeText.apply {
                     val arrivalTime = item.arrivalTime
@@ -91,26 +96,19 @@ class BusRealtimeListAdapter(
                             if (s < 4 * 3600) s + 86400 else s
                         }
                         val remainingMinutes = (toServiceSec(arrivalTime) - toServiceSec(now)) / 60
-                        text = binding.root.context.getString(R.string.bus_arrival_estimated_format, remainingMinutes) + secondarySuffix
+                        text = listOf(
+                            binding.root.context.getString(R.string.bus_arrival_estimated_format, remainingMinutes),
+                            secondarySuffix,
+                        ).filter(String::isNotEmpty).joinToString("\n")
                     }
-                    setTextColor(binding.root.context.getColor(R.color.secondary_text))
+                    setTextColor(binding.root.context.getColor(R.color.primary_text))
                     setTypeface(godoTypeface, Typeface.NORMAL)
                 }
             }
         }
 
         private fun android.widget.TextView.applyRealtimeColor(value: String) {
-            val styled = SpannableString(value)
-            val delimiter = value.indexOf('(')
-            if (delimiter > 0) {
-                styled.setSpan(
-                    ForegroundColorSpan(context.getColor(R.color.calendar_sunday)),
-                    0,
-                    (delimiter - 1).coerceAtLeast(0),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-            }
-            text = styled
+            text = value
             setTextColor(context.getColor(R.color.primary_text))
             setTypeface(godoTypeface, Typeface.NORMAL)
         }

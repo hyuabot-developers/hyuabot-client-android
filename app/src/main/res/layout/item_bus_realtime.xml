@@ -2,9 +2,20 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bus_item"
     android:layout_width="match_parent"
-    android:layout_height="40dp" >
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:paddingVertical="8dp">
+    <View
+        android:id="@+id/bus_route_indicator"
+        android:layout_width="4dp"
+        android:layout_height="24dp"
+        android:background="@color/green_bus"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/bus_route_text"
         android:layout_width="wrap_content"
@@ -12,9 +23,12 @@
         android:textColor="@color/primary_text"
         android:textFontWeight="700"
         android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@id/bus_route_indicator"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintEnd_toStartOf="@id/bus_low_floor_badge"
+        tools:text="3100" />
+
     <TextView
         android:id="@+id/bus_low_floor_badge"
         android:layout_width="wrap_content"
@@ -23,21 +37,26 @@
         android:gravity="center"
         android:text="@string/bus_low_floor"
         android:textSize="11sp"
-        android:textColor="@color/green_bus"
+        android:textColor="@color/primary_text"
         android:paddingHorizontal="4dp"
         android:background="@drawable/bg_low_floor_badge"
         android:layout_marginStart="6dp"
         android:visibility="gone"
         app:layout_constraintStart_toEndOf="@id/bus_route_text"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintEnd_toStartOf="@id/bus_time_text"
+        tools:visibility="visible" />
+
     <TextView
         android:id="@+id/bus_time_text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:layout_marginStart="16dp"
+        android:gravity="end"
+        android:textSize="15sp"
         android:textColor="@color/primary_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/bus_low_floor_badge"
+        tools:text="5분 (2전, 4석)\nHH:mm 확인\n▶ 수원역 10:30 도착" />
 </androidx.constraintlayout.widget.ConstraintLayout>

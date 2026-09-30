@@ -45,7 +45,7 @@
         android:contentDescription="@string/map_current_location"
         app:srcCompat="@drawable/ic_location"
         app:backgroundTint="@color/hanyang_green"
-        app:tint="@android:color/white"
+        app:tint="@android:color/black"
         app:layout_anchor="@id/map_view"
         app:layout_anchorGravity="bottom|end" />
 
@@ -72,7 +72,7 @@
         android:visibility="gone"
         app:srcCompat="@drawable/ic_reset"
         app:backgroundTint="@color/hanyang_green"
-        app:tint="@android:color/white"
+        app:tint="@android:color/black"
         app:layout_anchor="@id/map_view"
         app:layout_anchorGravity="bottom|end" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

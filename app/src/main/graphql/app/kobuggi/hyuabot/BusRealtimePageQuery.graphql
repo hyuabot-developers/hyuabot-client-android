@@ -24,6 +24,9 @@ query BusRealtimePageQuery($language: String!, $busInput: [BusRouteStopInput!]!)
             }
             destinationArrivalTime
         }
+        realtime {
+            updatedAt
+        }
         log {
             date
             time

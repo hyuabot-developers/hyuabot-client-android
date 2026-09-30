@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -31,6 +32,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     private val _oidoBlue = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _chojiSeohae = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _queryError = MutableLiveData<QueryError?>(null)
+    private val _lastSuccessfulCheckAt = MutableLiveData<Instant?>(null)
     private val _disposable = CompositeDisposable()
     private var loadedLanguage: String? = null
     private var requestGeneration = 0
@@ -46,6 +48,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
 
     val isLoading get() = _isLoading
     val queryError get() = _queryError
+    val lastSuccessfulCheckAt get() = _lastSuccessfulCheckAt
     val campusYellow get() = _campusYellow
     val campusBlue get() = _campusBlue
     val oidoYellow get() = _oidoYellow
@@ -91,6 +94,7 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
                 _oidoYellow.value = response.data?.subway?.firstOrNull { it.stationID == "K258" }
                 _oidoBlue.value = response.data?.subway?.firstOrNull { it.stationID == "K456" }
                 _chojiSeohae.value = response.data?.subway?.firstOrNull { it.stationID == "S26" }
+                _lastSuccessfulCheckAt.value = Instant.now()
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR

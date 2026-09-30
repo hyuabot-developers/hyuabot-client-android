@@ -19,5 +19,8 @@ query SubwayRealtimePageQuery($keys: [SubwayStationInput!]!, $language: String!)
                 isLast
             }
         }
+        realtime {
+            updatedAt
+        }
     }
 }

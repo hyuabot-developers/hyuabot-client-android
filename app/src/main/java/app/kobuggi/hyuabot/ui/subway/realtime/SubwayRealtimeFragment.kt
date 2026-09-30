@@ -1,6 +1,8 @@
 package app.kobuggi.hyuabot.ui.subway.realtime
 
 import android.os.Bundle
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import app.kobuggi.hyuabot.util.disableViewStateSaving
 import app.kobuggi.hyuabot.util.setSkeletonLoading
+import app.kobuggi.hyuabot.util.TransitFreshnessChecker
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class SubwayRealtimeFragment @Inject constructor() : Fragment() {
@@ -34,10 +40,14 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
     ): View {
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.loadingLayout.setSkeletonLoading(it)
+            updateTransitStatus()
         }
         viewModel.queryError.observe(viewLifecycleOwner) {
             it?.let { Toast.makeText(requireContext(), getString(R.string.subway_realtime_error), Toast.LENGTH_SHORT).show() }
+            updateTransitStatus()
         }
+        viewModel.lastSuccessfulCheckAt.observe(viewLifecycleOwner) { updateTransitStatus() }
+        binding.transitRetryButton.setOnClickListener { viewModel.fetchData() }
 
         val viewpagerAdapter = SubwayRealtimeViewPagerAdapter(childFragmentManager, lifecycle)
         val tabLabelList = listOf(
@@ -46,6 +56,12 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
             R.string.subway_tab_transfer
         )
         binding.viewPager.adapter = viewpagerAdapter
+        binding.viewPager.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                updateTransitStatus()  // Update status when tab changes
+            }
+        })
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
@@ -63,6 +79,63 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
             )
         }
         return binding.root.also { disableViewStateSaving(it) }
+    }
+
+    private fun updateTransitStatus() {
+        if (!isAdded) return
+        val hasError = viewModel.queryError.value != null
+        binding.transitRetryButton.visibility = if (hasError) View.VISIBLE else View.GONE
+        val stations = when (binding.viewPager.currentItem) {
+            0 -> {
+                listOfNotNull(
+                    viewModel.campusBlue.value,
+                    viewModel.oidoBlue.value
+                )
+            }
+            1 -> {
+                listOfNotNull(
+                    viewModel.campusYellow.value,
+                    viewModel.oidoYellow.value
+                )
+            }
+            2 -> {
+                listOfNotNull(
+                    viewModel.campusYellow.value,
+                    viewModel.campusBlue.value,
+                    viewModel.oidoYellow.value,
+                    viewModel.oidoBlue.value,
+                    viewModel.chojiSeohae.value,
+                )
+            }
+            else -> emptyList()
+        }
+        val now = Instant.now()
+        val stationUpdates = stations.map { station -> station.realtime.map { it.updatedAt } }
+        val updates = stationUpdates.mapNotNull(TransitFreshnessChecker::latestUpdate)
+        val oldestStale = TransitFreshnessChecker.staleSubwayUpdates(stationUpdates, now).minOrNull()
+        val lastCheck = viewModel.lastSuccessfulCheckAt.value
+        binding.transitStatusText.text = when {
+            hasError -> getString(if (isOffline()) R.string.transit_offline else R.string.transit_error)
+            viewModel.isLoading.value == true && lastCheck == null -> getString(R.string.transit_loading)
+            lastCheck == null || stations.none { station -> station.arrival.any { it.entries.isNotEmpty() } } ->
+                getString(R.string.transit_empty)
+            oldestStale != null -> getString(
+                R.string.freshness_stale_format,
+                TransitFreshnessChecker.ageMinutes(oldestStale, now),
+            )
+            updates.isEmpty() -> getString(R.string.freshness_scheduled_format)
+            else -> getString(
+                R.string.freshness_fresh_format,
+                lastCheck.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm")),
+            )
+        }
+    }
+
+    private fun isOffline(): Boolean {
+        val manager = requireContext().getSystemService(ConnectivityManager::class.java)
+        val network = manager.activeNetwork ?: return true
+        val capabilities = manager.getNetworkCapabilities(network) ?: return true
+        return !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     override fun onPause() {

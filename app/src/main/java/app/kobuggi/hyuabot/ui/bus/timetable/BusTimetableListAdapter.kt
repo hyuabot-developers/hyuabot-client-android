@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.bus.timetable
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -18,8 +19,11 @@ class BusTimetableListAdapter(private val context: Context, private var timetabl
         fun bind(timetableItem: BusTimetableItem) {
             binding.busRouteText.apply {
                 text = timetableItem.routeName
-                setTextColor(context.getColor(getRouteColor(timetableItem.routeName)))
+                setTextColor(context.getColor(R.color.primary_text))
             }
+            binding.busRouteIndicator.backgroundTintList = ColorStateList.valueOf(
+                context.getColor(getRouteColor(timetableItem.routeName)),
+            )
             binding.busTimeText.text = timetableItem.time
             binding.busTimeText.setTextColor(
                 if (context.getString(

@@ -10,8 +10,6 @@
     <string name="tabbar_bus">버스</string>
     <string name="tabbar_campus">캠퍼스</string>
     <!-- 홈 -->
-    <string name="home_hero_title">지금 필요한 것만</string>
-    <string name="home_hero_subtitle">이동부터 식사까지, 지금 상황에 맞는 정보를 보여줘요.</string>
     <string name="home_weather_rain_title">오늘 비 소식이 있어요</string>
     <string name="home_weather_rain_now_title">지금 비가 내리고 있어요</string>
     <string name="home_weather_rain_start_title">%1$s부터 비가 와요</string>
@@ -33,13 +31,13 @@
     <string name="home_weather_precipitation_amount_subtitle">현재 %1$.0f°C · 최근 1시간 %2$.1fmm</string>
     <string name="home_weather_confidence_low">예보가 달라질 수 있어요</string>
     <string name="home_weather_attribution">Open-Meteo ↗</string>
+    <string name="home_weather_summary">날씨 정보</string>
+    <string name="home_settings_button">홈 설정</string>
     <string name="home_movement_title">지금 이동</string>
     <string name="home_movement_timetable">전체 시간표</string>
     <string name="home_departure_selector_description">출발 정류장 선택: %1$s</string>
     <string name="home_destination_summary">%1$s 방면</string>
     <string name="home_cafeteria_detail">전체 학식</string>
-    <string name="home_quick_settings_action_bar_title">홈에 보일 내용을 조정해요</string>
-    <string name="home_quick_settings_button">설정</string>
     <string name="home_quick_settings_title">설정</string>
     <string name="home_quick_settings_legacy_button">기존 셔틀 화면</string>
     <string name="home_quick_settings_bus50_transfer_title">50번 환승 정보 표시</string>
@@ -90,10 +88,7 @@
     <string name="home_bus_destination_preview">강남역 방면</string>
     <string name="home_bus_preview_minutes_stops">%1$d분 후 · %2$d정거장</string>
     <string name="home_bus_stops_away">%1$d 전</string>
-    <string name="home_bus_stops_and_destination_eta">%1$d전 · %2$s 도착</string>
     <string name="home_bus_stops_and_seats">%1$d전 · %2$d석</string>
-    <string name="home_bus_stops_seats_and_destination_eta">%1$d전 · %2$d석 · %3$s 도착</string>
-    <string name="home_bus_destination_eta">%1$s 도착</string>
     <string name="home_bus_recent_departure">최근 출발 기록</string>
     <string name="home_bus_log_estimate">도착 예정 시간</string>
     <string name="home_bus_no_arrivals">도착 예정 버스가 없어요</string>
@@ -328,7 +323,15 @@
         <item quantity="other">%1$d분 (%2$d전)</item>
     </plurals>
     <string name="bus_arrival_estimated_format">%1$d분 (예정)</string>
-    <string name="bus_arrival_secondary_format">" ▶ %1$s 도착"</string>
+    <string name="bus_arrival_secondary_format_with_stop">▶ %1$s %2$s 도착</string>
+    <!-- Fixed destination stop names -->
+    <string name="stop_name_hanyang_erica_convention_center">한양대ERICA컨벤션센터</string>
+    <string name="stop_name_hanyang_university">한양대</string>
+    <string name="stop_name_hanyang_university_gate">한양대입구</string>
+    <string name="stop_name_suwon_station">수원역</string>
+    <string name="stop_name_seongpo_residential_area">성포주공4단지</string>
+    <string name="stop_name_uiwang_city_hall">의왕시청</string>
+    <string name="stop_name_gunpo_city_hall">군포시청</string>
     <plurals name="bus_realtime_format_seats_last">
         <item quantity="one">%1$d분 (%2$d전, %3$d석, 막차)</item>
         <item quantity="other">%1$d분 (%2$d전, %3$d석, 막차)</item>
@@ -637,6 +640,7 @@
     <string name="month_header">%1$d년 %2$d월</string>
     <string name="event_date_range_format">%1$d월 %2$d일 - %3$d월 %4$d일</string>
     <string name="calendar_select_date_hint">날짜를 선택하면 일정을 확인할 수 있습니다</string>
+    <string name="calendar_selected_date_empty">선택한 날짜에 일정이 없습니다</string>
     <string name="calendar_upcoming_empty">다가오는 일정이 없습니다</string>
     <string name="calendar_previous_month">이전 달</string>
     <string name="calendar_next_month">다음 달</string>
@@ -787,4 +791,17 @@
     <string name="bus_first_last_up">상행: 첫차 %1$s / 막차 %2$s</string>
     <string name="bus_first_last_down">하행: 첫차 %1$s / 막차 %2$s</string>
     <string name="bus_stop_first_last_title">노선별 첫차 &amp; 막차</string>
+
+    <!-- Realtime freshness indicators -->
+    <string name="freshness_fresh_format">%1$s 확인</string>
+    <string name="freshness_stale_format">%1$d분 전 정보</string>
+    <string name="freshness_scheduled_format">시간표 기준</string>
+    <string name="transit_arrival_scheduled_suffix">(예정)</string>
+
+    <string name="transit_loading">도착 정보를 불러오는 중</string>
+    <string name="transit_empty">도착 정보가 없습니다</string>
+    <string name="transit_error">도착 정보를 불러오지 못했습니다</string>
+    <string name="transit_offline">인터넷 연결을 확인해 주세요</string>
+    <string name="transit_retry">다시 시도</string>
+    <string name="home_transfer_connected_shuttle">셔틀 %1$s 연결</string>
 </resources>

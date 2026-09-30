@@ -9,8 +9,6 @@
     <string name="bus">路線バス</string>
     <string name="tabbar_bus">バス</string>
     <string name="tabbar_campus">キャンパス</string>
-    <string name="home_hero_title">今必要なものだけ</string>
-    <string name="home_hero_subtitle">移動から食事まで、今の状況に合う情報を表示します。</string>
     <string name="home_weather_rain_title">今日は雨が降る予報です</string>
     <string name="home_weather_rain_now_title">現在、雨が降っています</string>
     <string name="home_weather_rain_start_title">%1$sから雨が降る予報です</string>
@@ -32,13 +30,13 @@
     <string name="home_weather_precipitation_amount_subtitle">現在 %1$.0f°C・直近1時間 %2$.1f mm</string>
     <string name="home_weather_confidence_low">予報が変わる可能性があります</string>
     <string name="home_weather_attribution">Open-Meteo ↗</string>
+    <string name="home_weather_summary">天気情報</string>
+    <string name="home_settings_button">ホーム設定</string>
     <string name="home_movement_title">今すぐ移動</string>
     <string name="home_movement_timetable">全時刻表</string>
     <string name="home_departure_selector_description">出発停留所を選択：%1$s</string>
     <string name="home_destination_summary">%1$s方面</string>
     <string name="home_cafeteria_detail">全ての学食</string>
-    <string name="home_quick_settings_action_bar_title">ホームの表示を調整できます</string>
-    <string name="home_quick_settings_button">設定</string>
     <string name="home_quick_settings_title">設定</string>
     <string name="home_quick_settings_legacy_button">以前のシャトル画面</string>
     <string name="home_quick_settings_bus50_transfer_title">50番乗り換えを表示</string>
@@ -89,10 +87,7 @@
     <string name="home_bus_destination_preview">江南駅方面</string>
     <string name="home_bus_preview_minutes_stops">%1$d分後・%2$d停留所</string>
     <string name="home_bus_stops_away">%1$d先</string>
-    <string name="home_bus_stops_and_destination_eta">%1$d先 ・ %2$s到着</string>
     <string name="home_bus_stops_and_seats">%1$d先 ・ %2$d席</string>
-    <string name="home_bus_stops_seats_and_destination_eta">%1$d先 ・ %2$d席 ・ %3$s到着</string>
-    <string name="home_bus_destination_eta">%1$s到着</string>
     <string name="home_bus_recent_departure">最近の出発記録</string>
     <string name="home_bus_log_estimate">到着予定時刻</string>
     <string name="home_bus_no_arrivals">到着予定のバスがありません</string>
@@ -277,7 +272,15 @@
         <item quantity="other">%1$d分（%2$d前、終バス）</item>
     </plurals>
     <string name="bus_arrival_estimated_format">%1$d分（予定）</string>
-    <string name="bus_arrival_secondary_format">" ▶ %1$s到着"</string>
+    <string name="bus_arrival_secondary_format_with_stop">▶ %1$s %2$s 到着</string>
+    <!-- Fixed destination stop names -->
+    <string name="stop_name_hanyang_erica_convention_center">漢陽大学ERICAコンベンションセンター</string>
+    <string name="stop_name_hanyang_university">漢陽大学</string>
+    <string name="stop_name_hanyang_university_gate">漢陽大入口</string>
+    <string name="stop_name_suwon_station">水原駅</string>
+    <string name="stop_name_seongpo_residential_area">ソンポ住公4団地</string>
+    <string name="stop_name_uiwang_city_hall">義王市庁</string>
+    <string name="stop_name_gunpo_city_hall">軍浦市庁</string>
     <string name="bus_no_realtime_data">到着予定のバスはありません。</string>
     <string name="bus_departure_log">到着記録</string>
     <string name="bus_log_title">路線バス通過情報</string>
@@ -560,6 +563,7 @@
     <string name="month_header">%1$d年%2$d月</string>
     <string name="event_date_range_format">%1$d月%2$d日 〜 %3$d月%4$d日</string>
     <string name="calendar_select_date_hint">日付をタップすると日程が表示されます</string>
+    <string name="calendar_selected_date_empty">選択した日付に予定はありません</string>
     <string name="calendar_upcoming_empty">今後の予定はありません</string>
     <string name="calendar_previous_month">前の月</string>
     <string name="calendar_next_month">次の月</string>
@@ -711,6 +715,15 @@
     <string name="bus_first_last_up">上り: 始発 %1$s / 終バス %2$s</string>
     <string name="bus_first_last_down">下り: 始発 %1$s / 終バス %2$s</string>
     <string name="bus_stop_first_last_title">路線別 始発 &amp; 終発</string>
+
+    <!-- Realtime freshness indicators -->
+    <string name="freshness_fresh_format">%1$s 確認</string>
+    <string name="freshness_stale_format">%1$d分前情報</string>
+    <string name="freshness_scheduled_format">時刻表に基づく</string>
+    <string name="transit_arrival_scheduled_suffix">(予定)</string>
+
+    <!-- Network and error states -->
+
     <string name="shuttle_alarm_button_desc">通知設定</string>
     <string name="shuttle_alarm_boarding">乗車アラート</string>
     <string name="shuttle_alarm_alighting">降車アラート · 行程を共有</string>
@@ -748,4 +761,10 @@
     <string name="bus_alternative_stop_info">停留所の位置</string>
     <string name="bus_alternative_shuttle_stop">シャトルバス停留所</string>
     <string name="bus_alternative_bus_stop">バス乗車停留所</string>
+    <string name="transit_loading">到着情報を読み込み中</string>
+    <string name="transit_empty">到着情報がありません</string>
+    <string name="transit_error">到着情報を読み込めませんでした</string>
+    <string name="transit_offline">インターネット接続を確認してください</string>
+    <string name="transit_retry">再試行</string>
+    <string name="home_transfer_connected_shuttle">シャトル %1$s に接続</string>
 </resources>

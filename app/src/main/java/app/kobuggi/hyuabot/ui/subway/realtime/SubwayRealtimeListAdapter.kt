@@ -1,10 +1,8 @@
 package app.kobuggi.hyuabot.ui.subway.realtime
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.content.Context
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.ColorRes
@@ -21,7 +19,8 @@ class SubwayRealtimeListAdapter(
     inner class ViewHolder(private val binding: ItemSubwayRealtimeBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ClickableViewAccessibility")
         fun bind(arrival: SubwayRealtimePageQuery.Entry) {
-            binding.subwayDestinationText.setTextColor(context.getColor(destinationColor))
+            binding.subwayLineIndicator.backgroundTintList = ColorStateList.valueOf(context.getColor(destinationColor))
+            binding.subwayDestinationText.setTextColor(context.getColor(R.color.primary_text))
             if (arrival.isRealtime) {
                 if (arrival.isLast!!) {
                     binding.subwayDestinationText.apply {
@@ -58,28 +57,19 @@ class SubwayRealtimeListAdapter(
                         R.string.subway_realtime_destination_format,
                         arrival.terminal.name,
                     )
-                    subwayTimeText.text = context.resources.getQuantityString(
+                    val arrivalText = context.resources.getQuantityString(
                         R.plurals.subway_realtime_timetable_format,
                         arrival.minutes,
                         arrival.minutes,
                     )
+                    subwayTimeText.text = "$arrivalText ${context.getString(R.string.transit_arrival_scheduled_suffix)}"
                     subwayTimeText.setTextColor(context.getColor(R.color.primary_text))
                 }
             }
         }
 
         private fun android.widget.TextView.applyRealtimeColor(value: String) {
-            val styled = SpannableString(value)
-            val delimiter = value.indexOf('(')
-            if (delimiter > 0) {
-                styled.setSpan(
-                    ForegroundColorSpan(context.getColor(R.color.calendar_sunday)),
-                    0,
-                    (delimiter - 1).coerceAtLeast(0),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-            }
-            text = styled
+            text = value
             setTextColor(context.getColor(R.color.primary_text))
         }
     }

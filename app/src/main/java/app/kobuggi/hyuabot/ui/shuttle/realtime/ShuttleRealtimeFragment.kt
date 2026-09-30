@@ -538,15 +538,18 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         ),
         CoachmarkStep(
             { firstVisibleChildView(R.id.transfer_section) },
-            R.string.coachmark_shuttle_transfer_title, R.string.coachmark_shuttle_transfer_desc
+            R.string.coachmark_shuttle_transfer_title, R.string.coachmark_shuttle_transfer_desc,
+            centered = true,
         ),
         CoachmarkStep(
             { firstVisibleChildView(R.id.stop_info, R.id.stop_info_2) },
-            R.string.coachmark_shuttle_stop_title, R.string.coachmark_shuttle_stop_desc
+            R.string.coachmark_shuttle_stop_title, R.string.coachmark_shuttle_stop_desc,
+            centered = true,
         ),
         CoachmarkStep(
             { firstVisibleChildView(R.id.help_button, R.id.help_button_2) },
-            R.string.coachmark_shuttle_help_title, R.string.coachmark_shuttle_help_desc
+            R.string.coachmark_shuttle_help_title, R.string.coachmark_shuttle_help_desc,
+            centered = true,
         ),
         CoachmarkStep(
             { null },

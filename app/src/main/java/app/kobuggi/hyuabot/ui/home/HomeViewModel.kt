@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Locale
@@ -52,6 +53,7 @@ class HomeViewModel @Inject constructor(
     private val _data = MutableLiveData<HomePageQuery.Data?>()
     private val _initialStopRules = MutableLiveData<List<ShuttleInitialStopRuleCandidate>?>(null)
     private val _queryError = MutableLiveData<QueryError?>(null)
+    private val _lastSuccessfulCheckAt = MutableLiveData<Instant?>(null)
     private val _showBus50Transfer = MutableLiveData(true)
     private val _showSubwayTransfer = MutableLiveData(true)
     private val _subwayTransferDestination = MutableLiveData(HomeSubwayTransferDestination.SEOUL)
@@ -82,6 +84,7 @@ class HomeViewModel @Inject constructor(
     val data: LiveData<HomePageQuery.Data?> get() = _data
     val initialStopRules: LiveData<List<ShuttleInitialStopRuleCandidate>?> get() = _initialStopRules
     val queryError: LiveData<QueryError?> get() = _queryError
+    val lastSuccessfulCheckAt: LiveData<Instant?> get() = _lastSuccessfulCheckAt
     val showBus50Transfer: LiveData<Boolean> get() = _showBus50Transfer
     val showSubwayTransfer: LiveData<Boolean> get() = _showSubwayTransfer
     val subwayTransferDestination: LiveData<HomeSubwayTransferDestination> get() = _subwayTransferDestination
@@ -190,6 +193,7 @@ class HomeViewModel @Inject constructor(
                             )
                         }
                     _data.value = response.data
+                    _lastSuccessfulCheckAt.value = Instant.now()
                     lastAppliedMovementRequestKey = movementRequestKey
                     _bus50TerminalLogTimes.value = if (requestedSelection.needsBus50) fetchBus50TerminalLogTimes(now.toLocalDate()) else emptyList()
                     viewModelScope.launch { shuttleServiceNoticeScheduler.syncIfStale() }

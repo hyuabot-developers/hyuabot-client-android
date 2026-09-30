@@ -4,6 +4,7 @@ import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
@@ -26,6 +27,7 @@ class ShuttleTimetableListAdapter(
         @SuppressLint("ClickableViewAccessibility")
         fun bind(item: ShuttleTimetablePageQuery.Order) {
             val currentTime = LocalTime.now()
+            binding.shuttleTypeText.text = null
             if ((stopID == R.string.shuttle_tab_dormitory_out || stopID == R.string.shuttle_tab_shuttlecock_out)) {
                 if (headerID == R.string.shuttle_header_bound_for_station || headerID == R.string.shuttle_header_bound_for_jungang_station) {
                     when (item.route.tag) {
@@ -125,6 +127,13 @@ class ShuttleTimetableListAdapter(
                     }
                 }
             }
+            val markerColor = when {
+                item.route.tag == "DJ" -> R.color.hanyang_green
+                item.route.tag == "C" || item.route.name.endsWith("D") -> R.color.hanyang_blue
+                else -> R.color.red_bus
+            }
+            binding.shuttleRouteIndicator.backgroundTintList = ColorStateList.valueOf(binding.root.context.getColor(markerColor))
+            binding.shuttleTypeText.setTextColor(binding.root.context.getColor(R.color.primary_text))
             binding.shuttleTimeText.apply {
                 text = context.getString(
                     R.string.shuttle_time_type_1,

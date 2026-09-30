@@ -21,6 +21,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
 import java.util.Locale
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -36,6 +37,7 @@ class BusRealtimeViewModel @Inject constructor(
     private val _disposable = CompositeDisposable()
     private val _selectedStopID = MutableLiveData<Int?>(null)
     private val _queryError = MutableLiveData<QueryError?>(null)
+    private val _lastSuccessfulCheckAt = MutableLiveData<Instant?>(null)
     private val _showSecondaryEta = MutableLiveData(true)
     private val _seoulTarget = MutableLiveData(BusSeoulTargetStop.GANGNAM)
     private val _seoulFirstStopID = MutableLiveData<Int?>(null)
@@ -53,6 +55,7 @@ class BusRealtimeViewModel @Inject constructor(
     val isLoading get() = _isLoading
     val selectedStopID get() = _selectedStopID
     val queryError get() = _queryError
+    val lastSuccessfulCheckAt get() = _lastSuccessfulCheckAt
     val showSecondaryEta get() = _showSecondaryEta
     val seoulTarget get() = _seoulTarget
     val seoulFirstStopID get() = _seoulFirstStopID
@@ -153,6 +156,7 @@ class BusRealtimeViewModel @Inject constructor(
                 lastAppliedGeneration = requestGeneration
                 lastAppliedRequestKey = requestKey
                 _result.value = response.data?.bus
+                _lastSuccessfulCheckAt.value = Instant.now()
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR

@@ -10,8 +10,6 @@
     <string name="tabbar_bus">Bus</string>
     <string name="tabbar_campus">Campus</string>
     <!-- Home -->
-    <string name="home_hero_title">Only what you need now</string>
-    <string name="home_hero_subtitle">Information tailored to your situation.</string>
     <string name="home_weather_rain_title">Rain is expected today</string>
     <string name="home_weather_rain_now_title">It\'s raining now</string>
     <string name="home_weather_rain_start_title">Rain starts at %1$s</string>
@@ -33,13 +31,13 @@
     <string name="home_weather_precipitation_amount_subtitle">Now %1$.0f°C · %2$.1f mm in the last hour</string>
     <string name="home_weather_confidence_low">Forecast may change</string>
     <string name="home_weather_attribution">Open-Meteo ↗</string>
+    <string name="home_weather_summary">Weather info</string>
+    <string name="home_settings_button">Home settings</string>
     <string name="home_movement_title">Move now</string>
     <string name="home_movement_timetable">Full timetable</string>
     <string name="home_departure_selector_description">Select departure stop: %1$s</string>
     <string name="home_destination_summary">Toward %1$s</string>
     <string name="home_cafeteria_detail">All menus</string>
-    <string name="home_quick_settings_action_bar_title">Adjust what appears on Home</string>
-    <string name="home_quick_settings_button">Settings</string>
     <string name="home_quick_settings_title">Settings</string>
     <string name="home_quick_settings_legacy_button">Previous shuttle screen</string>
     <string name="home_quick_settings_bus50_transfer_title">Show Bus 50 transfers</string>
@@ -90,10 +88,7 @@
     <string name="home_bus_destination_preview">Toward Gangnam Station</string>
     <string name="home_bus_preview_minutes_stops">%1$d min · %2$d stops</string>
     <string name="home_bus_stops_away">%1$d away</string>
-    <string name="home_bus_stops_and_destination_eta">%1$d away · Arrives %2$s</string>
     <string name="home_bus_stops_and_seats">%1$d away · %2$d seats</string>
-    <string name="home_bus_stops_seats_and_destination_eta">%1$d away · %2$d seats · Arrives %3$s</string>
-    <string name="home_bus_destination_eta">Arrives %1$s</string>
     <string name="home_bus_recent_departure">Recent departure</string>
     <string name="home_bus_log_estimate">Expected arrival time</string>
     <string name="home_bus_no_arrivals">No upcoming buses</string>
@@ -296,7 +291,15 @@
         <item quantity="other">%1$d min (%2$d stops, Last)</item>
     </plurals>
     <string name="bus_arrival_estimated_format">%1$d min (scheduled)</string>
-    <string name="bus_arrival_secondary_format">" ▶ arrives %1$s"</string>
+    <string name="bus_arrival_secondary_format_with_stop">▶ %1$s, arrives %2$s</string>
+    <!-- Fixed destination stop names -->
+    <string name="stop_name_hanyang_erica_convention_center">ERICA Convention Center</string>
+    <string name="stop_name_hanyang_university">Hanyang University</string>
+    <string name="stop_name_hanyang_university_gate">Hanyang University Gate</string>
+    <string name="stop_name_suwon_station">Suwon Station</string>
+    <string name="stop_name_seongpo_residential_area">Seongpo Jugong 4 Complex</string>
+    <string name="stop_name_uiwang_city_hall">Uiwang City Hall</string>
+    <string name="stop_name_gunpo_city_hall">Gunpo City Hall</string>
     <!-- 노선버스 도착 정보 없음 -->
     <string name="bus_no_realtime_data">There are no buses scheduled to arrive.</string>
     <string name="bus_departure_log">Departure Log</string>
@@ -581,6 +584,7 @@
     <string name="month_header">%1$d/%2$d</string>
     <string name="event_date_range_format">%1$d/%2$d - %3$d/%4$d</string>
     <string name="calendar_select_date_hint">Tap a date to see events</string>
+    <string name="calendar_selected_date_empty">No events on the selected date</string>
     <string name="calendar_upcoming_empty">No upcoming events</string>
     <string name="calendar_previous_month">Previous month</string>
     <string name="calendar_next_month">Next month</string>
@@ -734,6 +738,15 @@
     <string name="bus_first_last_up">Northbound: First %1$s / Last %2$s</string>
     <string name="bus_first_last_down">Southbound: First %1$s / Last %2$s</string>
     <string name="bus_stop_first_last_title">First &amp; Last Time</string>
+
+    <!-- Realtime freshness indicators -->
+    <string name="freshness_fresh_format">Checked %1$s</string>
+    <string name="freshness_stale_format">%1$d min ago</string>
+    <string name="freshness_scheduled_format">Scheduled</string>
+    <string name="transit_arrival_scheduled_suffix">(scheduled)</string>
+
+    <!-- Network and error states -->
+
     <string name="shuttle_alarm_button_desc">Set Notification</string>
     <string name="shuttle_alarm_boarding">Boarding Alert</string>
     <string name="shuttle_alarm_alighting">Alighting Alert · Share Trip</string>
@@ -771,4 +784,10 @@
     <string name="bus_alternative_stop_info">Stop Location</string>
     <string name="bus_alternative_shuttle_stop">Shuttle Bus Stop</string>
     <string name="bus_alternative_bus_stop">Bus Boarding Stop</string>
+    <string name="transit_loading">Loading arrivals</string>
+    <string name="transit_empty">No arrivals available</string>
+    <string name="transit_error">Could not load arrivals</string>
+    <string name="transit_offline">Check your internet connection</string>
+    <string name="transit_retry">Retry</string>
+    <string name="home_transfer_connected_shuttle">Connected to shuttle %1$s</string>
 </resources>

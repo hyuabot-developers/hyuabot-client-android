@@ -77,8 +77,12 @@ query HomePageQuery(
         }
         arrival {
             minutes
+            arrivalTime
             stops
             isRealtime
+        }
+        realtime {
+            updatedAt
         }
     }
     subway(input: { language: $subwayLanguage, keys: $subwayKeys }) {
@@ -97,7 +101,9 @@ query HomePageQuery(
                 }
             }
         }
-
+        realtime {
+            updatedAt
+        }
     }
     subwayTimetable: subway(input: {language: $subwayLanguage, keys: $subwayTimetableKeys}) {
         stationID
@@ -130,6 +136,9 @@ query HomePageQuery(
                 destinationStopId
                 minutes
             }
+        }
+        realtime {
+            updatedAt
         }
         log {
             time

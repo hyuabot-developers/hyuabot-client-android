@@ -49,12 +49,9 @@ class CalendarFragment @Inject constructor() : Fragment() {
                 it?.let { Toast.makeText(requireContext(), getString(R.string.calendar_error), Toast.LENGTH_SHORT).show() }
             }
             events.observe(viewLifecycleOwner) { eventList ->
-                if (eventList.isEmpty()) return@observe
                 this@CalendarFragment.events = eventList
-                val firstDate = LocalDate.parse(eventList.first().startDate)
-                val lastDate = LocalDate.parse(eventList.last().endDate)
-                firstMonth = YearMonth.from(firstDate)
-                lastMonth = YearMonth.from(lastDate)
+                firstMonth = eventList.firstOrNull()?.let { YearMonth.from(LocalDate.parse(it.startDate)) } ?: YearMonth.now()
+                lastMonth = eventList.lastOrNull()?.let { YearMonth.from(LocalDate.parse(it.endDate)) } ?: firstMonth
                 displayedMonth = YearMonth.now().coerceIn(firstMonth, lastMonth)
                 selectedDate = null
                 binding.calendarTimelineView.setEvents(eventList)
@@ -131,7 +128,7 @@ class CalendarFragment @Inject constructor() : Fragment() {
         binding.calendarSelectDateHint.text = if (date == null) {
             getString(R.string.calendar_upcoming_empty)
         } else {
-            getString(R.string.calendar_select_date_hint)
+            getString(R.string.calendar_selected_date_empty)
         }
         binding.eventListOfMonth.visibility =
             if (selectedEvents.isNotEmpty()) View.VISIBLE else View.GONE

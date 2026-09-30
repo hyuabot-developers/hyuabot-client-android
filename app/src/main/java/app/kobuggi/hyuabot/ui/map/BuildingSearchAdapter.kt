@@ -21,8 +21,8 @@ class BuildingSearchAdapter(
                 itemBuildingSearch.tag = room
                 DynamicTextTranslator.bind(roomName, room.name)
                 roomDescription.text =
-                    context.getString(R.string.room_description_format, room.name, room.number)
-                DynamicTextTranslator.translateText(context.resources, room.name) { translatedName ->
+                    context.getString(R.string.room_description_format, room.building, room.number)
+                DynamicTextTranslator.translateText(context.resources, room.building) { translatedName ->
                     if (itemBuildingSearch.tag == room) {
                         roomDescription.text = context.getString(R.string.room_description_format, translatedName, room.number)
                     }
