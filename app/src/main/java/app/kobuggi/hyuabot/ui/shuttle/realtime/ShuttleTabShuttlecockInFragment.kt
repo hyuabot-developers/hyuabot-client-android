@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.LastRunJudge
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -148,7 +149,7 @@ class ShuttleTabShuttlecockInFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeData.visibility = View.GONE
                 binding.realtimeView.visibility = View.VISIBLE
-                shuttleAdapter.updateData(shuttleByOrder.subList(0, min(8, shuttleByOrder.size)), setOfNotNull(shuttleByOrder.lastOrNull()?.seq))
+                shuttleAdapter.updateData(shuttleByOrder.subList(0, min(8, shuttleByOrder.size)), LastRunJudge.shuttleLastRunSeqs(shuttleByOrder) { it.seq })
             }
             if (shuttleForCampus.isEmpty()) {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.VISIBLE
@@ -156,7 +157,7 @@ class ShuttleTabShuttlecockInFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
                 binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
-                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)), setOfNotNull(shuttleForCampus.lastOrNull()?.seq))
+                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)), LastRunJudge.shuttleLastRunSeqs(shuttleForCampus) { it.seq })
             }
         }
 

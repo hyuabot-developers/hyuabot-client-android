@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.shuttle.realtime
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.LastRunJudge
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -394,7 +395,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeData.visibility = View.GONE
                 binding.realtimeView.visibility = View.VISIBLE
-                shuttleAdapter.updateData(shuttleByOrder.subList(0, min(3, shuttleByOrder.size)), setOfNotNull(shuttleByOrder.lastOrNull()?.seq))
+                shuttleAdapter.updateData(shuttleByOrder.subList(0, min(3, shuttleByOrder.size)), LastRunJudge.shuttleLastRunSeqs(shuttleByOrder) { it.seq })
             }
 
             if (shuttleForCampus.isEmpty()) {
@@ -403,7 +404,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
                 binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
-                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(3, shuttleForCampus.size)), setOfNotNull(shuttleForCampus.lastOrNull()?.seq))
+                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(3, shuttleForCampus.size)), LastRunJudge.shuttleLastRunSeqs(shuttleForCampus) { it.seq })
             }
 
             if (shuttleForTerminal.isEmpty()) {
@@ -412,7 +413,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForTerminal.visibility = View.GONE
                 binding.realtimeViewBoundForTerminal.visibility = View.VISIBLE
-                shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(3, shuttleForTerminal.size)), setOfNotNull(shuttleForTerminal.lastOrNull()?.seq))
+                shuttleTerminalAdapter.updateData(shuttleForTerminal.subList(0, min(3, shuttleForTerminal.size)), LastRunJudge.shuttleLastRunSeqs(shuttleForTerminal) { it.seq })
             }
 
             if (shuttleForJungangStation.isEmpty()) {
@@ -421,7 +422,7 @@ class ShuttleTabStationFragment @Inject constructor() : Fragment() {
             } else {
                 binding.noRealtimeDataBoundForJungangStation.visibility = View.GONE
                 binding.realtimeViewBoundForJungangStation.visibility = View.VISIBLE
-                shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)), setOfNotNull(shuttleForJungangStation.lastOrNull()?.seq))
+                shuttleJungangStationAdapter.updateData(shuttleForJungangStation.subList(0, min(3, shuttleForJungangStation.size)), LastRunJudge.shuttleLastRunSeqs(shuttleForJungangStation) { it.seq })
             }
         }
         parentViewModel.busAlternativeStation.observe(viewLifecycleOwner) { busMinutes ->
