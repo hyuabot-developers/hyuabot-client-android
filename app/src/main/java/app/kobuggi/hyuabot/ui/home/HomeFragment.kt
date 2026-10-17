@@ -55,6 +55,7 @@ import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.LastRunJudge
 import app.kobuggi.hyuabot.util.localizedSubwayStationName
 import app.kobuggi.hyuabot.util.setSkeletonLoading
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopResolver
@@ -1255,7 +1256,7 @@ class HomeFragment : Fragment() {
         val shuttleRows = displayCandidates.mapIndexed { index, entry ->
             val routeDisplay = routeDisplay(route, entry)
             val subtitle = routeSubtitle(entry).let {
-                if (entry.seq == shuttleCandidates.lastOrNull()?.seq) {
+                if (LastRunJudge.shuttleLastRunSeqs(shuttleCandidates) { it.seq }.contains(entry.seq)) {
                     getString(R.string.home_shuttle_last_run_subtitle, it)
                 } else {
                     it
