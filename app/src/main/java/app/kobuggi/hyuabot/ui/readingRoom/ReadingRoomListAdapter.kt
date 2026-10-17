@@ -35,7 +35,7 @@ class ReadingRoomListAdapter(
                 val progress = if (room.seats.active > 0) (room.seats.occupied * 100) / room.seats.active else 0
                 readingRoomProgress.progress = progress
                 val indicatorColor = when {
-                    progress >= 90 -> context.getColor(R.color.calendar_sunday)
+                    progress >= 90 -> context.getColor(R.color.list_weekday_sunday)
                     progress >= 70 -> context.getColor(R.color.calendar_category_orange)
                     else -> context.getColor(R.color.calendar_category_green)
                 }

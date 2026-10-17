@@ -5,4 +5,16 @@
     <dimen name="home_weather_icon_size">88dp</dimen>
     <dimen name="home_weather_text_end_padding">84dp</dimen>
     <dimen name="setting_selection_check_padding">12dp</dimen>
+    <!-- 간격 4dp 격자 (명세 1.1) -->
+    <dimen name="space_4">4dp</dimen>
+    <dimen name="space_8">8dp</dimen>
+    <dimen name="space_12">12dp</dimen>
+    <dimen name="space_16">16dp</dimen>
+    <dimen name="space_24">24dp</dimen>
+    <dimen name="space_32">32dp</dimen>
+    <!-- 모양 단계 (명세 1.1) -->
+    <dimen name="shape_extra_small">4dp</dimen>
+    <dimen name="shape_small">8dp</dimen>
+    <dimen name="shape_medium">12dp</dimen>
+    <dimen name="shape_extra_large">28dp</dimen>
 </resources>

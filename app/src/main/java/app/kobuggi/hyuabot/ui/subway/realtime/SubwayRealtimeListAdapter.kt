@@ -73,7 +73,7 @@ class SubwayRealtimeListAdapter(
             val delimiter = value.indexOf('(')
             if (delimiter > 0) {
                 styled.setSpan(
-                    ForegroundColorSpan(context.getColor(R.color.calendar_sunday)),
+                    ForegroundColorSpan(context.getColor(R.color.list_weekday_sunday)),
                     0,
                     (delimiter - 1).coerceAtLeast(0),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

@@ -55,8 +55,8 @@
     <color name="calendar_today_fill">#0E4A84</color>
     <color name="calendar_selected_fill">#1A007AFF</color>
     <color name="calendar_event_text">#FFFFFF</color>
-    <color name="calendar_sunday">#FF3B30</color>
-    <color name="calendar_saturday">#007AFF</color>
+    <color name="calendar_sunday">#D60B00</color>
+    <color name="calendar_saturday">#0066D6</color>
     <color name="calendar_category_blue">#007AFF</color>
     <color name="calendar_category_orange">#FF9500</color>
     <color name="calendar_category_green">#34C759</color>
@@ -83,4 +83,54 @@
     <color name="inquiry_bubble_user">#0E4A84</color>
     <color name="inquiry_bubble_user_text">#FFFFFF</color>
     <color name="inquiry_bubble_admin">#F2F2F7</color>
+
+    <!-- M3 색 역할 (명세 2.1) -->
+    <color name="colorSurface">#F8F9FF</color>
+    <color name="colorSurfaceContainerLowest">#FFFFFF</color>
+    <color name="colorSurfaceContainerLow">#F2F3FA</color>
+    <color name="colorSurfaceContainer">#ECEEF4</color>
+    <color name="colorSurfaceContainerHigh">#E7E8EE</color>
+    <color name="colorSurfaceContainerHighest">#E1E2E8</color>
+    <color name="colorOnSurface">#191C20</color>
+    <color name="colorOnSurfaceVariant">#43474E</color>
+    <color name="colorOutline">#74777F</color>
+    <color name="colorOutlineVariant">#C3C6CF</color>
+    <color name="colorPrimary">#0E4A84</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorPrimaryContainer">#D5E3FF</color>
+    <color name="colorOnPrimaryContainer">#001C3A</color>
+    <color name="colorSecondaryContainer">#D6E3FF</color>
+    <color name="colorOnSecondaryContainer">#001B3E</color>
+    <color name="brandBar">#0E4A84</color>
+    <color name="onBrandBar">#FFFFFF</color>
+    <color name="onBrandBarVariant">#D6E3FF</color>
+    <!-- 오류 (명세 2.2) -->
+    <color name="colorError">#BA1A1A</color>
+    <color name="colorOnError">#FFFFFF</color>
+    <color name="colorErrorContainer">#FFDAD6</color>
+    <color name="colorOnErrorContainer">#410002</color>
+    <!-- 상태 (명세 2.3) -->
+    <color name="status_realtime_fg">#166534</color>
+    <color name="status_realtime_bg">#E8F5EC</color>
+    <color name="status_soon_fg">#C2410C</color>
+    <color name="status_soon_bg">#FFF1E6</color>
+    <color name="status_last_fg">#B42318</color>
+    <color name="status_last_bg">#FDECEA</color>
+    <color name="status_ended_fg">#43474E</color>
+    <color name="status_ended_bg">#E1E2E8</color>
+    <color name="status_delay_fg">#A15C00</color>
+    <color name="status_delay_bg">#FFF6E0</color>
+    <!-- 노선 점 (명세 2.4) -->
+    <color name="route_shuttle_dh">#E60012</color>
+    <color name="route_shuttle_dy">#F08100</color>
+    <color name="route_shuttle_dj">#7DB928</color>
+    <color name="route_shuttle_c">#0068B7</color>
+    <color name="route_bus_green">#33CC99</color>
+    <color name="route_bus_blue">#0068B7</color>
+    <color name="route_bus_red">#E60012</color>
+    <color name="route_subway_line4">#00A4E3</color>
+    <color name="route_subway_suin">#FABE00</color>
+    <color name="route_subway_seohae">#8FC21F</color>
+    <!-- 목록 일요일 (명세 2.4a, D8) -->
+    <color name="list_weekday_sunday">#FF3B30</color>
 </resources>
