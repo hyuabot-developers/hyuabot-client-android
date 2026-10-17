@@ -1,38 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.HYUabot" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Dark theme: inherits every item from Theme.HYUabot.Base and changes only the splash background. -->
+    <style name="Theme.HYUabot" parent="Theme.HYUabot.Base">
         <item name="android:windowSplashScreenBackground" tools:targetApi="s">@android:color/background_dark</item>
-        <item name="colorPrimary">@color/hanyang_blue</item>
-        <item name="colorPrimaryVariant">@color/hanyang_blue</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <item name="colorSecondary">@color/hanyang_green</item>
-        <item name="colorSecondaryVariant">@color/hanyang_green</item>
-        <item name="colorOnSecondary">@android:color/white</item>
-        <item name="android:colorBackground">@android:color/background_dark</item>
-        <item name="android:colorError">@color/hanyang_orange</item>
-        <item name="colorOnError">@color/hanyang_orange</item>
-        <item name="colorOnBackground">@color/hanyang_silver</item>
-        <item name="fontFamily">@font/godo</item>
-        <item name="android:fontFamily">@font/godo</item>
-        <!-- Bottom Navigation -->
-        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
-        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
-        <!-- Text Appearances -->
-        <item name="textAppearanceDisplayLarge">@style/TextAppearance.App.DisplayLarge</item>
-        <item name="textAppearanceDisplayMedium">@style/TextAppearance.App.DisplayMedium</item>
-        <item name="textAppearanceDisplaySmall">@style/TextAppearance.App.DisplaySmall</item>
-        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.App.HeadlineLarge</item>
-        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.App.HeadlineMedium</item>
-        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.App.HeadlineSmall</item>
-        <item name="textAppearanceTitleLarge">@style/TextAppearance.App.TitleLarge</item>
-        <item name="textAppearanceTitleMedium">@style/TextAppearance.App.TitleMedium</item>
-        <item name="textAppearanceTitleSmall">@style/TextAppearance.App.TitleSmall</item>
-        <item name="textAppearanceBodyLarge">@style/TextAppearance.App.BodyLarge</item>
-        <item name="textAppearanceBodyMedium">@style/TextAppearance.App.BodyMedium</item>
-        <item name="textAppearanceBodySmall">@style/TextAppearance.App.BodySmall</item>
-        <item name="textAppearanceLabelLarge">@style/TextAppearance.App.LabelLarge</item>
-        <item name="textAppearanceLabelMedium">@style/TextAppearance.App.LabelMedium</item>
-        <item name="textAppearanceLabelSmall">@style/TextAppearance.App.LabelSmall</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@mipmap/ic_launcher</item>
     </style>
     <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>

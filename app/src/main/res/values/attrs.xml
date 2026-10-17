@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 상단 파란 띠 (명세 2.1, D2). 모든 하단 탭 화면의 앱 바와 띠 위 탭에 쓴다. -->
+    <attr name="brandBar" format="color" />
+    <attr name="onBrandBar" format="color" />
+    <attr name="onBrandBarVariant" format="color" />
+</resources>
