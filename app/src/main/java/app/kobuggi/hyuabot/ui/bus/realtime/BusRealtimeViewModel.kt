@@ -34,11 +34,12 @@ class BusRealtimeViewModel @Inject constructor(
 ): ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _result = MutableLiveData<List<BusRealtimePageQuery.Bus>>()
-    val latestRealtimeUpdatedAt: LiveData<Instant?> = _result.map { buses ->
-        maxRealtimeUpdatedAt(buses.orEmpty().asSequence()
-            .flatMap { it.realtime.asSequence() }
-            .map { it.updatedAt.toInstant() }
-            .asIterable())
+    val sectionUpdatedAts = MutableLiveData<Map<String, Instant?>>(emptyMap())
+
+    fun reportSectionUpdatedAt(page: Int, sectionKey: String, at: Instant?) {
+        sectionUpdatedAts.value = sectionUpdatedAts.value.orEmpty().toMutableMap().apply {
+            put("$page:$sectionKey", at)
+        }
     }
     private val _notices = MutableLiveData<List<BusRealtimePageQuery.Notice1>>()
 

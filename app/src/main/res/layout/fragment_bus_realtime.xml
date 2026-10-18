@@ -77,6 +77,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <app.kobuggi.hyuabot.ui.common.FreshnessLabel
+            android:id="@+id/freshness_screen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:contentDescription="@string/bus_realtime_freshness_description" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bus_quick_settings_button"
             style="@style/Widget.Material3.Button"

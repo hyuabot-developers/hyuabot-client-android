@@ -53,6 +53,14 @@ class ShuttleRealtimeByTimeListAdapter(
                         item.time.minute.toString().padStart(2, '0')
                     )
                 }
+                binding.shuttleItem.contentDescription = listOf(
+                    binding.shuttleTypeText.text,
+                    binding.shuttleTimeText.text,
+                    *listOf(binding.lastRunBadge, binding.warningView)
+                        .filter { it.visibility == View.VISIBLE }
+                        .map { it.text }
+                        .toTypedArray()
+                ).filter { it.isNotBlank() }.joinToString(" ")
             }
 
             binding.shuttleItem.setOnTouchListener { _, event ->

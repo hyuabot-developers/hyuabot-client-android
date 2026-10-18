@@ -46,6 +46,21 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
             R.string.subway_tab_transfer
         )
         binding.viewPager.adapter = viewpagerAdapter
+        fun updateScreenFreshness(page: Int) {
+            val times = viewModel.sectionUpdatedAts.value.orEmpty().filterKeys { it.startsWith("$page:") }.values.toList()
+            binding.freshnessScreen.updatedAt = app.kobuggi.hyuabot.ui.common.screenReferenceTime(times)
+        }
+        binding.freshnessScreen.apply {
+            source = app.kobuggi.hyuabot.ui.common.FreshnessLabel.Source.REALTIME
+            analyticsDomain = "subway"
+            analyticsScreen = "subway_realtime"
+            delayAfter = java.time.Duration.ofMinutes(3)
+            updatedAt = null
+        }
+        viewModel.sectionUpdatedAts.observe(viewLifecycleOwner) { updateScreenFreshness(binding.viewPager.currentItem) }
+        binding.viewPager.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) = updateScreenFreshness(position)
+        })
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()

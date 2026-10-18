@@ -95,6 +95,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             }
             parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                 val firstBusList = busList.firstOrNull { bus -> bus.stop.seq == stopSeq && bus.route.seq == 216000061 }
+                parentViewModel.reportSectionUpdatedAt(1, "first", busSectionUpdatedAt(firstBusList))
                 if (firstBusList == null) {
                     busFirstAdapter.updateData(emptyList())
                     binding.noRealtimeDataFirst.visibility = View.VISIBLE
@@ -150,6 +151,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 val routes = busList.filter { route ->
                     route.stop.seq == stopSeq && (route.route.seq == 216000096 || route.route.seq == 216000026 || route.route.seq == 216000043)
                 }
+                parentViewModel.reportSectionUpdatedAt(1, "second", maxRealtimeUpdatedAt(routes.flatMap { route -> route.realtime.map { it.updatedAt.toInstant() } }))
                 val arrivalList = routes.flatMap { route ->
                     val secondaryTargetSeq = if (isRemote) SEOUL_SECOND_RETURN_STOP else currentSeoulTargetStopID()
                     route.arrival.map { arrival ->
@@ -187,12 +189,12 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 isNestedScrollingEnabled = false
                 itemAnimator = null
             }
-            headerThird.visibility = View.GONE
+            headerThirdContainer.visibility = View.GONE
             realtimeViewThird.visibility = View.GONE
             entireTimetableThird.visibility = View.GONE
             noRealtimeDataThird.visibility = View.GONE
             buttonLayoutThird.visibility = View.GONE
-            headerFourth.visibility = View.GONE
+            headerFourthContainer.visibility = View.GONE
             realtimeViewFourth.visibility = View.GONE
             entireTimetableFourth.visibility = View.GONE
             noRealtimeDataFourth.visibility = View.GONE
@@ -204,6 +206,8 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
+        parentViewModel.reportSectionUpdatedAt(1, "third", null)
+        parentViewModel.reportSectionUpdatedAt(1, "fourth", null)
         return binding.root.also { disableViewStateSaving(it) }
     }
 

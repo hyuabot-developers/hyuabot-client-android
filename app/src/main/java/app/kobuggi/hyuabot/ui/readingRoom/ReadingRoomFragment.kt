@@ -96,6 +96,10 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.readingRoomUpdateTime.apply {
+            analyticsDomain = "readingRoom"
+            analyticsScreen = app.kobuggi.hyuabot.util.AnalyticsScreen.READING_ROOM.id
+        }
         askNotificationPermission()
         viewModel.apply {
             campusID.observe(viewLifecycleOwner) {

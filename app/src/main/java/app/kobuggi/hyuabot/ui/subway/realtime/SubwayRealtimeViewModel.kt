@@ -19,11 +19,19 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: ApolloClient): ViewModel() {
+    val sectionUpdatedAts = MutableLiveData<Map<String, Instant?>>(emptyMap())
+
+    fun reportSectionUpdatedAt(page: Int, sectionKey: String, at: Instant?) {
+        val key = "$page:$sectionKey"
+        sectionUpdatedAts.value = sectionUpdatedAts.value.orEmpty() + (key to at)
+    }
+
     private val _isLoading = MutableLiveData(false)
     private val _campusYellow = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _campusBlue = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
@@ -60,6 +68,16 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     ) { campusYellow, campusBlue, oidoYellow, oidoBlue, chojiSeohae ->
         SubwayRealtimeCombinedData(campusYellow, campusBlue, oidoYellow, oidoBlue, chojiSeohae)
     }.onStart { emit(SubwayRealtimeCombinedData(null, null, null, null, null)) }.asLiveData()
+    val latestRealtimeUpdatedAt get() = combine(
+        campusYellow.asFlow(),
+        campusBlue.asFlow(),
+        oidoYellow.asFlow(),
+        oidoBlue.asFlow(),
+        chojiSeohae.asFlow()
+    ) { campusYellow, campusBlue, oidoYellow, oidoBlue, chojiSeohae ->
+        maxRealtimeUpdatedAt(listOf(campusYellow, campusBlue, oidoYellow, oidoBlue, chojiSeohae)
+            .flatMap { subway -> subway?.realtime?.map { it.updatedAt.toInstant() } ?: emptyList() })
+    }.onStart { emit(null as Instant?) }.asLiveData()
 
     fun fetchData() {
         val localDate = LocalDate.now()

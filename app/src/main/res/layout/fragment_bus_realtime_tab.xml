@@ -42,21 +42,9 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
-                    <TextView
-                        android:id="@+id/header_first_title"
-                        android:visibility="gone"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="56dp"
-                        android:gravity="center"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp"
-                        android:textFontWeight="700"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        android:layout_marginEnd="56dp">
+                    </app.kobuggi.hyuabot.ui.common.SectionHeader>
                     <ImageButton
                         android:id="@+id/header_first_stop_btn"
                         android:layout_width="48dp"
@@ -129,21 +117,9 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
-                    <TextView
-                        android:id="@+id/header_second_title"
-                        android:visibility="gone"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="56dp"
-                        android:gravity="center"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp"
-                        android:textFontWeight="700"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        android:layout_marginEnd="56dp">
+                    </app.kobuggi.hyuabot.ui.common.SectionHeader>
                     <ImageButton
                         android:id="@+id/header_second_stop_btn"
                         android:layout_width="48dp"
@@ -216,21 +192,9 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
-                    <TextView
-                        android:id="@+id/header_third_title"
-                        android:visibility="gone"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="56dp"
-                        android:gravity="center"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp"
-                        android:textFontWeight="700"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        android:layout_marginEnd="56dp">
+                    </app.kobuggi.hyuabot.ui.common.SectionHeader>
                     <ImageButton
                         android:id="@+id/header_third_stop_btn"
                         android:layout_width="48dp"
@@ -303,21 +267,9 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
-                    <TextView
-                        android:id="@+id/header_fourth_title"
-                        android:visibility="gone"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="56dp"
-                        android:gravity="center"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp"
-                        android:textFontWeight="700"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        android:layout_marginEnd="56dp">
+                    </app.kobuggi.hyuabot.ui.common.SectionHeader>
                     <ImageButton
                         android:id="@+id/header_fourth_stop_btn"
                         android:layout_width="48dp"

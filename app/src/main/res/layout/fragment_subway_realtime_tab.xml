@@ -24,18 +24,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="75dp">
-                <app.kobuggi.hyuabot.ui.common.SectionHeader
-                    android:id="@+id/header_up"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/header_up_container"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
+                    <app.kobuggi.hyuabot.ui.common.SectionHeader
+                        android:id="@+id/header_up"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+                    </app.kobuggi.hyuabot.ui.common.SectionHeader>
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_up" />
+                    app:layout_constraintTop_toBottomOf="@id/header_up_container" />
                 <TextView
                     android:id="@+id/no_realtime_data_up"
                     android:layout_width="match_parent"
@@ -55,18 +61,24 @@
                     android:text="@string/shuttle_footer_entire_timetable"
                     app:layout_constraintTop_toBottomOf="@id/no_realtime_data_up"
                     style="@style/Widget.App.PlainFooterButton" />
-                <app.kobuggi.hyuabot.ui.common.SectionHeader
-                    android:id="@+id/header_down"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/header_down_container"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_up" />
+                    app:layout_constraintTop_toBottomOf="@id/entire_timetable_up">
+                    <app.kobuggi.hyuabot.ui.common.SectionHeader
+                        android:id="@+id/header_down"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+                    </app.kobuggi.hyuabot.ui.common.SectionHeader>
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/realtime_view_down"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_down" />
+                    app:layout_constraintTop_toBottomOf="@id/header_down_container" />
                 <TextView
                     android:id="@+id/no_realtime_data_down"
                     android:layout_width="match_parent"

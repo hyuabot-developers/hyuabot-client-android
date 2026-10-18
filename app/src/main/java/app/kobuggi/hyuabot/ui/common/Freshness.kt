@@ -6,7 +6,21 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-/** Android-free freshness rules shared by the display component and its unit tests. */
+/** Localized wording for freshness labels. Pure Kotlin; the app supplies resource-backed strings. */
+interface FreshnessText {
+    fun scheduleBasis(): String
+    fun hourly(): String
+    fun observed(time: String): String
+    fun delayed(minutes: Long): String
+    fun readingRoomUpdated(minutes: Long): String
+    fun secondsUpdated(seconds: Long): String
+    fun minutesUpdated(minutes: Long): String
+    fun spokenDelayed(minutes: Long): String
+    fun spokenUnderMinute(): String
+    fun spokenMinutes(minutes: Long): String
+    fun minuteUnit(minutes: Long): String
+}
+
 object Freshness {
     enum class Category { SCHEDULE, REALTIME, READING_ROOM, HOURLY, OBSERVED }
 
@@ -15,13 +29,20 @@ object Freshness {
     fun elapsed(now: Instant, updatedAt: Instant): Duration =
         Duration.between(updatedAt, now).coerceAtLeast(Duration.ZERO)
 
-    fun display(category: Category, updatedAt: Instant?, now: Instant, timeZone: ZoneId, staleAfterOverride: Duration? = null): Display {
+    fun display(
+        category: Category,
+        updatedAt: Instant?,
+        now: Instant,
+        timeZone: ZoneId,
+        words: FreshnessText,
+        staleAfterOverride: Duration? = null,
+    ): Display {
         if (category == Category.SCHEDULE || (category == Category.REALTIME && updatedAt == null)) {
-            return Display("시간표 기준", "시간표 기준", false)
+            return Display(words.scheduleBasis(), words.scheduleBasis(), false)
         }
-        if (category == Category.HOURLY) return Display("매시 갱신", "매시 갱신", false)
+        if (category == Category.HOURLY) return Display(words.hourly(), words.hourly(), false)
         if (category == Category.OBSERVED && updatedAt != null) {
-            val observed = updatedAt.atZone(timeZone).format(CLOCK) + " 관측"
+            val observed = words.observed(updatedAt.atZone(timeZone).format(CLOCK))
             return Display(observed, observed, false)
         }
         if (updatedAt == null) return Display("", "", false)
@@ -32,23 +53,23 @@ object Freshness {
         val minutes = age.toMinutes()
         val stale = age > staleAfter
         val text = when {
-            stale -> "정보 지연 · ${minutes}분 전"
-            category == Category.READING_ROOM -> "${minutes}분 전 갱신"
-            age.seconds < 60 -> "${age.seconds}초 전 갱신"
-            else -> "${minutes}분 전 갱신"
+            stale -> words.delayed(minutes)
+            category == Category.READING_ROOM -> words.readingRoomUpdated(minutes)
+            age.seconds < 60 -> words.secondsUpdated(age.seconds)
+            else -> words.minutesUpdated(minutes)
         }
         val spoken = when {
-            stale -> "정보 지연, ${minutes}분 전"
-            minutes == 0L -> "1분 미만"
-            else -> "${minutes}분 전"
+            stale -> words.spokenDelayed(minutes)
+            minutes == 0L -> words.spokenUnderMinute()
+            else -> words.spokenMinutes(minutes)
         }
         return Display(text, spoken, stale)
     }
 
-    fun timeText(minutes: Long): String = when {
-        minutes < 0 -> "—"
+    fun timeText(minutes: Long, words: FreshnessText): String = when {
+        minutes < 0 -> "\u2014"
         minutes >= 60 -> String.format(Locale.ROOT, "%02d:%02d", minutes / 60, minutes % 60)
-        else -> "${minutes}분"
+        else -> words.minuteUnit(minutes)
     }
 
     private val CLOCK = DateTimeFormatter.ofPattern("HH:mm", Locale.ROOT)

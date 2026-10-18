@@ -787,4 +787,17 @@
     <string name="bus_first_last_up">상행: 첫차 %1$s / 막차 %2$s</string>
     <string name="bus_first_last_down">하행: 첫차 %1$s / 막차 %2$s</string>
     <string name="bus_stop_first_last_title">노선별 첫차 &amp; 막차</string>
+    <!-- Freshness labels (#124) -->
+    <string name="bus_realtime_freshness_description">버스 화면 정보 갱신 시각</string>
+    <string name="freshness_schedule_basis">시간표 기준</string>
+    <string name="freshness_hourly">매시 갱신</string>
+    <string name="freshness_observed">%s 관측</string>
+    <string name="freshness_delayed">정보 지연 · %d분 전</string>
+    <string name="freshness_reading_room_updated">%d분 전 갱신</string>
+    <string name="freshness_seconds_updated">%d초 전 갱신</string>
+    <string name="freshness_minutes_updated">%d분 전 갱신</string>
+    <string name="freshness_spoken_delayed">정보 지연, %d분 전</string>
+    <string name="freshness_spoken_under_minute">1분 미만</string>
+    <string name="freshness_spoken_minutes">%d분 전</string>
+    <string name="freshness_minute_unit">%d분</string>
 </resources>

@@ -61,6 +61,11 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
                 parentViewModel.fetchData()
             }
         }
+        parentViewModel.campusBlue.observe(viewLifecycleOwner) { subway ->
+            val updatedAt = subwaySectionUpdatedAt(subway)
+            parentViewModel.reportSectionUpdatedAt(0, "up", updatedAt)
+            parentViewModel.reportSectionUpdatedAt(0, "down", updatedAt)
+        }
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }

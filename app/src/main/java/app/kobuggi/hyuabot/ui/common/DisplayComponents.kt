@@ -1,6 +1,7 @@
 package app.kobuggi.hyuabot.ui.common
 
 import android.content.Context
+import android.util.AttributeSet
 import android.graphics.Typeface
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -14,13 +15,16 @@ import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.setPadding
+import androidx.core.widget.addTextChangedListener
+import app.kobuggi.hyuabot.R
 import java.time.Instant
 import java.time.ZoneId
 
 /** Shared status presentation. The badge itself is decorative; put [label] in the row's
  * content description so assistive technology reads the status in context. */
-class StatusBadge(context: Context) : AppCompatTextView(context) {
+class StatusBadge @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : AppCompatTextView(context, attrs) {
     enum class Kind { REALTIME, SCHEDULED, APPROACHING, LAST_RUN, ENDED, CLOSED, STALE }
 
     init {
@@ -69,11 +73,14 @@ class StatusBadge(context: Context) : AppCompatTextView(context) {
 }
 
 /** A timestamp label that only schedules its one-second ticker while attached to a visible view. */
-class FreshnessLabel(context: Context) : AppCompatTextView(context) {
+class FreshnessLabel @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : AppCompatTextView(context, attrs) {
     enum class Source { SCHEDULE, REALTIME, READING_ROOM, HOURLY, OBSERVED }
 
     var source: Source = Source.SCHEDULE
         set(value) { field = value; render() }
+    var analyticsDomain: String? = null
+    var onSpokenChanged: ((CharSequence) -> Unit)? = null
+    var analyticsScreen: String? = null
     var updatedAt: Instant? = null
         set(value) { field = value; render() }
     var delayAfter: java.time.Duration = java.time.Duration.ofMinutes(3)
@@ -82,14 +89,14 @@ class FreshnessLabel(context: Context) : AppCompatTextView(context) {
     private val ticker = object : Runnable {
         override fun run() {
             render()
-            if (isAttachedToWindow && windowVisibility == View.VISIBLE) postDelayed(this, 1_000L)
+            if (isEffectivelyVisible()) postDelayed(this, 1_000L)
         }
     }
 
     init {
         textSize = 12f
-        // TODO(issue-124-font): Switch to Pretendard Medium per D3; Phase A keeps Godo for now.
-        setTypeface(typeface, Typeface.NORMAL)
+        // Pretendard Medium + tnum for freshness labels only (spec D3).
+        setTypeface(ResourcesCompat.getFont(context, R.font.pretendard_medium), Typeface.NORMAL)
         fontFeatureSettings = "tnum"
         accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_NONE
     }
@@ -98,7 +105,7 @@ class FreshnessLabel(context: Context) : AppCompatTextView(context) {
         super.onAttachedToWindow()
         removeCallbacks(ticker)
         render()
-        if (windowVisibility == View.VISIBLE) postDelayed(ticker, 1_000L)
+        if (isEffectivelyVisible()) postDelayed(ticker, 1_000L)
     }
 
     override fun onDetachedFromWindow() {
@@ -109,8 +116,16 @@ class FreshnessLabel(context: Context) : AppCompatTextView(context) {
     override fun onWindowVisibilityChanged(visibility: Int) {
         super.onWindowVisibilityChanged(visibility)
         removeCallbacks(ticker)
-        if (visibility == View.VISIBLE && isAttachedToWindow) post(ticker)
+        if (visibility == View.VISIBLE && isEffectivelyVisible()) post(ticker)
     }
+
+    override fun onVisibilityAggregated(isVisible: Boolean) {
+        super.onVisibilityAggregated(isVisible)
+        removeCallbacks(ticker)
+        if (isVisible && isEffectivelyVisible()) post(ticker)
+    }
+
+    private fun isEffectivelyVisible(): Boolean = isAttachedToWindow && isShown && windowVisibility == View.VISIBLE
 
     private fun render() {
         val category = when (source) {
@@ -120,10 +135,23 @@ class FreshnessLabel(context: Context) : AppCompatTextView(context) {
             Source.HOURLY -> Freshness.Category.HOURLY
             Source.OBSERVED -> Freshness.Category.OBSERVED
         }
-        val display = Freshness.display(category, updatedAt, Instant.now(), ZoneId.systemDefault(), delayAfter)
+        val display = Freshness.display(category, updatedAt, Instant.now(), ZoneId.systemDefault(), ResourceFreshnessText(context), staleAfterOverride = delayAfter)
         val stale = display.stale
+        if (stale) {
+            val domain = analyticsDomain ?: when (source) {
+                Source.READING_ROOM -> "readingRoom"
+                else -> null
+            }
+            val screen = analyticsScreen ?: if (source == Source.READING_ROOM) "reading_room" else null
+            if (domain != null && screen != null) {
+                app.kobuggi.hyuabot.util.AnalyticsManager.logFreshnessStaleShown(domain, screen)
+            }
+        }
         text = display.text
-        if (contentDescription != display.spoken) contentDescription = display.spoken
+        if (contentDescription != display.spoken) {
+            contentDescription = display.spoken
+            onSpokenChanged?.invoke(display.spoken)
+        }
         val dark = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         val color = when {
             stale && dark -> 0xFFFFB340.toInt()
@@ -148,7 +176,7 @@ class FreshnessLabel(context: Context) : AppCompatTextView(context) {
 }
 
 /** Right-aligned fixed-width time text for departure rows. */
-class TimeText(context: Context) : AppCompatTextView(context) {
+class TimeText @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : AppCompatTextView(context, attrs) {
     init {
         textSize = 22f
         setTypeface(typeface, Typeface.BOLD)
@@ -159,9 +187,9 @@ class TimeText(context: Context) : AppCompatTextView(context) {
 
     fun show(minutes: Long, stale: Boolean = false, approaching: Boolean = false) {
         text = when {
-            minutes >= 60 -> Freshness.timeText(minutes)
-            minutes < 0 -> Freshness.timeText(minutes)
-            else -> SpannableString(Freshness.timeText(minutes)).apply {
+            minutes >= 60 -> Freshness.timeText(minutes, ResourceFreshnessText(context))
+            minutes < 0 -> Freshness.timeText(minutes, ResourceFreshnessText(context))
+            else -> SpannableString(Freshness.timeText(minutes, ResourceFreshnessText(context))).apply {
                 setSpan(RelativeSizeSpan(.55f), length - 1, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
         }
@@ -183,11 +211,13 @@ class TimeText(context: Context) : AppCompatTextView(context) {
 }
 
 /** Reusable section heading with a consistent title and optional trailing action. */
-class SectionHeader(context: Context) : LinearLayout(context) {
+class SectionHeader @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : LinearLayout(context, attrs) {
     val titleView = AppCompatTextView(context)
     val actionView = AppCompatTextView(context)
+    private var freshnessLabel: FreshnessLabel? = null
 
     init {
+        titleView.addTextChangedListener { refreshDescription() }
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         minimumHeight = (40 * resources.displayMetrics.density).toInt()
@@ -225,8 +255,26 @@ class SectionHeader(context: Context) : LinearLayout(context) {
     fun show(title: CharSequence, action: CharSequence? = null) {
         titleView.text = title
         actionView.text = action ?: ""
-        contentDescription = if (action.isNullOrEmpty()) title else "$title, $action"
         actionView.visibility = if (action.isNullOrEmpty()) View.GONE else View.VISIBLE
+        refreshDescription()
+    }
+
+    override fun onFinishInflate() {
+        super.onFinishInflate()
+        freshnessLabel = (0 until childCount).map { getChildAt(it) }.filterIsInstance<FreshnessLabel>().firstOrNull()
+        freshnessLabel?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        freshnessLabel?.onSpokenChanged = { refreshDescription() }
+        refreshDescription()
+    }
+
+    /** One focus for the whole header: title, action, and the freshness label read together (spec 4.7). */
+    private fun refreshDescription() {
+        val parts = listOfNotNull(
+            titleView.text.takeIf { it.isNotEmpty() },
+            actionView.text.takeIf { actionView.visibility == View.VISIBLE && it.isNotEmpty() },
+            freshnessLabel?.takeIf { it.visibility == View.VISIBLE }?.contentDescription?.takeIf { it.isNotEmpty() },
+        )
+        contentDescription = parts.joinToString(", ")
     }
 
     private fun resolveColor(attribute: Int): Int {
@@ -267,4 +315,20 @@ private class StatusMark(
     override fun getOpacity(): Int = android.graphics.PixelFormat.TRANSLUCENT
     override fun getIntrinsicWidth(): Int = size
     override fun getIntrinsicHeight(): Int = size
+}
+
+/** Freshness wording from the app's string resources (Korean default, English in values-en). */
+private class ResourceFreshnessText(private val context: Context) : FreshnessText {
+    private fun str(id: Int, vararg args: Any): String = context.getString(id, *args)
+    override fun scheduleBasis() = str(R.string.freshness_schedule_basis)
+    override fun hourly() = str(R.string.freshness_hourly)
+    override fun observed(time: String) = str(R.string.freshness_observed, time)
+    override fun delayed(minutes: Long) = str(R.string.freshness_delayed, minutes)
+    override fun readingRoomUpdated(minutes: Long) = str(R.string.freshness_reading_room_updated, minutes)
+    override fun secondsUpdated(seconds: Long) = str(R.string.freshness_seconds_updated, seconds)
+    override fun minutesUpdated(minutes: Long) = str(R.string.freshness_minutes_updated, minutes)
+    override fun spokenDelayed(minutes: Long) = str(R.string.freshness_spoken_delayed, minutes)
+    override fun spokenUnderMinute() = str(R.string.freshness_spoken_under_minute)
+    override fun spokenMinutes(minutes: Long) = str(R.string.freshness_spoken_minutes, minutes)
+    override fun minuteUnit(minutes: Long) = str(R.string.freshness_minute_unit, minutes)
 }

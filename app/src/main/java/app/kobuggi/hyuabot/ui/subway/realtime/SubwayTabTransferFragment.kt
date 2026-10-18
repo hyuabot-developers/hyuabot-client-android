@@ -49,6 +49,11 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
                 parentViewModel.fetchData()
             }
         }
+        parentViewModel.combinedData.observe(viewLifecycleOwner) { data ->
+            if (data == null) return@observe
+            parentViewModel.reportSectionUpdatedAt(2, "up", maxRealtimeUpdatedAt(listOf(data.campusYellow, data.oidoYellow, data.campusBlue).map(::subwaySectionUpdatedAt)))
+            parentViewModel.reportSectionUpdatedAt(2, "down", maxRealtimeUpdatedAt(listOf(data.campusBlue, data.campusYellow, data.chojiSeohae).map(::subwaySectionUpdatedAt)))
+        }
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }

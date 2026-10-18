@@ -771,4 +771,17 @@
     <string name="bus_alternative_stop_info">Stop Location</string>
     <string name="bus_alternative_shuttle_stop">Shuttle Bus Stop</string>
     <string name="bus_alternative_bus_stop">Bus Boarding Stop</string>
+    <!-- Freshness labels (#124) -->
+    <string name="bus_realtime_freshness_description">Bus screen data freshness</string>
+    <string name="freshness_schedule_basis">Based on timetable</string>
+    <string name="freshness_hourly">Updated hourly</string>
+    <string name="freshness_observed">Observed %s</string>
+    <string name="freshness_delayed">Delayed · %d min ago</string>
+    <string name="freshness_reading_room_updated">Updated %d min ago</string>
+    <string name="freshness_seconds_updated">Updated %d sec ago</string>
+    <string name="freshness_minutes_updated">Updated %d min ago</string>
+    <string name="freshness_spoken_delayed">Delayed, %d min ago</string>
+    <string name="freshness_spoken_under_minute">Less than 1 min</string>
+    <string name="freshness_spoken_minutes">%d min ago</string>
+    <string name="freshness_minute_unit">%d min</string>
 </resources>

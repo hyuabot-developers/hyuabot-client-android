@@ -16,6 +16,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentBusRealtimeTabBinding
 import app.kobuggi.hyuabot.util.NavControllerExtension.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.Duration
 import java.time.LocalTime
 import javax.inject.Inject
 import app.kobuggi.hyuabot.util.disableViewStateSaving
@@ -66,6 +67,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                         val firstBusList = busList.firstOrNull { bus -> bus.stop.seq == 216000379 && bus.route.seq == 216000068 }
+                        parentViewModel.reportSectionUpdatedAt(0, "first", busSectionUpdatedAt(firstBusList))
                         if (firstBusList == null) {
                             busFirstAdapter.updateData(emptyList())
                             binding.noRealtimeDataFirst.visibility = View.VISIBLE
@@ -106,6 +108,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                         val firstBusList = busList.firstOrNull { bus -> bus.stop.seq == 216000381 && bus.route.seq == 216000068 }
+                        parentViewModel.reportSectionUpdatedAt(0, "first", busSectionUpdatedAt(firstBusList))
                         if (firstBusList == null) {
                             busFirstAdapter.updateData(emptyList())
                             binding.noRealtimeDataFirst.visibility = View.VISIBLE
@@ -146,6 +149,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                     }
                     parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                         val firstBusList = busList.firstOrNull { bus -> bus.stop.seq == 216000383 && bus.route.seq == 216000068 }
+                        parentViewModel.reportSectionUpdatedAt(0, "first", busSectionUpdatedAt(firstBusList))
                         if (firstBusList == null) {
                             busFirstAdapter.updateData(emptyList())
                             binding.noRealtimeDataFirst.visibility = View.VISIBLE
@@ -169,6 +173,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
             if (busList == null) return@observe
             val currentTime = LocalTime.now()
             val secondBusList = busList.firstOrNull { bus -> bus.stop.seq == 216000138 && bus.route.seq == 216000068 }
+            parentViewModel.reportSectionUpdatedAt(0, "second", busSectionUpdatedAt(secondBusList))
             if (secondBusList == null) {
                 busSecondAdapter.updateData(emptyList())
                 binding.noRealtimeDataSecond.visibility = View.VISIBLE
@@ -231,12 +236,12 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(direction)
                 }
             }
-            headerThird.visibility = View.GONE
+            headerThirdContainer.visibility = View.GONE
             realtimeViewThird.visibility = View.GONE
             entireTimetableThird.visibility = View.GONE
             noRealtimeDataThird.visibility = View.GONE
             buttonLayoutThird.visibility = View.GONE
-            headerFourth.visibility = View.GONE
+            headerFourthContainer.visibility = View.GONE
             realtimeViewFourth.visibility = View.GONE
             entireTimetableFourth.visibility = View.GONE
             noRealtimeDataFourth.visibility = View.GONE
@@ -248,6 +253,8 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
+        parentViewModel.reportSectionUpdatedAt(0, "third", null)
+        parentViewModel.reportSectionUpdatedAt(0, "fourth", null)
         return binding.root.also { disableViewStateSaving(it) }
     }
 

@@ -16,6 +16,7 @@ class FreshnessTest {
         now.minusSeconds(secondsAgo),
         now,
         utc,
+        Ko,
     )
 
     @Test fun formats59And60Seconds() {
@@ -31,21 +32,36 @@ class FreshnessTest {
     }
 
     @Test fun negativeElapsedIsClampedToZero() {
-        val result = Freshness.display(Freshness.Category.REALTIME, now.plusSeconds(15), now, utc)
+        val result = Freshness.display(Freshness.Category.REALTIME, now.plusSeconds(15), now, utc, Ko)
         assertEquals("0초 전 갱신", result.text)
         assertFalse(result.stale)
     }
 
     @Test fun readingRoomStalesOnlyAfterFiveMinutes() {
         fun label(secondsAgo: Long) = Freshness.display(
-            Freshness.Category.READING_ROOM, now.minusSeconds(secondsAgo), now, utc,
+            Freshness.Category.READING_ROOM, now.minusSeconds(secondsAgo), now, utc, Ko,
         )
         assertFalse(label(300).stale)
         assertEquals("정보 지연 · 5분 전", label(301).text)
     }
 
     @Test fun timeTextSwitchesAtSixtyMinutes() {
-        assertEquals("59분", Freshness.timeText(59))
-        assertEquals("01:00", Freshness.timeText(60))
+        assertEquals("59분", Freshness.timeText(59, Ko))
+        assertEquals("01:00", Freshness.timeText(60, Ko))
     }
+}
+
+/** Korean wording matching values/strings.xml, so the assertions keep checking the shipped text. */
+private object Ko : FreshnessText {
+    override fun scheduleBasis() = "시간표 기준"
+    override fun hourly() = "매시 갱신"
+    override fun observed(time: String) = "$time 관측"
+    override fun delayed(minutes: Long) = "정보 지연 · ${minutes}분 전"
+    override fun readingRoomUpdated(minutes: Long) = "${minutes}분 전 갱신"
+    override fun secondsUpdated(seconds: Long) = "${seconds}초 전 갱신"
+    override fun minutesUpdated(minutes: Long) = "${minutes}분 전 갱신"
+    override fun spokenDelayed(minutes: Long) = "정보 지연, ${minutes}분 전"
+    override fun spokenUnderMinute() = "1분 미만"
+    override fun spokenMinutes(minutes: Long) = "${minutes}분 전"
+    override fun minuteUnit(minutes: Long) = "${minutes}분"
 }
