@@ -168,7 +168,6 @@ enum class AnalyticsItem(val id: String) {
 object AnalyticsManager {
     private val analytics: FirebaseAnalytics by lazy { Firebase.analytics }
     private val collectionGate = AnalyticsCollectionGate()
-    private val freshnessStaleGuard = FreshnessStaleSessionGuard()
 
     /**
      * Applies the user's collection preference and flushes events that arrived
@@ -215,7 +214,6 @@ object AnalyticsManager {
     }
 
     fun logFreshnessStaleShown(domain: String, screen: String) {
-        if (!freshnessStaleGuard.shouldLog(domain)) return
         collectionGate.runWhenEnabled {
             analytics.logEvent("freshness_stale_shown") {
                 param("domain", domain)
@@ -223,14 +221,6 @@ object AnalyticsManager {
             }
         }
     }
-}
-
-/** Tracks freshness domains already reported during this process. */
-internal class FreshnessStaleSessionGuard {
-    private val reportedDomains = mutableSetOf<String>()
-
-    @Synchronized
-    fun shouldLog(domain: String): Boolean = reportedDomains.add(domain)
 }
 
 internal fun selectionParameters(

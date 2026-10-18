@@ -46,6 +46,8 @@ import app.kobuggi.hyuabot.util.disableViewStateSaving
 
 @AndroidEntryPoint
 class BusRealtimeFragment @Inject constructor() : Fragment() {
+    private var pageCallback: ViewPager2.OnPageChangeCallback? = null
+    private var noticeCallback: ViewPager2.OnPageChangeCallback? = null
     private val binding by lazy { FragmentBusRealtimeBinding.inflate(layoutInflater) }
     private val viewModel: BusRealtimeViewModel by viewModels()
 
@@ -128,9 +130,11 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             updatedAt = null
         }
         viewModel.sectionUpdatedAts.observe(viewLifecycleOwner) { updateScreenFreshness(binding.viewPager.currentItem) }
-        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.freshnessScreen.spokenPrefix = getString(R.string.freshness_context_bus)
+        pageCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) = updateScreenFreshness(position)
-        })
+        }
+        binding.viewPager.registerOnPageChangeCallback(pageCallback!!)
         binding.busQuickSettingsButton.setOnClickListener { openQuickSettings() }
         childFragmentManager.setFragmentResultListener(
             BusQuickSettingsDialog.REQUEST_KEY,
@@ -157,7 +161,7 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
             }
         }
         binding.noticeViewPager.adapter = noticeAdapter
-        binding.noticeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        noticeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
                 if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
                     manuallyScrolled = true
@@ -167,7 +171,8 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
                     currentPosition = binding.noticeViewPager.currentItem
                 }
             }
-        })
+        }
+        binding.noticeViewPager.registerOnPageChangeCallback(noticeCallback!!)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
@@ -357,6 +362,10 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
 
     override fun onDestroyView() {
         stopNoticeAutoScroll()
+        pageCallback?.let { binding.viewPager.unregisterOnPageChangeCallback(it) }
+        noticeCallback?.let { binding.noticeViewPager.unregisterOnPageChangeCallback(it) }
+        pageCallback = null
+        noticeCallback = null
         super.onDestroyView()
         childFragmentManager.fragments.toList().forEach {
             childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()

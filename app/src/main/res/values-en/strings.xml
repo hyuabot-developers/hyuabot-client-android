@@ -784,4 +784,6 @@
     <string name="freshness_spoken_under_minute">Less than 1 min</string>
     <string name="freshness_spoken_minutes">%d min ago</string>
     <string name="freshness_minute_unit">%d min</string>
+    <string name="freshness_context_bus">Bus arrival info</string>
+    <string name="freshness_context_subway">Subway arrival info</string>
 </resources>

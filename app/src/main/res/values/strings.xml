@@ -800,4 +800,6 @@
     <string name="freshness_spoken_under_minute">1분 미만</string>
     <string name="freshness_spoken_minutes">%d분 전</string>
     <string name="freshness_minute_unit">%d분</string>
+    <string name="freshness_context_bus">버스 도착 정보</string>
+    <string name="freshness_context_subway">지하철 도착 정보</string>
 </resources>

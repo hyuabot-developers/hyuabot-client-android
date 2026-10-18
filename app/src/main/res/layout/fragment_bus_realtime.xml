@@ -69,7 +69,7 @@
         android:id="@+id/bus_action_bar"
         android:layout_width="match_parent"
         android:layout_height="54dp"
-        android:background="@color/background"
+        android:background="@color/bottom_navigation_background"
         android:gravity="center_vertical|end"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
@@ -79,12 +79,16 @@
 
         <app.kobuggi.hyuabot.ui.common.FreshnessLabel
             android:id="@+id/freshness_screen"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
             android:contentDescription="@string/bus_realtime_freshness_description" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bus_quick_settings_button"

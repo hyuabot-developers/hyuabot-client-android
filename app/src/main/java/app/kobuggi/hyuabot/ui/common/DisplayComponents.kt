@@ -80,6 +80,9 @@ class FreshnessLabel @JvmOverloads constructor(context: Context, attrs: Attribut
         set(value) { field = value; render() }
     var analyticsDomain: String? = null
     var onSpokenChanged: ((CharSequence) -> Unit)? = null
+    /** Screen name read before the freshness text, e.g. the bus or subway screen title. */
+    var spokenPrefix: CharSequence? = null
+    private var wasStale = false
     var analyticsScreen: String? = null
     var updatedAt: Instant? = null
         set(value) { field = value; render() }
@@ -136,7 +139,8 @@ class FreshnessLabel @JvmOverloads constructor(context: Context, attrs: Attribut
         }
         val display = Freshness.display(category, updatedAt, Instant.now(), ZoneId.systemDefault(), ResourceFreshnessText(context), staleAfterOverride = delayAfter)
         val stale = display.stale
-        if (stale) {
+        // Once per fresh -> stale transition for this label (one label per screen view).
+        if (stale && !wasStale) {
             val domain = analyticsDomain ?: when (source) {
                 Source.READING_ROOM -> "readingRoom"
                 else -> null
@@ -146,10 +150,12 @@ class FreshnessLabel @JvmOverloads constructor(context: Context, attrs: Attribut
                 app.kobuggi.hyuabot.util.AnalyticsManager.logFreshnessStaleShown(domain, screen)
             }
         }
+        wasStale = stale
         text = display.text
-        if (contentDescription != display.spoken) {
-            contentDescription = display.spoken
-            onSpokenChanged?.invoke(display.spoken)
+        val spoken = spokenPrefix?.let { "$it, ${display.spoken}" } ?: display.spoken
+        if (contentDescription != spoken) {
+            contentDescription = spoken
+            onSpokenChanged?.invoke(spoken)
         }
         val dark = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         val color = when {
