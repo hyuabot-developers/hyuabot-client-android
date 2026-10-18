@@ -68,16 +68,6 @@ class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: Apol
     ) { campusYellow, campusBlue, oidoYellow, oidoBlue, chojiSeohae ->
         SubwayRealtimeCombinedData(campusYellow, campusBlue, oidoYellow, oidoBlue, chojiSeohae)
     }.onStart { emit(SubwayRealtimeCombinedData(null, null, null, null, null)) }.asLiveData()
-    val latestRealtimeUpdatedAt get() = combine(
-        campusYellow.asFlow(),
-        campusBlue.asFlow(),
-        oidoYellow.asFlow(),
-        oidoBlue.asFlow(),
-        chojiSeohae.asFlow()
-    ) { campusYellow, campusBlue, oidoYellow, oidoBlue, chojiSeohae ->
-        maxRealtimeUpdatedAt(listOf(campusYellow, campusBlue, oidoYellow, oidoBlue, chojiSeohae)
-            .flatMap { subway -> subway?.realtime?.map { it.updatedAt.toInstant() } ?: emptyList() })
-    }.onStart { emit(null as Instant?) }.asLiveData()
 
     fun fetchData() {
         val localDate = LocalDate.now()

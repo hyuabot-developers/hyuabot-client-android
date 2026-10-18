@@ -95,9 +95,8 @@ class FreshnessLabel @JvmOverloads constructor(context: Context, attrs: Attribut
 
     init {
         textSize = 12f
-        // Pretendard Medium + tnum for freshness labels only (spec D3).
-        setTypeface(ResourcesCompat.getFont(context, R.font.pretendard_medium), Typeface.NORMAL)
-        fontFeatureSettings = "tnum"
+        // Same typography as the bottom tab labels: Godo Bold, LabelMedium 12sp (spec D3, revised).
+        setTypeface(ResourcesCompat.getFont(context, R.font.godo), Typeface.BOLD)
         accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_NONE
     }
 
@@ -214,7 +213,6 @@ class TimeText @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 class SectionHeader @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : LinearLayout(context, attrs) {
     val titleView = AppCompatTextView(context)
     val actionView = AppCompatTextView(context)
-    private var freshnessLabel: FreshnessLabel? = null
 
     init {
         titleView.addTextChangedListener { refreshDescription() }
@@ -261,9 +259,6 @@ class SectionHeader @JvmOverloads constructor(context: Context, attrs: Attribute
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        freshnessLabel = (0 until childCount).map { getChildAt(it) }.filterIsInstance<FreshnessLabel>().firstOrNull()
-        freshnessLabel?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-        freshnessLabel?.onSpokenChanged = { refreshDescription() }
         refreshDescription()
     }
 
@@ -272,7 +267,6 @@ class SectionHeader @JvmOverloads constructor(context: Context, attrs: Attribute
         val parts = listOfNotNull(
             titleView.text.takeIf { it.isNotEmpty() },
             actionView.text.takeIf { actionView.visibility == View.VISIBLE && it.isNotEmpty() },
-            freshnessLabel?.takeIf { it.visibility == View.VISIBLE }?.contentDescription?.takeIf { it.isNotEmpty() },
         )
         contentDescription = parts.joinToString(", ")
     }
