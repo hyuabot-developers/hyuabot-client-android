@@ -232,10 +232,13 @@ class SectionHeader @JvmOverloads constructor(context: Context, attrs: Attribute
         titleView.textSize = 14f
         titleView.setTypeface(titleView.typeface, Typeface.BOLD)
         titleView.setTextColor(resolveColor(com.google.android.material.R.attr.colorOnSurfaceVariant))
-        titleView.isAccessibilityHeading = true
+        // Heading semantics belong on the focusable container: the title child is hidden from
+        // accessibility, so TalkBack would otherwise never expose this row as a heading.
+        isAccessibilityHeading = true
         titleView.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         titleView.layoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f)
         actionView.textSize = 14f
+        actionView.visibility = View.GONE
         actionView.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         addView(titleView)
         addView(actionView)

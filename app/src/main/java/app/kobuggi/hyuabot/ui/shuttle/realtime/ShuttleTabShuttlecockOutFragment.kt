@@ -384,6 +384,10 @@ class ShuttleTabShuttlecockOutFragment @Inject constructor() : Fragment() {
             entireTimetableDormitory.visibility = View.GONE
         }
         bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
+        binding.headerBoundForStationComponent.titleView.setText(R.string.shuttle_header_bound_for_station)
+        binding.headerBoundForDormitoryComponent.titleView.setText(R.string.shuttle_header_bound_for_dormitory)
+        binding.headerBoundForTerminalComponent.titleView.setText(R.string.shuttle_header_bound_for_terminal)
+        binding.headerBoundForJungangStationComponent.titleView.setText(R.string.shuttle_header_bound_for_jungang_station)
         return binding.root.also { disableViewStateSaving(it) }
     }
 
