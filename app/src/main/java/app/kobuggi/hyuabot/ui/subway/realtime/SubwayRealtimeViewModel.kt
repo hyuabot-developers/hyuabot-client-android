@@ -19,11 +19,19 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class SubwayRealtimeViewModel @Inject constructor(private val apolloClient: ApolloClient): ViewModel() {
+    val sectionUpdatedAts = MutableLiveData<Map<String, Instant?>>(emptyMap())
+
+    fun reportSectionUpdatedAt(page: Int, sectionKey: String, at: Instant?) {
+        val key = "$page:$sectionKey"
+        sectionUpdatedAts.value = sectionUpdatedAts.value.orEmpty() + (key to at)
+    }
+
     private val _isLoading = MutableLiveData(false)
     private val _campusYellow = MutableLiveData<SubwayRealtimePageQuery.Subway?>()
     private val _campusBlue = MutableLiveData<SubwayRealtimePageQuery.Subway?>()

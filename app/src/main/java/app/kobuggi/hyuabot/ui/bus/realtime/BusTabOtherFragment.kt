@@ -39,6 +39,8 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
             if (busList == null) return@observe
             val firstBusList = busList.firstOrNull { bus -> bus.stop.seq == 216000759 && bus.route.seq == 216000075 }
             val secondBusList = busList.firstOrNull { bus -> bus.stop.seq == 213000487 && bus.route.seq == 216000075 }
+            parentViewModel.reportSectionUpdatedAt(3, "first", busSectionUpdatedAt(firstBusList))
+            parentViewModel.reportSectionUpdatedAt(3, "second", busSectionUpdatedAt(secondBusList))
             if (firstBusList == null) {
                 busFirstAdapter.updateData(emptyList())
                 binding.noRealtimeDataFirst.visibility = View.VISIBLE
@@ -71,7 +73,7 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
             }
         }
         binding.apply {
-            headerFirstTitle.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
+            headerFirst.titleView.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
             realtimeViewFirst.apply {
                 adapter = busFirstAdapter
                 addItemDecoration(decoration)
@@ -97,7 +99,7 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(direction)
                 }
             }
-            headerSecondTitle.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_gwangmyeong_station))
+            headerSecond.titleView.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_gwangmyeong_station))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)
@@ -123,12 +125,12 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(direction)
                 }
             }
-            headerThird.visibility = View.GONE
+            headerThirdContainer.visibility = View.GONE
             realtimeViewThird.visibility = View.GONE
             entireTimetableThird.visibility = View.GONE
             noRealtimeDataThird.visibility = View.GONE
             buttonLayoutThird.visibility = View.GONE
-            headerFourth.visibility = View.GONE
+            headerFourthContainer.visibility = View.GONE
             realtimeViewFourth.visibility = View.GONE
             entireTimetableFourth.visibility = View.GONE
             noRealtimeDataFourth.visibility = View.GONE
@@ -140,6 +142,8 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
+        parentViewModel.reportSectionUpdatedAt(3, "third", null)
+        parentViewModel.reportSectionUpdatedAt(3, "fourth", null)
         return binding.root.also { disableViewStateSaving(it) }
     }
 

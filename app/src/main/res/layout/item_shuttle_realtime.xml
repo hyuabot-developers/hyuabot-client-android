@@ -51,50 +51,27 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <app.kobuggi.hyuabot.ui.common.StatusBadge
                 android:id="@+id/last_run_badge"
                 android:layout_width="wrap_content"
-                android:layout_height="24dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:background="@drawable/bg_shuttle_last_run_badge"
-                android:gravity="center"
-                android:paddingHorizontal="9dp"
-                android:text="@string/shuttle_last_run"
-                android:textColor="@android:color/white"
-                android:textFontWeight="700"
-                android:textSize="12sp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/warning_view"
                 app:layout_constraintStart_toEndOf="@id/shuttle_type_text"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.card.MaterialCardView
+            <app.kobuggi.hyuabot.ui.common.StatusBadge
                 android:id="@+id/warning_view"
                 android:layout_width="wrap_content"
-                android:layout_height="24dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:visibility="gone"
-                app:cardBackgroundColor="@color/shuttle_status_badge_background"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/last_run_badge"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeWidth="0dp">
-
-                <TextView
-                    android:id="@+id/warning_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:paddingHorizontal="9dp"
-                    android:text="@string/shuttle_warning_text"
-                    android:textColor="@android:color/white"
-                    android:textFontWeight="700"
-                    android:textSize="12sp" />
-            </com.google.android.material.card.MaterialCardView>
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView

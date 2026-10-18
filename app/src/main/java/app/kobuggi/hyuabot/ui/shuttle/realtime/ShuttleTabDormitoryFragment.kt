@@ -26,7 +26,14 @@ import app.kobuggi.hyuabot.widget.ShuttleWidgetSupport
 
 @AndroidEntryPoint
 class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
-    private val binding by lazy { FragmentShuttleRealtimeTabBinding.inflate(layoutInflater) }
+    private val binding by lazy {
+        FragmentShuttleRealtimeTabBinding.inflate(layoutInflater).apply {
+            headerBoundForStationComponent.titleView.setText(R.string.shuttle_header_bound_for_station)
+            headerBoundForDormitoryComponent.titleView.setText(R.string.shuttle_header_bound_for_dormitory)
+            headerBoundForTerminalComponent.titleView.setText(R.string.shuttle_header_bound_for_terminal)
+            headerBoundForJungangStationComponent.titleView.setText(R.string.shuttle_header_bound_for_jungang_station)
+        }
+    }
     private val parentViewModel: ShuttleRealtimeViewModel by viewModels({ requireParentFragment() })
     private var nextStationShuttleTime: LocalTime? = null
     private var nextTerminalShuttleTime: LocalTime? = null

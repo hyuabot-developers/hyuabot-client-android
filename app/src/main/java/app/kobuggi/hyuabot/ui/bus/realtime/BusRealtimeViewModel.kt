@@ -1,7 +1,9 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
 
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.R
@@ -20,6 +22,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
+import java.time.Instant
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -31,6 +34,13 @@ class BusRealtimeViewModel @Inject constructor(
 ): ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _result = MutableLiveData<List<BusRealtimePageQuery.Bus>>()
+    val sectionUpdatedAts = MutableLiveData<Map<String, Instant?>>(emptyMap())
+
+    fun reportSectionUpdatedAt(page: Int, sectionKey: String, at: Instant?) {
+        sectionUpdatedAts.value = sectionUpdatedAts.value.orEmpty().toMutableMap().apply {
+            put("$page:$sectionKey", at)
+        }
+    }
     private val _notices = MutableLiveData<List<BusRealtimePageQuery.Notice1>>()
 
     private val _disposable = CompositeDisposable()

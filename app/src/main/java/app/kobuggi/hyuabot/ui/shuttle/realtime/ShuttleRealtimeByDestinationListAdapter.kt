@@ -81,6 +81,14 @@ class ShuttleRealtimeByDestinationListAdapter(
                 binding.transferExpansionContainer.removeAllViews()
             }
             val isLastRun = item.seq in lastRunSeqs
+            binding.lastRunBadge.show(
+                context.getString(R.string.shuttle_last_run),
+                app.kobuggi.hyuabot.ui.common.StatusBadge.Kind.LAST_RUN,
+            )
+            binding.warningView.show(
+                context.getString(R.string.shuttle_warning_text),
+                app.kobuggi.hyuabot.ui.common.StatusBadge.Kind.STALE,
+            )
             binding.lastRunBadge.visibility = if (isLastRun) View.VISIBLE else View.GONE
             binding.warningView.visibility = if (
                 stopID == R.string.shuttle_tab_shuttlecock_out && item.route.tag == "DY"
@@ -224,6 +232,14 @@ class ShuttleRealtimeByDestinationListAdapter(
                         item.time.minute.toString().padStart(2, '0')
                     )
                 }
+                binding.shuttleItem.contentDescription = listOf(
+                    binding.shuttleTypeText.text,
+                    binding.shuttleTimeText.text,
+                    *listOf(binding.lastRunBadge, binding.warningView)
+                        .filter { it.visibility == View.VISIBLE }
+                        .map { it.text }
+                        .toTypedArray()
+                ).filter { it.isNotBlank() }.joinToString(" ")
             }
 
             binding.shuttleItem.setOnTouchListener { _, event ->

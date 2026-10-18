@@ -21,6 +21,7 @@ import app.kobuggi.hyuabot.util.setSkeletonLoading
 
 @AndroidEntryPoint
 class SubwayRealtimeFragment @Inject constructor() : Fragment() {
+    private var pageCallback: androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback? = null
     private val binding by lazy { FragmentSubwayRealtimeBinding.inflate(layoutInflater) }
     private val viewModel: SubwayRealtimeViewModel by viewModels()
 
@@ -46,6 +47,23 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
             R.string.subway_tab_transfer
         )
         binding.viewPager.adapter = viewpagerAdapter
+        fun updateScreenFreshness(page: Int) {
+            val times = viewModel.sectionUpdatedAts.value.orEmpty().filterKeys { it.startsWith("$page:") }.values.toList()
+            binding.freshnessScreen.updatedAt = app.kobuggi.hyuabot.ui.common.screenReferenceTime(times)
+        }
+        binding.freshnessScreen.apply {
+            source = app.kobuggi.hyuabot.ui.common.FreshnessLabel.Source.REALTIME
+            analyticsDomain = "subway"
+            analyticsScreen = "subway_realtime"
+            delayAfter = java.time.Duration.ofMinutes(3)
+            updatedAt = null
+        }
+        viewModel.sectionUpdatedAts.observe(viewLifecycleOwner) { updateScreenFreshness(binding.viewPager.currentItem) }
+        binding.freshnessScreen.spokenPrefix = getString(R.string.freshness_context_subway)
+        pageCallback = object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) = updateScreenFreshness(position)
+        }
+        binding.viewPager.registerOnPageChangeCallback(pageCallback!!)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
@@ -76,6 +94,8 @@ class SubwayRealtimeFragment @Inject constructor() : Fragment() {
     }
 
     override fun onDestroyView() {
+        pageCallback?.let { binding.viewPager.unregisterOnPageChangeCallback(it) }
+        pageCallback = null
         super.onDestroyView()
         childFragmentManager.fragments.toList().forEach {
             childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()

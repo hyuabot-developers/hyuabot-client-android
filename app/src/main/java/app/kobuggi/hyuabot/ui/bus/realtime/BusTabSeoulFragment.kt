@@ -74,7 +74,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             val stopSeq = FIRST_SECTION_STOP_BY_RES[stopRes] ?: return@observe
             val stopName = getString(stopRes)
             binding.apply {
-                headerFirstTitle.text = getString(R.string.bus_header_format, "3102", stopName)
+                headerFirst.titleView.text = getString(R.string.bus_header_format, "3102", stopName)
                 headerFirstStopBtn.setOnClickListener {
                     BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(stopSeq, 216000061).also { direction ->
                         findNavController().safeNavigate(direction)
@@ -95,6 +95,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             }
             parentViewModel.result.observe(viewLifecycleOwner) { busList ->
                 val firstBusList = busList.firstOrNull { bus -> bus.stop.seq == stopSeq && bus.route.seq == 216000061 }
+                parentViewModel.reportSectionUpdatedAt(1, "first", busSectionUpdatedAt(firstBusList))
                 if (firstBusList == null) {
                     busFirstAdapter.updateData(emptyList())
                     binding.noRealtimeDataFirst.visibility = View.VISIBLE
@@ -121,7 +122,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             val stopName = getString(stopRes)
             val isRemote = stopRes in SEOUL_REMOTE_RES_IDS
             binding.apply {
-                headerSecondTitle.text = getString(R.string.bus_header_format, "3100/3101/3100N", stopName)
+                headerSecond.titleView.text = getString(R.string.bus_header_format, "3100/3101/3100N", stopName)
                 headerSecondStopBtn.setOnClickListener {
                     BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(
                         stopSeq, 216000096, 216000026, 216000043
@@ -150,6 +151,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 val routes = busList.filter { route ->
                     route.stop.seq == stopSeq && (route.route.seq == 216000096 || route.route.seq == 216000026 || route.route.seq == 216000043)
                 }
+                parentViewModel.reportSectionUpdatedAt(1, "second", maxRealtimeUpdatedAt(routes.flatMap { route -> route.realtime.map { it.updatedAt.toInstant() } }))
                 val arrivalList = routes.flatMap { route ->
                     val secondaryTargetSeq = if (isRemote) SEOUL_SECOND_RETURN_STOP else currentSeoulTargetStopID()
                     route.arrival.map { arrival ->
@@ -187,12 +189,12 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
                 isNestedScrollingEnabled = false
                 itemAnimator = null
             }
-            headerThird.visibility = View.GONE
+            headerThirdContainer.visibility = View.GONE
             realtimeViewThird.visibility = View.GONE
             entireTimetableThird.visibility = View.GONE
             noRealtimeDataThird.visibility = View.GONE
             buttonLayoutThird.visibility = View.GONE
-            headerFourth.visibility = View.GONE
+            headerFourthContainer.visibility = View.GONE
             realtimeViewFourth.visibility = View.GONE
             entireTimetableFourth.visibility = View.GONE
             noRealtimeDataFourth.visibility = View.GONE
@@ -204,6 +206,8 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
         parentViewModel.isLoading.observe(viewLifecycleOwner) {
             if (!it) binding.swipeRefreshLayout.isRefreshing = false
         }
+        parentViewModel.reportSectionUpdatedAt(1, "third", null)
+        parentViewModel.reportSectionUpdatedAt(1, "fourth", null)
         return binding.root.also { disableViewStateSaving(it) }
     }
 

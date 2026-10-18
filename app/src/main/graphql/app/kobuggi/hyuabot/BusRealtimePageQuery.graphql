@@ -33,5 +33,8 @@ query BusRealtimePageQuery($language: String!, $busInput: [BusRouteStopInput!]!)
             weekday
             minutes
         }
+        realtime {
+            updatedAt
+        }
     }
 }

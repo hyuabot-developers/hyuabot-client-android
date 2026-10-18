@@ -34,6 +34,7 @@ import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.Duration
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -95,6 +96,10 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.readingRoomUpdateTime.apply {
+            analyticsDomain = "readingRoom"
+            analyticsScreen = app.kobuggi.hyuabot.util.AnalyticsScreen.READING_ROOM.id
+        }
         askNotificationPermission()
         viewModel.apply {
             campusID.observe(viewLifecycleOwner) {
@@ -104,14 +109,13 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
                 binding.readingRoomSwipeRefreshLayout.isRefreshing = false
                 roomListAdapter.updateData(it)
                 if (it.isNotEmpty()) {
-                    // The updatedAt field is in UTC format and converted to LocalDateTime
-                    binding.readingRoomUpdateTime.text = getString(
-                        R.string.reading_room_update_time,
-                        it[0].updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                    )
-                } else {
-                    binding.readingRoomUpdateTime.text = getString(R.string.reading_room_update_time, LocalDateTime.now().toString())
-                }
+                    val newestUpdate = it.maxOf { room -> room.updatedAt }
+                    binding.readingRoomUpdateTime.apply {
+                        source = app.kobuggi.hyuabot.ui.common.FreshnessLabel.Source.READING_ROOM
+                        delayAfter = Duration.ofMinutes(5)
+                        updatedAt = newestUpdate.toInstant()
+                    }
+                } else binding.readingRoomUpdateTime.updatedAt = null
             }
             notificationList.observe(viewLifecycleOwner) {
                 Log.d("ReadingRoomFragment", "Notification list updated: $it")

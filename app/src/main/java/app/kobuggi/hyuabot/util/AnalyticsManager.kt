@@ -212,6 +212,15 @@ object AnalyticsManager {
             }
         }
     }
+
+    fun logFreshnessStaleShown(domain: String, screen: String) {
+        collectionGate.runWhenEnabled {
+            analytics.logEvent("freshness_stale_shown") {
+                param("domain", domain)
+                param("screen", screen)
+            }
+        }
+    }
 }
 
 internal fun selectionParameters(
