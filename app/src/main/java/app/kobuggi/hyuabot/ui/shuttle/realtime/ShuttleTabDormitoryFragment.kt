@@ -391,6 +391,7 @@ class ShuttleTabDormitoryFragment @Inject constructor() : Fragment() {
             entireTimetableDormitory.visibility = View.GONE
         }
         bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
+        binding.applySectionSpacing()
         return binding.root.also { disableViewStateSaving(it) }
     }
 

@@ -146,7 +146,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_dormitory"
                 android:layout_width="match_parent"
-                android:layout_marginTop="16dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -322,7 +321,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_terminal"
                 android:layout_width="match_parent"
-                android:layout_marginTop="16dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -447,7 +445,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_jungang_station"
                 android:layout_width="match_parent"
-                android:layout_marginTop="16dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

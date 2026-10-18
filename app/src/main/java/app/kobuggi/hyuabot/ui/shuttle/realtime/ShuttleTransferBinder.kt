@@ -5,19 +5,25 @@ import app.kobuggi.hyuabot.util.AnalyticsManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
+import app.kobuggi.hyuabot.databinding.FragmentShuttleRealtimeTabBinding
 import app.kobuggi.hyuabot.databinding.ItemShuttleConnectionRowBinding
 import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.util.TransitRow
 import app.kobuggi.hyuabot.util.buildTransitRows
+import kotlin.math.roundToInt
 
 fun Fragment.bindShuttleHelpButtons(vararg buttons: View) {
     buttons.forEach { button ->
@@ -27,6 +33,33 @@ fun Fragment.bindShuttleHelpButtons(vararg buttons: View) {
                 findNavController().safeNavigate(it)
             }
         }
+    }
+}
+
+private const val SECTION_GAP_DP = 16f
+
+/**
+ * Adds a 16dp gap above each visible section header that follows another visible section.
+ * Must be called after the tab has applied visibility to its section headers.
+ */
+fun FragmentShuttleRealtimeTabBinding.applySectionSpacing() {
+    val gapPx = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        SECTION_GAP_DP,
+        root.resources.displayMetrics,
+    ).roundToInt()
+    var hasVisibleSectionAbove = false
+    listOf(
+        headerBoundForStation,
+        headerBoundForDormitory,
+        headerBoundForTerminal,
+        headerBoundForJungangStation,
+    ).forEach { header ->
+        if (!header.isVisible) return@forEach
+        header.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = if (hasVisibleSectionAbove) gapPx else 0
+        }
+        hasVisibleSectionAbove = true
     }
 }
 

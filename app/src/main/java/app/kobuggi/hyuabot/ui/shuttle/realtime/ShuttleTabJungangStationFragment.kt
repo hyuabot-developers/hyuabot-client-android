@@ -198,6 +198,7 @@ class ShuttleTabJungangStationFragment @Inject constructor() : Fragment() {
             )
         }
         bindShuttleHelpButtons(binding.helpButton, binding.helpButton2)
+        binding.applySectionSpacing()
         binding.headerBoundForStationComponent.titleView.setText(R.string.shuttle_header_bound_for_station)
         binding.headerBoundForDormitoryComponent.titleView.setText(R.string.shuttle_header_bound_for_dormitory)
         binding.headerBoundForTerminalComponent.titleView.setText(R.string.shuttle_header_bound_for_terminal)
