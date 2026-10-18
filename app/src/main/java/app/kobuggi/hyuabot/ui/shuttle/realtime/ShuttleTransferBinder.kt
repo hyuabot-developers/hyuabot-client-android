@@ -39,7 +39,8 @@ fun Fragment.bindShuttleHelpButtons(vararg buttons: View) {
 private const val SECTION_GAP_DP = 16f
 
 /**
- * Adds a 16dp gap above each visible section header that follows another visible section.
+ * Adds a 16dp gap and a 1dp divider above each visible section header that follows another visible
+ * section, so the first visible header stays flush with the top of the tab.
  * Must be called after the tab has applied visibility to its section headers.
  */
 fun FragmentShuttleRealtimeTabBinding.applySectionSpacing() {
@@ -50,15 +51,16 @@ fun FragmentShuttleRealtimeTabBinding.applySectionSpacing() {
     ).roundToInt()
     var hasVisibleSectionAbove = false
     listOf(
-        headerBoundForStation,
-        headerBoundForDormitory,
-        headerBoundForTerminal,
-        headerBoundForJungangStation,
-    ).forEach { header ->
+        headerBoundForStation to headerDividerBoundForStation,
+        headerBoundForDormitory to headerDividerBoundForDormitory,
+        headerBoundForTerminal to headerDividerBoundForTerminal,
+        headerBoundForJungangStation to headerDividerBoundForJungangStation,
+    ).forEach { (header, divider) ->
         if (!header.isVisible) return@forEach
         header.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             topMargin = if (hasVisibleSectionAbove) gapPx else 0
         }
+        divider.isVisible = hasVisibleSectionAbove
         hasVisibleSectionAbove = true
     }
 }

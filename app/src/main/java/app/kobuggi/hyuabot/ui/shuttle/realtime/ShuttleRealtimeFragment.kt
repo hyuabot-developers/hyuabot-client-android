@@ -160,7 +160,9 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         }
         binding.noticeViewPager.adapter = noticeAdapter
 
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+        // Jump straight to the tapped stop instead of smooth-scrolling through every page in between;
+        // otherwise the intermediate tabs' sections slide past under the newly selected tab label.
+        TabLayoutMediator(binding.tabLayout, binding.viewPager, true, false) { tab, position ->
             tab.text = getString(tabLabelList[position])
         }.attach()
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
