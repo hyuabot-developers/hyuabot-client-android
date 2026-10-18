@@ -23,12 +23,12 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_station"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent">
                 <app.kobuggi.hyuabot.ui.common.SectionHeader
                     android:id="@+id/header_bound_for_station_component"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -146,7 +146,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_dormitory"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_station"
@@ -154,7 +155,7 @@
                 <app.kobuggi.hyuabot.ui.common.SectionHeader
                     android:id="@+id/header_bound_for_dormitory_component"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -321,14 +322,15 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_terminal"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_dormitory">
                 <app.kobuggi.hyuabot.ui.common.SectionHeader
                     android:id="@+id/header_bound_for_terminal_component"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -445,14 +447,15 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_jungang_station"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_terminal">
                 <app.kobuggi.hyuabot.ui.common.SectionHeader
                     android:id="@+id/header_bound_for_jungang_station_component"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

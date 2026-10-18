@@ -27,12 +27,12 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/header_up_container"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent">
                     <app.kobuggi.hyuabot.ui.common.SectionHeader
                         android:id="@+id/header_up"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
+                        android:layout_height="wrap_content" >
                     </app.kobuggi.hyuabot.ui.common.SectionHeader>
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.recyclerview.widget.RecyclerView
@@ -64,12 +64,13 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/header_down_container"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/entire_timetable_up">
                     <app.kobuggi.hyuabot.ui.common.SectionHeader
                         android:id="@+id/header_down"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
+                        android:layout_height="wrap_content" >
                     </app.kobuggi.hyuabot.ui.common.SectionHeader>
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.recyclerview.widget.RecyclerView
