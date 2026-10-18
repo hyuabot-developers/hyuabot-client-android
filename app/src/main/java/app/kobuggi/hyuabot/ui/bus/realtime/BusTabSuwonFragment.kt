@@ -47,7 +47,7 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
             val secondaryTargetSeq = if (stopRes == R.string.bus_stop_suwon_station) 216000141 else 202000208
             val stopName = getString(stopRes)
             binding.apply {
-                headerFirstTitle.text = getString(R.string.bus_header_format, "7070/9090", stopName)
+                headerFirst.titleView.text = getString(R.string.bus_header_format, "7070/9090", stopName)
                 headerFirstStopBtn.setOnClickListener {
                     BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(stopSeq, 216000104, 200000015).also { direction ->
                         findNavController().safeNavigate(direction)

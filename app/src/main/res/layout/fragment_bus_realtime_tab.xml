@@ -31,13 +31,21 @@
 
                 <!-- Section 1 header with stop info button -->
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/header_first"
+                    android:id="@+id/header_first_container"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@color/hanyang_blue"
+                    android:layout_height="48dp"
                     app:layout_constraintTop_toTopOf="parent">
+                    <app.kobuggi.hyuabot.ui.common.SectionHeader
+                        android:id="@+id/header_first"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
                     <TextView
                         android:id="@+id/header_first_title"
+                        android:visibility="gone"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="56dp"
@@ -55,7 +63,7 @@
                         android:layout_height="48dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
-                        app:tint="@android:color/white"
+                        app:tint="?attr/colorOnSurfaceVariant"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@null"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -69,7 +77,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_first" />
+                    app:layout_constraintTop_toBottomOf="@id/header_first_container" />
                 <TextView
                     android:id="@+id/no_realtime_data_first"
                     android:layout_width="match_parent"
@@ -110,13 +118,21 @@
 
                 <!-- Section 2 header with stop info button -->
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/header_second"
+                    android:id="@+id/header_second_container"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@color/hanyang_blue"
+                    android:layout_height="48dp"
                     app:layout_constraintTop_toBottomOf="@id/button_layout_first">
+                    <app.kobuggi.hyuabot.ui.common.SectionHeader
+                        android:id="@+id/header_second"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
                     <TextView
                         android:id="@+id/header_second_title"
+                        android:visibility="gone"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="56dp"
@@ -134,7 +150,7 @@
                         android:layout_height="48dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
-                        app:tint="@android:color/white"
+                        app:tint="?attr/colorOnSurfaceVariant"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@null"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -148,7 +164,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_second" />
+                    app:layout_constraintTop_toBottomOf="@id/header_second_container" />
                 <TextView
                     android:id="@+id/no_realtime_data_second"
                     android:layout_width="match_parent"
@@ -189,13 +205,21 @@
 
                 <!-- Section 3 header -->
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/header_third"
+                    android:id="@+id/header_third_container"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@color/hanyang_blue"
+                    android:layout_height="48dp"
                     app:layout_constraintTop_toBottomOf="@id/button_layout_second">
+                    <app.kobuggi.hyuabot.ui.common.SectionHeader
+                        android:id="@+id/header_third"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
                     <TextView
                         android:id="@+id/header_third_title"
+                        android:visibility="gone"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="56dp"
@@ -213,7 +237,7 @@
                         android:layout_height="48dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
-                        app:tint="@android:color/white"
+                        app:tint="?attr/colorOnSurfaceVariant"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@null"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -227,7 +251,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_third" />
+                    app:layout_constraintTop_toBottomOf="@id/header_third_container" />
                 <TextView
                     android:id="@+id/no_realtime_data_third"
                     android:layout_width="match_parent"
@@ -268,13 +292,21 @@
 
                 <!-- Section 4 header -->
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/header_fourth"
+                    android:id="@+id/header_fourth_container"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@color/hanyang_blue"
+                    android:layout_height="48dp"
                     app:layout_constraintTop_toBottomOf="@id/button_layout_third">
+                    <app.kobuggi.hyuabot.ui.common.SectionHeader
+                        android:id="@+id/header_fourth"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
                     <TextView
                         android:id="@+id/header_fourth_title"
+                        android:visibility="gone"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="56dp"
@@ -292,7 +324,7 @@
                         android:layout_height="48dp"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/ic_location"
-                        app:tint="@android:color/white"
+                        app:tint="?attr/colorOnSurfaceVariant"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@null"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -306,7 +338,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/header_fourth" />
+                    app:layout_constraintTop_toBottomOf="@id/header_fourth_container" />
                 <TextView
                     android:id="@+id/no_realtime_data_fourth"
                     android:layout_width="match_parent"

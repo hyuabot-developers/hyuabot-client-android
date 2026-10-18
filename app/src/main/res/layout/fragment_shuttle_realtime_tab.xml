@@ -23,18 +23,12 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_station"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@color/hanyang_blue"
+                android:layout_height="48dp"
                 app:layout_constraintTop_toTopOf="parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_station"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
-                    android:background="@color/hanyang_blue"
+                <app.kobuggi.hyuabot.ui.common.SectionHeader
+                    android:id="@+id/header_bound_for_station_component"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -152,19 +146,15 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_dormitory"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="48dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_station"
-                android:background="@color/hanyang_blue">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_dormitory"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
+                >
+                <app.kobuggi.hyuabot.ui.common.SectionHeader
+                    android:id="@+id/header_bound_for_dormitory_component"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -331,19 +321,14 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_terminal"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="48dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_dormitory"
-                android:background="@color/hanyang_blue">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_terminal"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
+                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_dormitory">
+                <app.kobuggi.hyuabot.ui.common.SectionHeader
+                    android:id="@+id/header_bound_for_terminal_component"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -460,19 +445,14 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_jungang_station"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="48dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_terminal"
-                android:background="@color/hanyang_blue">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/shuttle_header_bound_for_jungang_station"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
+                app:layout_constraintTop_toBottomOf="@id/entire_timetable_bound_for_terminal">
+                <app.kobuggi.hyuabot.ui.common.SectionHeader
+                    android:id="@+id/header_bound_for_jungang_station_component"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

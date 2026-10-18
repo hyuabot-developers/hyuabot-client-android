@@ -71,7 +71,7 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
             }
         }
         binding.apply {
-            headerFirstTitle.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
+            headerFirst.titleView.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_terminal))
             realtimeViewFirst.apply {
                 adapter = busFirstAdapter
                 addItemDecoration(decoration)
@@ -97,7 +97,7 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(direction)
                 }
             }
-            headerSecondTitle.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_gwangmyeong_station))
+            headerSecond.titleView.text = getString(R.string.bus_header_format, "50", getString(R.string.bus_stop_gwangmyeong_station))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 addItemDecoration(decoration)

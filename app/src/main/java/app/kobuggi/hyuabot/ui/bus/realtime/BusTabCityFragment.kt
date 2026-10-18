@@ -45,7 +45,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
             when (it) {
                 R.string.bus_stop_convention -> {
                     binding.apply {
-                        headerFirstTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))
+                        headerFirst.titleView.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))
                         headerFirstStopBtn.setOnClickListener {
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000379, 216000068).also { direction ->
                                 findNavController().safeNavigate(direction)
@@ -85,7 +85,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 }
                 R.string.bus_stop_cluster -> {
                     binding.apply {
-                        headerFirstTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_cluster))
+                        headerFirst.titleView.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_cluster))
                         headerFirstStopBtn.setOnClickListener {
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000381, 216000068).also { direction ->
                                 findNavController().safeNavigate(direction)
@@ -125,7 +125,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 }
                 R.string.bus_stop_dormitory -> {
                     binding.apply {
-                        headerFirstTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_dormitory))
+                        headerFirst.titleView.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_dormitory))
                         headerFirstStopBtn.setOnClickListener {
                             BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(216000383, 216000068).also { direction ->
                                 findNavController().safeNavigate(direction)
@@ -196,7 +196,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
             binding.noRealtimeDataSecond.visibility = if (secondBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
         }
         binding.apply {
-            headerFirstTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))
+            headerFirst.titleView.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_convention))
             realtimeViewFirst.apply {
                 adapter = busFirstAdapter
                 layoutManager = LinearLayoutManager(context)
@@ -205,7 +205,7 @@ class BusTabCityFragment @Inject constructor() : Fragment() {
                 isNestedScrollingEnabled = false
                 itemAnimator = null
             }
-            headerSecondTitle.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_sangnoksu_station))
+            headerSecond.titleView.text = getString(R.string.bus_header_format, "10-1", getString(R.string.bus_stop_sangnoksu_station))
             realtimeViewSecond.apply {
                 adapter = busSecondAdapter
                 layoutManager = LinearLayoutManager(context)

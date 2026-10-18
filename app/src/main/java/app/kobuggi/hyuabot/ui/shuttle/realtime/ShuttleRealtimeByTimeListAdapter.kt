@@ -17,7 +17,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.databinding.ItemShuttleRealtimeBinding
 import app.kobuggi.hyuabot.ui.shuttle.via.ShuttleViaSheetDialog
-import com.google.android.material.card.MaterialCardView
+import app.kobuggi.hyuabot.ui.common.StatusBadge
 import java.time.LocalTime
 
 class ShuttleRealtimeByTimeListAdapter(
@@ -36,6 +36,7 @@ class ShuttleRealtimeByTimeListAdapter(
         fun bind(item: ShuttleRealtimePageQuery.Order) {
             setStopText(context, binding.shuttleTypeText, binding.warningView, stopID, item)
             val isLastRun = item.seq in lastRunSeqs
+            binding.lastRunBadge.show(context.getString(R.string.shuttle_last_run), StatusBadge.Kind.LAST_RUN)
             binding.lastRunBadge.visibility = if (isLastRun) View.VISIBLE else View.GONE
             val now = LocalTime.now()
             shuttleRealtimeViewModel.showDepartureTime.observe(lifecycleOwner) {
@@ -113,7 +114,7 @@ class ShuttleRealtimeByTimeListAdapter(
         }
     }
 
-    private fun setStopText(context: Context, textView: TextView, warningView: MaterialCardView, stopID: Int, item: ShuttleRealtimePageQuery.Order) {
+    private fun setStopText(context: Context, textView: TextView, warningView: StatusBadge, stopID: Int, item: ShuttleRealtimePageQuery.Order) {
         val darkMode = context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
         warningView.visibility = View.GONE
         when (stopID) {
@@ -126,6 +127,7 @@ class ShuttleRealtimeByTimeListAdapter(
                         }
                     }
                     "DY" -> {
+                        warningView.show(context.getString(R.string.shuttle_warning_text), StatusBadge.Kind.STALE)
                         warningView.visibility = if (stopID == R.string.shuttle_tab_shuttlecock_out) View.VISIBLE else View.GONE
                         textView.apply {
                             text = context.getString(R.string.shuttle_type_school_terminal)

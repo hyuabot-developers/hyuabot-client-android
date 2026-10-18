@@ -81,6 +81,14 @@ class ShuttleRealtimeByDestinationListAdapter(
                 binding.transferExpansionContainer.removeAllViews()
             }
             val isLastRun = item.seq in lastRunSeqs
+            binding.lastRunBadge.show(
+                context.getString(R.string.shuttle_last_run),
+                app.kobuggi.hyuabot.ui.common.StatusBadge.Kind.LAST_RUN,
+            )
+            binding.warningView.show(
+                context.getString(R.string.shuttle_warning_text),
+                app.kobuggi.hyuabot.ui.common.StatusBadge.Kind.STALE,
+            )
             binding.lastRunBadge.visibility = if (isLastRun) View.VISIBLE else View.GONE
             binding.warningView.visibility = if (
                 stopID == R.string.shuttle_tab_shuttlecock_out && item.route.tag == "DY"

@@ -32,7 +32,7 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
-                    <TextView
+                    <app.kobuggi.hyuabot.ui.common.FreshnessLabel
                         android:id="@+id/reading_room_update_time"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

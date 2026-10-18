@@ -33,7 +33,7 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
         val upAdapter = SubwayRealtimeListAdapter(requireContext(), R.color.subway_line4)
         val downAdapter = SubwayRealtimeListAdapter(requireContext(), R.color.subway_line4)
         binding.apply {
-            headerUp.text = getString(R.string.subway_blue_up)
+            headerUp.show(getString(R.string.subway_blue_up))
             realtimeViewUp.apply {
                 adapter = upAdapter
                 layoutManager = LinearLayoutManager(requireContext())
@@ -45,7 +45,7 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
                     findNavController().safeNavigate(it)
                 }
             }
-            headerDown.text = getString(R.string.subway_blue_down)
+            headerDown.show(getString(R.string.subway_blue_down))
             realtimeViewDown.apply {
                 adapter = downAdapter
                 layoutManager = LinearLayoutManager(requireContext())

@@ -29,7 +29,7 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
         val chojiAdapter = SubwayTransferListAdapter(requireContext(), "choji")
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         binding.apply {
-            headerUp.text = getString(R.string.subway_transfer_incheon_oido)
+            headerUp.show(getString(R.string.subway_transfer_incheon_oido))
             realtimeViewUp.apply {
                 adapter = incheonAdapter
                 layoutManager = LinearLayoutManager(requireContext())
@@ -37,7 +37,7 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
                 configureTransferList()
             }
             entireTimetableUp.visibility = View.GONE
-            headerDown.text = getString(R.string.subway_transfer_ilsan_bucheon)
+            headerDown.show(getString(R.string.subway_transfer_ilsan_bucheon))
             realtimeViewDown.apply {
                 adapter = chojiAdapter
                 layoutManager = LinearLayoutManager(requireContext())

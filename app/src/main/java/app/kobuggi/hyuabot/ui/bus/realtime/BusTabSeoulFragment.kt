@@ -74,7 +74,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             val stopSeq = FIRST_SECTION_STOP_BY_RES[stopRes] ?: return@observe
             val stopName = getString(stopRes)
             binding.apply {
-                headerFirstTitle.text = getString(R.string.bus_header_format, "3102", stopName)
+                headerFirst.titleView.text = getString(R.string.bus_header_format, "3102", stopName)
                 headerFirstStopBtn.setOnClickListener {
                     BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(stopSeq, 216000061).also { direction ->
                         findNavController().safeNavigate(direction)
@@ -121,7 +121,7 @@ class BusTabSeoulFragment @Inject constructor() : Fragment() {
             val stopName = getString(stopRes)
             val isRemote = stopRes in SEOUL_REMOTE_RES_IDS
             binding.apply {
-                headerSecondTitle.text = getString(R.string.bus_header_format, "3100/3101/3100N", stopName)
+                headerSecond.titleView.text = getString(R.string.bus_header_format, "3100/3101/3100N", stopName)
                 headerSecondStopBtn.setOnClickListener {
                     BusRealtimeFragmentDirections.actionBusRealtimeFragmentToBusStopInfoFragment(
                         stopSeq, 216000096, 216000026, 216000043
