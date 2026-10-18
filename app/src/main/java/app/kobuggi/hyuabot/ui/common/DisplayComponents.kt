@@ -224,14 +224,14 @@ class SectionHeader @JvmOverloads constructor(context: Context, attrs: Attribute
         titleView.addTextChangedListener { refreshDescription() }
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
-        minimumHeight = (40 * resources.displayMetrics.density).toInt()
+        minimumHeight = (48 * resources.displayMetrics.density).toInt()
         setPadding((16 * resources.displayMetrics.density).toInt(), 0, (16 * resources.displayMetrics.density).toInt(), 0)
         setBackgroundColor(resolveColor(com.google.android.material.R.attr.colorSurface))
         isFocusable = true
         descendantFocusability = FOCUS_BLOCK_DESCENDANTS
-        titleView.textSize = 14f
+        titleView.textSize = 16f
         titleView.setTypeface(titleView.typeface, Typeface.BOLD)
-        titleView.setTextColor(resolveColor(com.google.android.material.R.attr.colorOnSurfaceVariant))
+        titleView.setTextColor(resolveColor(com.google.android.material.R.attr.colorOnSurface))
         // Heading semantics belong on the focusable container: the title child is hidden from
         // accessibility, so TalkBack would otherwise never expose this row as a heading.
         isAccessibilityHeading = true

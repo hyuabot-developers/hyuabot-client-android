@@ -33,7 +33,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/header_first_container"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent">
                     <app.kobuggi.hyuabot.ui.common.SectionHeader
                         android:id="@+id/header_first"
@@ -108,7 +108,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/header_second_container"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/button_layout_first">
                     <app.kobuggi.hyuabot.ui.common.SectionHeader
                         android:id="@+id/header_second"
@@ -183,7 +184,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/header_third_container"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/button_layout_second">
                     <app.kobuggi.hyuabot.ui.common.SectionHeader
                         android:id="@+id/header_third"
@@ -258,7 +260,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/header_fourth_container"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/button_layout_third">
                     <app.kobuggi.hyuabot.ui.common.SectionHeader
                         android:id="@+id/header_fourth"
