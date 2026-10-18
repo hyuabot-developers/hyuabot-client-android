@@ -91,13 +91,16 @@ query HomePageQuery(
                 location
                 stops
                 status
+                isLast
                 terminal {
                     stationID
                     name
                 }
             }
         }
-
+        realtime {
+            updatedAt
+        }
     }
     subwayTimetable: subway(input: {language: $subwayLanguage, keys: $subwayTimetableKeys}) {
         stationID
@@ -133,6 +136,9 @@ query HomePageQuery(
         }
         log {
             time
+        }
+        realtime {
+            updatedAt
         }
     }
     cafeteria(input: { date: $date, campus: $campusID }) {
