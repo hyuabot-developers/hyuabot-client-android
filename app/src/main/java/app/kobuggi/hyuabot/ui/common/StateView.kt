@@ -46,20 +46,24 @@ class StateView @JvmOverloads constructor(
         }
         this.model = model
         this.sourceScreen = sourceScreen
+        val singleLine = model.kind == StateKind.ERROR
         title.setText(content.titleRes)
-        body.text = if (model.kind == StateKind.SUSPENDED && model.noticeDate != null) {
-            val locale = resources.configuration.locales[0]
-            val date = model.noticeDate.format(DateTimeFormatter.ofPattern(context.getString(R.string.state_suspended_date), locale))
-            context.getString(R.string.state_suspended_body, date)
-        } else {
-            context.getString(content.bodyRes)
+        title.visibility = if (singleLine) View.GONE else View.VISIBLE
+        body.text = when {
+            singleLine -> context.getString(content.titleRes)
+            model.kind == StateKind.SUSPENDED && model.noticeDate != null -> {
+                val locale = resources.configuration.locales[0]
+                val date = model.noticeDate.format(DateTimeFormatter.ofPattern(context.getString(R.string.state_suspended_date), locale))
+                context.getString(R.string.state_suspended_body, date)
+            }
+            else -> context.getString(content.bodyRes)
         }
         if (content.iconRes == null) icon.setImageDrawable(null) else icon.setImageResource(content.iconRes)
         icon.visibility = if (content.iconRes == null) View.GONE else View.VISIBLE
         action.visibility = if (content.actionRes == null) View.GONE else View.VISIBLE
         if (content.actionRes == null) action.text = null else action.setText(content.actionRes)
         action.setOnClickListener(if (onAction == null) null else View.OnClickListener { onAction() })
-        header.contentDescription = context.getString(R.string.state_header_content_description, title.text, body.text)
+        header.contentDescription = if (singleLine) body.text else context.getString(R.string.state_header_content_description, title.text, body.text)
         visibility = View.VISIBLE
         updateImpression()
     }
