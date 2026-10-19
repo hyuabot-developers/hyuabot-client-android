@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui.shuttle.realtime
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
@@ -17,9 +18,13 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.service.ShuttlePresenceService
 import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
+import app.kobuggi.hyuabot.ui.common.RequestUiState
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import app.kobuggi.hyuabot.util.QueryError
+import app.kobuggi.hyuabot.util.ServiceNoticeInput
+import app.kobuggi.hyuabot.util.ServiceClock
+import app.kobuggi.hyuabot.util.haltDateFor
 import app.kobuggi.hyuabot.util.currentShuttleWeekday
 import app.kobuggi.hyuabot.util.shuttleBusLogReferenceDates
 import com.apollographql.apollo.ApolloClient
@@ -37,6 +42,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.LocalTime
+import java.time.LocalDate
+import kotlinx.coroutines.CancellationException
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -54,9 +61,11 @@ class ShuttleRealtimeViewModel @Inject constructor(
     private val _result = MutableLiveData<List<ShuttleRealtimePageQuery.Stop>>()
     private val _initialStopRules = MutableLiveData<List<ShuttleInitialStopRuleCandidate>>(emptyList())
     private val _notices = MutableLiveData<List<ShuttleRealtimePageQuery.Notice1>>()
+    private val _serviceNotices = MutableLiveData<List<ServiceNoticeInput>>(emptyList())
     private val _transfer = MutableLiveData<ShuttleRealtimePageQuery.Data?>(null)
     private val _disposable = CompositeDisposable()
     private val _queryError = MutableLiveData<QueryError?>(null)
+    private val _requestState = MutableLiveData(RequestUiState())
     private val _busAlternativeShuttlecock = MutableLiveData<BusAlternativeData?>(null)
     private val _busAlternativeDormitory = MutableLiveData<BusAlternativeData?>(null)
     private val _busAlternativeStation = MutableLiveData<BusAlternativeData?>(null)
@@ -90,9 +99,12 @@ class ShuttleRealtimeViewModel @Inject constructor(
     val result get() = _result
     val initialStopRules get() = _initialStopRules
     val notices get() = _notices
+    val serviceNotices: LiveData<List<ServiceNoticeInput>> get() = _serviceNotices
     val transfer get() = _transfer
     val isLoading get() = _isLoading
     val queryError get() = _queryError
+    val requestState: LiveData<RequestUiState> get() = _requestState
+    fun haltDate(today: LocalDate): LocalDate? = haltDateFor(_serviceNotices.value.orEmpty(), today)
     val showDepartureTime get() = _showDepartureTime
     val showByDestination get() = _showByDestination
     val busAlternativeShuttlecock get() = _busAlternativeShuttlecock
@@ -166,6 +178,15 @@ class ShuttleRealtimeViewModel @Inject constructor(
         val language = if (appLanguage == Locale.KOREAN.language) "KOREAN" else "ENGLISH"
         val subwayLanguage = DynamicTextTranslator.currentAppLanguageTag()
         val requestKey = selection to (language to subwayLanguage)
+        val noticeDate = LocalDate.now(ServiceClock.ZONE)
+        _requestState.value = (_requestState.value ?: RequestUiState()).start(requestKey == lastAppliedRequestKey)
+        if (requestKey != lastAppliedRequestKey) {
+            _serviceNotices.value = emptyList()
+            // Keep the public list non-null; requestState marks this snapshot unaccepted.
+            _result.value = emptyList()
+            _transfer.value = null
+            _queryError.value = null
+        }
         if (_result.value == null || requestKey != lastAppliedRequestKey) _isLoading.value = true
         if (loadedSubwayLanguage != subwayLanguage) {
             _transfer.value = null
@@ -173,6 +194,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
             loadedSubwayLanguage = subwayLanguage
         }
         viewModelScope.launch {
+            try {
             val response = apolloClient.query(ShuttleRealtimePageQuery(
                 language,
                 subwayLanguage,
@@ -197,27 +219,42 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 alternativeInput = selection.alternativePairs().map { (route, stop) ->
                     BusRouteStopInput(route = route, stop = stop, limit = Optional.present(1))
                 },
+                 noticeStart = noticeDate,
+                noticeEnd = noticeDate,
             )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
-            // Timer ticks issue newer requests with the same selection; a slow response is still applied unless the
-            // selection changed or a newer response has already been rendered.
-            if (request <= lastAppliedRequest || selection != requestSelection()) return@launch
-            if (response.data == null || response.exception != null) {
+            // Discard responses from older timer ticks before they can replace the latest accepted result.
+            if (request != latestRequest || request <= lastAppliedRequest || selection != requestSelection()) return@launch
+            if (response.data == null || response.exception != null || response.hasErrors()) {
                 _queryError.value = QueryError.SERVER_ERROR
+                _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
             } else if (response.data?.shuttle?.stops != null) {
                 lastAppliedRequest = request
                 lastAppliedRequestKey = requestKey
+                _serviceNotices.value = response.data?.shuttle?.serviceNotices.orEmpty().map { notice ->
+                    ServiceNoticeInput(notice.kind, notice.date, notice.holiday?.type)
+                }
                 _result.value = response.data?.shuttle?.stops
+                _requestState.value = _requestState.value?.success() ?: RequestUiState().success()
                 _transfer.value = response.data
                 updateBusAlternatives(response.data?.busAlternative.orEmpty())
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
+                _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
             }
             // Notices refresh with every poll; the list is only replaced when it changed so the pager is not redrawn.
             if (response.exception == null) {
                 response.data?.notices?.flatMap { it.notices }?.takeIf { it != _notices.value }?.let { _notices.value = it }
             }
             _isLoading.value = false
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (request != latestRequest || request <= lastAppliedRequest || selection != requestSelection()) return@launch
+                _queryError.value = QueryError.SERVER_ERROR
+                _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
+                _isLoading.value = false
+            }
         }
     }
 

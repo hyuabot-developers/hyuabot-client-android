@@ -192,8 +192,10 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.loadingLayout.setSkeletonLoading(it)
+        viewModel.requestState.observe(viewLifecycleOwner) { request ->
+            val loading = request.loading && !request.hasSnapshot
+            binding.loadingLayout.setSkeletonLoading(loading)
+            binding.viewPager.visibility = if (loading) View.GONE else View.VISIBLE
         }
         viewModel.notices.observe(viewLifecycleOwner) { notices ->
             if (notices.isNotEmpty()) {
@@ -225,9 +227,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 hasRequestedInitialStopLocation = true
                 moveToInitialStop(fusedLocationProviderClient, stops)
             }
-        }
-        viewModel.queryError.observe(viewLifecycleOwner) {
-            it?.let { Toast.makeText(requireContext(), getString(R.string.shuttle_realtime_error), Toast.LENGTH_SHORT).show() }
         }
         viewModel.result.observe(viewLifecycleOwner) { stops ->
             if (stops.isNotEmpty()) maybeShowCoachmark()

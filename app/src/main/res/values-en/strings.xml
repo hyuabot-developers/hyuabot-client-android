@@ -786,4 +786,21 @@
     <string name="freshness_minute_unit">%d min</string>
     <string name="freshness_context_bus">Bus arrival info</string>
     <string name="freshness_context_subway">Subway arrival info</string>
+    <string name="state_empty_title">Nothing to show</string>
+    <string name="state_empty_body">There are no items to display right now.</string>
+    <string name="state_ended_title">Service has ended for today</string>
+    <string name="state_ended_body">Check the timetable for the next service.</string>
+    <string name="state_suspended_title">No service today</string>
+    <string name="state_suspended_body">There is no service on %1$s.</string>
+    <string name="state_error_title">Could not load information</string>
+    <string name="state_error_body">Check your connection and try again.</string>
+    <string name="state_information_delayed">Showing the last information received.</string>
+    <string name="state_permission_title">Notification permission needed</string>
+    <string name="state_permission_body">Allow notifications in Settings to receive alerts.</string>
+    <string name="state_timetable_action">View full timetable</string>
+    <string name="state_retry_action">Try again</string>
+    <string name="state_settings_action">Open settings</string>
+    <string name="state_loading">Loading</string>
+    <string name="state_suspended_date">MMM d, yyyy</string>
+    <string name="state_header_content_description">%1$s. %2$s</string>
 </resources>

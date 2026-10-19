@@ -13,6 +13,7 @@ import app.kobuggi.hyuabot.service.ShuttlePresenceService
 import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
+import app.kobuggi.hyuabot.ui.common.RequestUiState
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import app.kobuggi.hyuabot.ui.bus.realtime.BusRecentDates
@@ -28,6 +29,7 @@ import com.apollographql.cache.normalized.doNotStore
 import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
@@ -52,6 +54,8 @@ class HomeViewModel @Inject constructor(
     private val _data = MutableLiveData<HomePageQuery.Data?>()
     private val _initialStopRules = MutableLiveData<List<ShuttleInitialStopRuleCandidate>?>(null)
     private val _queryError = MutableLiveData<QueryError?>(null)
+    private val _requestState = MutableLiveData(RequestUiState())
+    private val _lastAcceptedAt = MutableLiveData<java.time.Instant?>(null)
     private val _showBus50Transfer = MutableLiveData(true)
     private val _showSubwayTransfer = MutableLiveData(true)
     private val _subwayTransferDestination = MutableLiveData(HomeSubwayTransferDestination.SEOUL)
@@ -62,7 +66,7 @@ class HomeViewModel @Inject constructor(
     private var isFetching = false
     private var pendingRefresh = false
     private var requestSelection = HomeRequestSelection()
-    private var lastAppliedMovementRequestKey: Pair<HomeRequestSelection, Pair<String, String>>? = null
+    private var lastAppliedMovementRequestKey: HomeRequestSnapshotKey? = null
     private var loadedSubwayLanguage: String? = null
     private var presenceJob: Job? = null
     private var selectedPresenceStop = "dormitory_o"
@@ -82,6 +86,8 @@ class HomeViewModel @Inject constructor(
     val data: LiveData<HomePageQuery.Data?> get() = _data
     val initialStopRules: LiveData<List<ShuttleInitialStopRuleCandidate>?> get() = _initialStopRules
     val queryError: LiveData<QueryError?> get() = _queryError
+    val requestState: LiveData<RequestUiState> get() = _requestState
+    val lastAcceptedAt: LiveData<java.time.Instant?> get() = _lastAcceptedAt
     val showBus50Transfer: LiveData<Boolean> get() = _showBus50Transfer
     val showSubwayTransfer: LiveData<Boolean> get() = _showSubwayTransfer
     val subwayTransferDestination: LiveData<HomeSubwayTransferDestination> get() = _subwayTransferDestination
@@ -127,7 +133,17 @@ class HomeViewModel @Inject constructor(
             val requestedBusDestination = selectedHomeBusDestination
             val subwayLanguage = DynamicTextTranslator.currentAppLanguageTag()
             val noticeLanguage = currentNoticeLanguage()
-            val movementRequestKey = requestedSelection to (noticeLanguage to subwayLanguage)
+            val movementRequestKey = HomeRequestSnapshotKey(
+                requestedSelection, requestedBusGroup, requestedBusDestination, noticeLanguage, subwayLanguage,
+            )
+            val retainSnapshot = movementRequestKey == lastAppliedMovementRequestKey
+            if (!retainSnapshot) {
+                _lastAcceptedAt.value = null
+                _data.value = null
+                _initialStopRules.value = null
+                _queryError.value = null
+            }
+            _requestState.value = (_requestState.value ?: RequestUiState()).start(retainSnapshot)
             if (loadedSubwayLanguage != subwayLanguage) {
                 _data.value = null
                 loadedSubwayLanguage = subwayLanguage
@@ -170,9 +186,9 @@ class HomeViewModel @Inject constructor(
                     pendingRefresh = true
                     return@launch
                 }
-                if (response.data == null || response.exception != null) {
-                    _initialStopRules.value = emptyList()
+                if (response.data == null || response.exception != null || response.hasErrors()) {
                     _queryError.value = QueryError.SERVER_ERROR
+                    _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
                 } else {
                     _initialStopRules.value =
                         response.data?.shuttle?.initialStopRules.orEmpty().map { rule ->
@@ -190,14 +206,18 @@ class HomeViewModel @Inject constructor(
                             )
                         }
                     _data.value = response.data
+                    _lastAcceptedAt.value = java.time.Instant.now()
+                    _requestState.value = _requestState.value?.success() ?: RequestUiState().success()
                     lastAppliedMovementRequestKey = movementRequestKey
                     _bus50TerminalLogTimes.value = if (requestedSelection.needsBus50) fetchBus50TerminalLogTimes(now.toLocalDate()) else emptyList()
                     viewModelScope.launch { shuttleServiceNoticeScheduler.syncIfStale() }
                     _queryError.value = null
                 }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (_: Exception) {
-                _initialStopRules.value = emptyList()
                 _queryError.value = QueryError.SERVER_ERROR
+                _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
             } finally {
                 val selectionChangedWhileFetching = requestedSelection != requestSelection ||
                     requestedBusGroup != selectedHomeBusGroup ||
@@ -465,3 +485,11 @@ class HomeViewModel @Inject constructor(
         stopPresenceUpdates()
     }
 }
+
+private data class HomeRequestSnapshotKey(
+    val movement: HomeRequestSelection,
+    val busGroup: HomeBusGroup?,
+    val busDestination: BusHomeDestination,
+    val noticeLanguage: String,
+    val subwayLanguage: String,
+)

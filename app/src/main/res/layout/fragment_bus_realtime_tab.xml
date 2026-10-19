@@ -66,16 +66,10 @@
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintTop_toBottomOf="@id/header_first_container" />
-                <TextView
+                <app.kobuggi.hyuabot.ui.common.StateView
                     android:id="@+id/no_realtime_data_first"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/bus_no_realtime_data"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_first" />
                 <LinearLayout
                     android:id="@+id/button_layout_first"
@@ -142,16 +136,10 @@
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintTop_toBottomOf="@id/header_second_container" />
-                <TextView
+                <app.kobuggi.hyuabot.ui.common.StateView
                     android:id="@+id/no_realtime_data_second"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/bus_no_realtime_data"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_second" />
                 <LinearLayout
                     android:id="@+id/button_layout_second"
@@ -218,16 +206,10 @@
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintTop_toBottomOf="@id/header_third_container" />
-                <TextView
+                <app.kobuggi.hyuabot.ui.common.StateView
                     android:id="@+id/no_realtime_data_third"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/bus_no_realtime_data"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_third" />
                 <LinearLayout
                     android:id="@+id/button_layout_third"
@@ -294,16 +276,10 @@
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintTop_toBottomOf="@id/header_fourth_container" />
-                <TextView
+                <app.kobuggi.hyuabot.ui.common.StateView
                     android:id="@+id/no_realtime_data_fourth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/bus_no_realtime_data"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_fourth" />
                 <LinearLayout
                     android:id="@+id/button_layout_fourth"

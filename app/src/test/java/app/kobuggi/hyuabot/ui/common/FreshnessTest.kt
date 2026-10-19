@@ -45,6 +45,24 @@ class FreshnessTest {
         assertEquals("정보 지연 · 5분 전", label(301).text)
     }
 
+    @Test fun forcedDelayIsImmediateAndSupportsMissingTimestamp() {
+        val fresh = Freshness.display(Freshness.Category.REALTIME, now.minusSeconds(20), now, utc, Ko, forcedDelayed = true)
+        assertEquals("정보 지연 · 0분 전", fresh.text)
+        assertEquals("정보 지연, 0분 전", fresh.spoken)
+        assertTrue(fresh.stale)
+
+        val missing = Freshness.display(Freshness.Category.REALTIME, null, now, utc, Ko, forcedDelayed = true)
+        assertEquals("정보 지연", missing.text)
+        assertEquals("정보 지연", missing.spoken)
+        assertTrue(missing.stale)
+    }
+
+    @Test fun scheduleBasisIsNotReplacedByForcedDelay() {
+        val schedule = Freshness.display(Freshness.Category.SCHEDULE, null, now, utc, Ko, forcedDelayed = true)
+        assertEquals("시간표 기준", schedule.text)
+        assertFalse(schedule.stale)
+    }
+
     @Test fun timeTextSwitchesAtSixtyMinutes() {
         assertEquals("59분", Freshness.timeText(59, Ko))
         assertEquals("01:00", Freshness.timeText(60, Ko))
@@ -64,4 +82,5 @@ private object Ko : FreshnessText {
     override fun spokenUnderMinute() = "1분 미만"
     override fun spokenMinutes(minutes: Long) = "${minutes}분 전"
     override fun minuteUnit(minutes: Long) = "${minutes}분"
+    override fun informationDelayed() = "정보 지연"
 }

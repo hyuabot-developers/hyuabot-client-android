@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +36,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.Duration
+import java.time.ZonedDateTime
+import java.time.ZoneId
+import app.kobuggi.hyuabot.ui.common.ListPresentation
+import app.kobuggi.hyuabot.ui.common.StateKind
+import app.kobuggi.hyuabot.ui.common.StateModel
+import app.kobuggi.hyuabot.util.AnalyticsScreen
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -96,10 +103,6 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.readingRoomUpdateTime.apply {
-            analyticsDomain = "readingRoom"
-            analyticsScreen = app.kobuggi.hyuabot.util.AnalyticsScreen.READING_ROOM.id
-        }
         askNotificationPermission()
         viewModel.apply {
             campusID.observe(viewLifecycleOwner) {
@@ -108,14 +111,11 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
             rooms.observe(viewLifecycleOwner) {
                 binding.readingRoomSwipeRefreshLayout.isRefreshing = false
                 roomListAdapter.updateData(it)
-                if (it.isNotEmpty()) {
-                    val newestUpdate = it.maxOf { room -> room.updatedAt }
-                    binding.readingRoomUpdateTime.apply {
-                        source = app.kobuggi.hyuabot.ui.common.FreshnessLabel.Source.READING_ROOM
-                        delayAfter = Duration.ofMinutes(5)
-                        updatedAt = newestUpdate.toInstant()
-                    }
-                } else binding.readingRoomUpdateTime.updatedAt = null
+                renderListState()
+            }
+            requestState.observe(viewLifecycleOwner) { request ->
+                if (!request.loading) binding.readingRoomSwipeRefreshLayout.isRefreshing = false
+                renderListState()
             }
             notificationList.observe(viewLifecycleOwner) {
                 Log.d("ReadingRoomFragment", "Notification list updated: $it")
@@ -133,9 +133,6 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
                     binding.readingRoomAlarmCancel.visibility = View.GONE
                 }
             }
-            queryError.observe(viewLifecycleOwner) {
-                it?.let { Toast.makeText(requireContext(), getString(R.string.reading_room_error), Toast.LENGTH_SHORT).show() }
-            }
         }
         showCoachmarkOnce(userPreferencesRepository, Coachmarks.READING_ROOM) {
             listOf(
@@ -149,6 +146,45 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
                 ),
             )
         }
+    }
+
+    private fun renderListState() {
+        val state = viewModel.requestState.value ?: return
+        val rooms = viewModel.rooms.value.orEmpty()
+        val presentation = app.kobuggi.hyuabot.ui.common.resolveListPresentation(
+            state,
+            hasSourceData = rooms.isNotEmpty(),
+            remainingCount = rooms.size,
+            mode = null,
+            now = ZonedDateTime.now(ZoneId.systemDefault()),
+        )
+        when (presentation) {
+            ListPresentation.Loading -> {
+                binding.readingRoomState.clear()
+                binding.readingRoomRecyclerView.isVisible = false
+            }
+            ListPresentation.Content -> {
+                binding.readingRoomState.clear()
+                binding.readingRoomRecyclerView.isVisible = true
+            }
+            is ListPresentation.State -> {
+                binding.readingRoomRecyclerView.isVisible = false
+                val retry = { viewModel.fetchRooms(viewModel.campusID.value ?: 2) }
+                if (presentation.model.kind == StateKind.ERROR) {
+                    binding.readingRoomState.bind(presentation.model, AnalyticsScreen.READING_ROOM, retry)
+                } else binding.readingRoomState.bind(presentation.model, AnalyticsScreen.READING_ROOM)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.readingRoomState.setScreenActive(true)
+    }
+
+    override fun onPause() {
+        binding.readingRoomState.setScreenActive(false)
+        super.onPause()
     }
 
     private fun askNotificationPermission() {

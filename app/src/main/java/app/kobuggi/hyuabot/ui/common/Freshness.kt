@@ -19,6 +19,7 @@ interface FreshnessText {
     fun spokenUnderMinute(): String
     fun spokenMinutes(minutes: Long): String
     fun minuteUnit(minutes: Long): String
+    fun informationDelayed(): String
 }
 
 object Freshness {
@@ -36,16 +37,32 @@ object Freshness {
         timeZone: ZoneId,
         words: FreshnessText,
         staleAfterOverride: Duration? = null,
+        forcedDelayed: Boolean = false,
     ): Display {
-        if (category == Category.SCHEDULE || (category == Category.REALTIME && updatedAt == null)) {
+        if (category == Category.SCHEDULE) {
             return Display(words.scheduleBasis(), words.scheduleBasis(), false)
+        }
+        if (forcedDelayed) {
+            if (updatedAt == null) {
+                val delayed = words.informationDelayed()
+                return Display(delayed, delayed, true)
+            }
+            val minutes = elapsed(now, updatedAt).toMinutes()
+            return Display(words.delayed(minutes), words.spokenDelayed(minutes), true)
+        }
+        if (category == Category.REALTIME && updatedAt == null) {
+            return Display("", "", false)
         }
         if (category == Category.HOURLY) return Display(words.hourly(), words.hourly(), false)
         if (category == Category.OBSERVED && updatedAt != null) {
             val observed = words.observed(updatedAt.atZone(timeZone).format(CLOCK))
             return Display(observed, observed, false)
         }
-        if (updatedAt == null) return Display("", "", false)
+        if (updatedAt == null) {
+            if (!forcedDelayed) return Display("", "", false)
+            val delayed = words.informationDelayed()
+            return Display(delayed, delayed, true)
+        }
 
         val age = elapsed(now, updatedAt)
         val staleAfter = staleAfterOverride
