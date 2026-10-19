@@ -87,6 +87,8 @@ class FreshnessLabel @JvmOverloads constructor(context: Context, attrs: Attribut
         set(value) { field = value; render() }
     var delayAfter: java.time.Duration = java.time.Duration.ofMinutes(3)
         set(value) { field = value; render() }
+    var forcedDelayed: Boolean = false
+        set(value) { field = value; render() }
 
     private val ticker = object : Runnable {
         override fun run() {
@@ -136,7 +138,7 @@ class FreshnessLabel @JvmOverloads constructor(context: Context, attrs: Attribut
             Source.HOURLY -> Freshness.Category.HOURLY
             Source.OBSERVED -> Freshness.Category.OBSERVED
         }
-        val display = Freshness.display(category, updatedAt, Instant.now(), ZoneId.systemDefault(), ResourceFreshnessText(context), staleAfterOverride = delayAfter)
+        val display = Freshness.display(category, updatedAt, Instant.now(), ZoneId.systemDefault(), ResourceFreshnessText(context), staleAfterOverride = delayAfter, forcedDelayed = forcedDelayed)
         val stale = display.stale
         // Once per fresh -> stale transition for this label (one label per screen view).
         if (stale && !wasStale) {
@@ -333,4 +335,5 @@ private class ResourceFreshnessText(private val context: Context) : FreshnessTex
     override fun spokenUnderMinute() = str(R.string.freshness_spoken_under_minute)
     override fun spokenMinutes(minutes: Long) = str(R.string.freshness_spoken_minutes, minutes)
     override fun minuteUnit(minutes: Long) = str(R.string.freshness_minute_unit, minutes)
+    override fun informationDelayed() = str(R.string.state_information_delayed)
 }

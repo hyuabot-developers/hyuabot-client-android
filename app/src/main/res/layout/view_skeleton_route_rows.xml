@@ -9,7 +9,4 @@
     <include layout="@layout/view_skeleton_route_row" />
     <include layout="@layout/view_skeleton_route_row" />
     <include layout="@layout/view_skeleton_route_row" />
-    <include layout="@layout/view_skeleton_route_row" />
-    <include layout="@layout/view_skeleton_route_row" />
-    <include layout="@layout/view_skeleton_route_row" />
 </LinearLayout>

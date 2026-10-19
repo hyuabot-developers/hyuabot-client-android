@@ -221,6 +221,15 @@ object AnalyticsManager {
             }
         }
     }
+
+    fun logEmptyStateShown(kind: String, sourceScreen: String) {
+        val event = app.kobuggi.hyuabot.ui.common.emptyStateEvent(kind, sourceScreen)
+        collectionGate.runWhenEnabled {
+            analytics.logEvent(event.name) {
+                event.parameters().forEach { (key, value) -> param(key, value) }
+            }
+        }
+    }
 }
 
 internal fun selectionParameters(
