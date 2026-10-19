@@ -93,7 +93,7 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
                 itemAnimator = null
             }
             entireTimetableFirst.isEnabled = false
-            headerSecond.visibility = View.GONE
+            headerSecondContainer.visibility = View.GONE
             realtimeViewSecond.visibility = View.GONE
             entireTimetableSecond.visibility = View.GONE
             noRealtimeDataSecond.visibility = View.GONE
