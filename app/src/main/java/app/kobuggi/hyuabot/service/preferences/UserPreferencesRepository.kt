@@ -11,12 +11,20 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import javax.inject.Singleton
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+@Singleton
 class UserPreferencesRepository @Inject constructor(private val userDataStorePreferences: DataStore<Preferences>) : UserPreferencesRepositoryImpl {
+    private val coachmarkInitializationMutex = Mutex()
+    @Volatile private var coachmarkInitialEligibility: Boolean? = null
     val readingRoomNotifications: Flow<Set<String>> = userDataStorePreferences.data
         .catch { exception ->
             if (exception is IOException) {
@@ -564,29 +572,32 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
-    override suspend fun resetCoachmarks() {
-        Result.runCatching {
+    override suspend fun resetCoachmarks() = coachmarkInitializationMutex.withLock {
+        try {
             userDataStorePreferences.edit { preferences ->
                 preferences.remove(COACHMARKS_SEEN_KEY)
                 preferences.remove(COACHMARK_INITIALIZED_KEY)
                 preferences.remove(COACHMARK_RESET_KEYS_KEY)
             }
+            coachmarkInitialEligibility = null
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         }
     }
 
-    override suspend fun syncCoachmarkEligibility(isFreshInstall: Boolean, allCoachmarkKeys: Set<String>) {
-        Result.runCatching {
+    override suspend fun initializeCoachmarks(): Boolean = coachmarkInitializationMutex.withLock {
+        coachmarkInitialEligibility?.let { return it }
+        try {
+            var isNew: Boolean? = null
             userDataStorePreferences.edit { preferences ->
-                if (!isFreshInstall) {
-                    val current = preferences[COACHMARKS_SEEN_KEY] ?: emptySet()
-                    val resetKeys = preferences[COACHMARK_RESET_KEYS_KEY] ?: emptySet()
-                    preferences[COACHMARKS_SEEN_KEY] = current + (allCoachmarkKeys - resetKeys)
-                    return@edit
-                }
-                if (preferences[COACHMARK_INITIALIZED_KEY] != true) {
-                    preferences[COACHMARK_INITIALIZED_KEY] = true
-                }
+                isNew = COACHMARK_INITIALIZED_KEY !in preferences
+                preferences[COACHMARK_INITIALIZED_KEY] = true
             }
+            val result = requireNotNull(isNew)
+            coachmarkInitialEligibility = result
+            result
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         }
     }
 

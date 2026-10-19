@@ -1,11 +1,11 @@
 package app.kobuggi.hyuabot.ui.common.coachmark
 
-import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 object Coachmarks {
@@ -20,6 +20,7 @@ object Coachmarks {
     const val READING_ROOM = "reading_room"
     const val MAP = "map"
     const val SETTING = "setting"
+    const val HOME = "home"
 
     val USER_VISIBLE_KEYS = setOf(
         SHUTTLE,
@@ -33,33 +34,47 @@ object Coachmarks {
         READING_ROOM,
         MAP,
         SETTING,
+        HOME,
     )
 }
 
-suspend fun Context.ensureCoachmarkEligibility(repository: UserPreferencesRepository) {
-    val packageInfo = packageManager.getPackageInfo(packageName, 0)
-    val isFreshInstall = packageInfo.firstInstallTime == packageInfo.lastUpdateTime
-    repository.syncCoachmarkEligibility(isFreshInstall, Coachmarks.USER_VISIBLE_KEYS)
+suspend fun android.content.Context.ensureCoachmarkEligibility(repository: UserPreferencesRepository): Boolean {
+    return repository.initializeCoachmarks()
 }
 
 fun Fragment.showCoachmarkOnce(
     repository: UserPreferencesRepository,
     key: String,
+    onStepShown: (Int) -> Unit = {},
+    onSkip: (Int) -> Unit = {},
+    onComplete: (Int) -> Unit = {},
+    onDismiss: () -> Unit = {},
     steps: () -> List<CoachmarkStep>,
 ) {
     val owner = viewLifecycleOwner
     owner.lifecycleScope.launch {
-        requireContext().ensureCoachmarkEligibility(repository)
+        try {
+            requireContext().ensureCoachmarkEligibility(repository)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (_: Exception) {
+            return@launch
+        }
         if (repository.coachmarkSeen(key).first()) return@launch
         val rootView = view ?: return@launch
         rootView.post {
             if (!isAdded || view == null || !owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
                 return@post
             }
-            CoachmarkController.show(requireActivity(), steps(), owner) {
-                lifecycleScope.launch {
-                    repository.markCoachmarkSeen(key)
-                }
+            val host = activity ?: return@post
+            host.lifecycleScope.launch {
+                if (host is app.kobuggi.hyuabot.ui.MainActivity && !host.claimStartupCoachmark(key)) return@launch
+                CoachmarkController.show(host, steps(), owner, onFinish = {
+                    host.lifecycleScope.launch { repository.markCoachmarkSeen(key) }
+                }, onStepShown = onStepShown, onSkip = onSkip, onComplete = onComplete, onDismiss = {
+                    (host as? app.kobuggi.hyuabot.ui.MainActivity)?.releaseStartupCoachmarkClaim()
+                    onDismiss()
+                })
             }
         }
     }

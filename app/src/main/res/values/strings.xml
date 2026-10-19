@@ -688,7 +688,9 @@
     <string name="coachmark_skip">건너뛰기</string>
     <string name="coachmark_next">다음</string>
     <string name="coachmark_done">완료</string>
-    <string name="coachmark_step_indicator">%1$d / %2$d</string>
+    <string name="coachmark_step_indicator">%1$d/%2$d</string>
+    <string name="coachmark_accessibility_summary">%1$d/%2$d. %3$s. %4$s</string>
+    <string name="coachmark_body_with_target">%1$s. %2$s</string>
     <string name="coachmark_shuttle_nav_title">한눈에 보는 캠퍼스 정보</string>
     <string name="coachmark_shuttle_nav_desc">셔틀·버스·지하철·식당을 탭으로 전환하세요. 메뉴 탭에 더 많은 기능이 있어요.</string>
     <string name="coachmark_shuttle_tab_title">정류장 탭</string>
@@ -819,4 +821,10 @@
     <string name="state_loading">불러오는 중</string>
     <string name="state_suspended_date">yyyy년 M월 d일</string>
     <string name="state_header_content_description">%1$s. %2$s</string>
+    <string name="coachmark_home_destination_title">목적지 선택</string>
+    <string name="coachmark_home_destination_desc">목적지를 선택하면 해당 이동 정보를 확인할 수 있어요.</string>
+    <string name="coachmark_home_movement_title">다음 셔틀</string>
+    <string name="coachmark_home_movement_desc">가까운 셔틀 출발 시각을 확인할 수 있어요.</string>
+    <string name="coachmark_home_legacy_title">셔틀 화면</string>
+    <string name="coachmark_home_legacy_desc">셔틀 화면을 열어 실시간 정보를 확인할 수 있어요.</string>
 </resources>

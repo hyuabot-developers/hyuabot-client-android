@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.google.android.material.button.MaterialButton
 import app.kobuggi.hyuabot.databinding.DialogHomeQuickSettingsBinding
 import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
+import app.kobuggi.hyuabot.util.AnalyticsManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -15,6 +16,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
     private var _binding: DialogHomeQuickSettingsBinding? = null
     private val binding get() = _binding!!
+    private var lastPresenceStatus: Boolean? = null
+    private var lastBus50Transfer: Boolean? = null
+    private var lastSubwayTransfer: Boolean? = null
+    private var lastSeoulBusStop: Boolean? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), theme).apply {
@@ -45,6 +50,10 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
         val subwayDestination = HomeSubwayTransferDestination.from(requireArguments().getString(ARG_SUBWAY_TRANSFER_DESTINATION))
         binding.subwayDestinationGroup.check(buttonIdFor(subwayDestination))
         binding.showSeoulBusStopSwitch.isChecked = requireArguments().getBoolean(ARG_SHOW_SEOUL_BUS_STOP, true)
+        lastPresenceStatus = binding.showPresenceStatusSwitch.isChecked
+        lastBus50Transfer = binding.showBus50TransferSwitch.isChecked
+        lastSubwayTransfer = binding.showSubwayTransferSwitch.isChecked
+        lastSeoulBusStop = binding.showSeoulBusStopSwitch.isChecked
         val seoulBusStop = BusSeoulTargetStop.from(requireArguments().getString(ARG_SEOUL_BUS_STOP))
         binding.seoulBusStopGroup.check(buttonIdFor(seoulBusStop))
         reorderHomeSettingsSections()
@@ -70,18 +79,27 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.showPresenceStatusSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (lastPresenceStatus == isChecked) return@setOnCheckedChangeListener
+            lastPresenceStatus = isChecked
+            AnalyticsManager.logQuickSettingToggle("show_presence_status", isChecked)
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
                 Bundle().apply { putBoolean(KEY_SHOW_PRESENCE_STATUS, isChecked) },
             )
         }
         binding.showBus50TransferSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (lastBus50Transfer == isChecked) return@setOnCheckedChangeListener
+            lastBus50Transfer = isChecked
+            AnalyticsManager.logQuickSettingToggle("show_bus50_transfer", isChecked)
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
                 Bundle().apply { putBoolean(KEY_SHOW_BUS50_TRANSFER, isChecked) },
             )
         }
         binding.showSubwayTransferSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (lastSubwayTransfer == isChecked) return@setOnCheckedChangeListener
+            lastSubwayTransfer = isChecked
+            AnalyticsManager.logQuickSettingToggle("show_subway_transfer", isChecked)
             updateSubwayDestinationEnabled(isChecked)
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
@@ -97,6 +115,9 @@ class HomeQuickSettingsDialog : BottomSheetDialogFragment() {
             )
         }
         binding.showSeoulBusStopSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (lastSeoulBusStop == isChecked) return@setOnCheckedChangeListener
+            lastSeoulBusStop = isChecked
+            AnalyticsManager.logQuickSettingToggle("show_seoul_bus_stop", isChecked)
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
                 Bundle().apply { putBoolean(KEY_SHOW_SEOUL_BUS_STOP, isChecked) },

@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.ui.bus.realtime
 import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.ManualRefreshDomain
 import app.kobuggi.hyuabot.util.AnalyticsItem
 
 import androidx.core.view.isVisible
@@ -126,6 +127,7 @@ class BusTabSuwonFragment @Inject constructor() : Fragment() {
             noRealtimeDataFourth.visibility = View.GONE
             buttonLayoutFourth.visibility = View.GONE
             swipeRefreshLayout.setOnRefreshListener {
+                AnalyticsManager.logManualRefresh(ManualRefreshDomain.BUS)
                 parentViewModel.fetchData()
             }
         }

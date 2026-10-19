@@ -57,11 +57,17 @@ import app.kobuggi.hyuabot.ui.common.StateModel
 import app.kobuggi.hyuabot.ui.common.StateView
 import app.kobuggi.hyuabot.ui.common.resolveListPresentation
 import app.kobuggi.hyuabot.ui.common.RequestUiState
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkShape
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
+import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.AnalyticsScreen
 import app.kobuggi.hyuabot.util.TransportMode
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.ManualRefreshDomain
 import app.kobuggi.hyuabot.util.LastRunJudge
 import app.kobuggi.hyuabot.util.localizedSubwayStationName
 import app.kobuggi.hyuabot.util.setSkeletonLoading
@@ -76,6 +82,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.Duration
@@ -99,6 +106,7 @@ private data class HomeBusArrivalCandidate(
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
+    @Inject lateinit var userPreferencesRepository: UserPreferencesRepository
     private val binding by lazy { FragmentHomeBinding.inflate(layoutInflater) }
     private val viewModel: HomeViewModel by viewModels()
     private val homeTypeface by lazy { ResourcesCompat.getFont(requireContext(), R.font.godo) }
@@ -186,6 +194,7 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.busRealtimeFragment)
         }
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
+                AnalyticsManager.logManualRefresh(ManualRefreshDomain.HOME)
             AnalyticsManager.logSelect(AnalyticsItem.HOME_REFRESH)
             refreshHome()
         }
@@ -296,6 +305,24 @@ class HomeFragment : Fragment() {
         refreshHome()
         return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        showCoachmarkOnce(
+            userPreferencesRepository,
+            Coachmarks.HOME,
+            steps = ::buildHomeCoachmarkSteps,
+            onStepShown = AnalyticsManager::logCoachmarkStepView,
+            onSkip = AnalyticsManager::logCoachmarkSkip,
+            onComplete = AnalyticsManager::logCoachmarkComplete,
+        )
+    }
+
+    private fun buildHomeCoachmarkSteps(): List<CoachmarkStep> = listOf(
+        CoachmarkStep({ binding.destinationGroup }, R.string.coachmark_home_destination_title, R.string.coachmark_home_destination_desc, CoachmarkShape.ROUNDED_RECT),
+        CoachmarkStep({ binding.movementContainer }, R.string.coachmark_home_movement_title, R.string.coachmark_home_movement_desc, CoachmarkShape.ROUNDED_RECT),
+        CoachmarkStep({ binding.legacyShuttleButton }, R.string.coachmark_home_legacy_title, R.string.coachmark_home_legacy_desc, CoachmarkShape.ROUNDED_RECT),
+    )
 
     private fun renderPresencePill(viewerCount: Int?) {
         binding.homePresencePill.visibility = if (viewerCount == null) View.GONE else View.VISIBLE

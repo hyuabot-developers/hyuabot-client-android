@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.ui.subway.realtime
 import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.ManualRefreshDomain
 import app.kobuggi.hyuabot.util.AnalyticsItem
 
 import android.os.Bundle
@@ -68,6 +69,7 @@ class SubwayTabBlueFragment @Inject constructor() : Fragment() {
                 }
             }
             swipeRefreshLayout.setOnRefreshListener {
+                AnalyticsManager.logManualRefresh(ManualRefreshDomain.SUBWAY)
                 parentViewModel.fetchData()
             }
         }

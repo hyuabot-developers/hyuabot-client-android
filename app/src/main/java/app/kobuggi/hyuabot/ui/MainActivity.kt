@@ -49,6 +49,9 @@ import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.AnalyticsScreen
 import app.kobuggi.hyuabot.util.AnalyticsScreenDispatcher
 import app.kobuggi.hyuabot.util.InAppReviewManager
+import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.StartupOverlay
 import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import app.kobuggi.hyuabot.ui.common.applyPermissionDialogButtonColors
 import app.kobuggi.hyuabot.ui.bus.realtime.BusQuickSettingsDialog
@@ -64,6 +67,7 @@ import app.kobuggi.hyuabot.widget.refreshHyuabotWidgets
 import com.google.android.material.navigation.NavigationBarView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -74,6 +78,7 @@ import app.kobuggi.hyuabot.BuildConfig
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedListener, NavigationBarView.OnItemSelectedListener, DialogInterface.OnDismissListener {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<MainViewModel>()
+    private val startupOverlayViewModel by viewModels<StartupOverlayViewModel>()
     private val navController: NavController by lazy {
         val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragment.id)!! as NavHostFragment
         navHostFragment.navController
@@ -92,7 +97,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     private var backgroundLocationDisclosureDeferredThisSession = false
     private var backgroundLocationDisclosureDialog: AlertDialog? = null
     private var foregroundLocationPermissionAction: (() -> Unit)? = null
+    private var deferredForegroundDisclosureAction: (() -> Unit)? = null
     private var foregroundLocationDisclosureShown = false
+    private var startupOverlayResolved = false
+    private var startupDialogVisible = false
+
+    @Inject lateinit var userPreferencesRepository: UserPreferencesRepository
 
     private fun logLocationFlow(message: String) {
         if (BuildConfig.DEBUG) Log.d("LocationFlow", message)
@@ -126,7 +136,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         super.onCreate(savedInstanceState)
         backgroundLocationSettingsOpened =
             savedInstanceState?.getBoolean(BACKGROUND_LOCATION_SETTINGS_OPENED_STATE) == true
-        initializeLocationDisclosureSession()
         setContentView(binding.root)
         applyStatusBarStyle(navController.currentDestination?.id)
         binding.bottomNavigation.apply {
@@ -141,6 +150,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             applyStatusBarStyle(destination.id)
             updatePrimaryNavigationItem(destination.id)
             screenForDestination(destination.id)?.let {
+                AnalyticsManager.setSourceScreen(it)
                 analyticsScreenDispatcher.onDestinationChanged(it)
             }
         }
@@ -151,9 +161,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 else -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) }
             }
         }
-        suggestLanguageIfNeeded()
-        openBirthDayDialog()
-        requestInAppReview()
         syncShuttleServiceNotices()
         pendingBackgroundLocationRequest =
             intent.getBooleanExtra(EXTRA_REQUEST_BACKGROUND_LOCATION, false) ||
@@ -167,6 +174,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         ) {
             showLegacyShuttleAsRoot()
         }
+        startStartupOverlaySelection()
     }
 
     private fun setupTopAppBar() {
@@ -333,6 +341,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             }
             return
         }
+        if (!startupOverlayResolved || startupDialogVisible) return
+        if (startupOverlayViewModel.decision.value == StartupOverlay.COACHMARK) {
+            backgroundLocationDisclosureDeferredThisSession = true
+            return
+        }
         handlePendingBackgroundLocationRequest()
     }
 
@@ -342,6 +355,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     private fun handlePendingBackgroundLocationRequest() {
+        if (!startupOverlayResolved || startupDialogVisible) return
+        if (startupOverlayViewModel.decision.value == StartupOverlay.COACHMARK) {
+            backgroundLocationDisclosureDeferredThisSession = true
+            return
+        }
         logLocationFlow("handlePending; pending=$pendingBackgroundLocationRequest foreground=${hasLocationPermission()} background=${hasBackgroundLocationPermission()} widget=${hasShuttleWidget()}")
         if (!pendingBackgroundLocationRequest) return
         if (hasLocationPermission()) {
@@ -416,39 +434,125 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         else -> false
     }
 
-    private fun suggestLanguageIfNeeded() {
-        val prefs = getSharedPreferences("pref", MODE_PRIVATE)
-        if (prefs.getBoolean("languageSuggestionShown", false)) return
-        prefs.edit { putBoolean("languageSuggestionShown", true) }
-
+    private fun isLanguageSuggestionEligible(): Boolean {
+        if (getSharedPreferences("pref", MODE_PRIVATE).getBoolean("languageSuggestionShown", false)) return false
         val systemLang = resources.configuration.locales[0].language
-        if (systemLang != "ja" && systemLang != "zh") return
+        return (systemLang == "ja" || systemLang == "zh") &&
+            AppCompatDelegate.getApplicationLocales().get(0)?.language == "en"
+    }
 
-        val appLocales = AppCompatDelegate.getApplicationLocales()
-        val appLang = appLocales.get(0)?.language
-
-        if (appLang == "en") {
-            val targetTag = if (systemLang == "ja") "ja-JP" else "zh-CN"
-            val targetLangName = getString(if (systemLang == "ja") R.string.language_japanese else R.string.language_chinese)
-            AlertDialog.Builder(this)
-                .setTitle(getString(R.string.language_suggestion_title))
-                .setMessage(getString(R.string.language_suggestion_message, targetLangName))
-                .setPositiveButton(targetLangName) { _, _ ->
-                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(targetTag))
-                }
-                .setNegativeButton(getString(R.string.language_suggestion_keep_english), null)
-                .show()
-                .applyGodoTypography()
-        } else if (appLang != "ja" && appLang != "zh") {
+    private fun applyAutomaticLocaleFallback() {
+        val systemLang = resources.configuration.locales[0].language
+        val appLang = AppCompatDelegate.getApplicationLocales().get(0)?.language
+        if ((systemLang == "ja" || systemLang == "zh") && appLang != "en" && appLang != "ja" && appLang != "zh") {
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
         }
     }
 
-    private fun requestInAppReview() {
+    private fun suggestLanguageIfNeeded(force: Boolean = false) {
+        if (!force && !isLanguageSuggestionEligible()) return
+        getSharedPreferences("pref", MODE_PRIVATE).edit { putBoolean("languageSuggestionShown", true) }
+        val systemLang = resources.configuration.locales[0].language
+        val targetTag = if (systemLang == "ja") "ja-JP" else "zh-CN"
+        val targetLangName = getString(if (systemLang == "ja") R.string.language_japanese else R.string.language_chinese)
+        startupDialogVisible = true
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.language_suggestion_title))
+            .setMessage(getString(R.string.language_suggestion_message, targetLangName))
+            .setPositiveButton(targetLangName) { _, _ ->
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(targetTag))
+            }
+            .setNegativeButton(getString(R.string.language_suggestion_keep_english), null)
+            .create()
+            .apply {
+                setOnDismissListener {
+                    startupDialogVisible = false
+                    resumeDeferredForegroundDisclosure()
+                    handlePendingBackgroundLocationRequest()
+                }
+                show()
+                applyGodoTypography()
+            }
+    }
+
+    private fun startStartupOverlaySelection() {
+        startupOverlayViewModel.initialize {
+            val initialized = try {
+                userPreferencesRepository.initializeCoachmarks()
+                true
+            } catch (error: kotlinx.coroutines.CancellationException) {
+                throw error
+            } catch (_: Exception) {
+                false
+            }
+            initializeLocationDisclosureSession()
+            applyAutomaticLocaleFallback()
+            val coachmarkKeys = navController.currentDestination?.id?.let(::coachmarkKeysForDestination).orEmpty()
+            val coachmarkEligible = initialized && coachmarkKeys.any { !userPreferencesRepository.coachmarkSeen(it).first() }
+            val languageEligible = initialized && isLanguageSuggestionEligible()
+            val birthdayEligible = initialized && isBirthdayEligible()
+            val reviewPotential = inAppReviewManager.recordLaunchAndIsEligible()
+            val reviewEligible = initialized && reviewPotential
+            val selected = app.kobuggi.hyuabot.ui.common.coachmark.chooseStartupOverlay(
+                coachmarkEligible, languageEligible, birthdayEligible, reviewEligible,
+            )
+            if (birthdayEligible && selected != StartupOverlay.BIRTHDAY) {
+                val pref = getSharedPreferences("pref", MODE_PRIVATE)
+                val pendingYear = pref.getInt("birthDayPendingYear", ZonedDateTime.now(ZoneId.of("Asia/Seoul")).year)
+                pref.edit { putInt("birthDayPendingYear", pendingYear) }
+            }
+            selected
+        }
         lifecycleScope.launch {
-            inAppReviewManager.maybeRequestReview(this@MainActivity)
+            val selected = startupOverlayViewModel.decision.first { it != null } ?: StartupOverlay.NONE
+            startupOverlayResolved = true
+            when (selected) {
+                StartupOverlay.LANGUAGE -> suggestLanguageIfNeeded(force = true)
+                StartupOverlay.BIRTHDAY -> openBirthDayDialog()
+                StartupOverlay.REVIEW -> if (startupOverlayViewModel.claimReviewRequest()) {
+                    inAppReviewManager.requestEligibleReview(this@MainActivity)
+                }
+                StartupOverlay.COACHMARK, StartupOverlay.NONE -> Unit
+            }
+            resumeDeferredForegroundDisclosure()
         }
     }
+
+    private fun coachmarkKeyForDestination(destinationId: Int): String? = when (screenForDestination(destinationId)) {
+        AnalyticsScreen.HOME -> Coachmarks.HOME
+        AnalyticsScreen.SHUTTLE_REALTIME -> Coachmarks.SHUTTLE
+        AnalyticsScreen.SHUTTLE_TIMETABLE -> Coachmarks.SHUTTLE_TIMETABLE
+        AnalyticsScreen.BUS_REALTIME -> Coachmarks.BUS
+        AnalyticsScreen.SUBWAY_REALTIME -> Coachmarks.SUBWAY
+        AnalyticsScreen.CAFETERIA -> Coachmarks.CAFETERIA
+        AnalyticsScreen.READING_ROOM -> Coachmarks.READING_ROOM
+        AnalyticsScreen.MAP -> Coachmarks.MAP
+        AnalyticsScreen.SETTING -> Coachmarks.SETTING
+        AnalyticsScreen.MENU -> Coachmarks.MENU
+        else -> null
+    }
+
+    private fun coachmarkKeysForDestination(destinationId: Int): Set<String> = buildSet {
+        coachmarkKeyForDestination(destinationId)?.let(::add)
+        if (screenForDestination(destinationId) == AnalyticsScreen.SHUTTLE_REALTIME) add(Coachmarks.SHUTTLE_REALTIME_UPDATES)
+    }
+
+    private fun isBirthdayEligible(): Boolean {
+        val pref = getSharedPreferences("pref", MODE_PRIVATE)
+        val pendingYear = pref.getInt("birthDayPendingYear", 0)
+        val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+        val year = if (pendingYear != 0) pendingYear else if (now.monthValue == 12 && now.dayOfMonth == 12) now.year else 0
+        return year != 0 && pref.getInt("birthDayOpened", 0) != year
+    }
+
+    suspend fun claimStartupCoachmark(key: String): Boolean {
+        val decision = startupOverlayViewModel.decision.first { it != null }
+        val destination = navController.currentDestination?.id ?: return false
+        if (decision != StartupOverlay.COACHMARK || key != coachmarkKeyForDestination(destination)) return false
+        return startupOverlayViewModel.claimCoachmark()
+    }
+
+    fun releaseStartupCoachmarkClaim() = startupOverlayViewModel.releaseCoachmarkClaim()
 
     private fun syncShuttleServiceNotices() {
         lifecycleScope.launch {
@@ -473,6 +577,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     private fun maybeRequestBackgroundLocation() {
+        if (!startupOverlayResolved || startupDialogVisible) return
+        if (startupOverlayViewModel.decision.value == StartupOverlay.COACHMARK) {
+            backgroundLocationDisclosureDeferredThisSession = true
+            return
+        }
         if (backgroundLocationDisclosureDialog?.isShowing == true) {
             logLocationFlow("maybeBackground skipped; disclosure already showing")
             return
@@ -561,8 +670,28 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             onGranted()
             return
         }
+        if (!startupOverlayResolved || startupDialogVisible) {
+            deferredForegroundDisclosureAction = onGranted
+            return
+        }
+        if (startupOverlayViewModel.decision.value == StartupOverlay.COACHMARK) {
+            backgroundLocationDisclosureDeferredThisSession = true
+            return
+        }
         foregroundLocationPermissionAction = onGranted
         showForegroundLocationDisclosure()
+    }
+
+    private fun resumeDeferredForegroundDisclosure() {
+        if (!startupOverlayResolved || startupDialogVisible) return
+        if (startupOverlayViewModel.decision.value == StartupOverlay.COACHMARK) {
+            deferredForegroundDisclosureAction = null
+            return
+        }
+        deferredForegroundDisclosureAction?.let { action ->
+            deferredForegroundDisclosureAction = null
+            requestForegroundLocationPermission(action)
+        }
     }
 
     private fun recordLocationDisclosureDecline(key: String) {
@@ -719,7 +848,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.noticeWebViewFragment -> AnalyticsScreen.WEB_VIEW
         R.id.contactFragment -> AnalyticsScreen.CONTACT
         R.id.calendarFragment -> AnalyticsScreen.CALENDAR
-        R.id.menuFragment -> AnalyticsScreen.CAMPUS
+        R.id.menuFragment -> AnalyticsScreen.MENU
         R.id.languageSettingDialogFragment -> AnalyticsScreen.SETTING_LANGUAGE
         R.id.campusSettingDialogFragment -> AnalyticsScreen.SETTING_CAMPUS
         R.id.themeSettingDialogFragment -> AnalyticsScreen.SETTING_THEME
@@ -753,8 +882,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         val pref = getSharedPreferences("pref", MODE_PRIVATE)
         val lastOpenedYear = pref.getInt("birthDayOpened", 0)
         val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+        val pendingYear = pref.getInt("birthDayPendingYear", 0)
+        val birthdayYear = if (pendingYear != 0) pendingYear else now.year
+        val isDue = pendingYear != 0 || (now.monthValue == 12 && now.dayOfMonth == 12)
 
-        if (now.monthValue == 12 && now.dayOfMonth == 12 && lastOpenedYear != now.year){
+        if (isDue && lastOpenedYear != birthdayYear){
             val dialogBuilder = AlertDialog.Builder(this)
             val dialogLayout = R.layout.dialog_birthday
             val dialogView = LayoutInflater.from(this).inflate(dialogLayout,null)
@@ -766,13 +898,20 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             dialogBuilder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->
                 if (dialogCheckBox.isChecked){
                     AnalyticsManager.logSelect(AnalyticsItem.BIRTHDAY_DO_NOT_SHOW)
-                    pref.edit { putInt("birthDayOpened", now.year) }
+                    pref.edit { putInt("birthDayOpened", birthdayYear) }
                 }
                 AnalyticsManager.logSelect(AnalyticsItem.BIRTHDAY_DISMISS)
                 dialogInterface.dismiss()
             }
             AnalyticsManager.logScreen(AnalyticsScreen.BIRTHDAY)
+            startupDialogVisible = true
             dialogBuilder.create().apply {
+                setOnDismissListener {
+                    startupDialogVisible = false
+                    pref.edit { remove("birthDayPendingYear") }
+                    resumeDeferredForegroundDisclosure()
+                    handlePendingBackgroundLocationRequest()
+                }
                 show()
                 applyGodoTypography()
             }

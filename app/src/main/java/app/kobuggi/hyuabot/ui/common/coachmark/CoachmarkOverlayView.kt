@@ -19,6 +19,8 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.graphics.toColorInt
 import androidx.core.view.doOnLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.updateLayoutParams
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ViewCoachmarkBubbleBinding
@@ -43,6 +45,11 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
     private var steps: List<CoachmarkStep> = emptyList()
     private var index = 0
     private var onFinish: () -> Unit = {}
+    private var onSkip: (Int) -> Unit = {}
+    private var onComplete: (Int) -> Unit = {}
+    private var onAbort: () -> Unit = {}
+    private var onStepShown: (Int) -> Unit = {}
+    private var notifiedStep = -1
     private var allowTapThrough = false
 
     private val bubbleBinding = ViewCoachmarkBubbleBinding.inflate(LayoutInflater.from(context), this, false)
@@ -55,20 +62,35 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
         setLayerType(LAYER_TYPE_HARDWARE, null)
         isClickable = true
         isFocusable = true
+        val onSurface = TypedValue()
+        if (context.theme.resolveAttribute(com.google.android.material.R.attr.colorOnSurface, onSurface, true)) {
+            borderPaint.color = onSurface.data
+        }
         val horizontalMargin = dp(16f).toInt()
         bubbleBinding.root.updateLayoutParams<LayoutParams> {
-            width = ViewGroup.LayoutParams.MATCH_PARENT
+            width = minOf(dp(320f).toInt(), resources.displayMetrics.widthPixels - horizontalMargin * 2)
             marginStart = horizontalMargin
             marginEnd = horizontalMargin
         }
         addView(bubbleBinding.root)
         bubbleBinding.coachmarkNext.setOnClickListener { advance() }
-        bubbleBinding.coachmarkSkip.setOnClickListener { finish() }
+        bubbleBinding.coachmarkSkip.setOnClickListener { finish(skipped = true) }
     }
 
-    fun setSteps(steps: List<CoachmarkStep>, onFinish: () -> Unit) {
+    fun setSteps(
+        steps: List<CoachmarkStep>,
+        onFinish: () -> Unit,
+        onSkip: (Int) -> Unit = {},
+        onComplete: (Int) -> Unit = {},
+        onAbort: () -> Unit = {},
+        onStepShown: (Int) -> Unit = {},
+    ) {
         this.steps = steps
         this.onFinish = onFinish
+        this.onSkip = onSkip
+        this.onComplete = onComplete
+        this.onAbort = onAbort
+        this.onStepShown = onStepShown
         this.index = 0
         doOnLayout { showStep() }
     }
@@ -87,7 +109,7 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
 
     private fun showStep() {
         if (index >= steps.size) {
-            finish()
+            onAbort()
             return
         }
         val step = steps[index]
@@ -96,14 +118,24 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
             if (step.centered) {
                 showCenteredStep(step)
             } else {
-                index++
-                showStep()
+                onAbort()
             }
             return
         }
         currentShape = step.shape
         allowTapThrough = step.allowTapThrough
         bindBubble(step)
+        bubbleBinding.root.doOnLayout {
+            if (notifiedStep != index) {
+                notifiedStep = index
+                onStepShown(index + 1)
+                ViewCompat.performAccessibilityAction(
+                    bubbleBinding.root,
+                    AccessibilityNodeInfoCompat.ACTION_ACCESSIBILITY_FOCUS,
+                    null,
+                )
+            }
+        }
         step.onShow?.invoke(target)
         target.requestRectangleOnScreen(Rect(0, 0, target.width, target.height), true)
         post { updateSpotlight(target) }
@@ -113,15 +145,41 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
         hasSpotlight = false
         allowTapThrough = false
         bindBubble(step)
+        bubbleBinding.root.doOnLayout {
+            if (notifiedStep != index) {
+                notifiedStep = index
+                onStepShown(index + 1)
+                ViewCompat.performAccessibilityAction(
+                    bubbleBinding.root,
+                    AccessibilityNodeInfoCompat.ACTION_ACCESSIBILITY_FOCUS,
+                    null,
+                )
+            }
+        }
         positionBubble()
         invalidate()
     }
 
     private fun bindBubble(step: CoachmarkStep) {
         bubbleBinding.coachmarkTitle.setText(step.titleRes)
-        bubbleBinding.coachmarkDesc.setText(step.descRes)
+        bubbleBinding.coachmarkDesc.text = context.getString(
+            R.string.coachmark_body_with_target,
+            context.getString(step.titleRes),
+            context.getString(step.descRes),
+        )
         bubbleBinding.coachmarkStep.text =
             context.getString(R.string.coachmark_step_indicator, index + 1, steps.size)
+        bubbleBinding.coachmarkTitle.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        bubbleBinding.coachmarkDesc.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        bubbleBinding.coachmarkStep.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        bubbleBinding.root.contentDescription = context.getString(
+            R.string.coachmark_accessibility_summary,
+            index + 1,
+            steps.size,
+            context.getString(step.titleRes),
+            context.getString(step.descRes),
+        )
+        ViewCompat.setScreenReaderFocusable(bubbleBinding.root, true)
         bubbleBinding.coachmarkNext.setText(
             if (index == steps.size - 1) R.string.coachmark_done else R.string.coachmark_next
         )
@@ -170,13 +228,21 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
     }
 
     private fun advance() {
+        if (index == steps.lastIndex) {
+            onComplete(steps.size)
+            finish(skipped = false)
+            return
+        }
         index++
         showStep()
     }
 
-    private fun finish() {
+    private fun finish(skipped: Boolean) {
+        if (skipped) onSkip(index + 1)
         onFinish()
     }
+
+    fun skip() = finish(skipped = true)
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -213,7 +279,7 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
 
     override fun performClick(): Boolean {
         super.performClick()
-        advance()
+        finish(skipped = true)
         return true
     }
 

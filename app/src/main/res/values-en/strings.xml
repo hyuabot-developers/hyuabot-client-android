@@ -632,7 +632,9 @@
     <string name="coachmark_skip">Skip</string>
     <string name="coachmark_next">Next</string>
     <string name="coachmark_done">Done</string>
-    <string name="coachmark_step_indicator">%1$d / %2$d</string>
+    <string name="coachmark_step_indicator">%1$d/%2$d</string>
+    <string name="coachmark_accessibility_summary">%1$d/%2$d. %3$s. %4$s</string>
+    <string name="coachmark_body_with_target">%1$s. %2$s</string>
     <string name="coachmark_shuttle_nav_title">Campus info at a glance</string>
     <string name="coachmark_shuttle_nav_desc">Switch between Shuttle, Bus, Subway, and Cafeteria with the tabs. The Menu tab has even more features.</string>
     <string name="coachmark_shuttle_tab_title">Stop Tabs</string>
@@ -803,4 +805,10 @@
     <string name="state_loading">Loading</string>
     <string name="state_suspended_date">MMM d, yyyy</string>
     <string name="state_header_content_description">%1$s. %2$s</string>
+    <string name="coachmark_home_destination_title">Choose a destination</string>
+    <string name="coachmark_home_destination_desc">Choose a destination to see relevant trip information.</string>
+    <string name="coachmark_home_movement_title">Next shuttle</string>
+    <string name="coachmark_home_movement_desc">See upcoming shuttle departure times here.</string>
+    <string name="coachmark_home_legacy_title">Shuttle screen</string>
+    <string name="coachmark_home_legacy_desc">Open the shuttle screen for real-time information.</string>
 </resources>

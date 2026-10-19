@@ -48,15 +48,15 @@ class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDism
             settingTheme.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "theme"); openThemeDialog() }
             appInfo.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "info"); openInfoDialog() }
             settingHelp.setOnClickListener {
-                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "help")
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "help", destinationId = "web_view")
                 openHelp()
             }
             settingPrivacyPolicy.setOnClickListener {
-                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "privacy_policy")
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "privacy_policy", destinationId = "web_view")
                 openPrivacyPolicy()
             }
             settingOpenSourceLicenses.setOnClickListener {
-                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "open_source_licenses")
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "open_source_licenses", destinationId = "setting_developer")
                 openOpenSourceLicenses()
             }
             settingCoachmarkReset.setOnClickListener {

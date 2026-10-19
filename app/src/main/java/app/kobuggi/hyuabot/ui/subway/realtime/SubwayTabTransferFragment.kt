@@ -19,6 +19,8 @@ import app.kobuggi.hyuabot.ui.common.StateKind
 import app.kobuggi.hyuabot.ui.common.StateView
 import app.kobuggi.hyuabot.ui.common.resolveListPresentation
 import app.kobuggi.hyuabot.util.AnalyticsScreen
+import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.ManualRefreshDomain
 import app.kobuggi.hyuabot.util.TransportMode
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -59,6 +61,7 @@ class SubwayTabTransferFragment @Inject constructor() : Fragment() {
             }
             entireTimetableDown.visibility = View.GONE
             swipeRefreshLayout.setOnRefreshListener {
+                AnalyticsManager.logManualRefresh(ManualRefreshDomain.SUBWAY)
                 parentViewModel.fetchData()
             }
         }

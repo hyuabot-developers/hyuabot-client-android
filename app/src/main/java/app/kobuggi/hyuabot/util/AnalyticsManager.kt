@@ -4,6 +4,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
+import android.util.Log
+import app.kobuggi.hyuabot.BuildConfig
 
 /**
  * Central Firebase Analytics catalog.
@@ -89,9 +91,14 @@ object AnalyticsParameter {
     const val ELEMENT_ID = "element_id"
     const val ELEMENT_TYPE = "element_type"
     const val DESTINATION_ID = "destination_id"
+    const val SOURCE_SCREEN = "source_screen"
 }
 
-const val ANALYTICS_SCHEMA_VERSION = "2"
+const val ANALYTICS_SCHEMA_VERSION = "3"
+
+enum class ManualRefreshDomain { HOME, BUS, SUBWAY, READING_ROOM }
+
+data class AnalyticsEvent(val name: String, val parameters: Map<String, Any>)
 
 /** Every tappable element. [id] == GA4 `item_id` (shared with iOS). */
 enum class AnalyticsItem(val id: String) {
@@ -168,6 +175,9 @@ enum class AnalyticsItem(val id: String) {
 object AnalyticsManager {
     private val analytics: FirebaseAnalytics by lazy { Firebase.analytics }
     private val collectionGate = AnalyticsCollectionGate()
+    @Volatile private var currentSourceScreen: AnalyticsScreen = AnalyticsScreen.HOME
+
+    fun setSourceScreen(screen: AnalyticsScreen) { currentSourceScreen = screen }
 
     /**
      * Applies the user's collection preference and flushes events that arrived
@@ -180,11 +190,15 @@ object AnalyticsManager {
 
     /** Logs a GA4 `screen_view` event. */
     fun logScreen(screen: AnalyticsScreen, screenClass: String? = null) {
+        setSourceScreen(screen)
+        val envelope = eventParameters(screen.id, buildMap {
+            put(FirebaseAnalytics.Param.SCREEN_NAME, screen.id)
+            screenClass?.let { put(FirebaseAnalytics.Param.SCREEN_CLASS, it) }
+        })
         collectionGate.runWhenEnabled {
             analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-                param(FirebaseAnalytics.Param.SCREEN_NAME, screen.id)
-                screenClass?.let { param(FirebaseAnalytics.Param.SCREEN_CLASS, it) }
-                param(AnalyticsParameter.SCHEMA_VERSION, ANALYTICS_SCHEMA_VERSION)
+                logDebug(FirebaseAnalytics.Event.SCREEN_VIEW, envelope)
+                envelope.forEach { (key, value) -> logParam(key, value) }
             }
         }
     }
@@ -204,32 +218,144 @@ object AnalyticsManager {
         type: AnalyticsContentType = AnalyticsContentType.BUTTON,
         name: String? = null,
         destinationId: String? = null,
+        sourceScreen: AnalyticsScreen? = null,
     ) {
-        val parameters = selectionParameters(item, type, name, destinationId)
+        val resolvedDestination = destinationId ?: navigationDestination(item, name)
+        if (BuildConfig.DEBUG && resolvedDestination == null && item in NAVIGATION_ITEMS) {
+            Log.w("Analytics", "Navigation selection missing destination: ${item.id}")
+        }
+        val parameters = eventParameters((sourceScreen ?: currentSourceScreen).id,
+            selectionParameters(item, type, name, resolvedDestination))
         collectionGate.runWhenEnabled {
             analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT) {
-                parameters.forEach { (key, value) -> param(key, value) }
+                logDebug(FirebaseAnalytics.Event.SELECT_CONTENT, parameters)
+                parameters.forEach { (key, value) -> logParam(key, value) }
             }
         }
     }
 
     fun logFreshnessStaleShown(domain: String, screen: String) {
+        val parameters = eventParameters(screen, mapOf("domain" to domain, "screen" to screen))
         collectionGate.runWhenEnabled {
             analytics.logEvent("freshness_stale_shown") {
-                param("domain", domain)
-                param("screen", screen)
+                logDebug("freshness_stale_shown", parameters)
+                parameters.forEach { (key, value) -> logParam(key, value) }
             }
         }
     }
 
     fun logEmptyStateShown(kind: String, sourceScreen: String) {
         val event = app.kobuggi.hyuabot.ui.common.emptyStateEvent(kind, sourceScreen)
+        val parameters = eventParameters(sourceScreen, event.parameters())
         collectionGate.runWhenEnabled {
             analytics.logEvent(event.name) {
-                event.parameters().forEach { (key, value) -> param(key, value) }
+                logDebug(event.name, parameters)
+                parameters.forEach { (key, value) -> logParam(key, value) }
             }
         }
     }
+
+    fun logManualRefresh(domain: ManualRefreshDomain) {
+        emit(manualRefreshEvent(domain))
+    }
+
+    fun logQuickSettingToggle(setting: String, value: Boolean) = emit(quickSettingEvent(setting, value))
+
+    fun logCoachmarkStepView(step: Int) = logCoachmark("coachmark_step_view", step)
+    fun logCoachmarkSkip(step: Int) = logCoachmark("coachmark_skip", step)
+    fun logCoachmarkComplete(step: Int) = logCoachmark("coachmark_complete", step)
+
+    private fun logCoachmark(name: String, step: Int) {
+        val event = coachmarkEvent(name, step) ?: return
+        emit(event)
+    }
+
+    private fun emit(name: String, source: AnalyticsScreen, parameters: Map<String, Any>) {
+        emit(AnalyticsEvent(name, eventParameters(source.id, parameters)))
+    }
+
+    private fun emit(event: AnalyticsEvent) {
+        collectionGate.runWhenEnabled {
+            analytics.logEvent(event.name) {
+                logDebug(event.name, event.parameters)
+                event.parameters.forEach { (key, value) -> logParam(key, value) }
+            }
+        }
+    }
+
+    private fun logDebug(name: String, parameters: Map<String, Any>) {
+        if (!BuildConfig.DEBUG) return
+        val safeDestinations = AnalyticsScreen.entries.map { it.id }.toSet()
+        val safeParameters = parameters.filter { (key, value) ->
+            key in DEBUG_PARAMETER_ALLOWLIST ||
+                (key == AnalyticsParameter.DESTINATION_ID && value in safeDestinations)
+        }
+        Log.d("Analytics", "$name $safeParameters")
+    }
+
+    private fun com.google.firebase.analytics.ParametersBuilder.logParam(key: String, value: Any) {
+        when (value) {
+            is String -> param(key, value)
+            is Int -> param(key, value.toLong())
+            is Long -> param(key, value)
+            is Double -> param(key, value)
+            is Float -> param(key, value.toDouble())
+            is Boolean -> param(key, value.toString())
+            else -> param(key, value.toString())
+        }
+    }
+
+    private val NAVIGATION_ITEMS = setOf(
+        AnalyticsItem.TAB_HOME, AnalyticsItem.TAB_SHUTTLE, AnalyticsItem.TAB_BUS,
+        AnalyticsItem.TAB_SUBWAY, AnalyticsItem.TAB_CAFETERIA, AnalyticsItem.TAB_MENU,
+        AnalyticsItem.TAB_CAMPUS, AnalyticsItem.HOME_OPEN_SHUTTLE_DETAIL,
+        AnalyticsItem.HOME_OPEN_LEGACY_SHUTTLE, AnalyticsItem.HOME_OPEN_SHUTTLE_TIMETABLE,
+        AnalyticsItem.HOME_OPEN_CAFETERIA, AnalyticsItem.SHUTTLE_OPEN_HELP,
+        AnalyticsItem.SHUTTLE_SHOW_STOP_MODAL, AnalyticsItem.SHUTTLE_SHOW_ENTIRE_TIMETABLE,
+        AnalyticsItem.SHUTTLE_SELECT_VIA_ROW,
+        AnalyticsItem.SHUTTLE_OPEN_FILTER, AnalyticsItem.BUS_OPEN_HELP,
+        AnalyticsItem.BUS_STOP_BUTTON, AnalyticsItem.BUS_SHOW_ENTIRE_TIMETABLE,
+        AnalyticsItem.BUS_SHOW_DEPARTURE_LOG, AnalyticsItem.BUS_ROUTE_INFO,
+        AnalyticsItem.SUBWAY_SHOW_ENTIRE_TIMETABLE, AnalyticsItem.NOTICE_OPEN,
+        AnalyticsItem.SETTING_SELECT_ROW, AnalyticsItem.SETTING_SELECT_CAMPUS,
+        AnalyticsItem.SETTING_SELECT_THEME, AnalyticsItem.SETTING_SELECT_LANGUAGE,
+        AnalyticsItem.MENU_SELECT_ROW, AnalyticsItem.CAMPUS_SELECT_TOOL,
+    )
+
+    private val DEBUG_PARAMETER_ALLOWLIST = setOf(
+        AnalyticsParameter.SCHEMA_VERSION,
+        AnalyticsParameter.SOURCE_SCREEN,
+        AnalyticsParameter.ELEMENT_ID,
+        AnalyticsParameter.ELEMENT_TYPE,
+        "trigger", "step", "setting", "value", "domain", "screen", "kind",
+        FirebaseAnalytics.Param.SCREEN_NAME, FirebaseAnalytics.Param.SCREEN_CLASS,
+    )
+}
+
+internal fun eventParameters(sourceScreen: String, parameters: Map<String, Any>): Map<String, Any> =
+    parameters + mapOf(
+        AnalyticsParameter.SCHEMA_VERSION to ANALYTICS_SCHEMA_VERSION,
+        AnalyticsParameter.SOURCE_SCREEN to sourceScreen,
+    )
+
+internal fun manualRefreshEvent(domain: ManualRefreshDomain): AnalyticsEvent {
+    val (name, source) = when (domain) {
+        ManualRefreshDomain.HOME -> "home_refresh" to AnalyticsScreen.HOME
+        ManualRefreshDomain.BUS -> "bus_refresh" to AnalyticsScreen.BUS_REALTIME
+        ManualRefreshDomain.SUBWAY -> "subway_refresh" to AnalyticsScreen.SUBWAY_REALTIME
+        ManualRefreshDomain.READING_ROOM -> "reading_room_refresh" to AnalyticsScreen.READING_ROOM
+    }
+    return AnalyticsEvent(name, eventParameters(source.id, mapOf("trigger" to "manual")))
+}
+
+internal fun quickSettingEvent(setting: String, value: Boolean): AnalyticsEvent = AnalyticsEvent(
+    "quick_setting_toggle",
+    eventParameters(AnalyticsScreen.HOME.id, mapOf("setting" to setting, "value" to value.toString())),
+)
+
+internal fun coachmarkEvent(name: String, step: Int): AnalyticsEvent? {
+    if (step !in 1..3 || name !in setOf("coachmark_step_view", "coachmark_skip", "coachmark_complete")) return null
+    return AnalyticsEvent(name, eventParameters(AnalyticsScreen.HOME.id, mapOf("step" to step)))
 }
 
 internal fun selectionParameters(

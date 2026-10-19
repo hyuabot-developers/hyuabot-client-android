@@ -444,7 +444,13 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
         coachmarkShown = true
         val owner = viewLifecycleOwner
         owner.lifecycleScope.launch {
-            requireContext().ensureCoachmarkEligibility(viewModel.userPreferencesRepository)
+            try {
+                requireContext().ensureCoachmarkEligibility(viewModel.userPreferencesRepository)
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                return@launch
+            }
             val showMainCoachmark = !viewModel.userPreferencesRepository.coachmarkSeen(COACHMARK_KEY).first()
             val showRealtimeUpdatesCoachmark =
                 !viewModel.userPreferencesRepository.coachmarkSeen(REALTIME_UPDATES_COACHMARK_KEY).first()
@@ -458,7 +464,10 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                 if (!isAdded || view == null || !owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
                     return@post
                 }
-                CoachmarkController.show(requireActivity(), buildShuttleCoachmarkSteps(), owner) {
+                val activity = requireActivity()
+                lifecycleScope.launch {
+                    if (activity is app.kobuggi.hyuabot.ui.MainActivity && !activity.claimStartupCoachmark(COACHMARK_KEY)) return@launch
+                    CoachmarkController.show(activity, buildShuttleCoachmarkSteps(), owner, onFinish = {
                     if (owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
                         viewModel.setShowByDestination(originalByDestination)
                         viewModel.setShowDepartureTime(originalDepartureTime)
@@ -468,6 +477,7 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
                         viewModel.userPreferencesRepository.markCoachmarkSeen(COACHMARK_KEY)
                         viewModel.userPreferencesRepository.markCoachmarkSeen(REALTIME_UPDATES_COACHMARK_KEY)
                     }
+                    }, onDismiss = { (activity as? app.kobuggi.hyuabot.ui.MainActivity)?.releaseStartupCoachmarkClaim() })
                 }
             }
         }

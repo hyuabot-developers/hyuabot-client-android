@@ -13,7 +13,10 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(
-    name = "app.kobuggi.hyuabot.user_preferences"
+    name = "app.kobuggi.hyuabot.user_preferences",
+    produceMigrations = { context ->
+        listOf(CoachmarkPreferencesMigration { CoachmarkPreferencesMigration.legacyAppDataExists(context) })
+    },
 )
 
 

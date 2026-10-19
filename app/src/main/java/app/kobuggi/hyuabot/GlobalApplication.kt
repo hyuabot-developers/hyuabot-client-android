@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -30,6 +31,13 @@ class GlobalApplication : Application() {
         super.onCreate()
         createNotificationChannels()
         applicationScope.launch {
+            try {
+                userPreferencesRepository.initializeCoachmarks()
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                // The activity retries initialization and suppresses startup overlays on failure.
+            }
             val enabled = userPreferencesRepository.analyticsConsent.first()
             AnalyticsManager.setCollectionEnabled(enabled)
             CrashlyticsManager.setCollectionEnabled(enabled)

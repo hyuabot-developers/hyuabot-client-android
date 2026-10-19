@@ -194,17 +194,27 @@ class ShuttleTimetableFragment @Inject constructor() : Fragment() {
     private fun maybeShowCoachmark() {
         val owner = viewLifecycleOwner
         owner.lifecycleScope.launch {
-            requireContext().ensureCoachmarkEligibility(userPreferencesRepository)
+            try {
+                requireContext().ensureCoachmarkEligibility(userPreferencesRepository)
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                return@launch
+            }
             if (userPreferencesRepository.coachmarkSeen(Coachmarks.SHUTTLE_TIMETABLE).first()) return@launch
             val rootView = view ?: return@launch
             rootView.post {
                 if (!isAdded || view == null || !owner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
                     return@post
                 }
-                CoachmarkController.show(requireActivity(), buildCoachmarkSteps(), owner) {
-                    lifecycleScope.launch {
-                        userPreferencesRepository.markCoachmarkSeen(Coachmarks.SHUTTLE_TIMETABLE)
-                    }
+                val activity = requireActivity()
+                lifecycleScope.launch {
+                    if (activity is app.kobuggi.hyuabot.ui.MainActivity && !activity.claimStartupCoachmark(Coachmarks.SHUTTLE_TIMETABLE)) return@launch
+                    CoachmarkController.show(activity, buildCoachmarkSteps(), owner, onFinish = {
+                        lifecycleScope.launch {
+                            userPreferencesRepository.markCoachmarkSeen(Coachmarks.SHUTTLE_TIMETABLE)
+                        }
+                    }, onDismiss = { (activity as? app.kobuggi.hyuabot.ui.MainActivity)?.releaseStartupCoachmarkClaim() })
                 }
             }
         }

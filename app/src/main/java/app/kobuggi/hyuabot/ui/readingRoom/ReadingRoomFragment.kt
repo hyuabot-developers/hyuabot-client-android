@@ -2,6 +2,7 @@ package app.kobuggi.hyuabot.ui.readingRoom
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
+import app.kobuggi.hyuabot.util.ManualRefreshDomain
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.AlertDialog
@@ -72,6 +73,7 @@ class ReadingRoomFragment @Inject constructor() : Fragment() {
         roomListAdapter = ReadingRoomListAdapter(requireContext(), ::onClickReadingRoom, emptyList(), emptySet())
         binding.apply {
             readingRoomSwipeRefreshLayout.setOnRefreshListener {
+                AnalyticsManager.logManualRefresh(ManualRefreshDomain.READING_ROOM)
                 viewModel.campusID.observe(viewLifecycleOwner) {
                     viewModel.fetchRooms(it)
                 }
