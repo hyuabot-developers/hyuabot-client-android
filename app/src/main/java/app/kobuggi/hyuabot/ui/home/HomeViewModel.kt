@@ -14,6 +14,7 @@ import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.ui.common.RequestUiState
+import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkProgress
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import app.kobuggi.hyuabot.ui.bus.realtime.BusRecentDates
@@ -49,6 +50,8 @@ class HomeViewModel @Inject constructor(
     private val shuttleServiceNoticeScheduler: ShuttleServiceNoticeScheduler,
     private val shuttlePresenceService: ShuttlePresenceService,
 ) : ViewModel() {
+    val coachmarkProgress = CoachmarkProgress()
+
     private val _isLoading = MutableLiveData(false)
     private val _isHomeBusLoading = MutableLiveData(false)
     private val _data = MutableLiveData<HomePageQuery.Data?>()

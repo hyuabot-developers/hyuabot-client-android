@@ -134,6 +134,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        analyticsScreenDispatcher.restoreLastLoggedScreen(
+            savedInstanceState?.getString(LAST_LOGGED_SCREEN_STATE)?.let { name -> AnalyticsScreen.entries.find { it.name == name } }
+        )
         backgroundLocationSettingsOpened =
             savedInstanceState?.getBoolean(BACKGROUND_LOCATION_SETTINGS_OPENED_STATE) == true
         setContentView(binding.root)
@@ -350,6 +353,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(LAST_LOGGED_SCREEN_STATE, analyticsScreenDispatcher.lastLoggedScreen?.name)
         outState.putBoolean(BACKGROUND_LOCATION_SETTINGS_OPENED_STATE, backgroundLocationSettingsOpened)
         super.onSaveInstanceState(outState)
     }
@@ -920,6 +924,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     companion object {
+        private const val LAST_LOGGED_SCREEN_STATE = "last_logged_screen"
         const val HOME_EXPERIENCE_PREFERENCES = "home_experience"
         const val HOME_EXPERIENCE_ENABLED = "enabled"
         const val EXTRA_REQUEST_BACKGROUND_LOCATION = "request_background_location"

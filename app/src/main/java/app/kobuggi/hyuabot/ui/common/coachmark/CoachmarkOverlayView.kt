@@ -44,6 +44,7 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
 
     private var steps: List<CoachmarkStep> = emptyList()
     private var index = 0
+    private var progress = CoachmarkProgress()
     private var onFinish: () -> Unit = {}
     private var onSkip: (Int) -> Unit = {}
     private var onComplete: (Int) -> Unit = {}
@@ -84,6 +85,7 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
         onComplete: (Int) -> Unit = {},
         onAbort: () -> Unit = {},
         onStepShown: (Int) -> Unit = {},
+        progress: CoachmarkProgress? = null,
     ) {
         this.steps = steps
         this.onFinish = onFinish
@@ -91,7 +93,8 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
         this.onComplete = onComplete
         this.onAbort = onAbort
         this.onStepShown = onStepShown
-        this.index = 0
+        this.progress = progress ?: CoachmarkProgress()
+        this.index = this.progress.stepIndex
         doOnLayout { showStep() }
     }
 
@@ -128,7 +131,7 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
         bubbleBinding.root.doOnLayout {
             if (notifiedStep != index) {
                 notifiedStep = index
-                onStepShown(index + 1)
+                if (progress.recordStepShown(index)) onStepShown(index + 1)
                 ViewCompat.performAccessibilityAction(
                     bubbleBinding.root,
                     AccessibilityNodeInfoCompat.ACTION_ACCESSIBILITY_FOCUS,
@@ -148,7 +151,7 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
         bubbleBinding.root.doOnLayout {
             if (notifiedStep != index) {
                 notifiedStep = index
-                onStepShown(index + 1)
+                if (progress.recordStepShown(index)) onStepShown(index + 1)
                 ViewCompat.performAccessibilityAction(
                     bubbleBinding.root,
                     AccessibilityNodeInfoCompat.ACTION_ACCESSIBILITY_FOCUS,
@@ -234,6 +237,7 @@ class CoachmarkOverlayView(context: Context) : FrameLayout(context) {
             return
         }
         index++
+        progress.stepIndex = index
         showStep()
     }
 

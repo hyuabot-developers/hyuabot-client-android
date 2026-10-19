@@ -9,10 +9,16 @@ class AnalyticsScreenDispatcher(
 ) {
     private var isResumed = false
     private var pendingScreen: AnalyticsScreen? = null
+    var lastLoggedScreen: AnalyticsScreen? = null
+        private set
+
+    fun restoreLastLoggedScreen(screen: AnalyticsScreen?) {
+        lastLoggedScreen = screen
+    }
 
     fun onDestinationChanged(screen: AnalyticsScreen) {
         if (isResumed) {
-            logScreen(screen)
+            dispatch(screen)
         } else {
             pendingScreen = screen
         }
@@ -20,11 +26,17 @@ class AnalyticsScreenDispatcher(
 
     fun onResumed() {
         isResumed = true
-        pendingScreen?.let(logScreen)
+        pendingScreen?.let(::dispatch)
         pendingScreen = null
     }
 
     fun onPaused() {
         isResumed = false
+    }
+
+    private fun dispatch(screen: AnalyticsScreen) {
+        if (lastLoggedScreen == screen) return
+        lastLoggedScreen = screen
+        logScreen(screen)
     }
 }

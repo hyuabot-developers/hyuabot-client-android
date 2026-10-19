@@ -21,6 +21,7 @@ object CoachmarkController {
         onSkip: (Int) -> Unit = {},
         onComplete: (Int) -> Unit = {},
         onDismiss: () -> Unit = {},
+        progress: CoachmarkProgress? = null,
     ) {
         if (steps.isEmpty()) {
             onFinish()
@@ -83,6 +84,7 @@ object CoachmarkController {
             onComplete = onComplete,
             onAbort = { close(true) },
             onStepShown = onStepShown,
+            progress = progress,
         )
     }
 

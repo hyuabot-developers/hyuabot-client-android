@@ -315,6 +315,7 @@ class HomeFragment : Fragment() {
             onStepShown = AnalyticsManager::logCoachmarkStepView,
             onSkip = AnalyticsManager::logCoachmarkSkip,
             onComplete = AnalyticsManager::logCoachmarkComplete,
+            progress = viewModel.coachmarkProgress,
         )
     }
 

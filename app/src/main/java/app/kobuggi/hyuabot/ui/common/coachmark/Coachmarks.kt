@@ -49,6 +49,7 @@ fun Fragment.showCoachmarkOnce(
     onSkip: (Int) -> Unit = {},
     onComplete: (Int) -> Unit = {},
     onDismiss: () -> Unit = {},
+    progress: CoachmarkProgress? = null,
     steps: () -> List<CoachmarkStep>,
 ) {
     val owner = viewLifecycleOwner
@@ -74,7 +75,7 @@ fun Fragment.showCoachmarkOnce(
                 }, onStepShown = onStepShown, onSkip = onSkip, onComplete = onComplete, onDismiss = {
                     (host as? app.kobuggi.hyuabot.ui.MainActivity)?.releaseStartupCoachmarkClaim()
                     onDismiss()
-                })
+                }, progress = progress)
             }
         }
     }
