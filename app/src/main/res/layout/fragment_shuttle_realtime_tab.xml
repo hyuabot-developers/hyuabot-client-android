@@ -44,6 +44,16 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
+                <View
+                    android:id="@+id/header_divider_bound_for_station"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="?attr/colorOutlineVariant"
+                    android:importantForAccessibility="no"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/help_bound_for_station"
@@ -80,7 +90,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:gravity="center"
+                android:gravity="start|center_vertical"
                 android:text="@string/shuttle_no_realtime_data"
                 android:textColor="@color/secondary_text"
                 android:textSize="18sp"
@@ -146,7 +156,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_dormitory"
                 android:layout_width="match_parent"
-                android:layout_marginTop="16dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -171,6 +180,16 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
+                <View
+                    android:id="@+id/header_divider_bound_for_dormitory"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="?attr/colorOutlineVariant"
+                    android:importantForAccessibility="no"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/help_bound_for_dormitory"
@@ -207,7 +226,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:gravity="center"
+                android:gravity="start|center_vertical"
                 android:text="@string/shuttle_no_realtime_data"
                 android:textColor="@color/secondary_text"
                 android:textSize="18sp"
@@ -322,7 +341,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_terminal"
                 android:layout_width="match_parent"
-                android:layout_marginTop="16dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -346,6 +364,16 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
+                <View
+                    android:id="@+id/header_divider_bound_for_terminal"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="?attr/colorOutlineVariant"
+                    android:importantForAccessibility="no"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/help_bound_for_terminal"
@@ -382,7 +410,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:gravity="center"
+                android:gravity="start|center_vertical"
                 android:text="@string/shuttle_no_realtime_data"
                 android:textColor="@color/secondary_text"
                 android:textSize="18sp"
@@ -447,7 +475,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header_bound_for_jungang_station"
                 android:layout_width="match_parent"
-                android:layout_marginTop="16dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -471,6 +498,16 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
+                <View
+                    android:id="@+id/header_divider_bound_for_jungang_station"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="?attr/colorOutlineVariant"
+                    android:importantForAccessibility="no"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/help_bound_for_jungang_station"
@@ -507,7 +544,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:gravity="center"
+                android:gravity="start|center_vertical"
                 android:text="@string/shuttle_no_realtime_data"
                 android:textColor="@color/secondary_text"
                 android:textSize="18sp"
@@ -642,7 +679,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:gravity="center"
+                android:gravity="start|center_vertical"
                 android:text="@string/shuttle_no_realtime_data"
                 android:textColor="@color/secondary_text"
                 android:textSize="18sp"
