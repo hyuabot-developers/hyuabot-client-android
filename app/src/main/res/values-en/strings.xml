@@ -517,8 +517,8 @@
     <string name="map_current_location_error">Could not get your current location.</string>
     <string name="room_description_format">Room %1$s/%2$s</string>
     <string name="reading_room_alarm_description">Reading Room Extension Reminder</string>
-    <string name="reading_room_alarm_3_hour">3-hour alarm</string>
-    <string name="reading_room_alarm_4_hour">4-hour alarm</string>
+    <string name="reading_room_alarm_3_hour">Notify in 2 hr 50 min (3-hour extension)</string>
+    <string name="reading_room_alarm_4_hour">Notify in 3 hr 50 min (4-hour extension)</string>
     <string name="reading_room_alarm_cancel">Cancel alarm</string>
     <string name="reading_room_available_seat_format">%1$d seats available · %2$d total</string>
     <string name="reading_room_full_seat_format">Full · %1$d total seats</string>

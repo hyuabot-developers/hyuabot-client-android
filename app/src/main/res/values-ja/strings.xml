@@ -494,8 +494,8 @@
     <string name="map_current_location_error">現在地を取得できませんでした。</string>
     <string name="room_description_format">%1$s/%2$s号</string>
     <string name="reading_room_alarm_description">閲覧室延長通知</string>
-    <string name="reading_room_alarm_3_hour">3時間後に通知</string>
-    <string name="reading_room_alarm_4_hour">4時間後に通知</string>
+    <string name="reading_room_alarm_3_hour">2時間50分後に通知（3時間延長の場合）</string>
+    <string name="reading_room_alarm_4_hour">3時間50分後に通知（4時間延長の場合）</string>
     <string name="reading_room_alarm_cancel">通知をキャンセル</string>
     <string name="reading_room_available_seat_format">残り %1$d 席 · 全 %2$d 席</string>
     <string name="reading_room_full_seat_format">満席 · 全 %1$d 席</string>
