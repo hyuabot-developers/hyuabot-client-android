@@ -12,6 +12,7 @@ import app.kobuggi.hyuabot.BusRealtimePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.type.BusRouteStopInput
 import app.kobuggi.hyuabot.util.QueryError
+import app.kobuggi.hyuabot.ui.common.RequestUiState
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.FetchPolicy
 import com.apollographql.cache.normalized.doNotStore
@@ -24,6 +25,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.util.Locale
+import kotlinx.coroutines.CancellationException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -46,6 +48,7 @@ class BusRealtimeViewModel @Inject constructor(
     private val _disposable = CompositeDisposable()
     private val _selectedStopID = MutableLiveData<Int?>(null)
     private val _queryError = MutableLiveData<QueryError?>(null)
+    private val _requestState = MutableLiveData(RequestUiState())
     private val _showSecondaryEta = MutableLiveData(true)
     private val _seoulTarget = MutableLiveData(BusSeoulTargetStop.GANGNAM)
     private val _seoulFirstStopID = MutableLiveData<Int?>(null)
@@ -63,6 +66,7 @@ class BusRealtimeViewModel @Inject constructor(
     val isLoading get() = _isLoading
     val selectedStopID get() = _selectedStopID
     val queryError get() = _queryError
+    val requestState: LiveData<RequestUiState> get() = _requestState
     val showSecondaryEta get() = _showSecondaryEta
     val seoulTarget get() = _seoulTarget
     val seoulFirstStopID get() = _seoulFirstStopID
@@ -148,30 +152,45 @@ class BusRealtimeViewModel @Inject constructor(
         val dates = BusRecentDates.sameWeekdayType(count = 4)
         val busInput = selectedBusInput(dates)
         val requestKey = busInput to language
+        val retainSnapshot = requestKey == lastAppliedRequestKey
+        _requestState.value = (_requestState.value ?: RequestUiState()).start(retainSnapshot)
+        if (!retainSnapshot) _result.value = emptyList()
         if (_result.value == null || requestKey != lastAppliedRequestKey) _isLoading.value = true
         viewModelScope.launch {
+            try {
             val response = apolloClient.query(BusRealtimePageQuery(language, busInput))
                 .fetchPolicy(FetchPolicy.NetworkOnly)
                 .doNotStore(true)
                 .execute()
             // Timer ticks issue newer requests with identical inputs; keep applying a slow response unless the
             // selected stops changed or a newer response was already rendered.
-            if (requestGeneration <= lastAppliedGeneration || busInput != selectedBusInput(dates)) return@launch
-            if (response.data == null || response.exception != null) {
+            if (requestGeneration != latestRequestGeneration || requestGeneration <= lastAppliedGeneration || busInput != selectedBusInput(dates)) return@launch
+            if (response.data == null || response.exception != null || response.hasErrors()) {
                 _queryError.value = QueryError.SERVER_ERROR
+                _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
             } else if (response.data?.bus != null) {
                 lastAppliedGeneration = requestGeneration
                 lastAppliedRequestKey = requestKey
                 _result.value = response.data?.bus
+                _requestState.value = _requestState.value?.success() ?: RequestUiState().success()
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
+                _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
             }
             // Notices refresh with every poll; the list is only replaced when it changed so the pager is not redrawn.
             if (response.exception == null) {
                 response.data?.notices?.flatMap { it.notices }?.takeIf { it != _notices.value }?.let { _notices.value = it }
             }
             _isLoading.value = false
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (requestGeneration != latestRequestGeneration || requestGeneration <= lastAppliedGeneration || busInput != selectedBusInput(dates)) return@launch
+                _queryError.value = QueryError.SERVER_ERROR
+                _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
+                _isLoading.value = false
+            }
         }
     }
 

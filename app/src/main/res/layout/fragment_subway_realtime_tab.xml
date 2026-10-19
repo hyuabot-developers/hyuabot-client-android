@@ -42,16 +42,10 @@
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintTop_toBottomOf="@id/header_up_container" />
-                <TextView
+                <app.kobuggi.hyuabot.ui.common.StateView
                     android:id="@+id/no_realtime_data_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/bus_no_realtime_data"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_up" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/entire_timetable_up"
@@ -80,16 +74,10 @@
                     android:layout_marginHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintTop_toBottomOf="@id/header_down_container" />
-                <TextView
+                <app.kobuggi.hyuabot.ui.common.StateView
                     android:id="@+id/no_realtime_data_down"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:text="@string/bus_no_realtime_data"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="18sp"
-                    android:textFontWeight="700"
                     app:layout_constraintTop_toBottomOf="@id/realtime_view_down" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/entire_timetable_down"

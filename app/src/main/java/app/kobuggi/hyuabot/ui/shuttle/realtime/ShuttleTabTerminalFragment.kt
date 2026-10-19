@@ -2,6 +2,16 @@ package app.kobuggi.hyuabot.ui.shuttle.realtime
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.AnalyticsItem
 
+import app.kobuggi.hyuabot.ui.common.ListPresentation
+import app.kobuggi.hyuabot.ui.common.RequestUiState
+import app.kobuggi.hyuabot.ui.common.StateKind
+import app.kobuggi.hyuabot.ui.common.StateView
+import app.kobuggi.hyuabot.ui.common.resolveListPresentation
+import app.kobuggi.hyuabot.util.AnalyticsScreen
+import app.kobuggi.hyuabot.util.ServiceClock
+import app.kobuggi.hyuabot.util.TransportMode
+import java.time.ZonedDateTime
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -152,8 +162,12 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
             }
         }
         parentViewModel.latestShuttleResult.observe(viewLifecycleOwner) { source ->
-            val now = LocalTime.now()
-            val shuttle = source.result.firstOrNull { it.name == "terminal" } ?: return@observe
+            val now = ZonedDateTime.now(ServiceClock.ZONE).toLocalTime()
+            val shuttle = source.result.firstOrNull { it.name == "terminal" }
+            if (shuttle == null) {
+                renderListStates()
+                return@observe
+            }
             val shuttleByOrder = shuttle.timetable.order.filter { it.time > now }
             val shuttleForCampus = shuttle.timetable.destination.firstOrNull { it.destination == "CAMPUS" }?.entries?.filter { it.time > now } ?: emptyList()
             nextCampusShuttleTime = shuttleForCampus.firstOrNull()?.time
@@ -161,22 +175,9 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
             binding.shuttleDestinationScroll.visibility = if (source.showByDestination) View.VISIBLE else View.GONE
             binding.shuttleTimeScroll.visibility = if (source.showByDestination) View.GONE else View.VISIBLE
             // Update the recycler view
-            if (shuttleByOrder.isEmpty()) {
-                binding.noRealtimeData.visibility = View.VISIBLE
-                binding.realtimeView.visibility = View.GONE
-            } else {
-                binding.noRealtimeData.visibility = View.GONE
-                binding.realtimeView.visibility = View.VISIBLE
-                shuttleAdapter.updateData(shuttleByOrder.subList(0, min(8, shuttleByOrder.size)), setOfNotNull(shuttleByOrder.lastOrNull()?.seq))
-            }
-            if (shuttleForCampus.isEmpty()) {
-                binding.noRealtimeDataBoundForDormitory.visibility = View.VISIBLE
-                binding.realtimeViewBoundForDormitory.visibility = View.GONE
-            } else {
-                binding.noRealtimeDataBoundForDormitory.visibility = View.GONE
-                binding.realtimeViewBoundForDormitory.visibility = View.VISIBLE
-                shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)), setOfNotNull(shuttleForCampus.lastOrNull()?.seq))
-            }
+            shuttleAdapter.updateData(shuttleByOrder.subList(0, min(8, shuttleByOrder.size)), setOfNotNull(shuttleByOrder.lastOrNull()?.seq))
+            shuttleCampusAdapter.updateData(shuttleForCampus.subList(0, min(8, shuttleForCampus.size)), setOfNotNull(shuttleForCampus.lastOrNull()?.seq))
+            renderListStates()
         }
 
         binding.apply {
@@ -214,6 +215,8 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
         binding.headerBoundForDormitoryComponent.titleView.setText(R.string.shuttle_header_bound_for_dormitory)
         binding.headerBoundForTerminalComponent.titleView.setText(R.string.shuttle_header_bound_for_terminal)
         binding.headerBoundForJungangStationComponent.titleView.setText(R.string.shuttle_header_bound_for_jungang_station)
+        parentViewModel.requestState.observe(viewLifecycleOwner) { renderListStates() }
+        parentViewModel.serviceNotices.observe(viewLifecycleOwner) { renderListStates() }
         return binding.root.also { disableViewStateSaving(it) }
     }
 
@@ -309,5 +312,62 @@ class ShuttleTabTerminalFragment @Inject constructor() : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+    }
+
+    override fun onResume() {
+        super.onResume()
+        renderListStates()
+        binding.noRealtimeData.setScreenActive(true)
+        binding.noRealtimeDataBoundForDormitory.setScreenActive(true)
+    }
+
+    override fun onPause() {
+        binding.noRealtimeData.setScreenActive(false)
+        binding.noRealtimeDataBoundForDormitory.setScreenActive(false)
+        super.onPause()
+    }
+
+    private fun renderListStates() {
+        val byDestination = parentViewModel.showByDestination.value ?: false
+        binding.shuttleDestinationScroll.isVisible = byDestination
+        binding.shuttleTimeScroll.isVisible = !byDestination
+        val now = ZonedDateTime.now(ServiceClock.ZONE)
+        val stop = parentViewModel.result.value.orEmpty().firstOrNull { it.name == "terminal" }
+        val count = stop?.timetable?.order?.count { it.time > now.toLocalTime() } ?: 0
+        renderSection(binding.noRealtimeData, binding.realtimeView, binding.entireTimetableDormitory, stop != null, count, !byDestination)
+        renderSection(
+            binding.noRealtimeDataBoundForDormitory, binding.realtimeViewBoundForDormitory, binding.entireTimetableBoundForDormitory,
+            stop != null, stop?.timetable?.destination?.firstOrNull { it.destination == "CAMPUS" }?.entries?.count { it.time > now.toLocalTime() } ?: 0, byDestination,
+        )
+        val showTimeActions = !byDestination && resolveListPresentation(
+            parentViewModel.requestState.value ?: RequestUiState(), stop != null, count,
+            TransportMode.SHUTTLE, now, parentViewModel.haltDate(now.toLocalDate()),
+        ) == ListPresentation.Content
+        binding.entireTimetableDormitory.isVisible = showTimeActions
+    }
+
+    private fun renderSection(stateView: StateView, rows: View, timetable: View, hasSource: Boolean, count: Int, active: Boolean) {
+        if (!active) {
+            stateView.clear()
+            return
+        }
+        val now = ZonedDateTime.now(ServiceClock.ZONE)
+        val presentation = resolveListPresentation(
+            parentViewModel.requestState.value ?: RequestUiState(), hasSource, count,
+            TransportMode.SHUTTLE, now, parentViewModel.haltDate(now.toLocalDate()),
+        )
+        rows.isVisible = presentation == ListPresentation.Content
+        timetable.isVisible = presentation == ListPresentation.Content
+        when (presentation) {
+            is ListPresentation.State -> {
+                val action = when (presentation.model.kind) {
+                    StateKind.ERROR -> ({ parentViewModel.fetchData() })
+                    StateKind.ENDED, StateKind.SUSPENDED -> ({ timetable.performClick(); Unit })
+                    else -> null
+                }
+                stateView.bind(presentation.model, AnalyticsScreen.SHUTTLE_REALTIME, action)
+            }
+            else -> stateView.clear()
+        }
     }
 }

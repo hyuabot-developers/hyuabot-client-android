@@ -16,7 +16,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationCompat
 import androidx.fragment.app.Fragment
@@ -75,11 +74,11 @@ class BusRealtimeFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel.initSelectedStopID()
-        viewModel.queryError.observe(viewLifecycleOwner) {
-            it?.let { Toast.makeText(requireContext(), getString(R.string.bus_realtime_error), Toast.LENGTH_SHORT).show() }
-        }
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.loadingLayout.setSkeletonLoading(it)
+        viewModel.requestState.observe(viewLifecycleOwner) { request ->
+            val loading = request.loading && !request.hasSnapshot
+            binding.freshnessScreen.forcedDelayed = request.failed
+            binding.loadingLayout.setSkeletonLoading(loading)
+            binding.viewPager.visibility = if (loading) View.GONE else View.VISIBLE
         }
         viewModel.notices.observe(viewLifecycleOwner) { notices ->
             if (notices.isNotEmpty()) {

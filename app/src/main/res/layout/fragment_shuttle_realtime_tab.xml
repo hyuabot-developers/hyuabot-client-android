@@ -85,16 +85,10 @@
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/help_bound_for_station" />
-            <TextView
+            <app.kobuggi.hyuabot.ui.common.StateView
                 android:id="@+id/no_realtime_data_bound_for_station"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="start|center_vertical"
-                android:text="@string/shuttle_no_realtime_data"
-                android:textColor="@color/secondary_text"
-                android:textSize="18sp"
-                android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_station" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bus_alternative_station"
@@ -221,16 +215,10 @@
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/help_bound_for_dormitory" />
-            <TextView
+            <app.kobuggi.hyuabot.ui.common.StateView
                 android:id="@+id/no_realtime_data_bound_for_dormitory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="start|center_vertical"
-                android:text="@string/shuttle_no_realtime_data"
-                android:textColor="@color/secondary_text"
-                android:textSize="18sp"
-                android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_dormitory" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bus_alternative_dormitory"
@@ -405,16 +393,10 @@
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/help_bound_for_terminal" />
-            <TextView
+            <app.kobuggi.hyuabot.ui.common.StateView
                 android:id="@+id/no_realtime_data_bound_for_terminal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="start|center_vertical"
-                android:text="@string/shuttle_no_realtime_data"
-                android:textColor="@color/secondary_text"
-                android:textSize="18sp"
-                android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_terminal" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bus_alternative_terminal"
@@ -539,16 +521,10 @@
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/help_bound_for_jungang_station" />
-            <TextView
+            <app.kobuggi.hyuabot.ui.common.StateView
                 android:id="@+id/no_realtime_data_bound_for_jungang_station"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="start|center_vertical"
-                android:text="@string/shuttle_no_realtime_data"
-                android:textColor="@color/secondary_text"
-                android:textSize="18sp"
-                android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view_bound_for_jungang_station" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bus_alternative_jungang_station"
@@ -674,16 +650,10 @@
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toTopOf="parent"/>
-            <TextView
+            <app.kobuggi.hyuabot.ui.common.StateView
                 android:id="@+id/no_realtime_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="start|center_vertical"
-                android:text="@string/shuttle_no_realtime_data"
-                android:textColor="@color/secondary_text"
-                android:textSize="18sp"
-                android:textFontWeight="700"
                 app:layout_constraintTop_toBottomOf="@id/realtime_view" />
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/entire_timetable_station"

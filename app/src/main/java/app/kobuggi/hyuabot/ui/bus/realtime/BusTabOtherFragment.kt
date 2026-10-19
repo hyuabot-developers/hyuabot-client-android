@@ -2,6 +2,17 @@ package app.kobuggi.hyuabot.ui.bus.realtime
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.AnalyticsItem
 
+import androidx.core.view.isVisible
+import app.kobuggi.hyuabot.ui.common.ListPresentation
+import app.kobuggi.hyuabot.ui.common.RequestUiState
+import app.kobuggi.hyuabot.ui.common.StateKind
+import app.kobuggi.hyuabot.ui.common.StateView
+import app.kobuggi.hyuabot.ui.common.resolveListPresentation
+import app.kobuggi.hyuabot.util.AnalyticsScreen
+import app.kobuggi.hyuabot.util.ServiceClock
+import app.kobuggi.hyuabot.util.TransportMode
+import java.time.ZonedDateTime
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -43,7 +54,7 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
             parentViewModel.reportSectionUpdatedAt(3, "second", busSectionUpdatedAt(secondBusList))
             if (firstBusList == null) {
                 busFirstAdapter.updateData(emptyList())
-                binding.noRealtimeDataFirst.visibility = View.VISIBLE
+
             } else {
                 busFirstAdapter.updateData(firstBusList.arrival.map { arrival ->
                     BusArrivalItem(
@@ -54,11 +65,11 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                         minimumDispatchMinutes = BusDispatchInterval.forToday(firstBusList.minimumDispatchIntervals),
                     )
                 })
-                binding.noRealtimeDataFirst.visibility = if (firstBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
+
             }
             if (secondBusList == null) {
                 busSecondAdapter.updateData(emptyList())
-                binding.noRealtimeDataSecond.visibility = View.VISIBLE
+
             } else {
                 busSecondAdapter.updateData(secondBusList.arrival.map { arrival ->
                     BusArrivalItem(
@@ -69,7 +80,7 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                         minimumDispatchMinutes = BusDispatchInterval.forToday(secondBusList.minimumDispatchIntervals),
                     )
                 })
-                binding.noRealtimeDataSecond.visibility = if (secondBusList.arrival.isEmpty()) View.VISIBLE else View.GONE
+
             }
         }
         binding.apply {
@@ -139,14 +150,64 @@ class BusTabOtherFragment @Inject constructor() : Fragment() {
                 parentViewModel.fetchData()
             }
         }
-        parentViewModel.isLoading.observe(viewLifecycleOwner) {
-            if (!it) binding.swipeRefreshLayout.isRefreshing = false
+        parentViewModel.requestState.observe(viewLifecycleOwner) { request ->
+            if (!request.loading) binding.swipeRefreshLayout.isRefreshing = false
+            renderListStates()
         }
         parentViewModel.reportSectionUpdatedAt(3, "third", null)
         parentViewModel.reportSectionUpdatedAt(3, "fourth", null)
+        parentViewModel.result.observe(viewLifecycleOwner) { renderListStates() }
+        binding.swipeRefreshLayout.setColorSchemeColors(
+            com.google.android.material.color.MaterialColors.getColor(binding.root, androidx.appcompat.R.attr.colorPrimary),
+        )
         return binding.root.also { disableViewStateSaving(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+    }
+
+    override fun onResume() {
+        super.onResume()
+        renderListStates()
+        binding.noRealtimeDataFirst.setScreenActive(true)
+        binding.noRealtimeDataSecond.setScreenActive(true)
+    }
+
+    override fun onPause() {
+        binding.noRealtimeDataFirst.setScreenActive(false)
+        binding.noRealtimeDataSecond.setScreenActive(false)
+        super.onPause()
+    }
+
+    private fun renderListStates() {
+        val buses = parentViewModel.result.value.orEmpty()
+        renderSection(
+            binding.noRealtimeDataFirst, binding.realtimeViewFirst, binding.entireTimetableFirst,
+            buses.any { bus -> bus.stop.seq == 216000759 && bus.route.seq == 216000075 }, binding.realtimeViewFirst.adapter?.itemCount ?: 0,
+        )
+        renderSection(
+            binding.noRealtimeDataSecond, binding.realtimeViewSecond, binding.entireTimetableSecond,
+            buses.any { bus -> bus.stop.seq == 213000487 && bus.route.seq == 216000075 }, binding.realtimeViewSecond.adapter?.itemCount ?: 0,
+        )
+    }
+
+    private fun renderSection(stateView: StateView, rows: View, timetable: View, hasSource: Boolean, count: Int) {
+        val presentation = resolveListPresentation(
+            parentViewModel.requestState.value ?: RequestUiState(), hasSource, count,
+            TransportMode.BUS, ZonedDateTime.now(ServiceClock.ZONE),
+        )
+        rows.isVisible = presentation == ListPresentation.Content
+        timetable.isVisible = presentation == ListPresentation.Content
+        when (presentation) {
+            is ListPresentation.State -> {
+                val action = when (presentation.model.kind) {
+                    StateKind.ERROR -> ({ parentViewModel.fetchData() })
+                    StateKind.ENDED -> ({ timetable.performClick(); Unit })
+                    else -> null
+                }
+                stateView.bind(presentation.model, AnalyticsScreen.BUS_REALTIME, action)
+            }
+            else -> stateView.clear()
+        }
     }
 }
