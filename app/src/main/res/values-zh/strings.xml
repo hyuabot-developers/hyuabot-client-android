@@ -494,8 +494,8 @@
     <string name="map_current_location_error">无法获取当前位置。</string>
     <string name="room_description_format">%1$s/%2$s号</string>
     <string name="reading_room_alarm_description">阅览室延长提醒</string>
-    <string name="reading_room_alarm_3_hour">3小时后提醒</string>
-    <string name="reading_room_alarm_4_hour">4小时后提醒</string>
+    <string name="reading_room_alarm_3_hour">2小时50分钟后提醒（按3小时续期计算）</string>
+    <string name="reading_room_alarm_4_hour">3小时50分钟后提醒（按4小时续期计算）</string>
     <string name="reading_room_alarm_cancel">取消提醒</string>
     <string name="reading_room_available_seat_format">剩余 %1$d 座 · 共 %2$d 座</string>
     <string name="reading_room_full_seat_format">已满 · 共 %1$d 座</string>

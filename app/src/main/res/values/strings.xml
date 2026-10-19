@@ -565,8 +565,8 @@
     <string name="map_current_location_error">현재 위치를 가져오지 못했습니다.</string>
     <string name="room_description_format">%1$s/%2$s호</string>
     <string name="reading_room_alarm_description">열람실 연장 알림</string>
-    <string name="reading_room_alarm_3_hour">3시간 후 알림</string>
-    <string name="reading_room_alarm_4_hour">4시간 후 알림</string>
+    <string name="reading_room_alarm_3_hour">2시간 50분 후 알림 (3시간 연장 기준)</string>
+    <string name="reading_room_alarm_4_hour">3시간 50분 후 알림 (4시간 연장 기준)</string>
     <string name="reading_room_alarm_cancel">알림 취소</string>
     <string name="reading_room_available_seat_format">잔여 %1$d석 · 전체 %2$d석</string>
     <string name="reading_room_full_seat_format">만석 · 전체 %1$d석</string>
