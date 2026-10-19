@@ -476,34 +476,34 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     private fun startStartupOverlaySelection() {
-        startupOverlayViewModel.initialize {
-            val initialized = try {
-                userPreferencesRepository.initializeCoachmarks()
-                true
-            } catch (error: kotlinx.coroutines.CancellationException) {
-                throw error
-            } catch (_: Exception) {
-                false
-            }
-            initializeLocationDisclosureSession()
-            applyAutomaticLocaleFallback()
-            val coachmarkKeys = navController.currentDestination?.id?.let(::coachmarkKeysForDestination).orEmpty()
-            val coachmarkEligible = initialized && coachmarkKeys.any { !userPreferencesRepository.coachmarkSeen(it).first() }
-            val languageEligible = initialized && isLanguageSuggestionEligible()
-            val birthdayEligible = initialized && isBirthdayEligible()
-            val reviewPotential = inAppReviewManager.recordLaunchAndIsEligible()
-            val reviewEligible = initialized && reviewPotential
-            val selected = app.kobuggi.hyuabot.ui.common.coachmark.chooseStartupOverlay(
-                coachmarkEligible, languageEligible, birthdayEligible, reviewEligible,
-            )
-            if (birthdayEligible && selected != StartupOverlay.BIRTHDAY) {
-                val pref = getSharedPreferences("pref", MODE_PRIVATE)
-                val pendingYear = pref.getInt("birthDayPendingYear", ZonedDateTime.now(ZoneId.of("Asia/Seoul")).year)
-                pref.edit { putInt("birthDayPendingYear", pendingYear) }
-            }
-            selected
-        }
         lifecycleScope.launch {
+            startupOverlayViewModel.initialize {
+                val initialized = try {
+                    userPreferencesRepository.initializeCoachmarks()
+                    true
+                } catch (error: kotlinx.coroutines.CancellationException) {
+                    throw error
+                } catch (_: Exception) {
+                    false
+                }
+                initializeLocationDisclosureSession()
+                applyAutomaticLocaleFallback()
+                val coachmarkKeys = navController.currentDestination?.id?.let(::coachmarkKeysForDestination).orEmpty()
+                val coachmarkEligible = initialized && coachmarkKeys.any { !userPreferencesRepository.coachmarkSeen(it).first() }
+                val languageEligible = initialized && isLanguageSuggestionEligible()
+                val birthdayEligible = initialized && isBirthdayEligible()
+                val reviewPotential = inAppReviewManager.recordLaunchAndIsEligible()
+                val reviewEligible = initialized && reviewPotential
+                val selected = app.kobuggi.hyuabot.ui.common.coachmark.chooseStartupOverlay(
+                    coachmarkEligible, languageEligible, birthdayEligible, reviewEligible,
+                )
+                if (birthdayEligible && selected != StartupOverlay.BIRTHDAY) {
+                    val pref = getSharedPreferences("pref", MODE_PRIVATE)
+                    val pendingYear = pref.getInt("birthDayPendingYear", ZonedDateTime.now(ZoneId.of("Asia/Seoul")).year)
+                    pref.edit { putInt("birthDayPendingYear", pendingYear) }
+                }
+                selected
+            }
             val selected = startupOverlayViewModel.decision.first { it != null } ?: StartupOverlay.NONE
             startupOverlayResolved = true
             when (selected) {

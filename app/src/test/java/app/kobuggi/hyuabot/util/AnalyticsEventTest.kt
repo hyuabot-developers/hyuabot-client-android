@@ -25,6 +25,12 @@ class AnalyticsEventTest {
     }
 
     @Test
+    fun `menu tab aliases use the existing campus screen id`() {
+        assertEquals("campus", navigationDestination(AnalyticsItem.TAB_CAMPUS))
+        assertEquals("campus", navigationDestination(AnalyticsItem.TAB_MENU))
+    }
+
+    @Test
     fun `manual refresh event maps each domain and preserves home source`() {
         val expected = mapOf(
             ManualRefreshDomain.HOME to ("home_refresh" to "home"),

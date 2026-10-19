@@ -1,21 +1,22 @@
 package app.kobuggi.hyuabot.ui
 
+import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import app.kobuggi.hyuabot.ui.common.coachmark.StartupOverlay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 @HiltViewModel
 class StartupOverlayViewModel @Inject constructor() : ViewModel() {
     private val mutableDecision = MutableStateFlow<StartupOverlay?>(null)
     val decision: StateFlow<StartupOverlay?> = mutableDecision.asStateFlow()
-    private var initialized = false
+    private val initializationMutex = Mutex()
     private var coachmarkClaimedKey: String? = null
     private var reviewRequested = false
 
@@ -40,18 +41,14 @@ class StartupOverlayViewModel @Inject constructor() : ViewModel() {
         if (mutableDecision.value == StartupOverlay.COACHMARK) coachmarkClaimedKey = null
     }
 
-    @Synchronized
-    fun initialize(decide: suspend () -> StartupOverlay) {
-        if (initialized) return
-        initialized = true
-        viewModelScope.launch {
-            mutableDecision.value = try {
-                decide()
-            } catch (error: Exception) {
-                if (error is CancellationException) throw error
-                mutableDecision.value = StartupOverlay.NONE
-                null
-            } ?: StartupOverlay.NONE
+    @MainThread
+    suspend fun initialize(decide: suspend () -> StartupOverlay) = initializationMutex.withLock {
+        if (mutableDecision.value != null) return@withLock
+        mutableDecision.value = try {
+            decide()
+        } catch (error: Exception) {
+            if (error is CancellationException) throw error
+            StartupOverlay.NONE
         }
     }
 }

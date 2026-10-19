@@ -6,7 +6,7 @@ internal fun navigationDestination(item: AnalyticsItem, name: String? = null): S
     AnalyticsItem.TAB_BUS -> AnalyticsScreen.BUS_REALTIME.id
     AnalyticsItem.TAB_SUBWAY -> AnalyticsScreen.SUBWAY_REALTIME.id
     AnalyticsItem.TAB_CAFETERIA -> AnalyticsScreen.CAFETERIA.id
-    AnalyticsItem.TAB_MENU, AnalyticsItem.TAB_CAMPUS -> AnalyticsScreen.MENU.id
+    AnalyticsItem.TAB_MENU, AnalyticsItem.TAB_CAMPUS -> AnalyticsScreen.CAMPUS.id
     AnalyticsItem.CAMPUS_SELECT_TOOL -> AnalyticsScreen.CAMPUS.id
     AnalyticsItem.HOME_OPEN_SHUTTLE_DETAIL, AnalyticsItem.HOME_OPEN_LEGACY_SHUTTLE -> AnalyticsScreen.SHUTTLE_REALTIME.id
     AnalyticsItem.HOME_OPEN_SHUTTLE_TIMETABLE -> AnalyticsScreen.SHUTTLE_TIMETABLE.id
