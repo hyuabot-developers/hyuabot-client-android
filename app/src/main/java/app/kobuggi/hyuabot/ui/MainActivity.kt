@@ -449,8 +449,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         }
     }
 
-    private fun suggestLanguageIfNeeded(force: Boolean = false) {
-        if (!force && !isLanguageSuggestionEligible()) return
+    private fun suggestLanguageIfNeeded() {
+        if (!isLanguageSuggestionEligible()) return
         getSharedPreferences("pref", MODE_PRIVATE).edit { putBoolean("languageSuggestionShown", true) }
         val systemLang = resources.configuration.locales[0].language
         val targetTag = if (systemLang == "ja") "ja-JP" else "zh-CN"
@@ -507,7 +507,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
             val selected = startupOverlayViewModel.decision.first { it != null } ?: StartupOverlay.NONE
             startupOverlayResolved = true
             when (selected) {
-                StartupOverlay.LANGUAGE -> suggestLanguageIfNeeded(force = true)
+                StartupOverlay.LANGUAGE -> suggestLanguageIfNeeded()
                 StartupOverlay.BIRTHDAY -> openBirthDayDialog()
                 StartupOverlay.REVIEW -> if (startupOverlayViewModel.claimReviewRequest()) {
                     inAppReviewManager.requestEligibleReview(this@MainActivity)
@@ -529,6 +529,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         AnalyticsScreen.MAP -> Coachmarks.MAP
         AnalyticsScreen.SETTING -> Coachmarks.SETTING
         AnalyticsScreen.MENU -> Coachmarks.MENU
+        AnalyticsScreen.CAMPUS -> Coachmarks.MENU
         else -> null
     }
 
@@ -546,10 +547,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     suspend fun claimStartupCoachmark(key: String): Boolean {
-        val decision = startupOverlayViewModel.decision.first { it != null }
+        startupOverlayViewModel.decision.first { it != null }
         val destination = navController.currentDestination?.id ?: return false
-        if (decision != StartupOverlay.COACHMARK || key != coachmarkKeyForDestination(destination)) return false
-        return startupOverlayViewModel.claimCoachmark()
+        if (key != coachmarkKeyForDestination(destination)) return false
+        return startupOverlayViewModel.claimCoachmark(key)
     }
 
     fun releaseStartupCoachmarkClaim() = startupOverlayViewModel.releaseCoachmarkClaim()
@@ -848,7 +849,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.noticeWebViewFragment -> AnalyticsScreen.WEB_VIEW
         R.id.contactFragment -> AnalyticsScreen.CONTACT
         R.id.calendarFragment -> AnalyticsScreen.CALENDAR
-        R.id.menuFragment -> AnalyticsScreen.MENU
+        R.id.menuFragment -> AnalyticsScreen.CAMPUS
         R.id.languageSettingDialogFragment -> AnalyticsScreen.SETTING_LANGUAGE
         R.id.campusSettingDialogFragment -> AnalyticsScreen.SETTING_CAMPUS
         R.id.themeSettingDialogFragment -> AnalyticsScreen.SETTING_THEME

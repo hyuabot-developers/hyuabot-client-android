@@ -809,6 +809,6 @@
     <string name="coachmark_home_destination_desc">Choose a destination to see relevant trip information.</string>
     <string name="coachmark_home_movement_title">Next shuttle</string>
     <string name="coachmark_home_movement_desc">See upcoming shuttle departure times here.</string>
-    <string name="coachmark_home_legacy_title">Shuttle screen</string>
-    <string name="coachmark_home_legacy_desc">Open the shuttle screen for real-time information.</string>
+    <string name="coachmark_home_legacy_title">Shuttle quick settings</string>
+    <string name="coachmark_home_legacy_desc">Open shuttle quick settings for real-time information.</string>
 </resources>

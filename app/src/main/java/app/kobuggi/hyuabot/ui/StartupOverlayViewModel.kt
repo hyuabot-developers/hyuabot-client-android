@@ -16,13 +16,15 @@ class StartupOverlayViewModel @Inject constructor() : ViewModel() {
     private val mutableDecision = MutableStateFlow<StartupOverlay?>(null)
     val decision: StateFlow<StartupOverlay?> = mutableDecision.asStateFlow()
     private var initialized = false
-    private var coachmarkClaimed = false
+    private var coachmarkClaimedKey: String? = null
     private var reviewRequested = false
 
     @Synchronized
-    fun claimCoachmark(): Boolean {
-        if (mutableDecision.value != StartupOverlay.COACHMARK || coachmarkClaimed) return false
-        coachmarkClaimed = true
+    fun claimCoachmark(key: String): Boolean {
+        if (mutableDecision.value != StartupOverlay.COACHMARK) return true
+        val claimedKey = coachmarkClaimedKey
+        if (claimedKey == key) return false
+        if (claimedKey == null) coachmarkClaimedKey = key
         return true
     }
 
@@ -35,7 +37,7 @@ class StartupOverlayViewModel @Inject constructor() : ViewModel() {
 
     @Synchronized
     fun releaseCoachmarkClaim() {
-        if (mutableDecision.value == StartupOverlay.COACHMARK) coachmarkClaimed = false
+        if (mutableDecision.value == StartupOverlay.COACHMARK) coachmarkClaimedKey = null
     }
 
     @Synchronized
