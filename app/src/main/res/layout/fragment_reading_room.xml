@@ -32,16 +32,11 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
-                    <app.kobuggi.hyuabot.ui.common.FreshnessLabel
-                        android:id="@+id/reading_room_update_time"
+                    <app.kobuggi.hyuabot.ui.common.StateView
+                        android:id="@+id/reading_room_state"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/secondary_text"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toBottomOf="@id/reading_room_recycler_view" />
+                        android:visibility="gone" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
             <TextView

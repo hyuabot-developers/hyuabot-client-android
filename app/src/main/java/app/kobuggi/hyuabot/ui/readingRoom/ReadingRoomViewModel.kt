@@ -10,6 +10,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ReadingRoomPageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.QueryError
+import app.kobuggi.hyuabot.ui.common.RequestUiState
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.cache.normalized.FetchPolicy
 import com.apollographql.cache.normalized.fetchPolicy
@@ -17,6 +18,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +28,9 @@ class ReadingRoomViewModel @Inject constructor(
 ): ViewModel() {
     private val _rooms = MutableLiveData<List<ReadingRoomPageQuery.ReadingRoom>>()
     private val _queryError = MutableLiveData<QueryError?>(null)
+    private val _requestState = MutableLiveData(RequestUiState())
+    private var latestRequest = 0L
+    private var lastAppliedCampus: Int? = null
 
     val notificationList = userPreferencesRepository.readingRoomNotifications.asLiveData()
     val extendNotificationTime = userPreferencesRepository.readingRoomExtendNotification.asLiveData()
@@ -35,17 +40,38 @@ class ReadingRoomViewModel @Inject constructor(
         get() = _rooms
     val queryError: MutableLiveData<QueryError?>
         get() = _queryError
+    val requestState get() = _requestState
 
     fun fetchRooms(campusID: Int = 2) {
+        val request = ++latestRequest
+        val retainSnapshot = campusID == lastAppliedCampus && _requestState.value?.hasSnapshot == true
+        _requestState.value = (_requestState.value ?: RequestUiState()).start(retainSnapshot)
+        if (!retainSnapshot) {
+            _rooms.value = emptyList()
+            _queryError.value = null
+        }
         viewModelScope.launch {
+            try {
             val response = apolloClient.query(ReadingRoomPageQuery()).fetchPolicy(FetchPolicy.NetworkOnly).execute()
-            if (response.data == null || response.exception != null) {
+            if (request != latestRequest) return@launch
+            if (response.data == null || response.exception != null || response.hasErrors()) {
                 _queryError.value = QueryError.SERVER_ERROR
+                _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
             } else if (response.data?.readingRoom != null) {
                 _rooms.value = response.data?.readingRoom?.filter { room -> room.campus == campusID } ?: emptyList()
+                lastAppliedCampus = campusID
+                _requestState.value = _requestState.value?.success() ?: RequestUiState().success()
                 _queryError.value = null
             } else {
                 _queryError.value = QueryError.UNKNOWN_ERROR
+                _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
+            }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (request != latestRequest) return@launch
+                _queryError.value = QueryError.SERVER_ERROR
+                _requestState.value = _requestState.value?.failure() ?: RequestUiState().failure()
             }
         }
     }

@@ -30,7 +30,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
@@ -52,6 +51,14 @@ import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
 import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.ui.bus.realtime.BusSeoulTargetStop
+import app.kobuggi.hyuabot.ui.common.ListPresentation
+import app.kobuggi.hyuabot.ui.common.StateKind
+import app.kobuggi.hyuabot.ui.common.StateModel
+import app.kobuggi.hyuabot.ui.common.StateView
+import app.kobuggi.hyuabot.ui.common.resolveListPresentation
+import app.kobuggi.hyuabot.ui.common.RequestUiState
+import app.kobuggi.hyuabot.util.AnalyticsScreen
+import app.kobuggi.hyuabot.util.TransportMode
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
@@ -100,6 +107,7 @@ class HomeFragment : Fragment() {
     private var selectedBusHomeDestination = BusHomeDestination.GANGNAM
     private var selectedBusHomeGroup: HomeBusGroup? = null
     private var selectedBusHomeStopSeq: Int? = null
+    private var stateViewsActive = false
     private var lastHomeLocation: Location? = null
     private var showHomeSeoulBusStop = true
     private var selectedHomeSeoulBusStop = BusSeoulTargetStop.GANGNAM
@@ -265,6 +273,10 @@ class HomeFragment : Fragment() {
             lastHomeLocation?.let { location -> selectBusHomeGroup(location, it) }
             render(it)
         }
+        viewModel.requestState.observe(viewLifecycleOwner) { request ->
+            if (!request.loading) binding.homeSwipeRefreshLayout.isRefreshing = false
+            renderCardStates()
+        }
         viewModel.stopCoordinates.observe(viewLifecycleOwner) {
             lastHomeLocation?.let { location -> selectBusHomeGroup(location, viewModel.data.value) }
         }
@@ -280,12 +292,6 @@ class HomeFragment : Fragment() {
         viewModel.presenceViewerCount.observe(viewLifecycleOwner, ::renderPresencePill)
         viewModel.presenceAvailableSeats.observe(viewLifecycleOwner) {
             renderPresencePill(viewModel.presenceViewerCount.value)
-        }
-        viewModel.queryError.observe(viewLifecycleOwner) {
-            it?.let {
-                binding.homeSwipeRefreshLayout.isRefreshing = false
-                Toast.makeText(requireContext(), getString(R.string.shuttle_no_realtime_data), Toast.LENGTH_SHORT).show()
-            }
         }
         refreshHome()
         return binding.root
@@ -316,6 +322,8 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        stateViewsActive = true
+        setHomeStateViewsActive(true)
         viewModel.startPresenceUpdates()
         hasResolvedInitialDepartureLocation = false
         refreshHome()
@@ -325,6 +333,8 @@ class HomeFragment : Fragment() {
     }
 
     override fun onPause() {
+        stateViewsActive = false
+        setHomeStateViewsActive(false)
         viewModel.stopPresenceUpdates()
         refreshHandler.removeCallbacks(autoRefreshRunnable)
         stopNoticeAutoScroll()
@@ -693,12 +703,56 @@ class HomeFragment : Fragment() {
         renderMeals(data)
     }
 
+    private fun renderCardStates() {
+        render(viewModel.data.value)
+    }
+
+    private fun addHomeState(
+        container: LinearLayout,
+        model: StateModel,
+        onTimetable: (() -> Unit)? = null,
+    ) {
+        val retry = { viewModel.fetchData() }
+        val action = when (model.kind) {
+            StateKind.EMPTY -> null
+            StateKind.ERROR -> retry
+            StateKind.ENDED, StateKind.SUSPENDED -> onTimetable ?: retry
+            StateKind.PERMISSION_DENIED -> retry
+        }
+        val state = StateView(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
+            if (action == null) bind(model, AnalyticsScreen.HOME)
+            else bind(model, AnalyticsScreen.HOME, action)
+            setScreenActive(stateViewsActive)
+        }
+        container.addView(state)
+    }
+
+    private fun setHomeStateViewsActive(active: Boolean) {
+        if (!isAdded || view == null) return
+        listOf(binding.movementContainer, binding.mealContainer, binding.busHomeContainer).forEach { container ->
+            for (index in 0 until container.childCount) {
+                (container.getChildAt(index) as? StateView)?.setScreenActive(active)
+            }
+        }
+    }
+
     /** Temporary visual preview for the new home bus card. Live group data follows next. */
     private fun renderBusHomePreview(data: HomePageQuery.Data?) {
         val group = selectedBusHomeGroup
-        binding.busHomeCard.visibility = if (data == null || group == null) View.GONE else View.VISIBLE
-        if (data == null || group == null) return
+        val showError = data == null && viewModel.requestState.value?.failed == true
+        binding.busHomeCard.visibility = if (group == null || (data == null && !showError)) View.GONE else View.VISIBLE
+        if (group == null) return
         binding.busHomeContainer.removeAllViews()
+        if (data == null) {
+            if (viewModel.requestState.value?.failed == true) {
+                addHomeState(binding.busHomeContainer, StateModel(StateKind.ERROR))
+            }
+            return
+        }
         val title = if (group == HomeBusGroup.CAMPUS) {
             getString(selectedBusHomeDestination.titleRes)
         } else {
@@ -968,11 +1022,13 @@ class HomeFragment : Fragment() {
                 }
         }
         if (binding.busHomeContainer.childCount == 0) {
-            addEmptyRow(
-                binding.busHomeContainer,
-                getString(R.string.home_bus_no_arrivals),
-                getString(R.string.home_bus_no_arrivals_message),
+            val presentation = resolveListPresentation(
+                viewModel.requestState.value ?: RequestUiState(), matchingItems.isNotEmpty(), 0,
+                TransportMode.BUS, java.time.ZonedDateTime.now(java.time.ZoneId.of("Asia/Seoul")),
             )
+            if (presentation is ListPresentation.State) {
+                addHomeState(binding.busHomeContainer, presentation.model) { binding.busHomeDetail.performClick() }
+            }
         }
     }
 
@@ -1247,7 +1303,12 @@ class HomeFragment : Fragment() {
 
     private fun renderMovement(data: HomePageQuery.Data?) {
         binding.movementContainer.removeAllViews()
-        if (data == null) return
+        if (data == null) {
+            if (viewModel.requestState.value?.failed == true) {
+                addHomeState(binding.movementContainer, StateModel(StateKind.ERROR))
+            }
+            return
+        }
 
         val route = selectedDeparture.routeTo(selectedDestination)
         val shuttleCandidates = shuttleEntries(data).take(SHUTTLE_TRANSFER_LOOKAHEAD_COUNT)
@@ -1278,7 +1339,14 @@ class HomeFragment : Fragment() {
         val shouldEmphasizeSupport = nextShuttleMinutes?.let { it > SUPPORT_EMPHASIS_THRESHOLD_MINUTES } ?: true
 
         if (shuttleRows.isEmpty()) {
-            addEmptyRow(binding.movementContainer, R.string.home_no_data_title, R.string.home_no_data_message)
+            val hasSource = data.shuttle.stops.any { it.name == route.stop }
+            val presentation = resolveListPresentation(
+                viewModel.requestState.value ?: RequestUiState(), hasSource, 0,
+                TransportMode.SHUTTLE, java.time.ZonedDateTime.now(java.time.ZoneId.of("Asia/Seoul")),
+            )
+            if (presentation is ListPresentation.State) {
+                addHomeState(binding.movementContainer, presentation.model) { binding.movementTimetable.performClick() }
+            }
         } else {
             shuttleRows.forEach { addShuttleMovement(binding.movementContainer, it) }
         }
@@ -1829,7 +1897,12 @@ class HomeFragment : Fragment() {
 
     private fun renderMeals(data: HomePageQuery.Data?) {
         binding.mealContainer.removeAllViews()
-        if (data == null) return
+        if (data == null) {
+            if (viewModel.requestState.value?.failed == true) {
+                addHomeState(binding.mealContainer, StateModel(StateKind.ERROR))
+            }
+            return
+        }
         val period = activeMealPeriod()
         val sections = data.cafeteria
             .sortedBy { it.seq }
@@ -1857,11 +1930,7 @@ class HomeFragment : Fragment() {
             .take(5)
 
         if (sections.isEmpty()) {
-            addEmptyRow(
-                binding.mealContainer,
-                getString(R.string.home_meal_empty_title, period.title(requireContext())),
-                getString(R.string.home_meal_empty_message),
-            )
+            addHomeState(binding.mealContainer, StateModel(StateKind.EMPTY))
         } else {
             sections.forEach { addMealSection(binding.mealContainer, it) }
         }
