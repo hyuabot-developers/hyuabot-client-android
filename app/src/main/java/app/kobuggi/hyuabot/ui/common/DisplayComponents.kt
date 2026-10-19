@@ -153,6 +153,7 @@ class FreshnessLabel @JvmOverloads constructor(context: Context, attrs: Attribut
         }
         wasStale = stale
         text = display.text
+        visibility = if (display.text.isEmpty()) View.GONE else View.VISIBLE
         val spoken = spokenPrefix?.let { "$it, ${display.spoken}" } ?: display.spoken
         if (contentDescription != spoken) {
             contentDescription = spoken

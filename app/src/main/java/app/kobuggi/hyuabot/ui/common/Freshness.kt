@@ -51,7 +51,7 @@ object Freshness {
             return Display(words.delayed(minutes), words.spokenDelayed(minutes), true)
         }
         if (category == Category.REALTIME && updatedAt == null) {
-            return Display(words.scheduleBasis(), words.scheduleBasis(), false)
+            return Display("", "", false)
         }
         if (category == Category.HOURLY) return Display(words.hourly(), words.hourly(), false)
         if (category == Category.OBSERVED && updatedAt != null) {
