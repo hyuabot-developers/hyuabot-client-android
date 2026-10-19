@@ -41,10 +41,9 @@ class AnalyticsScreenDispatcherTest {
         dispatcher.onPaused()
 
         val restored = AnalyticsScreenDispatcher(screens::add)
-        restored.restoreLastLoggedScreen(dispatcher.lastLoggedScreen)
+        restored.restoreLastLoggedScreen(AnalyticsScreen.HOME)
         restored.onDestinationChanged(AnalyticsScreen.HOME)
         restored.onResumed()
-        restored.onDestinationChanged(AnalyticsScreen.HOME)
         assertEquals(listOf(AnalyticsScreen.HOME), screens)
 
         restored.onDestinationChanged(AnalyticsScreen.BUS_REALTIME)
@@ -59,6 +58,57 @@ class AnalyticsScreenDispatcherTest {
         dispatcher.restoreLastLoggedScreen(AnalyticsScreen.HOME)
         dispatcher.onDestinationChanged(AnalyticsScreen.MAP)
         dispatcher.onResumed()
-        assertEquals(listOf(AnalyticsScreen.MAP), screens)
+        dispatcher.onDestinationChanged(AnalyticsScreen.HOME)
+        assertEquals(listOf(AnalyticsScreen.MAP, AnalyticsScreen.HOME), screens)
+    }
+
+    @Test
+    fun `return from an unmapped destination logs home again`() {
+        val screens = mutableListOf<AnalyticsScreen>()
+        val dispatcher = AnalyticsScreenDispatcher(screens::add)
+        dispatcher.onResumed()
+        dispatcher.onDestinationChanged(AnalyticsScreen.HOME)
+        dispatcher.onDestinationChanged(null)
+        dispatcher.onDestinationChanged(AnalyticsScreen.HOME)
+        assertEquals(listOf(AnalyticsScreen.HOME, AnalyticsScreen.HOME), screens)
+    }
+
+    @Test
+    fun `restoration suppresses only the first dispatch`() {
+        val screens = mutableListOf<AnalyticsScreen>()
+        val dispatcher = AnalyticsScreenDispatcher(screens::add)
+        dispatcher.restoreLastLoggedScreen(AnalyticsScreen.HOME)
+        dispatcher.onDestinationChanged(AnalyticsScreen.HOME)
+        dispatcher.onResumed()
+        assertEquals(emptyList<AnalyticsScreen>(), screens)
+
+        dispatcher.onDestinationChanged(AnalyticsScreen.HOME)
+        assertEquals(listOf(AnalyticsScreen.HOME), screens)
+        dispatcher.onDestinationChanged(null)
+        dispatcher.onDestinationChanged(AnalyticsScreen.HOME)
+        assertEquals(listOf(AnalyticsScreen.HOME, AnalyticsScreen.HOME), screens)
+    }
+
+    @Test
+    fun `restoring an unmapped destination does not suppress the next home visit`() {
+        val screens = mutableListOf<AnalyticsScreen>()
+        val dispatcher = AnalyticsScreenDispatcher(screens::add)
+        dispatcher.restoreLastLoggedScreen(AnalyticsScreen.HOME)
+        dispatcher.onDestinationChanged(null)
+        dispatcher.onResumed()
+        dispatcher.onDestinationChanged(AnalyticsScreen.HOME)
+        assertEquals(listOf(AnalyticsScreen.HOME), screens)
+    }
+
+    @Test
+    fun `unmapped destination clears a pending screen before resume`() {
+        val screens = mutableListOf<AnalyticsScreen>()
+        val dispatcher = AnalyticsScreenDispatcher(screens::add)
+        dispatcher.onDestinationChanged(AnalyticsScreen.HOME)
+        dispatcher.onDestinationChanged(null)
+        dispatcher.onResumed()
+        assertEquals(emptyList<AnalyticsScreen>(), screens)
+        dispatcher.onDestinationChanged(AnalyticsScreen.HOME)
+        assertEquals(listOf(AnalyticsScreen.HOME), screens)
     }
 }

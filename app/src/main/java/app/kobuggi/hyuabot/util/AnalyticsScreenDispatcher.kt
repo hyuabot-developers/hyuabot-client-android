@@ -9,14 +9,19 @@ class AnalyticsScreenDispatcher(
 ) {
     private var isResumed = false
     private var pendingScreen: AnalyticsScreen? = null
-    var lastLoggedScreen: AnalyticsScreen? = null
-        private set
+    private var restoredScreen: AnalyticsScreen? = null
 
+    /** Suppresses only the first dispatch when it matches the recreated screen. */
     fun restoreLastLoggedScreen(screen: AnalyticsScreen?) {
-        lastLoggedScreen = screen
+        restoredScreen = screen
     }
 
-    fun onDestinationChanged(screen: AnalyticsScreen) {
+    fun onDestinationChanged(screen: AnalyticsScreen?) {
+        if (screen == null) {
+            restoredScreen = null
+            pendingScreen = null
+            return
+        }
         if (isResumed) {
             dispatch(screen)
         } else {
@@ -35,8 +40,9 @@ class AnalyticsScreenDispatcher(
     }
 
     private fun dispatch(screen: AnalyticsScreen) {
-        if (lastLoggedScreen == screen) return
-        lastLoggedScreen = screen
+        val restored = restoredScreen
+        restoredScreen = null
+        if (restored == screen) return
         logScreen(screen)
     }
 }
