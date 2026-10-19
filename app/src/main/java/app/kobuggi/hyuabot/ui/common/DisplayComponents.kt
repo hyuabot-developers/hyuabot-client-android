@@ -57,7 +57,6 @@ class StatusBadge @JvmOverloads constructor(context: Context, attrs: AttributeSe
         compoundDrawablePadding = dp(4)
         val mark = when (kind) {
             Kind.REALTIME -> StatusMark(dp(6), foreground, false)
-            Kind.STALE -> StatusMark(dp(14), foreground, true)
             else -> null
         }
         setCompoundDrawablesRelative(mark, null, null, null)
