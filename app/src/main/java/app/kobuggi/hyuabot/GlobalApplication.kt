@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import app.kobuggi.hyuabot.service.assistant.AssistantShortcutPublisher
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.CrashlyticsManager
@@ -29,6 +30,7 @@ class GlobalApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannels()
+        AssistantShortcutPublisher.publish(this)
         applicationScope.launch {
             val enabled = userPreferencesRepository.analyticsConsent.first()
             AnalyticsManager.setCollectionEnabled(enabled)
