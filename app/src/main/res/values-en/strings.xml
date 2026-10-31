@@ -771,4 +771,24 @@
     <string name="bus_alternative_stop_info">Stop Location</string>
     <string name="bus_alternative_shuttle_stop">Shuttle Bus Stop</string>
     <string name="bus_alternative_bus_stop">Bus Boarding Stop</string>
+    <string name="assistant_network_error">Could not reach the network. Please check your connection and try again.</string>
+    <string name="assistant_cafeteria_menus">Today’s %1$s menu: %2$s</string>
+    <string name="assistant_cafeteria_entry">%1$s: %2$s</string>
+    <string name="assistant_cafeteria_entry_with_time">%1$s (%2$s): %3$s</string>
+    <string name="assistant_cafeteria_no_menu">There is no %1$s menu today. The cafeteria may be closed.</string>
+    <string name="assistant_cafeteria_no_menu_named">There is no %2$s menu at %1$s today. It may be closed.</string>
+    <string name="assistant_cafeteria_unknown">Could not find a cafeteria named “%1$s”. Try a name such as Student Cafeteria.</string>
+    <string name="assistant_shuttle_next">Departs %1$s in %2$d min (%3$s), bound for %4$s</string>
+    <string name="assistant_shuttle_next_now">Departs %1$s now (%2$s), bound for %3$s</string>
+    <string name="assistant_shuttle_following">The next one departs at %1$s.</string>
+    <string name="assistant_shuttle_ended">Shuttle service at %1$s has ended for today.</string>
+    <string name="assistant_shuttle_ended_destination">Shuttle service from %1$s to %2$s has ended for today.</string>
+    <string name="assistant_shuttle_unknown_stop">Could not find a stop named “%1$s”. Try Dormitory, Shuttlecock, Station, Terminal or Jungang Station.</string>
+    <string name="assistant_shuttle_unknown_destination">Could not find a destination named “%1$s”. Try Station, Terminal, Jungang Station or Campus.</string>
+    <string name="assistant_shortcut_shuttle_dormitory_short">Dorm shuttle</string>
+    <string name="assistant_shortcut_shuttle_dormitory_long">Shuttles from the dormitory</string>
+    <string name="assistant_shortcut_shuttle_station_short">Station shuttle</string>
+    <string name="assistant_shortcut_shuttle_station_long">Shuttles from Hanyang Univ. at Ansan station</string>
+    <string name="assistant_shortcut_cafeteria_short">Meal now</string>
+    <string name="assistant_shortcut_cafeteria_long">Cafeteria menu for the current meal</string>
 </resources>
