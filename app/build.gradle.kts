@@ -173,6 +173,9 @@ dependencies {
     implementation(libs.playReviewKtx)
     // App Widget
     implementation(libs.coreRemoteViews)
+    // AppFunctions
+    implementation(libs.appfunctions)
+    ksp(libs.appfunctions.compiler)
     // ML Kit
     implementation(libs.mlkit.translate)
     // Open source notices

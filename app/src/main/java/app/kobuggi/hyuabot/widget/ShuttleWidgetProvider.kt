@@ -10,10 +10,9 @@ import android.view.View
 import android.widget.RemoteViews
 import androidx.core.net.toUri
 import app.kobuggi.hyuabot.R
-import app.kobuggi.hyuabot.ShuttleWidgetQuery
+import app.kobuggi.hyuabot.service.time.CampusTime
 import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.util.localizedContext
-import com.apollographql.apollo.api.Optional
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +20,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -220,11 +218,8 @@ abstract class ShuttleWidgetProvider : AppWidgetProvider() {
             ShuttleWidgetEntryPoint::class.java
         )
         return try {
-            val now = LocalTime.now(ZoneId.of("Asia/Seoul"))
-            val response = entryPoint.apolloClient()
-                .query(ShuttleWidgetQuery(Optional.present(now)))
-                .execute()
-            val stops = response.data?.shuttle?.stops
+            val now = CampusTime.now().toLocalTime()
+            val stops = entryPoint.shuttleRepository().fetchDepartures(now).getOrNull()
             if (stops.isNullOrEmpty()) {
                 return ShuttleWidgetData(ShuttleError.NO_DATA, null, null, emptyList())
             }

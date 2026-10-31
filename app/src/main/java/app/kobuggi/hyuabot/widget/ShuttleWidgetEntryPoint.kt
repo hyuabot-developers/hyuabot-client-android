@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.widget
 
+import app.kobuggi.hyuabot.service.shuttle.ShuttleRepository
 import com.apollographql.apollo.ApolloClient
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -9,4 +10,5 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 interface ShuttleWidgetEntryPoint {
     fun apolloClient(): ApolloClient
+    fun shuttleRepository(): ShuttleRepository
 }

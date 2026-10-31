@@ -11,20 +11,17 @@ import android.widget.RemoteViews
 import androidx.core.net.toUri
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.ShuttleTransferQuery
-import app.kobuggi.hyuabot.ShuttleWidgetQuery
+import app.kobuggi.hyuabot.service.time.CampusTime
 import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.util.TransitRow
 import app.kobuggi.hyuabot.util.buildTransitRows
 import app.kobuggi.hyuabot.util.currentShuttleWeekday
 import app.kobuggi.hyuabot.util.localizedContext
-import com.apollographql.apollo.api.Optional
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import java.time.LocalTime
-import java.time.ZoneId
 
 class ShuttleTransferWidgetProvider : AppWidgetProvider() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -78,11 +75,8 @@ class ShuttleTransferWidgetProvider : AppWidgetProvider() {
         )
         val ctx = localizedContext(context)
         return try {
-            val now = LocalTime.now(ZoneId.of("Asia/Seoul"))
-            val shuttleResponse = entryPoint.apolloClient()
-                .query(ShuttleWidgetQuery(Optional.present(now)))
-                .execute()
-            val stops = shuttleResponse.data?.shuttle?.stops
+            val now = CampusTime.now().toLocalTime()
+            val stops = entryPoint.shuttleRepository().fetchDepartures(now).getOrNull()
             if (stops.isNullOrEmpty()) {
                 return TransferWidgetData(ShuttleError.NO_DATA, null, null, emptyList(), emptyList())
             }

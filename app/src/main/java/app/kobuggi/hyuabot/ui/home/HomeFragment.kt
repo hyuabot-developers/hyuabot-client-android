@@ -47,6 +47,8 @@ import androidx.viewpager2.widget.ViewPager2
 import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.HomePageQuery
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.service.time.CampusTime
+import app.kobuggi.hyuabot.service.time.MealPeriod
 import app.kobuggi.hyuabot.databinding.FragmentHomeBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeRowBinding
 import app.kobuggi.hyuabot.databinding.ItemHomeTransferRowBinding
@@ -2241,13 +2243,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun automaticMealPeriod(): HomeMealPeriod {
-        val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-        val periods = mealPeriods(isTomorrow = now.hour >= 20)
-        return periods[
-            when {
-                now.hour < 10 || now.hour >= 20 -> 0
-                now.hour < 15 -> 1
-                else -> 2
+        val selection = MealPeriod.screenDefault(CampusTime.now())
+        return mealPeriods(isTomorrow = selection.isTomorrow)[
+            when (selection.meal) {
+                MealPeriod.BREAKFAST -> 0
+                MealPeriod.LUNCH -> 1
+                MealPeriod.DINNER -> 2
             }
         ]
     }

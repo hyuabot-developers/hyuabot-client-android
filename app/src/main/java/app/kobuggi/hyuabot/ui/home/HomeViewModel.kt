@@ -10,6 +10,8 @@ import app.kobuggi.hyuabot.BusStopCoordinatesQuery
 import app.kobuggi.hyuabot.ui.bus.realtime.busLocationInputs
 import app.kobuggi.hyuabot.HomePageQuery
 import app.kobuggi.hyuabot.service.ShuttlePresenceService
+import app.kobuggi.hyuabot.service.time.CampusTime
+import app.kobuggi.hyuabot.service.time.MealPeriod
 import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
@@ -134,8 +136,8 @@ class HomeViewModel @Inject constructor(
             }
             if (_data.value == null || movementRequestKey != lastAppliedMovementRequestKey) _isLoading.value = true
             try {
-                val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-                val mealDate = if (now.hour >= 20) now.toLocalDate().plusDays(1) else now.toLocalDate()
+                val now = CampusTime.now()
+                val mealDate = MealPeriod.screenDefault(now).date
                 val response = apolloClient.query(
                     HomePageQuery(
                         language = noticeLanguage,
