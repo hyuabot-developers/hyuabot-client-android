@@ -15,6 +15,8 @@ import androidx.viewpager2.widget.ViewPager2
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentCafeteriaBinding
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
+import app.kobuggi.hyuabot.service.time.CampusTime
+import app.kobuggi.hyuabot.service.time.MealPeriod
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
@@ -23,7 +25,6 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -115,13 +116,14 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
             "lunch" -> 1
             "dinner" -> 2
             else -> {
-                val now = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
+                val now = CampusTime.now()
+                val selection = MealPeriod.screenDefault(now)
                 // 20시 이후에는 홈 화면과 동일하게 내일 조식으로 진입한다.
-                if (now.hour >= 20) {
-                    viewModel.date.value = now.plusDays(1)
+                if (selection.isTomorrow) {
+                    viewModel.date.value = now.toLocalDateTime().plusDays(1)
                     showingAutomaticTomorrow = true
                 }
-                defaultMealTab(now)
+                defaultMealTab(selection.meal)
             }
         }
         binding.viewPager.setCurrentItem(initialTab, false)
@@ -162,11 +164,11 @@ class CafeteriaFragment @Inject constructor() : Fragment() {
         else -> "lunch" to (viewModel.lunch.value ?: emptyList())
     }
 
-    // 홈 화면(HomeFragment.automaticMealPeriod)과 동일한 시각 경계로 조식/중식/석식을 선택한다.
-    private fun defaultMealTab(dateTime: LocalDateTime): Int = when {
-        dateTime.hour < 10 || dateTime.hour >= 20 -> 0 // 조식
-        dateTime.hour < 15 -> 1 // 중식
-        else -> 2 // 석식
+    // 경계는 홈 화면과 공유하는 MealPeriod.screenDefault에서 결정한다.
+    private fun defaultMealTab(meal: MealPeriod): Int = when (meal) {
+        MealPeriod.BREAKFAST -> 0
+        MealPeriod.LUNCH -> 1
+        MealPeriod.DINNER -> 2
     }
 
     // 자동으로 내일 식단으로 넘어간 경우에만 탭 제목을 "내일 조식/중식/석식"으로 표시한다.
