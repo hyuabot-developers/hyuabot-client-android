@@ -1,5 +1,6 @@
 package app.kobuggi.hyuabot.widget
 
+import app.kobuggi.hyuabot.service.time.MealPeriod
 import java.time.LocalTime
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -27,5 +28,15 @@ class WidgetMealTest {
     fun currentReturnsClosedFromTwenty() {
         assertEquals(WidgetMeal.CLOSED, WidgetMeal.current(LocalTime.of(20, 0)))
         assertEquals(WidgetMeal.CLOSED, WidgetMeal.current(LocalTime.of(23, 59)))
+    }
+    @Test
+    fun mealPeriodsMatchWidgetEntries() {
+        assertEquals(MealPeriod.BREAKFAST, WidgetMeal.BREAKFAST.mealPeriod)
+        assertEquals(MealPeriod.LUNCH, WidgetMeal.LUNCH.mealPeriod)
+        assertEquals(MealPeriod.DINNER, WidgetMeal.DINNER.mealPeriod)
+        assertEquals(MealPeriod.BREAKFAST, WidgetMeal.CLOSED.mealPeriod)
+        WidgetMeal.values().forEach { meal ->
+            assertEquals(meal.mealPeriod.typeString, meal.typeString)
+        }
     }
 }
