@@ -9,8 +9,10 @@ import android.content.Intent
 import android.view.View
 import android.widget.RemoteViews
 import androidx.core.net.toUri
-import app.kobuggi.hyuabot.CafeteriaPageQuery
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.service.cafeteria.CafeteriaCatalog
+import app.kobuggi.hyuabot.service.cafeteria.CafeteriaMenuSelector
+import app.kobuggi.hyuabot.service.time.CampusTime
 import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.util.localizedContext
@@ -22,7 +24,6 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -65,7 +66,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
                 withTimeout(CAFETERIA_WIDGET_TIMEOUT_MS) {
                     val appContext = context.applicationContext
                     val textContext = localizedContext(appContext)
-                    val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                    val now = CampusTime.now()
                     val meal = WidgetMeal.current(now.toLocalTime())
                     val items = loadItems(appContext, textContext, meal, now.toLocalDate())
                     appWidgetIds.forEach {
@@ -187,23 +188,14 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
         )
         val campusID = entryPoint.userPreferencesRepository().campusID.first()
         return try {
-            val response = entryPoint.apolloClient()
-                .query(CafeteriaPageQuery(date, campusID))
-                .execute()
-            val cafeteria = response.data?.cafeteria ?: return emptyList()
-            cafeteria
-                .filter { c -> c.menus.any { it.type.contains(meal.typeString) } }
+            val cafeteria = entryPoint.cafeteriaRepository().fetchCafeterias(date, campusID).getOrNull()
+                ?: return emptyList()
+            CafeteriaMenuSelector.servingCafeterias(cafeteria, meal.mealPeriod)
                 .sortedBy { it.seq }
                 .mapNotNull { c ->
-                    val menus = c.menus
-                        .filter { it.type.contains(meal.typeString) }
-                        .distinctBy { it.food }
+                    val menus = CafeteriaMenuSelector.menusFor(c, meal.mealPeriod)
                     if (menus.isEmpty()) return@mapNotNull null
-                    val runningTime = when (meal) {
-                        WidgetMeal.BREAKFAST, WidgetMeal.CLOSED -> c.runningTime.breakfast
-                        WidgetMeal.LUNCH -> c.runningTime.lunch
-                        WidgetMeal.DINNER -> c.runningTime.dinner
-                    }
+                    val runningTime = CafeteriaMenuSelector.runningTimeFor(c, meal.mealPeriod)
                     CafeteriaWidgetItem(
                         name = cafeteriaName(textContext, c.seq),
                         runningTime = runningTime,
@@ -238,22 +230,7 @@ class CafeteriaWidgetProvider : AppWidgetProvider() {
             char in '\uAC00'..'\uD7A3'
     }
 
-    private fun cafeteriaName(context: Context, seq: Int): String = context.getString(
-        when (seq) {
-            1 -> R.string.widget_cafeteria_1
-            2 -> R.string.widget_cafeteria_2
-            4 -> R.string.widget_cafeteria_4
-            6 -> R.string.widget_cafeteria_6
-            7 -> R.string.widget_cafeteria_7
-            8 -> R.string.widget_cafeteria_8
-            11 -> R.string.widget_cafeteria_11
-            12 -> R.string.widget_cafeteria_12
-            13 -> R.string.widget_cafeteria_13
-            14 -> R.string.widget_cafeteria_14
-            15 -> R.string.widget_cafeteria_15
-            else -> R.string.widget_cafeteria_1
-        }
-    )
+    private fun cafeteriaName(context: Context, seq: Int): String = context.getString(CafeteriaCatalog.nameRes(seq))
 }
 
 data class CafeteriaWidgetMenu(val food: String, val price: String)
