@@ -16,16 +16,16 @@ import app.kobuggi.hyuabot.ShuttleRealtimePageQuery
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.translation.DynamicTextTranslator
 import app.kobuggi.hyuabot.service.ShuttlePresenceService
+import app.kobuggi.hyuabot.service.shuttle.ShuttleRepository
+import app.kobuggi.hyuabot.service.time.CampusTime
 import app.kobuggi.hyuabot.ui.home.HomeSubwayTransferDestination
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleGeoCoordinate
 import app.kobuggi.hyuabot.ui.shuttle.initialstop.ShuttleInitialStopRuleCandidate
 import app.kobuggi.hyuabot.util.QueryError
 import app.kobuggi.hyuabot.util.currentShuttleWeekday
 import app.kobuggi.hyuabot.util.shuttleBusLogReferenceDates
-import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.apollographql.cache.normalized.FetchPolicy
-import com.apollographql.cache.normalized.fetchPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -44,7 +44,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ShuttleRealtimeViewModel @Inject constructor(
     val userPreferencesRepository: UserPreferencesRepository,
-    private val apolloClient: ApolloClient,
+    private val shuttleRepository: ShuttleRepository,
     private val shuttlePresenceService: ShuttlePresenceService,
 ): ViewModel() {
     private val _isLoading = MutableLiveData(false)
@@ -173,7 +173,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
             loadedSubwayLanguage = subwayLanguage
         }
         viewModelScope.launch {
-            val response = apolloClient.query(ShuttleRealtimePageQuery(
+            val result = shuttleRepository.fetchRealtimePage(ShuttleRealtimePageQuery(
                 language,
                 subwayLanguage,
                 Optional.present(LocalTime.now()),
@@ -197,25 +197,22 @@ class ShuttleRealtimeViewModel @Inject constructor(
                 alternativeInput = selection.alternativePairs().map { (route, stop) ->
                     BusRouteStopInput(route = route, stop = stop, limit = Optional.present(1))
                 },
-            )).fetchPolicy(FetchPolicy.NetworkOnly).execute()
+            ), FetchPolicy.NetworkOnly)
             // Timer ticks issue newer requests with the same selection; a slow response is still applied unless the
             // selection changed or a newer response has already been rendered.
             if (request <= lastAppliedRequest || selection != requestSelection()) return@launch
-            if (response.data == null || response.exception != null) {
+            val data = result.getOrNull()
+            if (data == null) {
                 _queryError.value = QueryError.SERVER_ERROR
-            } else if (response.data?.shuttle?.stops != null) {
+            } else {
                 lastAppliedRequest = request
                 lastAppliedRequestKey = requestKey
-                _result.value = response.data?.shuttle?.stops
-                _transfer.value = response.data
-                updateBusAlternatives(response.data?.busAlternative.orEmpty())
+                _result.value = data.shuttle.stops
+                _transfer.value = data
+                updateBusAlternatives(data.busAlternative)
                 _queryError.value = null
-            } else {
-                _queryError.value = QueryError.UNKNOWN_ERROR
-            }
-            // Notices refresh with every poll; the list is only replaced when it changed so the pager is not redrawn.
-            if (response.exception == null) {
-                response.data?.notices?.flatMap { it.notices }?.takeIf { it != _notices.value }?.let { _notices.value = it }
+                // Notices refresh with every poll; the list is only replaced when it changed so the pager is not redrawn.
+                data.notices.flatMap { it.notices }.takeIf { it != _notices.value }?.let { _notices.value = it }
             }
             _isLoading.value = false
         }
@@ -226,8 +223,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
         loadingLocations = true
         viewModelScope.launch {
             try {
-                val response = apolloClient.query(ShuttleLocationQuery()).fetchPolicy(FetchPolicy.NetworkOnly).execute()
-                response.data?.shuttle?.let { shuttle ->
+                shuttleRepository.fetchLocations(FetchPolicy.NetworkOnly).getOrNull()?.let { shuttle ->
                     _initialStopRules.value = shuttle.initialStopRules.map { rule ->
                         ShuttleInitialStopRuleCandidate(rule.seq, rule.stopName, rule.priority,
                             rule.polygon.map { ShuttleGeoCoordinate(it.latitude, it.longitude) })
@@ -388,10 +384,7 @@ class ShuttleRealtimeViewModel @Inject constructor(
         }
     }
 
-    private fun minutesUntil(time: LocalTime): Long {
-        val difference = java.time.Duration.between(LocalTime.now(), time).toMinutes()
-        return if (difference >= 0) difference else difference + MINUTES_PER_DAY
-    }
+    private fun minutesUntil(time: LocalTime): Long = CampusTime.minutesUntil(LocalTime.now(), time)
 
     fun setPresenceStop(position: Int) {
         val stopId = PRESENCE_STOP_IDS.getOrNull(position) ?: return
@@ -452,7 +445,6 @@ class ShuttleRealtimeViewModel @Inject constructor(
 
     private companion object {
         const val ALTERNATIVE_THRESHOLD_MINUTES = 20
-        const val MINUTES_PER_DAY = 24 * 60L
         val PRESENCE_STOP_IDS = listOf(
             "dormitory_o",
             "shuttlecock_o",
