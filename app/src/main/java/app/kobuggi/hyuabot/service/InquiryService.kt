@@ -3,6 +3,9 @@ package app.kobuggi.hyuabot.service
 import android.content.Context
 import app.kobuggi.hyuabot.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
+import com.google.android.gms.tasks.Task
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -11,7 +14,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.coroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -51,6 +57,8 @@ class InquiryService @Inject constructor(
     private val streamClient = OkHttpClient.Builder()
         .readTimeout(0, TimeUnit.MILLISECONDS)
         .build()
+    @Volatile
+    private var lastRegisteredPushToken: String? = null
     private val installationId = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).let { preferences ->
         preferences.getString(SESSION_ID_KEY, null) ?: UUID.randomUUID().toString().lowercase().also {
             preferences.edit().putString(SESSION_ID_KEY, it).apply()
@@ -208,6 +216,41 @@ class InquiryService @Inject constructor(
                 client.newCall(request).execute().use { }
             }
         }
+    }
+
+    suspend fun registerPushToken(token: String): Boolean = withContext(Dispatchers.IO) {
+        if (token.isBlank()) return@withContext false
+        runCatching {
+            val payload = JSONObject()
+                .put("provider", InquiryPush.PROVIDER_FCM)
+                .put("token", token)
+                .put("platform", InquiryPush.PLATFORM_ANDROID)
+                .toString()
+                .toRequestBody(JSON_MEDIA_TYPE)
+            val request = Request.Builder()
+                .url("${BuildConfig.API_URL}/api/v1/inquiry/push-token")
+                .withCommonHeaders()
+                .post(payload)
+                .build()
+            client.newCall(request).execute().use { it.isSuccessful }
+        }.getOrDefault(false).also { success ->
+            if (success) lastRegisteredPushToken = token
+        }
+    }
+
+    suspend fun syncPushToken(): Boolean {
+        val token = runCatching { Firebase.messaging.token.await() }
+            .getOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?: return false
+        if (token == lastRegisteredPushToken) return true
+        return registerPushToken(token)
+    }
+
+    private suspend fun <T> Task<T>.await(): T = suspendCancellableCoroutine { continuation ->
+        addOnSuccessListener { continuation.resume(it) }
+        addOnFailureListener { continuation.resumeWithException(it) }
+        addOnCanceledListener { continuation.cancel() }
     }
 
     private fun JSONObject.optStringOrNull(key: String): String? =
