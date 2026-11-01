@@ -1,8 +1,14 @@
 package app.kobuggi.hyuabot.ui.inquiry
 
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.AlertDialog
+import android.app.NotificationManager
+import android.content.Context
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +16,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.net.toUri
+import androidx.core.content.ContextCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -18,7 +26,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.FragmentInquiryChatBinding
 import app.kobuggi.hyuabot.service.InquiryMessage
+import app.kobuggi.hyuabot.service.InquiryPush
 import app.kobuggi.hyuabot.service.InquiryService
+import app.kobuggi.hyuabot.ui.common.applyGodoTypography
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.NaverMap
@@ -34,6 +44,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class InquiryChatFragment @Inject constructor() : Fragment(), OnMapReadyCallback {
     private val args: InquiryChatFragmentArgs by navArgs()
+    private val requestNotificationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
     private var viewBinding: FragmentInquiryChatBinding? = null
     private val binding get() = requireNotNull(viewBinding)
     private val messageAdapter = InquiryMessageAdapter(emptyList())
@@ -126,6 +137,8 @@ class InquiryChatFragment @Inject constructor() : Fragment(), OnMapReadyCallback
                 return@launch
             }
             threadId = thread.id
+            launch { inquiryService.syncPushToken() }
+            askNotificationPermissionIfNeeded()
             refreshMessages(markRead = true)
             startStream(thread.id)
             pollMessages()
@@ -232,6 +245,34 @@ class InquiryChatFragment @Inject constructor() : Fragment(), OnMapReadyCallback
         Toast.makeText(requireContext(), R.string.inquiry_load_failed, Toast.LENGTH_SHORT).show()
     }
 
+    private fun askNotificationPermissionIfNeeded() {
+        if (!isAdded) return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (ContextCompat.checkSelfPermission(requireContext(), POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) return
+        val prefs = requireContext().getSharedPreferences(PERMISSION_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        if (prefs.getBoolean(PERMISSION_ASKED_KEY, false)) return
+        prefs.edit().putBoolean(PERMISSION_ASKED_KEY, true).apply()
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.notification_permission_disclosure_title)
+            .setMessage(R.string.inquiry_notification_permission_disclosure_message)
+            .setPositiveButton(R.string.notification_permission_disclosure_allow) { dialog, _ ->
+                dialog.dismiss()
+                requestNotificationPermissionLauncher.launch(POST_NOTIFICATIONS)
+            }
+            .setNegativeButton(R.string.notification_permission_disclosure_later, null)
+            .show()
+            .applyGodoTypography()
+    }
+
+    private fun clearInquiryNotifications() {
+        val manager = requireContext().getSystemService(NotificationManager::class.java) ?: return
+        runCatching {
+            manager.activeNotifications.filter { it.notification.channelId == InquiryPush.CHANNEL_ID }.forEach {
+                manager.cancel(it.tag, it.id)
+            }
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         binding.inquiryOfficeMapView.onStart()
@@ -240,9 +281,12 @@ class InquiryChatFragment @Inject constructor() : Fragment(), OnMapReadyCallback
     override fun onResume() {
         super.onResume()
         binding.inquiryOfficeMapView.onResume()
+        InquiryPush.isChatVisible = true
+        clearInquiryNotifications()
     }
 
     override fun onPause() {
+        InquiryPush.isChatVisible = false
         binding.inquiryOfficeMapView.onPause()
         super.onPause()
     }
@@ -269,6 +313,8 @@ class InquiryChatFragment @Inject constructor() : Fragment(), OnMapReadyCallback
     }
 
     private companion object {
+        const val PERMISSION_PREFERENCES_NAME = "inquiry_push"
+        const val PERMISSION_ASKED_KEY = "notification_permission_asked"
         val OFFICE_COORDINATE = LatLng(37.29275316695924, 126.83714484865253)
         const val POLL_INTERVAL_MS = 30_000L
         const val STREAM_RECONNECT_DELAY_MS = 1_000L

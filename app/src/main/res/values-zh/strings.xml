@@ -464,6 +464,9 @@
     <string name="inquiry_send">发送</string>
     <string name="inquiry_empty">还没有对话。欢迎留下您的问题。</string>
     <string name="inquiry_read">已读</string>
+    <string name="inquiry_notification_channel_name">咨询回复</string>
+    <string name="inquiry_notification_default_title">您的咨询有新回复</string>
+    <string name="inquiry_notification_permission_disclosure_message">工作人员回复您的咨询时，我们会通过通知告知您。请允许通知。</string>
     <string name="inquiry_load_failed">无法加载对话。</string>
     <string name="inquiry_shuttle_lost_title">在校车上遗落东西了吗？</string>
     <string name="inquiry_shuttle_lost_detail">请到宿舍后方教育楼1层的校车办公室询问，或拨打031-400-4412。</string>

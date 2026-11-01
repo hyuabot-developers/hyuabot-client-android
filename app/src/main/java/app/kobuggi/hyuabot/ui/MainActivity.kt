@@ -29,6 +29,7 @@ import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.core.view.isVisible
@@ -43,6 +44,8 @@ import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
 import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
+import app.kobuggi.hyuabot.service.InquiryPush
+import app.kobuggi.hyuabot.service.InquiryService
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
@@ -122,6 +125,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     @Inject
     lateinit var shuttleServiceNoticeScheduler: ShuttleServiceNoticeScheduler
 
+    @Inject
+    lateinit var inquiryService: InquiryService
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         backgroundLocationSettingsOpened =
@@ -155,11 +161,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         openBirthDayDialog()
         requestInAppReview()
         syncShuttleServiceNotices()
+        lifecycleScope.launch { inquiryService.syncPushToken() }
         pendingBackgroundLocationRequest =
             intent.getBooleanExtra(EXTRA_REQUEST_BACKGROUND_LOCATION, false) ||
                 hasShuttleWidget()
         logLocationFlow("onCreate; pending=$pendingBackgroundLocationRequest widget=${hasShuttleWidget()} foreground=${hasLocationPermission()} background=${hasBackgroundLocationPermission()}")
-        val handledDeepLink = handleDebugDeepLink(intent) || navController.handleDeepLink(intent)
+        val handledDeepLink = (savedInstanceState == null && handleInquiryNotificationIntent(intent)) || handleDebugDeepLink(intent) || navController.handleDeepLink(intent)
         if (
             savedInstanceState == null &&
             !handledDeepLink &&
@@ -607,7 +614,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         if (intent.getBooleanExtra(EXTRA_REQUEST_BACKGROUND_LOCATION, false)) {
             pendingBackgroundLocationRequest = true
         }
-        handleDebugDeepLink(intent) || navController.handleDeepLink(intent)
+        handleInquiryNotificationIntent(intent) || handleDebugDeepLink(intent) || navController.handleDeepLink(intent)
         binding.root.post(::handlePendingBackgroundLocationRequest)
     }
 
@@ -653,6 +660,21 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
             else -> Unit
         }
+        return true
+    }
+
+    private fun handleInquiryNotificationIntent(intent: Intent): Boolean {
+        val open = InquiryPush.isInquiryLaunch(
+            intent.getBooleanExtra(InquiryPush.EXTRA_OPEN_INQUIRY, false),
+            intent.getStringExtra(InquiryPush.DATA_TYPE_KEY)
+        )
+        if (!open) return false
+        intent.removeExtra(InquiryPush.EXTRA_OPEN_INQUIRY)
+        intent.removeExtra(InquiryPush.DATA_TYPE_KEY)
+        if (navController.currentDestination?.id != R.id.inquiryChatFragment) {
+            navController.navigate(R.id.inquiryChatFragment)
+        }
+        NotificationManagerCompat.from(this).cancel(InquiryPush.NOTIFICATION_ID)
         return true
     }
 

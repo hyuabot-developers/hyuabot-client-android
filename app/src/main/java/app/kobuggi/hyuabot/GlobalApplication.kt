@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import app.kobuggi.hyuabot.service.assistant.AssistantShortcutPublisher
+import app.kobuggi.hyuabot.service.NotificationService
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.CrashlyticsManager
@@ -48,5 +49,6 @@ class GlobalApplication : Application() {
             description = getString(R.string.shuttle_alarm_channel_desc)
         }
         nm.createNotificationChannel(channel)
+        NotificationService.ensureInquiryChannel(this)
     }
 }

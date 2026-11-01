@@ -5,8 +5,10 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
@@ -29,6 +31,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class NotificationService : FirebaseMessagingService() {
     @Inject lateinit var userPreferencesRepository: UserPreferencesRepository
+    @Inject lateinit var inquiryService: InquiryService
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
 
@@ -41,9 +44,15 @@ class NotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d("NotificationService", "Refreshed token: $token")
+        serviceScope.launch { inquiryService.registerPushToken(token) }
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
+        if (InquiryPush.isInquiryPayload(message.data)) {
+            showInquiryNotification(message)
+            return
+        }
+
         val topicName = message.from?.substringAfterLast("/").orEmpty()
         val readingRoomKey = message.data["id"]
             ?.takeIf { it.isNotBlank() }
@@ -105,6 +114,40 @@ class NotificationService : FirebaseMessagingService() {
         NotificationManagerCompat.from(this).notify(notifyId, notification)
     }
 
+    private fun showInquiryNotification(message: RemoteMessage) {
+        if (InquiryPush.isChatVisible) return
+        ensureInquiryChannel(this)
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra(InquiryPush.EXTRA_OPEN_INQUIRY, true)
+            putExtra(InquiryPush.DATA_THREAD_ID_KEY, message.data[InquiryPush.DATA_THREAD_ID_KEY])
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            InquiryPush.NOTIFICATION_ID,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        val title = message.notification?.title ?: message.data["title"] ?: getString(R.string.inquiry_notification_default_title)
+        val body = message.notification?.body ?: message.data["body"]
+        val notification = Notification.Builder(this, InquiryPush.CHANNEL_ID)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(Notification.BigTextStyle().bigText(body))
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setCategory(Notification.CATEGORY_MESSAGE)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) return
+        NotificationManagerCompat.from(this).notify(InquiryPush.NOTIFICATION_ID, notification)
+    }
+
     private fun readingRoomName(key: String): String = getString(
         when (key) {
             "reading_room_1" -> R.string.reading_room_1
@@ -123,5 +166,14 @@ class NotificationService : FirebaseMessagingService() {
     companion object {
         const val CHANNEL_ID = "ReadingRoomNotification"
         const val NOTIFICATION_GROUP_ID = "app.kobuggi.hyuabot.reading_room_notification"
+
+        fun ensureInquiryChannel(context: Context) {
+            val channel = NotificationChannel(
+                InquiryPush.CHANNEL_ID,
+                context.getString(R.string.inquiry_notification_channel_name),
+                NotificationManager.IMPORTANCE_HIGH,
+            )
+            context.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
+        }
     }
 }

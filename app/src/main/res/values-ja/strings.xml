@@ -464,6 +464,9 @@
     <string name="inquiry_send">送信</string>
     <string name="inquiry_empty">まだ会話がありません。ご質問をお気軽にどうぞ。</string>
     <string name="inquiry_read">既読</string>
+    <string name="inquiry_notification_channel_name">お問い合わせへの返信</string>
+    <string name="inquiry_notification_default_title">お問い合わせに返信が届きました</string>
+    <string name="inquiry_notification_permission_disclosure_message">スタッフがお問い合わせに返信すると通知でお知らせします。通知を許可してください。</string>
     <string name="inquiry_load_failed">会話を読み込めませんでした。</string>
     <string name="inquiry_shuttle_lost_title">シャトルバスに忘れ物をしましたか？</string>
     <string name="inquiry_shuttle_lost_detail">寮の裏にある教育棟1階のシャトルバス事務所へお越しいただくか、031-400-4412にお電話ください。</string>
