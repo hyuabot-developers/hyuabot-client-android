@@ -28,6 +28,9 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -206,6 +209,9 @@ fun TrailingIcon(icon: ImageVector, contentDescription: String? = null) {
     )
 }
 
+/** 큰 앱바의 스크롤 연결. 당겨서 새로고침이 앱바보다 먼저 스크롤을 가로채지 않도록 안쪽에서 다시 연결한다. */
+val LocalTopBarNestedScroll = staticCompositionLocalOf<NestedScrollConnection?> { null }
+
 /**
  * iOS 큰 제목처럼 스크롤하면 접히는 앱 바 + 본문. 본문은 받은 패딩을 적용해 스스로 스크롤한다.
  * [subtitle]이 있으면 앱 바 아래에 한 줄 부제를 붙여 둔다(제목 아래 4 · 20 · 아래 12). 부제는 접히지 않고 남는다.
@@ -217,13 +223,17 @@ fun SettingsScaffold(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    subtitleLeading: (@Composable () -> Unit)? = null,
+    subtitleModifier: Modifier = Modifier,
     actions: @Composable RowScope.() -> Unit = {},
+    /** 본문이 당겨서 새로고침을 쓰면 true: 앱바 스크롤 연결을 루트가 아닌 새로고침 안쪽에 한 번만 붙인다. */
+    pullToRefresh: Boolean = false,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val scheme = MaterialTheme.colorScheme
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = if (pullToRefresh) modifier else modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = scheme.surface,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
@@ -245,22 +255,30 @@ fun SettingsScaffold(
                     scrollBehavior = scrollBehavior,
                 )
                 if (subtitle != null) {
-                    Text(
-                        subtitle,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = scheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
+                    Row(
+                        modifier = subtitleModifier
                             .fillMaxWidth()
                             .background(scheme.surface)
                             .padding(start = SettingsDimens.ScreenPadding, end = SettingsDimens.ScreenPadding, top = 4.dp, bottom = 8.dp)
                             .heightIn(min = 20.dp),
-                    )
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        subtitleLeading?.invoke()
+                        Text(
+                            subtitle,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = scheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 }
             }
         },
-        content = content,
+        content = { padding ->
+            CompositionLocalProvider(LocalTopBarNestedScroll provides if (pullToRefresh) scrollBehavior.nestedScrollConnection else null) { content(padding) }
+        },
     )
 }
 
@@ -277,6 +295,7 @@ fun SettingsSheet(
     subtitleStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     contentTopGap: Dp = 12.dp,
     headerInset: Dp = SettingsDimens.SheetInset,
+    leading: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     ModalBottomSheet(
@@ -287,6 +306,9 @@ fun SettingsSheet(
         dragHandle = { SheetHandle() },
     ) {
         Column(modifier = Modifier.padding(bottom = SettingsDimens.SheetInset)) {
+            if (leading != null) {
+                Box(modifier = Modifier.padding(start = headerInset, end = headerInset, bottom = 16.dp)) { leading() }
+            }
             if (overline != null) {
                 Text(
                     overline,
