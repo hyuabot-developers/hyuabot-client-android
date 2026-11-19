@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -40,6 +39,7 @@ import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.compose.HyuabotTheme
+import app.kobuggi.hyuabot.ui.common.openCustomTab
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
@@ -110,8 +110,8 @@ class SettingFragment @Inject constructor() : Fragment() {
                 AnalyticsManager.setCollectionEnabled(enabled)
                 CrashlyticsManager.setCollectionEnabled(enabled)
             },
-            onPrivacy = { log("privacy_policy"); openCustomTab(getString(R.string.privacy_policy_url)) },
-            onHelp = { log("help"); openCustomTab(helpUrl()) },
+            onPrivacy = { log("privacy_policy"); requireContext().openCustomTab(getString(R.string.privacy_policy_url)) },
+            onHelp = { log("help"); requireContext().openCustomTab(helpUrl()) },
             onResetCoachmarks = {
                 viewLifecycleOwner.lifecycleScope.launch {
                     Coachmarks.USER_VISIBLE_KEYS.forEach { userPreferencesRepository.resetCoachmark(it) }
@@ -173,8 +173,4 @@ class SettingFragment @Inject constructor() : Fragment() {
         return "${getString(R.string.docs_site_base_url)}/$docsLocalePath" + "docs/android"
     }
 
-    private fun openCustomTab(url: String) {
-        runCatching { CustomTabsIntent.Builder().setShowTitle(true).build().launchUrl(requireContext(), url.toUri()) }
-            .onFailure { runCatching { startActivity(Intent(Intent.ACTION_VIEW, url.toUri())) } }
-    }
 }

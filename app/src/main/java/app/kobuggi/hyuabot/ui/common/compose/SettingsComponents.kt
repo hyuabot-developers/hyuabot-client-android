@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -70,26 +71,34 @@ fun settingsItemShape(isFirst: Boolean, isLast: Boolean): Shape = RoundedCornerS
     bottomEnd = if (isLast) SettingsDimens.OuterRadius else SettingsDimens.InnerRadius,
 )
 
-enum class IconTone { Primary, Filled, Green, Neutral }
+enum class IconTone { Primary, Filled, Green, Neutral, Pink, Inverse }
 
-/** 지름 32dp 원 안에 20dp 글리프. */
+/** 기본은 지름 32dp 원 안에 20dp 글리프. 큰 타일은 40/24, 강조 카드의 [IconTone.Inverse]는 primary 위에 놓는 배지. */
 @Composable
-fun IconBadge(icon: ImageVector, tone: IconTone, modifier: Modifier = Modifier) {
+fun IconBadge(
+    icon: ImageVector,
+    tone: IconTone,
+    modifier: Modifier = Modifier,
+    size: Dp = SettingsDimens.BadgeSize,
+    glyph: Dp = SettingsDimens.BadgeGlyph,
+) {
     val scheme = MaterialTheme.colorScheme
     val (container, content) = when (tone) {
         IconTone.Primary -> scheme.primaryContainer to scheme.onPrimaryContainer
         IconTone.Filled -> scheme.primary to scheme.onPrimary
         IconTone.Green -> scheme.tertiaryContainer to scheme.onTertiaryContainer
         IconTone.Neutral -> scheme.secondaryContainer to scheme.onSecondaryContainer
+        IconTone.Pink -> colorResource(R.color.md_pink_container) to colorResource(R.color.md_on_pink_container)
+        IconTone.Inverse -> scheme.onPrimary to scheme.primary
     }
     Box(
         modifier = modifier
-            .size(SettingsDimens.BadgeSize)
+            .size(size)
             .clip(RoundedCornerShape(50))
             .background(container),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(icon, contentDescription = null, tint = content, modifier = Modifier.size(SettingsDimens.BadgeGlyph))
+        Icon(icon, contentDescription = null, tint = content, modifier = Modifier.size(glyph))
     }
 }
 
@@ -142,9 +151,9 @@ fun SettingsRow(
     subtitle: String? = null,
     onClick: (() -> Unit)? = null,
     role: Role? = null,
+    minHeight: Dp = SettingsDimens.ValueRowHeight,
     trailing: (@Composable () -> Unit)? = null,
 ) {
-    val minHeight = SettingsDimens.ValueRowHeight
     val content: @Composable () -> Unit = {
         Row(
             modifier = Modifier
