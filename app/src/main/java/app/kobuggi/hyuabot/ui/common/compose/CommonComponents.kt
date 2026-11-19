@@ -14,6 +14,19 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -27,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
@@ -105,6 +119,110 @@ fun EmptyState(
         ) {
             Icon(actionIcon, contentDescription = null, modifier = Modifier.size(18.dp))
             Text(actionLabel, style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(start = 8.dp))
+        }
+    }
+}
+
+/**
+ * 당겨서 새로고침. 컨테이너 32 · primaryContainer 위에 24 진행 표시 (M3 Expressive 로딩 표시기 모양).
+ * [loadingLabel]은 진행 중일 때 읽어 주는 설명이다.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HyuabotPullToRefresh(
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    loadingLabel: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val pullState = rememberPullToRefreshState()
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = modifier,
+        state = pullState,
+        indicator = {
+            val scheme = MaterialTheme.colorScheme
+            val visible = isRefreshing || pullState.distanceFraction > 0f
+            if (visible) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 12.dp)
+                        .graphicsLayer {
+                            val fraction = if (isRefreshing) 1f else pullState.distanceFraction.coerceIn(0f, 1f)
+                            translationY = (fraction - 1f) * 48.dp.toPx()
+                            alpha = fraction
+                        }
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(scheme.primaryContainer),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (isRefreshing) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp).semantics { contentDescription = loadingLabel },
+                            strokeWidth = 3.dp,
+                            color = scheme.onPrimaryContainer,
+                            trackColor = Color.Transparent,
+                        )
+                    } else {
+                        CircularProgressIndicator(
+                            progress = { pullState.distanceFraction.coerceIn(0f, 1f) },
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 3.dp,
+                            color = scheme.onPrimaryContainer,
+                            trackColor = Color.Transparent,
+                        )
+                    }
+                }
+            }
+        },
+        content = {
+            val appBar = LocalTopBarNestedScroll.current
+            Box(if (appBar != null) Modifier.nestedScroll(appBar) else Modifier) { content() }
+        },
+    )
+}
+
+/** 불러오지 못했을 때의 카드: 아이콘 56 → 12 → 문구 → 12 → 다시 시도 (40, 터치 48). 카드 모서리 24, 좌우 여백 16. */
+@Composable
+fun ErrorCard(message: String, retryLabel: String, onRetry: () -> Unit, modifier: Modifier = Modifier, topGap: Dp = 12.dp) {
+    val scheme = MaterialTheme.colorScheme
+    Column(
+        modifier = modifier
+            .padding(start = 16.dp, end = 16.dp, top = topGap)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(scheme.surfaceContainerLowest)
+            .padding(horizontal = 16.dp, vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Box(Modifier.size(56.dp).clip(RoundedCornerShape(20.dp)).background(scheme.surfaceContainerHighest), contentAlignment = Alignment.Center) {
+            Icon(HyuabotIcons.CloudOff, null, tint = scheme.onSurfaceVariant, modifier = Modifier.size(28.dp))
+        }
+        Text(message, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+        Box(
+            modifier = Modifier
+                .requiredHeight(48.dp)
+                .clip(CircleShape)
+                .clickable(role = Role.Button, onClick = onRetry),
+            contentAlignment = Alignment.Center,
+        ) {
+            Row(
+                modifier = Modifier
+                    .height(40.dp)
+                    .clip(CircleShape)
+                    .background(scheme.primaryContainer)
+                    .padding(start = 16.dp, end = 24.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Icon(HyuabotIcons.Refresh, null, tint = scheme.onPrimaryContainer, modifier = Modifier.size(18.dp))
+                Text(retryLabel, style = MaterialTheme.typography.labelLarge, color = scheme.onPrimaryContainer)
+            }
         }
     }
 }

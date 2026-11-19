@@ -73,7 +73,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.ui.common.compose.ErrorCard
 import app.kobuggi.hyuabot.ui.common.compose.HyuabotIcons
+import app.kobuggi.hyuabot.ui.common.compose.HyuabotPullToRefresh
 import app.kobuggi.hyuabot.ui.common.compose.SettingsDimens
 import app.kobuggi.hyuabot.ui.common.compose.SettingsScaffold
 import app.kobuggi.hyuabot.ui.common.compose.SettingsSheet
@@ -128,7 +130,7 @@ fun CommuterScreen(state: CommuterUiState, installedMaps: Set<CommuterMapApp>, a
             else -> stringResource(R.string.commuter_period_weekdays_only)
         }
     }
-    SettingsScaffold(stringResource(R.string.campus_commuter_title), actions.onBack, subtitle = subtitle) { padding ->
+    SettingsScaffold(stringResource(R.string.campus_commuter_title), actions.onBack, subtitle = subtitle, pullToRefresh = true) { padding ->
         CommuterBody(state, padding, actions)
     }
     state.sheetStop?.let { stop ->
@@ -136,56 +138,15 @@ fun CommuterScreen(state: CommuterUiState, installedMaps: Set<CommuterMapApp>, a
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CommuterBody(state: CommuterUiState, padding: PaddingValues, actions: CommuterActions) {
     val model = state.model
     val refreshing = state.load == CommuterLoad.Refresh
-    val pullState = rememberPullToRefreshState()
-    PullToRefreshBox(
+    HyuabotPullToRefresh(
         isRefreshing = refreshing,
         onRefresh = actions.onRefresh,
+        loadingLabel = stringResource(R.string.commuter_loading_a11y),
         modifier = Modifier.padding(padding).fillMaxWidth(),
-        state = pullState,
-        indicator = {
-            // 컨테이너 32 · primaryContainer 위에 24 진행 표시 (M3 Expressive 로딩 표시기 모양)
-            val scheme = MaterialTheme.colorScheme
-            val visible = refreshing || pullState.distanceFraction > 0f
-            if (visible) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 12.dp)
-                        .graphicsLayer {
-                            val fraction = if (refreshing) 1f else pullState.distanceFraction.coerceIn(0f, 1f)
-                            translationY = (fraction - 1f) * 48.dp.toPx()
-                            alpha = fraction
-                        }
-                        .size(32.dp)
-                        .clip(CircleShape)
-                        .background(scheme.primaryContainer),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    val loadingLabel = stringResource(R.string.commuter_loading_a11y)
-                    if (refreshing) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp).semantics { contentDescription = loadingLabel },
-                            strokeWidth = 3.dp,
-                            color = scheme.onPrimaryContainer,
-                            trackColor = Color.Transparent,
-                        )
-                    } else {
-                        CircularProgressIndicator(
-                            progress = { pullState.distanceFraction.coerceIn(0f, 1f) },
-                            modifier = Modifier.size(24.dp),
-                            strokeWidth = 3.dp,
-                            color = scheme.onPrimaryContainer,
-                            trackColor = Color.Transparent,
-                        )
-                    }
-                }
-            }
-        },
     ) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
             val firstLoad = !state.hasContext
@@ -198,7 +159,7 @@ private fun CommuterBody(state: CommuterUiState, padding: PaddingValues, actions
             }
             when {
                 state.load != CommuterLoad.Idle -> TimelineSkeleton()
-                state.failed -> ErrorCard(actions.onRetry)
+                state.failed -> ErrorCard(stringResource(R.string.commuter_error), stringResource(R.string.commuter_retry), actions.onRetry)
                 model?.summary != null -> {
                     TimelineCard(model, actions)
                     Text(
@@ -865,46 +826,6 @@ private fun TimelineSkeleton() {
                         Box(Modifier.fillMaxWidth(fraction).height(14.dp).clip(RoundedCornerShape(7.dp)).background(scheme.surfaceContainerHighest))
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ErrorCard(onRetry: () -> Unit) {
-    val scheme = MaterialTheme.colorScheme
-    Column(
-        modifier = Modifier
-            .padding(start = SettingsDimens.ScreenPadding, end = SettingsDimens.ScreenPadding, top = CommuterDimens.BlockGap)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(SettingsDimens.OuterRadius))
-            .background(scheme.surfaceContainerLowest)
-            .padding(horizontal = 16.dp, vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Box(Modifier.size(56.dp).clip(RoundedCornerShape(20.dp)).background(scheme.surfaceContainerHighest), contentAlignment = Alignment.Center) {
-            Icon(HyuabotIcons.CloudOff, null, tint = scheme.onSurfaceVariant, modifier = Modifier.size(28.dp))
-        }
-        Text(stringResource(R.string.commuter_error), style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
-        Box(
-            modifier = Modifier
-                .requiredHeight(CommuterDimens.TouchTarget)
-                .clip(CircleShape)
-                .clickable(role = Role.Button, onClick = onRetry),
-            contentAlignment = Alignment.Center,
-        ) {
-            Row(
-                modifier = Modifier
-                    .height(CommuterDimens.DirectionHeight)
-                    .clip(CircleShape)
-                    .background(scheme.primaryContainer)
-                    .padding(start = 16.dp, end = 24.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Icon(HyuabotIcons.Refresh, null, tint = scheme.onPrimaryContainer, modifier = Modifier.size(18.dp))
-                Text(stringResource(R.string.commuter_retry), style = MaterialTheme.typography.labelLarge, color = scheme.onPrimaryContainer)
             }
         }
     }

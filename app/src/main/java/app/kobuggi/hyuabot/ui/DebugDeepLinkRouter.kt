@@ -34,6 +34,7 @@ internal object DebugDeepLinkRouter {
             putString("entryScreen", uri.getQueryParameter("entryScreen") ?: "debug")
             putString("entryScreenName", uri.getQueryParameter("entryScreenName") ?: "Debug")
             if (route == "commuter" || route == "commuter-bus") putString("commuterFixture", uri.encodedQuery.orEmpty())
+            if (route == "reading-room") putString("readingRoomFixture", uri.encodedQuery.orEmpty())
             uri.getQueryParameter("url")?.let { putString("url", it) }
             uri.getQueryParameter("title")?.let { putString("title", it) }
         }

@@ -15,6 +15,7 @@ import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.safeNavigate
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.placeAt
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
 import app.kobuggi.hyuabot.ui.common.compose.HyuabotTheme
 import app.kobuggi.hyuabot.ui.common.openCustomTab
@@ -57,17 +58,7 @@ class MenuFragment @Inject constructor() : Fragment() {
     }
 
     private fun placeAnchor(bounds: Rect) {
-        val anchor = toolsAnchor ?: return
-        val lp = anchor.layoutParams as FrameLayout.LayoutParams
-        val width = bounds.width.toInt()
-        val height = bounds.height.toInt()
-        if (lp.width != width || lp.height != height) {
-            lp.width = width
-            lp.height = height
-            anchor.layoutParams = lp
-        }
-        anchor.translationX = bounds.left
-        anchor.translationY = bounds.top
+        toolsAnchor?.placeAt(bounds)
     }
 
     private fun onSelect(destination: CampusDestination) {

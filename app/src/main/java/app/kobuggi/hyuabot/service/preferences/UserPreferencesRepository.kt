@@ -41,6 +41,18 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             preferences[READING_ROOM_EXTEND_NOTIFICATION_KEY] ?: ""
         }
 
+    val readingRoomExtendHours: Flow<Int> = userDataStorePreferences.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[READING_ROOM_EXTEND_HOURS_KEY] ?: 0
+        }
+
     val theme: Flow<String?> = userDataStorePreferences.data
         .catch { exception ->
             if (exception is IOException) {
@@ -173,6 +185,24 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         Result.runCatching {
             userDataStorePreferences.edit { preferences ->
                 preferences[READING_ROOM_EXTEND_NOTIFICATION_KEY] = timeString ?: ""
+            }
+        }
+    }
+
+    override suspend fun setReadingRoomExtendHours(hours: Int?) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                if (hours == null) preferences.remove(READING_ROOM_EXTEND_HOURS_KEY) else preferences[READING_ROOM_EXTEND_HOURS_KEY] = hours
+            }
+        }
+    }
+
+    /** 알림 시각과 시간 수를 한 번에 저장해, 중간 상태가 흘러나와 카드가 깜빡이지 않게 한다. */
+    override suspend fun setReadingRoomExtend(timeString: String?, hours: Int?) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[READING_ROOM_EXTEND_NOTIFICATION_KEY] = timeString ?: ""
+                if (hours == null) preferences.remove(READING_ROOM_EXTEND_HOURS_KEY) else preferences[READING_ROOM_EXTEND_HOURS_KEY] = hours
             }
         }
     }
@@ -614,6 +644,7 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val BUS_STOP_ID_KEY = intPreferencesKey("bus_stop_id")
         private val READING_ROOM_NOTIFICATIONS_KEY = stringSetPreferencesKey("reading_room_notifications")
         private val READING_ROOM_EXTEND_NOTIFICATION_KEY = stringPreferencesKey("reading_room_extend_notification")
+        private val READING_ROOM_EXTEND_HOURS_KEY = intPreferencesKey("reading_room_extend_hours")
         private val THEME_KEY = stringPreferencesKey("theme")
         private val CAMPUS_ID_KEY = intPreferencesKey("campus_id")
         private val CONTACT_KEY = stringPreferencesKey("contact_version")

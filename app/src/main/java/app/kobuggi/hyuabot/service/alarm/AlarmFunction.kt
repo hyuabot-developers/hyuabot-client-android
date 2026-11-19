@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 class AlarmFunction (private val context: Context){
 
@@ -31,7 +32,7 @@ class AlarmFunction (private val context: Context){
             PendingIntent.getBroadcast(context, alarmCode, receiverIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd H:mm:ss", Locale.KOREA)
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd H:mm:ss", Locale.KOREA).apply { timeZone = TimeZone.getTimeZone("Asia/Seoul") }
         var datetime = Date()
         try {
             datetime = dateFormat.parse(time) as Date

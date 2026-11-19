@@ -63,8 +63,6 @@
     <color name="cafeteria_price_text">#0E4A84</color>
     <color name="cafeteria_info_button_tint">#0E4A84</color>
     <color name="cafeteria_date_background">#E9E9EA</color>
-    <color name="reading_room_progress_track">#593C3C43</color>
-    <color name="reading_room_extension_button_background">#DCE4EC</color>
     <color name="live_activity_accent">#003C82</color>
     <!-- 위젯 -->
     <color name="widget_background">#FFFFFF</color>
@@ -107,4 +105,12 @@
     <color name="md_near_container">#EAF1FB</color>
     <color name="md_warn_container">#FFDDB3</color>
     <color name="md_on_warn_container">#5C3B00</color>
+    <color name="reading_room_good">#146C2E</color>
+    <color name="reading_room_good_fill">#D7F5DD</color>
+    <color name="reading_room_mid">#8A5100</color>
+    <color name="reading_room_mid_fill">#FFE7C2</color>
+    <color name="reading_room_busy">#A33A08</color>
+    <color name="reading_room_busy_fill">#FFDBCC</color>
+    <color name="reading_room_full">#BA1A1A</color>
+    <color name="reading_room_full_fill">#FFDAD6</color>
 </resources>

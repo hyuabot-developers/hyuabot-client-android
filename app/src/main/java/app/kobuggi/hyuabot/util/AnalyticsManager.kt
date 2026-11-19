@@ -143,6 +143,8 @@ enum class AnalyticsItem(val id: String) {
     // Reading room
     READING_ROOM_SELECT_ROW("reading_room_select_row"),
     READING_ROOM_ALARM_TOGGLE("reading_room_alarm_toggle"),
+    READING_ROOM_REFRESH("reading_room_refresh"),
+    READING_ROOM_PERMISSION_SHEET("reading_room_permission_sheet"),
 
     // Contact / Map
     CONTACT_SELECT_ROW("contact_select_row"),

@@ -38,8 +38,6 @@
     <color name="calendar_status_ongoing">#30D158</color>
     <color name="calendar_status_upcoming">#FF9F0A</color>
     <color name="cafeteria_date_background">#3A3A3C</color>
-    <color name="reading_room_progress_track">#59545458</color>
-    <color name="reading_room_extension_button_background">#071D32</color>
     <color name="skeleton_placeholder">#2C2C2E</color>
     <color name="skeleton_placeholder_highlight">#3A3A3C</color>
     <color name="widget_background">#1C1C1E</color>
@@ -82,4 +80,12 @@
     <color name="md_near_container">#1A2A40</color>
     <color name="md_warn_container">#4A3300</color>
     <color name="md_on_warn_container">#FFDDB3</color>
+    <color name="reading_room_good">#7EDB94</color>
+    <color name="reading_room_good_fill">#123A1F</color>
+    <color name="reading_room_mid">#FFB95C</color>
+    <color name="reading_room_mid_fill">#3D2A00</color>
+    <color name="reading_room_busy">#FFB596</color>
+    <color name="reading_room_busy_fill">#4A1D05</color>
+    <color name="reading_room_full">#FFB4AB</color>
+    <color name="reading_room_full_fill">#5C1410</color>
 </resources>
