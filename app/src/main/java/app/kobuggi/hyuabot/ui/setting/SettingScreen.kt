@@ -331,7 +331,7 @@ private fun ThemeTile(value: String?, label: String, selected: Boolean, onClick:
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Box(modifier = Modifier.fillMaxWidth().aspectRatio(1f / 0.72f)) {
+        Box(modifier = Modifier.fillMaxWidth().aspectRatio(1f)) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
