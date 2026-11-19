@@ -559,7 +559,7 @@
     <string name="open_source_licenses_description">アプリで使用しているオープンソースソフトウェアを確認します。</string>
     <string name="developer_name">開発者: イ・ジョンイン</string>
     <string name="developer_belong">所属: ソフトウェア学部 17期</string>
-    <string name="contact_search_guide">名前 / 電話番号を検索</string>
+    <string name="contact_search_guide">部署・業務・番号で検索</string>
     <string name="month_header">%1$d年%2$d月</string>
     <string name="event_date_range_format">%1$d月%2$d日 〜 %3$d月%4$d日</string>
     <string name="calendar_select_date_hint">日付をタップすると日程が表示されます</string>
@@ -575,7 +575,6 @@
     <string name="bus_timetable_error">バス時刻表の読み込みに失敗しました。</string>
     <string name="cafeteria_error">学食情報の読み込みに失敗しました。</string>
     <string name="calendar_error">学事暦の読み込みに失敗しました。</string>
-    <string name="contact_error">連絡先の読み込みに失敗しました。</string>
     <string name="reading_room_error">閲覧室座席情報の読み込みに失敗しました。</string>
     <string name="map_building_error">建物情報の読み込みに失敗しました。</string>
     <string name="shuttle_realtime_error">シャトルバス到着情報の読み込みに失敗しました。</string>
@@ -681,6 +680,27 @@
     <string name="contact_action_share">共有</string>
     <string name="contact_phone_copied">電話番号をコピーしました。</string>
     <string name="contact_share_format">%1$s\n%2$s</string>
+    <string name="contact_filter_group">部署フィルター</string>
+    <string name="contact_filter_all">すべて</string>
+    <string name="contact_search_clear">検索語を消去</string>
+    <string name="contact_department_other">その他</string>
+    <plurals name="contact_count">
+        <item quantity="other">%1$d件</item>
+    </plurals>
+    <string name="contact_status_checking">連絡先の更新を確認しています</string>
+    <string name="contact_status_downloading">新しい連絡先を取得しています · バージョン %1$s</string>
+    <string name="contact_status_failed">連絡先を更新できませんでした</string>
+    <string name="contact_empty_title">「%1$s」の連絡先がありません</string>
+    <string name="contact_empty_description">部署名、業務、番号の下4桁で\nもう一度お探しください。</string>
+    <string name="contact_empty_reset">検索をリセット</string>
+    <string name="contact_load_failed_title">連絡先を読み込めませんでした</string>
+    <string name="contact_load_failed_description">ネットワーク接続を確認してもう一度お試しください。</string>
+    <string name="contact_retry">再試行</string>
+    <string name="contact_footer_info">連絡先情報 · %1$s</string>
+    <string name="contact_footer_hint">長押しでコピー・共有できます</string>
+    <string name="contact_action_call">電話をかける</string>
+    <string name="contact_row_description">%1$s %2$s、%3$s、電話をかける</string>
+    <string name="contact_campus_description">キャンパス: %1$s、設定で変更</string>
     <string name="shuttle_share_journey">行程を共有</string>
     <string name="shuttle_share_journey_title">シャトル行程を共有</string>
     <string name="shuttle_share_journey_format">シャトル、一緒に乗りませんか？\n\n乗車  %1$s · %2$s\n下車  %3$s · %4$s\n\nリアルタイム情報はこちら\n%5$s</string>

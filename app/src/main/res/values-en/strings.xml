@@ -580,7 +580,7 @@
     <string name="open_source_licenses_description">View the open source software used by the app.</string>
     <string name="developer_name">Developer: Jeongin Lee</string>
     <string name="developer_belong">Department: Software Studies, Class of \'17</string>
-    <string name="contact_search_guide">Search name / phone</string>
+    <string name="contact_search_guide">Search by office, task or number</string>
     <string name="month_header">%1$d/%2$d</string>
     <string name="event_date_range_format">%1$d/%2$d - %3$d/%4$d</string>
     <string name="calendar_select_date_hint">Tap a date to see events</string>
@@ -596,7 +596,6 @@
     <string name="bus_timetable_error">Failed to load bus timetable.</string>
     <string name="cafeteria_error">Failed to load cafeteria information.</string>
     <string name="calendar_error">Failed to load academic calendar.</string>
-    <string name="contact_error">Failed to load contacts.</string>
     <string name="reading_room_error">Failed to load reading room information.</string>
     <string name="map_building_error">Failed to load building information.</string>
     <string name="shuttle_realtime_error">Failed to load shuttle bus arrival information.</string>
@@ -702,6 +701,28 @@
     <string name="contact_action_share">Share</string>
     <string name="contact_phone_copied">Phone number copied.</string>
     <string name="contact_share_format">%1$s\n%2$s</string>
+    <string name="contact_filter_group">Department filter</string>
+    <string name="contact_filter_all">All</string>
+    <string name="contact_search_clear">Clear search</string>
+    <string name="contact_department_other">Other</string>
+    <plurals name="contact_count">
+        <item quantity="one">%1$d contact</item>
+        <item quantity="other">%1$d contacts</item>
+    </plurals>
+    <string name="contact_status_checking">Checking for contact updates</string>
+    <string name="contact_status_downloading">Downloading new contacts · version %1$s</string>
+    <string name="contact_status_failed">Couldn\'t update contacts</string>
+    <string name="contact_empty_title">No contacts for ‘%1$s’</string>
+    <string name="contact_empty_description">Try an office name, a task, or the\nlast 4 digits of the number.</string>
+    <string name="contact_empty_reset">Reset search</string>
+    <string name="contact_load_failed_title">Couldn\'t load contacts</string>
+    <string name="contact_load_failed_description">Check your network connection and try again.</string>
+    <string name="contact_retry">Try again</string>
+    <string name="contact_footer_info">Contact info · %1$s</string>
+    <string name="contact_footer_hint">Long-press to copy or share</string>
+    <string name="contact_action_call">Call</string>
+    <string name="contact_row_description">%1$s %2$s, %3$s, call</string>
+    <string name="contact_campus_description">Campus: %1$s, change in settings</string>
     <string name="shuttle_share_journey">Share trip</string>
     <string name="shuttle_share_journey_title">Share shuttle trip</string>
     <string name="shuttle_share_journey_format">Want to take the shuttle together?\n\nBoard  %1$s · %2$s\nGet off  %3$s · %4$s\n\nLive shuttle info is here\n%5$s</string>

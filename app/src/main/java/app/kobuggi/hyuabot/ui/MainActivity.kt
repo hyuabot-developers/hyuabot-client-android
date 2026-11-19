@@ -306,7 +306,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     private fun applyStatusBarStyle(destinationId: Int?) {
-        val isSettings = destinationId == R.id.settingFragment || destinationId == R.id.licensesFragment
+        val isSettings = destinationId == R.id.settingFragment || destinationId == R.id.licensesFragment ||
+            destinationId == R.id.contactFragment
         val statusBarColor = ContextCompat.getColor(
             this,
             when {

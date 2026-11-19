@@ -21,9 +21,6 @@ interface ContactDao {
     @Query("SELECT * FROM contact WHERE name LIKE :name AND campusID = :campusID")
     fun findByNameAndCampusID(name: String, campusID: Int): Flow<List<Contact>>
 
-    @Query("SELECT * FROM contact WHERE (name LIKE :name OR phone LIKE :phone) AND campusID = :campusID")
-    fun findByNameOrPhoneAndCampusID(name: String, phone: String, campusID: Int): Flow<List<Contact>>
-
     @Query("SELECT COUNT(*) FROM contact")
     suspend fun count(): Int
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -39,6 +40,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.kobuggi.hyuabot.R
 
@@ -199,6 +201,7 @@ fun SettingsScaffold(
     title: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    actions: @Composable RowScope.() -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -215,6 +218,7 @@ fun SettingsScaffold(
                         Icon(HyuabotIcons.Back, contentDescription = stringResource(R.string.setting_back))
                     }
                 },
+                actions = actions,
                 expandedHeight = 112.dp,
                 windowInsets = WindowInsets(0, 0, 0, 0),
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -236,6 +240,10 @@ fun SettingsSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     hint: String? = null,
+    overline: String? = null,
+    subtitle: String? = null,
+    contentTopGap: Dp = 12.dp,
+    headerInset: Dp = SettingsDimens.SheetInset,
     content: @Composable () -> Unit,
 ) {
     ModalBottomSheet(
@@ -246,21 +254,37 @@ fun SettingsSheet(
         dragHandle = { SheetHandle() },
     ) {
         Column(modifier = Modifier.padding(bottom = SettingsDimens.SheetInset)) {
+            if (overline != null) {
+                Text(
+                    overline,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = headerInset, end = headerInset, bottom = 4.dp),
+                )
+            }
             Text(
                 title,
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(horizontal = SettingsDimens.SheetInset).semantics { heading() },
+                modifier = Modifier.padding(horizontal = headerInset).semantics { heading() },
             )
+            if (subtitle != null) {
+                Text(
+                    subtitle,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = headerInset, end = headerInset, top = 4.dp),
+                )
+            }
             if (hint != null) {
                 Text(
                     hint,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = SettingsDimens.SheetInset, end = SettingsDimens.SheetInset, top = 4.dp),
+                    modifier = Modifier.padding(start = headerInset, end = headerInset, top = 4.dp),
                 )
             }
             Column(
-                modifier = Modifier.padding(start = SettingsDimens.ScreenPadding, end = SettingsDimens.ScreenPadding, top = 12.dp),
+                modifier = Modifier.padding(start = SettingsDimens.ScreenPadding, end = SettingsDimens.ScreenPadding, top = contentTopGap),
                 verticalArrangement = Arrangement.spacedBy(SettingsDimens.GroupGap),
             ) { content() }
         }
@@ -315,6 +339,34 @@ fun SheetRadioRow(
                     Text(subtitle, style = MaterialTheme.typography.bodySmall, color = scheme.onSurfaceVariant)
                 }
             }
+        }
+    }
+}
+
+/** 시트 안 작업 행 (56dp · 24dp 아이콘 @32 · 글자 @72). */
+@Composable
+fun SheetActionRow(
+    icon: ImageVector,
+    label: String,
+    shape: Shape,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        shape = shape,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+    ) {
+        Row(
+            modifier = Modifier
+                .heightIn(min = 56.dp)
+                .padding(horizontal = SettingsDimens.RowPaddingHorizontal),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
+            Text(label, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }

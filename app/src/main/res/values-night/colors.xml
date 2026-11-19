@@ -77,4 +77,6 @@
     <color name="md_on_secondary_container">#C4C6CF</color>
     <color name="md_inverse_surface">#E2E2E9</color>
     <color name="md_inverse_on_surface">#2E3036</color>
+    <color name="md_highlight">#5A4500</color>
+    <color name="md_on_highlight">#FFE08A</color>
 </resources>

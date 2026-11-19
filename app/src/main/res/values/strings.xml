@@ -635,7 +635,7 @@
     <string name="open_source_licenses_description">앱에서 사용하는 오픈소스 소프트웨어를 확인합니다.</string>
     <string name="developer_name">개발자: 이정인</string>
     <string name="developer_belong">소속: 소프트웨어학부 17학번</string>
-    <string name="contact_search_guide">이름 / 전화번호 검색</string>
+    <string name="contact_search_guide">부서, 업무, 번호로 검색</string>
     <!-- 캘린더 -->
     <string name="month_header">%1$d년 %2$d월</string>
     <string name="event_date_range_format">%1$d월 %2$d일 - %3$d월 %4$d일</string>
@@ -652,7 +652,6 @@
     <string name="bus_timetable_error">버스 시간표를 불러오는데 실패했습니다.</string>
     <string name="cafeteria_error">학식 정보를 불러오는데 실패했습니다.</string>
     <string name="calendar_error">학사 일정을 불러오는데 실패했습니다.</string>
-    <string name="contact_error">연락처를 불러오는데 실패했습니다.</string>
     <string name="reading_room_error">열람실 좌석 정보를 불러오는데 실패했습니다.</string>
     <string name="map_building_error">건물 정보를 불러오는데 실패했습니다.</string>
     <string name="shuttle_realtime_error">셔틀버스 도착 정보를 불러오는데 실패했습니다.</string>
@@ -758,6 +757,27 @@
     <string name="contact_action_share">공유</string>
     <string name="contact_phone_copied">전화번호를 복사했어요.</string>
     <string name="contact_share_format">%1$s\n%2$s</string>
+    <string name="contact_filter_group">부서 필터</string>
+    <string name="contact_filter_all">전체</string>
+    <string name="contact_search_clear">검색어 지우기</string>
+    <string name="contact_department_other">기타</string>
+    <plurals name="contact_count">
+        <item quantity="other">%1$d개</item>
+    </plurals>
+    <string name="contact_status_checking">연락처 업데이트를 확인하는 중이에요</string>
+    <string name="contact_status_downloading">새 연락처를 받는 중이에요 · %1$s 버전</string>
+    <string name="contact_status_failed">연락처를 업데이트하지 못했어요</string>
+    <string name="contact_empty_title">‘%1$s’ 연락처가 없어요</string>
+    <string name="contact_empty_description">부서 이름, 업무, 번호 끝 4자리로\n다시 찾아보세요.</string>
+    <string name="contact_empty_reset">검색 초기화</string>
+    <string name="contact_load_failed_title">연락처를 불러오지 못했어요</string>
+    <string name="contact_load_failed_description">네트워크 연결을 확인한 뒤 다시 시도해 주세요.</string>
+    <string name="contact_retry">다시 시도</string>
+    <string name="contact_footer_info">연락처 정보 · %1$s</string>
+    <string name="contact_footer_hint">길게 누르면 복사·공유할 수 있어요</string>
+    <string name="contact_action_call">전화 걸기</string>
+    <string name="contact_row_description">%1$s %2$s, %3$s, 전화 걸기</string>
+    <string name="contact_campus_description">캠퍼스: %1$s, 설정에서 바꾸기</string>
     <string name="shuttle_share_journey">여정 공유</string>
     <string name="shuttle_share_journey_title">셔틀 여정 공유</string>
     <string name="shuttle_share_journey_format">셔틀 같이 탈래요?\n\n승차  %1$s · %2$s\n하차  %3$s · %4$s\n\n실시간 정보는 여기서 볼 수 있어요\n%5$s</string>
