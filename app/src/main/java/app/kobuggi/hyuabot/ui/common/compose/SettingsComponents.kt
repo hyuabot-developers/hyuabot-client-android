@@ -131,7 +131,7 @@ fun SettingsGroup(
     }
 }
 
-/** 설정 한 행: 배지 + 제목(+부제) + 끝 요소. 값이 있으면 60, 이동 행은 48. */
+/** 설정 한 행: 배지 + 제목(+부제) + 끝 요소. 1줄/2줄 모두 최소 60dp로 통일. */
 @Composable
 fun SettingsRow(
     icon: ImageVector,
@@ -144,7 +144,7 @@ fun SettingsRow(
     role: Role? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
-    val minHeight = if (subtitle != null) SettingsDimens.ValueRowHeight else SettingsDimens.NavRowHeight
+    val minHeight = SettingsDimens.ValueRowHeight
     val content: @Composable () -> Unit = {
         Row(
             modifier = Modifier
