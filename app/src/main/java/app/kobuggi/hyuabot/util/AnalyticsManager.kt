@@ -146,6 +146,11 @@ enum class AnalyticsItem(val id: String) {
 
     // Contact / Map
     CONTACT_SELECT_ROW("contact_select_row"),
+    COMMUTER_SELECT_DIRECTION("commuter_select_direction"),
+    COMMUTER_SELECT_ROUTE("commuter_select_route"),
+    COMMUTER_RESET_NEAREST("commuter_reset_nearest"),
+    COMMUTER_EXPAND_STOPS("commuter_expand_stops"),
+    COMMUTER_SELECT_MAP_APP("commuter_select_map_app"),
     MAP_SELECT_SEARCH_RESULT("map_select_search_result"),
     MAP_RECENTER("map_recenter"),
 
