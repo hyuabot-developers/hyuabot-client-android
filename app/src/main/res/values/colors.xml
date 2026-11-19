@@ -102,4 +102,9 @@
     <color name="md_on_pink_container">#8E0048</color>
     <color name="md_highlight">#FFE08A</color>
     <color name="md_on_highlight">#241A00</color>
+    <color name="md_rail_traveled">#9FB4CB</color>
+    <color name="md_rail_soft">#D5DCE4</color>
+    <color name="md_near_container">#EAF1FB</color>
+    <color name="md_warn_container">#FFDDB3</color>
+    <color name="md_on_warn_container">#5C3B00</color>
 </resources>

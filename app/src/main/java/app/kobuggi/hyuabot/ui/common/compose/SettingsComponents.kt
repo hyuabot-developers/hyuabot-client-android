@@ -40,7 +40,10 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.kobuggi.hyuabot.R
@@ -203,13 +206,17 @@ fun TrailingIcon(icon: ImageVector, contentDescription: String? = null) {
     )
 }
 
-/** iOS 큰 제목처럼 스크롤하면 접히는 앱 바 + 본문. 본문은 받은 패딩을 적용해 스스로 스크롤한다. */
+/**
+ * iOS 큰 제목처럼 스크롤하면 접히는 앱 바 + 본문. 본문은 받은 패딩을 적용해 스스로 스크롤한다.
+ * [subtitle]이 있으면 앱 바 아래에 한 줄 부제를 붙여 둔다(제목 아래 4 · 20 · 아래 12). 부제는 접히지 않고 남는다.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScaffold(
     title: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    subtitle: String? = null,
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -220,22 +227,38 @@ fun SettingsScaffold(
         containerColor = scheme.surface,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            LargeTopAppBar(
-                title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() }) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(HyuabotIcons.Back, contentDescription = stringResource(R.string.setting_back))
-                    }
-                },
-                actions = actions,
-                expandedHeight = 112.dp,
-                windowInsets = WindowInsets(0, 0, 0, 0),
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = scheme.surface,
-                    scrolledContainerColor = scheme.surface,
-                ),
-                scrollBehavior = scrollBehavior,
-            )
+            Column {
+                LargeTopAppBar(
+                    title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() }) },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(HyuabotIcons.Back, contentDescription = stringResource(R.string.setting_back))
+                        }
+                    },
+                    actions = actions,
+                    expandedHeight = if (subtitle == null) 112.dp else 100.dp,
+                    windowInsets = WindowInsets(0, 0, 0, 0),
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = scheme.surface,
+                        scrolledContainerColor = scheme.surface,
+                    ),
+                    scrollBehavior = scrollBehavior,
+                )
+                if (subtitle != null) {
+                    Text(
+                        subtitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = scheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(scheme.surface)
+                            .padding(start = SettingsDimens.ScreenPadding, end = SettingsDimens.ScreenPadding, top = 4.dp, bottom = 8.dp)
+                            .heightIn(min = 20.dp),
+                    )
+                }
+            }
         },
         content = content,
     )
@@ -251,6 +274,7 @@ fun SettingsSheet(
     hint: String? = null,
     overline: String? = null,
     subtitle: String? = null,
+    subtitleStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     contentTopGap: Dp = 12.dp,
     headerInset: Dp = SettingsDimens.SheetInset,
     content: @Composable () -> Unit,
@@ -279,7 +303,7 @@ fun SettingsSheet(
             if (subtitle != null) {
                 Text(
                     subtitle,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = subtitleStyle,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(start = headerInset, end = headerInset, top = 4.dp),
                 )
@@ -376,6 +400,45 @@ fun SheetActionRow(
         ) {
             Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
             Text(label, style = MaterialTheme.typography.bodyLarge)
+        }
+    }
+}
+
+/** 시트 안 앱 선택 행 (56dp · 40dp 타일 모서리 12 · 끝에 open_in_new 20). */
+@Composable
+fun SheetAppRow(
+    name: String,
+    tileColor: Color,
+    shape: Shape,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    tile: @Composable BoxScope.() -> Unit,
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        shape = shape,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+    ) {
+        Row(
+            modifier = Modifier
+                .heightIn(min = 56.dp)
+                .padding(horizontal = SettingsDimens.RowPaddingHorizontal, vertical = SettingsDimens.RowPaddingVertical),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Box(
+                modifier = Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(tileColor),
+                contentAlignment = Alignment.Center,
+                content = tile,
+            )
+            Text(name, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+            Icon(
+                HyuabotIcons.OpenInNew,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
         }
     }
 }
