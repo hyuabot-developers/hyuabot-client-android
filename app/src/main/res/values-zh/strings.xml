@@ -559,7 +559,7 @@
     <string name="open_source_licenses_description">查看本应用使用的开源软件。</string>
     <string name="developer_name">开发者: 李正仁</string>
     <string name="developer_belong">所属: 软件学院 17届</string>
-    <string name="contact_search_guide">搜索姓名 / 电话号码</string>
+    <string name="contact_search_guide">按部门、业务、号码搜索</string>
     <string name="month_header">%1$d年%2$d月</string>
     <string name="event_date_range_format">%1$d月%2$d日 - %3$d月%4$d日</string>
     <string name="calendar_select_date_hint">点击日期查看日程</string>
@@ -575,7 +575,6 @@
     <string name="bus_timetable_error">加载公交时刻表失败。</string>
     <string name="cafeteria_error">加载学食信息失败。</string>
     <string name="calendar_error">加载学事历失败。</string>
-    <string name="contact_error">加载联系方式失败。</string>
     <string name="reading_room_error">加载阅览室座位信息失败。</string>
     <string name="map_building_error">加载建筑信息失败。</string>
     <string name="shuttle_realtime_error">加载校车到达信息失败。</string>
@@ -681,6 +680,27 @@
     <string name="contact_action_share">分享</string>
     <string name="contact_phone_copied">已复制电话号码。</string>
     <string name="contact_share_format">%1$s\n%2$s</string>
+    <string name="contact_filter_group">部门筛选</string>
+    <string name="contact_filter_all">全部</string>
+    <string name="contact_search_clear">清除搜索</string>
+    <string name="contact_department_other">其他</string>
+    <plurals name="contact_count">
+        <item quantity="other">%1$d个</item>
+    </plurals>
+    <string name="contact_status_checking">正在检查联系方式更新</string>
+    <string name="contact_status_downloading">正在下载新的联系方式 · 版本 %1$s</string>
+    <string name="contact_status_failed">无法更新联系方式</string>
+    <string name="contact_empty_title">没有“%1$s”的联系方式</string>
+    <string name="contact_empty_description">请试试部门名称、业务或\n号码后4位。</string>
+    <string name="contact_empty_reset">重置搜索</string>
+    <string name="contact_load_failed_title">无法加载联系方式</string>
+    <string name="contact_load_failed_description">请检查网络连接后重试。</string>
+    <string name="contact_retry">重试</string>
+    <string name="contact_footer_info">联系方式信息 · %1$s</string>
+    <string name="contact_footer_hint">长按可复制或分享</string>
+    <string name="contact_action_call">拨打电话</string>
+    <string name="contact_row_description">%1$s %2$s，%3$s，拨打电话</string>
+    <string name="contact_campus_description">校区：%1$s，在设置中更改</string>
     <string name="shuttle_share_journey">分享行程</string>
     <string name="shuttle_share_journey_title">分享校车行程</string>
     <string name="shuttle_share_journey_format">一起坐校车吗？\n\n上车  %1$s · %2$s\n下车  %3$s · %4$s\n\n实时校车信息在这里\n%5$s</string>

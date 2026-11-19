@@ -214,8 +214,7 @@
     <fragment
         android:id="@+id/contactFragment"
         android:name="app.kobuggi.hyuabot.ui.contact.ContactFragment"
-        android:label="전화부"
-        tools:layout="@layout/fragment_contact">
+        android:label="전화부">
         <deepLink app:uri="hyuabot://contact" />
         <deepLink app:uri="https://hyuabot.app/contact" />
     </fragment>
