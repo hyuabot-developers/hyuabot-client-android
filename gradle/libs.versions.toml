@@ -37,7 +37,6 @@ coreRemoteViews = "1.1.0"
 secretsGradlePlugin = "2.0.1"
 googleServices = "4.5.0"
 crashlytics = "3.0.7"
-playServicesWearable = "20.0.1"
 composeBom = "2026.06.01"
 composeMaterial = "1.6.2"
 composeFoundation = "1.6.2"
@@ -55,10 +54,14 @@ materialCompose = "1.4.0"
 runtimeLivedata = "1.11.4"
 naverMap = "3.24.0"
 mlkitTranslate = "17.0.3"
-playServicesOssLicenses = "17.5.1"
 appfunctions = "1.0.0-beta01"
+browser = "1.9.0"
+lifecycleRuntimeCompose = "2.11.0"
 
 [libraries]
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "coreTesting" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
@@ -72,7 +75,6 @@ material = { group = "com.google.android.material", name = "material", version.r
 materialCompose = { group = "androidx.compose.material3", name = "material3", version.ref = "materialCompose" }
 navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
 navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
-navigation-dynamic-features-fragment = { group = "androidx.navigation", name = "navigation-dynamic-features-fragment", version.ref = "navigation" }
 rxJava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxJava" }
 rxAndroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = "rxAndroid" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
@@ -82,13 +84,10 @@ okhttpLogging = { group = "com.squareup.okhttp3", name = "logging-interceptor", 
 apollo = { group = "com.apollographql.apollo", name = "apollo-runtime", version.ref = "apollo" }
 apolloNormalizedCache = { group = "com.apollographql.cache", name = "normalized-cache", version.ref = "apolloCache" }
 dataStore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStore" }
-dataStoreRx = { group = "androidx.datastore", name = "datastore-preferences-rxjava3", version.ref = "dataStore" }
 viewPager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewPager2" }
 room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 roomCompiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-roomRx = { group = "androidx.room", name = "room-rxjava3", version.ref = "room" }
 roomKtx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-roomPaging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 calendar = { group = "com.kizitonwose.calendar", name = "view", version.ref = "calendar" }
 firebase = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebaseAnalytics = { group = "com.google.firebase", name = "firebase-analytics" }
@@ -105,7 +104,6 @@ appfunctions = { group = "androidx.appfunctions", name = "appfunctions", version
 appfunctions-compiler = { group = "androidx.appfunctions", name = "appfunctions-compiler", version.ref = "appfunctions" }
 playReview = { group = "com.google.android.play", name = "review", version.ref = "playReview" }
 playReviewKtx = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReview" }
-play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
@@ -128,7 +126,6 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 naver-map = { group = "com.naver.maps", name = "map-sdk", version.ref = "naverMap" }
 mlkit-translate = { group = "com.google.mlkit", name = "translate", version.ref = "mlkitTranslate" }
-play-services-oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "playServicesOssLicenses" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

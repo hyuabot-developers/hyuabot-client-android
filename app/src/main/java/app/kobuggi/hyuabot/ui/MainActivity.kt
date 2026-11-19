@@ -42,6 +42,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import app.kobuggi.hyuabot.R
+import app.kobuggi.hyuabot.service.preferences.StartScreen
 import app.kobuggi.hyuabot.databinding.ActivityMainBinding
 import app.kobuggi.hyuabot.service.alarm.ShuttleServiceNoticeScheduler
 import app.kobuggi.hyuabot.service.InquiryPush
@@ -83,9 +84,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
     private val analyticsScreenDispatcher = AnalyticsScreenDispatcher {
         AnalyticsManager.logScreen(it, it.id)
-    }
-    private val homeExperiencePreferences by lazy {
-        getSharedPreferences(HOME_EXPERIENCE_PREFERENCES, MODE_PRIVATE)
     }
     private val locationDisclosurePreferences by lazy {
         getSharedPreferences(LOCATION_DISCLOSURE_PREFERENCES, MODE_PRIVATE)
@@ -157,6 +155,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 else -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) }
             }
         }
+        syncAppLanguage()
         suggestLanguageIfNeeded()
         openBirthDayDialog()
         requestInAppReview()
@@ -167,19 +166,37 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
                 hasShuttleWidget()
         logLocationFlow("onCreate; pending=$pendingBackgroundLocationRequest widget=${hasShuttleWidget()} foreground=${hasLocationPermission()} background=${hasBackgroundLocationPermission()}")
         val handledDeepLink = (savedInstanceState == null && handleInquiryNotificationIntent(intent)) || handleDebugDeepLink(intent) || navController.handleDeepLink(intent)
-        if (
-            savedInstanceState == null &&
-            !handledDeepLink &&
-            !homeExperiencePreferences.getBoolean(HOME_EXPERIENCE_ENABLED, true)
-        ) {
-            showLegacyShuttleAsRoot()
+        if (savedInstanceState == null && !handledDeepLink) {
+            openConfiguredStartScreen()
+        }
+    }
+
+    /** 설정의 '첫 화면'이 버스·전철·학식이면 앱 시작 때 해당 탭을 연다. 셔틀은 기존 시작 화면 그대로. */
+    private fun openConfiguredStartScreen() {
+        lifecycleScope.launch {
+            val destination = when (viewModel.startScreen()) {
+                StartScreen.BUS -> R.id.busRealtimeFragment
+                StartScreen.SUBWAY -> R.id.subwayRealtimeFragment
+                StartScreen.CAFETERIA -> R.id.cafeteriaFragment
+                else -> return@launch
+            }
+            if (navController.currentDestination?.id == R.id.shuttleRealtimeFragment) {
+                navController.navigate(
+                    destination,
+                    null,
+                    navOptions {
+                        popUpTo(R.id.shuttleRealtimeFragment) { inclusive = true }
+                        launchSingleTop = true
+                    },
+                )
+            }
         }
     }
 
     private fun setupTopAppBar() {
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.homeFragment,
+                R.id.shuttleRealtimeFragment,
                 R.id.busRealtimeFragment,
                 R.id.subwayRealtimeFragment,
                 R.id.cafeteriaFragment,
@@ -281,7 +298,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     private fun NavigationBarView.populateBottomNavigationMenu() {
         if (menu.size() > 0) return
-        menu.add(0, R.id.homeFragment, 0, R.string.home).setIcon(R.drawable.ic_home)
+        menu.add(0, R.id.shuttleRealtimeFragment, 0, R.string.tabbar_shuttle).setIcon(R.drawable.ic_shuttle)
         menu.add(0, R.id.busRealtimeFragment, 1, R.string.bus).setIcon(R.drawable.ic_bus)
         menu.add(0, R.id.subwayRealtimeFragment, 2, R.string.subway).setIcon(R.drawable.ic_subway)
         menu.add(0, R.id.cafeteriaFragment, 3, R.string.cafeteria).setIcon(R.drawable.ic_cafeteria)
@@ -289,12 +306,15 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     private fun applyStatusBarStyle(destinationId: Int?) {
-        val isHome = destinationId == R.id.homeFragment
+        val isSettings = destinationId == R.id.settingFragment || destinationId == R.id.licensesFragment
         val statusBarColor = ContextCompat.getColor(
             this,
-            if (isHome) R.color.home_screen_background else R.color.hanyang_blue
+            when {
+                isSettings -> R.color.md_surface
+                else -> R.color.hanyang_blue
+            }
         )
-        val statusBarStyle = if (isHome) {
+        val statusBarStyle = if (isSettings) {
             SystemBarStyle.auto(statusBarColor, statusBarColor)
         } else {
             SystemBarStyle.dark(statusBarColor)
@@ -359,6 +379,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     private fun updateBottomNavigationLabels() {
+        binding.bottomNavigation.menu.findItem(R.id.shuttleRealtimeFragment)?.title = getString(R.string.tabbar_shuttle)
         binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)?.title = getString(R.string.tabbar_bus)
         binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)?.title = getString(R.string.subway)
         binding.bottomNavigation.menu.findItem(R.id.cafeteriaFragment)?.title = getString(R.string.cafeteria)
@@ -367,19 +388,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
 
     private fun updatePrimaryNavigationItem(destinationId: Int?) {
         updateBottomNavigationLabels()
-        val primaryItem = binding.bottomNavigation.menu.findItem(R.id.homeFragment) ?: return
-        val busItem = binding.bottomNavigation.menu.findItem(R.id.busRealtimeFragment)
-        val subwayItem = binding.bottomNavigation.menu.findItem(R.id.subwayRealtimeFragment)
-        val moreItem = binding.bottomNavigation.menu.findItem(R.id.menuFragment)
-        val showsLegacyShuttle = !homeExperiencePreferences.getBoolean(HOME_EXPERIENCE_ENABLED, true)
-        primaryItem.title = getString(if (showsLegacyShuttle) R.string.shuttle_bus else R.string.home)
-        primaryItem.setIcon(if (showsLegacyShuttle) R.drawable.ic_bus else R.drawable.ic_home)
+        val menu = binding.bottomNavigation.menu
         when {
-            destinationId == R.id.homeFragment || destinationId.isShuttleDestination() ->
-                primaryItem.isChecked = true
-            destinationId.isBusDestination() -> busItem?.isChecked = true
-            destinationId.isSubwayDestination() -> subwayItem?.isChecked = true
-            destinationId.isMoreDestination() -> moreItem?.isChecked = true
+            destinationId.isShuttleDestination() -> menu.findItem(R.id.shuttleRealtimeFragment)?.isChecked = true
+            destinationId.isBusDestination() -> menu.findItem(R.id.busRealtimeFragment)?.isChecked = true
+            destinationId.isSubwayDestination() -> menu.findItem(R.id.subwayRealtimeFragment)?.isChecked = true
+            destinationId.isMoreDestination() -> menu.findItem(R.id.menuFragment)?.isChecked = true
         }
     }
 
@@ -416,11 +430,19 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.calendarFragment,
         R.id.mapFragment,
         R.id.settingFragment,
-        R.id.languageSettingDialogFragment,
-        R.id.campusSettingDialogFragment,
-        R.id.themeSettingDialogFragment,
-        R.id.settingDeveloperDialogFragment -> true
+        R.id.licensesFragment -> true
         else -> false
+    }
+
+    private fun syncAppLanguage() {
+        val language = AppCompatDelegate.getApplicationLocales()[0]?.language
+            ?: resources.configuration.locales[0].language
+        val prefs = getSharedPreferences("pref", MODE_PRIVATE)
+        val applied = prefs.getString(APPLIED_LANGUAGE_KEY, null)
+        prefs.edit { putString(APPLIED_LANGUAGE_KEY, language) }
+        if (applied != null && applied != language) {
+            viewModel.clearLocalizedCaches { refreshHyuabotWidgets(this) }
+        }
     }
 
     private fun suggestLanguageIfNeeded() {
@@ -679,47 +701,14 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.homeFragment) {
-            if (!homeExperiencePreferences.getBoolean(HOME_EXPERIENCE_ENABLED, true)) {
-                showLegacyShuttleAsRoot()
-                return true
-            }
-        }
         tabItemForDestination(item.itemId)?.let {
             AnalyticsManager.logSelect(it, AnalyticsContentType.TAB)
         }
         return item.onNavDestinationSelected(navController)
     }
 
-    fun showLegacyShuttleAsRoot() {
-        homeExperiencePreferences.edit { putBoolean(HOME_EXPERIENCE_ENABLED, false) }
-        navController.navigate(
-            R.id.shuttleRealtimeFragment,
-            null,
-            navOptions {
-                popUpTo(R.id.homeFragment) { inclusive = true }
-                launchSingleTop = true
-            },
-        )
-        updatePrimaryNavigationItem(navController.currentDestination?.id)
-    }
-
-    fun showHomeExperienceAsRoot() {
-        homeExperiencePreferences.edit { putBoolean(HOME_EXPERIENCE_ENABLED, true) }
-        navController.navigate(
-            R.id.homeFragment,
-            null,
-            navOptions {
-                popUpTo(R.id.shuttleRealtimeFragment) { inclusive = true }
-                launchSingleTop = true
-            },
-        )
-        updatePrimaryNavigationItem(navController.currentDestination?.id)
-    }
-
     /** Maps a nav-graph destination id to its analytics screen (null = not tracked as a screen). */
     private fun screenForDestination(destinationId: Int): AnalyticsScreen? = when (destinationId) {
-        R.id.homeFragment -> AnalyticsScreen.HOME
         R.id.shuttleRealtimeFragment -> AnalyticsScreen.SHUTTLE_REALTIME
         R.id.shuttleTimetableFragment -> AnalyticsScreen.SHUTTLE_TIMETABLE
         R.id.shuttleStopDialogFragment -> AnalyticsScreen.SHUTTLE_STOP_INFO
@@ -742,16 +731,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.contactFragment -> AnalyticsScreen.CONTACT
         R.id.calendarFragment -> AnalyticsScreen.CALENDAR
         R.id.menuFragment -> AnalyticsScreen.CAMPUS
-        R.id.languageSettingDialogFragment -> AnalyticsScreen.SETTING_LANGUAGE
-        R.id.campusSettingDialogFragment -> AnalyticsScreen.SETTING_CAMPUS
-        R.id.themeSettingDialogFragment -> AnalyticsScreen.SETTING_THEME
-        R.id.settingDeveloperDialogFragment -> AnalyticsScreen.SETTING_DEVELOPER
         else -> null
     }
 
     /** Maps a bottom-navigation item id to its analytics tab item. */
     private fun tabItemForDestination(destinationId: Int): AnalyticsItem? = when (destinationId) {
-        R.id.homeFragment -> AnalyticsItem.TAB_HOME
+        R.id.shuttleRealtimeFragment -> AnalyticsItem.TAB_SHUTTLE
         R.id.busRealtimeFragment -> AnalyticsItem.TAB_BUS
         R.id.subwayRealtimeFragment -> AnalyticsItem.TAB_SUBWAY
         R.id.cafeteriaFragment -> AnalyticsItem.TAB_CAFETERIA
@@ -802,8 +787,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
     }
 
     companion object {
-        const val HOME_EXPERIENCE_PREFERENCES = "home_experience"
-        const val HOME_EXPERIENCE_ENABLED = "enabled"
+        private const val APPLIED_LANGUAGE_KEY = "appliedLanguage"
         const val EXTRA_REQUEST_BACKGROUND_LOCATION = "request_background_location"
         private const val BACKGROUND_LOCATION_SETTINGS_OPENED_STATE =
             "background_location_settings_opened"

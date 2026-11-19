@@ -149,9 +149,6 @@ class ShuttleRealtimeFragment @Inject constructor() : Fragment() {
             result.getString(ShuttleQuickSettingsDialog.KEY_ALTERNATIVE_MODE)?.let {
                 viewModel.setAlternativeDisplayMode(ShuttleAlternativeDisplayMode.from(it))
             }
-            if (result.getBoolean(ShuttleQuickSettingsDialog.KEY_OPEN_HOME, false)) {
-                (activity as? MainActivity)?.showHomeExperienceAsRoot()
-            }
             if (result.getBoolean(ShuttleQuickSettingsDialog.KEY_OPEN_INQUIRY, false)) {
                 findNavController().navigate(
                     ShuttleRealtimeFragmentDirections.actionShuttleRealtimeFragmentToInquiryChatFragment(),

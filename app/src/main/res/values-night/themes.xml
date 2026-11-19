@@ -38,10 +38,10 @@
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
     </style>
     <style name="ThemeOverlay.App.BottomNavigationView" parent="">
-        <item name="colorSurfaceContainer">@color/bottom_navigation_background</item>
-        <item name="colorOnSurfaceVariant">@color/bottom_navigation_unselected</item>
-        <item name="colorOnSecondaryContainer">@color/bottom_navigation_selected</item>
-        <item name="colorOnSurface">@color/bottom_navigation_selected</item>
-        <item name="colorSecondaryContainer">@color/bottom_navigation_indicator</item>
+        <item name="colorSurfaceContainer">@color/md_surface_container_lowest</item>
+        <item name="colorOnSurfaceVariant">@color/md_on_surface_variant</item>
+        <item name="colorOnSecondaryContainer">@color/md_on_primary_container</item>
+        <item name="colorOnSurface">@color/md_on_primary_container</item>
+        <item name="colorSecondaryContainer">@color/md_primary_container</item>
     </style>
 </resources>

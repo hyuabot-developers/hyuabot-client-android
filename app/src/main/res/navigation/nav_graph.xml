@@ -3,39 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="app.kobuggi.hyuabot.ui.home.HomeFragment"
-        android:label="홈"
-        tools:layout="@layout/fragment_home">
-        <deepLink app:uri="hyuabot://home" />
-        <deepLink app:uri="https://hyuabot.app/home" />
-        <action
-            android:id="@+id/action_homeFragment_to_shuttleRealtimeFragment"
-            app:destination="@id/shuttleRealtimeFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_shuttleTimetableFragment"
-            app:destination="@id/shuttleTimetableFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_cafeteriaFragment"
-            app:destination="@id/cafeteriaFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_noticeWebViewFragment"
-            app:destination="@id/noticeWebViewFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_inquiryChatFragment"
-            app:destination="@id/inquiryChatFragment">
-            <argument
-                android:name="entryScreen"
-                android:defaultValue="home"
-                app:argType="string" />
-            <argument
-                android:name="entryScreenName"
-                android:defaultValue="홈"
-                app:argType="string" />
-        </action>
-    </fragment>
+    app:startDestination="@id/shuttleRealtimeFragment">
     <fragment
         android:id="@+id/shuttleRealtimeFragment"
         android:name="app.kobuggi.hyuabot.ui.shuttle.realtime.ShuttleRealtimeFragment"
@@ -49,6 +17,8 @@
             android:name="to"
             app:argType="string"
             android:defaultValue="" />
+        <deepLink app:uri="hyuabot://home" />
+        <deepLink app:uri="https://hyuabot.app/home" />
         <deepLink app:uri="hyuabot://shuttle" />
         <deepLink app:uri="hyuabot://shuttle?stop={stop}" />
         <deepLink app:uri="hyuabot://shuttle?stop={stop}&amp;to={to}" />
@@ -215,26 +185,17 @@
     <fragment
         android:id="@+id/settingFragment"
         android:name="app.kobuggi.hyuabot.ui.setting.SettingFragment"
-        android:label="설정"
-        tools:layout="@layout/fragment_setting">
+        android:label="설정">
         <deepLink app:uri="hyuabot://setting" />
         <deepLink app:uri="https://hyuabot.app/setting" />
-        <action
-            android:id="@+id/action_settingFragment_to_languageSettingDialogFragment"
-            app:destination="@id/languageSettingDialogFragment" />
-        <action
-            android:id="@+id/action_settingFragment_to_campusSettingDialogFragment"
-            app:destination="@id/campusSettingDialogFragment" />
-        <action
-            android:id="@+id/action_settingFragment_to_themeSettingDialogFragment"
-            app:destination="@id/themeSettingDialogFragment" />
-        <action
-            android:id="@+id/action_settingFragment_to_settingDeveloperDialogFragment"
-            app:destination="@id/settingDeveloperDialogFragment" />
         <action
             android:id="@+id/action_settingFragment_to_noticeWebViewFragment"
             app:destination="@id/noticeWebViewFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/licensesFragment"
+        android:name="app.kobuggi.hyuabot.ui.setting.LicensesFragment"
+        android:label="오픈소스 라이선스" />
     <dialog
         android:id="@+id/noticeWebViewFragment"
         android:name="app.kobuggi.hyuabot.ui.notice.NoticeWebviewFragment"
@@ -403,24 +364,4 @@
             app:argType="integer"
             android:defaultValue="0" />
     </dialog>
-    <dialog
-        android:id="@+id/languageSettingDialogFragment"
-        android:name="app.kobuggi.hyuabot.ui.setting.LanguageSettingDialog"
-        android:label="언어 설정"
-        tools:layout="@layout/dialog_setting_language" />
-    <dialog
-        android:id="@+id/campusSettingDialogFragment"
-        android:name="app.kobuggi.hyuabot.ui.setting.CampusSettingDialog"
-        android:label="캠퍼스 설정"
-        tools:layout="@layout/dialog_setting_campus" />
-    <dialog
-        android:id="@+id/themeSettingDialogFragment"
-        android:name="app.kobuggi.hyuabot.ui.setting.ThemeSettingDialog"
-        android:label="테마 설정"
-        tools:layout="@layout/dialog_setting_theme" />
-    <dialog
-        android:id="@+id/settingDeveloperDialogFragment"
-        android:name="app.kobuggi.hyuabot.ui.setting.InfoSettingDialog"
-        android:label="앱 정보"
-        tools:layout="@layout/dialog_setting_developer" />
 </navigation>

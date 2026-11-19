@@ -101,6 +101,18 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
             preferences[ANALYTICS_CONSENT_KEY] ?: true
         }
 
+    val startScreen: Flow<String> = userDataStorePreferences.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[START_SCREEN_KEY] ?: StartScreen.SHUTTLE
+        }
+
     val reviewRequestedAt: Flow<Long> = userDataStorePreferences.data
         .catch { exception ->
             if (exception is IOException) {
@@ -505,6 +517,14 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         }
     }
 
+    suspend fun setStartScreen(screen: String) {
+        Result.runCatching {
+            userDataStorePreferences.edit { preferences ->
+                preferences[START_SCREEN_KEY] = screen
+            }
+        }
+    }
+
     override suspend fun incrementLaunchCount(): Int {
         var newCount = 0
         userDataStorePreferences.edit { preferences ->
@@ -610,6 +630,7 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val BUS_SEOUL_FIRST_STOP_KEY = intPreferencesKey("bus_seoul_first_stop")
         private val BUS_SEOUL_SECOND_STOP_KEY = intPreferencesKey("bus_seoul_second_stop")
         private val BUS_SUWON_STOP_KEY = intPreferencesKey("bus_suwon_stop")
+        private val START_SCREEN_KEY = stringPreferencesKey("start_screen")
         private val ANALYTICS_CONSENT_KEY = booleanPreferencesKey("analytics_consent")
         private val LAUNCH_COUNT_KEY = intPreferencesKey("launch_count")
         private val REVIEW_REQUESTED_AT_KEY = longPreferencesKey("review_requested_at")
@@ -617,4 +638,11 @@ class UserPreferencesRepository @Inject constructor(private val userDataStorePre
         private val COACHMARK_INITIALIZED_KEY = booleanPreferencesKey("coachmark_initialized")
         private val COACHMARK_RESET_KEYS_KEY = stringSetPreferencesKey("coachmark_reset_keys")
     }
+}
+
+object StartScreen {
+    const val SHUTTLE = "shuttle"
+    const val BUS = "bus"
+    const val SUBWAY = "subway"
+    const val CAFETERIA = "cafeteria"
 }

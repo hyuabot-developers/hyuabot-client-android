@@ -32,7 +32,6 @@ object Coachmarks {
         MENU,
         READING_ROOM,
         MAP,
-        SETTING,
     )
 }
 

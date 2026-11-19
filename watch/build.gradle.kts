@@ -93,7 +93,6 @@ android {
 
 dependencies {
 
-    implementation(libs.play.services.wearable)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -110,7 +109,6 @@ dependencies {
     implementation(libs.horologist.tiles)
     implementation(libs.androidx.watchface.complications.data.source.ktx)
     // SplashScreen
-    implementation(libs.splashScreen)
     // Navigation
     implementation(libs.androidx.navigation.compose)
     // Material
