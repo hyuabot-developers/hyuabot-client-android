@@ -219,6 +219,13 @@
         <deepLink app:uri="https://hyuabot.app/contact" />
     </fragment>
     <fragment
+        android:id="@+id/commuterFragment"
+        android:name="app.kobuggi.hyuabot.ui.commuter.CommuterFragment"
+        android:label="@string/campus_commuter_title">
+        <deepLink app:uri="hyuabot://commuter" />
+        <deepLink app:uri="https://hyuabot.app/commuter" />
+    </fragment>
+    <fragment
         android:id="@+id/calendarFragment"
         android:name="app.kobuggi.hyuabot.ui.calendar.CalendarFragment"
         android:label="학사일정"
@@ -245,10 +252,12 @@
     <fragment
         android:id="@+id/menuFragment"
         android:name="app.kobuggi.hyuabot.ui.menu.MenuFragment"
-        android:label="@string/tabbar_campus"
-        tools:layout="@layout/fragment_menu">
+        android:label="@string/tabbar_campus">
         <deepLink app:uri="hyuabot://campus" />
         <deepLink app:uri="https://hyuabot.app/campus" />
+        <action
+            android:id="@+id/action_menuFragment_to_commuterFragment"
+            app:destination="@id/commuterFragment" />
         <action
             android:id="@+id/action_menuFragment_to_readingRoomFragment"
             app:destination="@id/readingRoomFragment" />

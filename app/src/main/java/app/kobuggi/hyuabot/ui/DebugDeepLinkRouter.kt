@@ -58,6 +58,7 @@ internal object DebugDeepLinkRouter {
             "map" -> R.id.mapFragment
             "setting" -> R.id.settingFragment
             "contact" -> R.id.contactFragment
+            "commuter", "commuter-bus" -> R.id.commuterFragment
             "calendar" -> R.id.calendarFragment
             "inquiry" -> R.id.inquiryChatFragment
             "campus" -> R.id.menuFragment

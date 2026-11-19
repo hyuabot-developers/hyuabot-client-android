@@ -431,6 +431,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.calendarFragment,
         R.id.mapFragment,
         R.id.settingFragment,
+        R.id.commuterFragment,
         R.id.licensesFragment -> true
         else -> false
     }
@@ -732,6 +733,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemReselectedList
         R.id.contactFragment -> AnalyticsScreen.CONTACT
         R.id.calendarFragment -> AnalyticsScreen.CALENDAR
         R.id.menuFragment -> AnalyticsScreen.CAMPUS
+        R.id.commuterFragment -> AnalyticsScreen.COMMUTER_BUS
         else -> null
     }
 
