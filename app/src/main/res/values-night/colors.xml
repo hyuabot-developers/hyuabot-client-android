@@ -58,4 +58,23 @@
     <color name="inquiry_bubble_user">#0E4A84</color>
     <color name="inquiry_bubble_user_text">#FFFFFF</color>
     <color name="inquiry_bubble_admin">#2C2C2E</color>
+    <!-- Compose 설정 화면 색 역할 (한양 블루 기준) -->
+    <color name="md_primary">#A5C8FF</color>
+    <color name="md_on_primary">#00315F</color>
+    <color name="md_primary_container">#1F3D63</color>
+    <color name="md_on_primary_container">#D6E3FF</color>
+    <color name="md_surface">#111318</color>
+    <color name="md_surface_container_lowest">#1D2026</color>
+    <color name="md_surface_container_highest">#282A30</color>
+    <color name="md_surface_container">#282A30</color>
+    <color name="md_on_surface">#E2E2E9</color>
+    <color name="md_on_surface_variant">#C4C6CF</color>
+    <color name="md_outline">#8E9099</color>
+    <color name="md_outline_variant">#44474E</color>
+    <color name="md_tertiary_container">#2B3D1A</color>
+    <color name="md_on_tertiary_container">#B6D98F</color>
+    <color name="md_secondary_container">#2F3138</color>
+    <color name="md_on_secondary_container">#C4C6CF</color>
+    <color name="md_inverse_surface">#E2E2E9</color>
+    <color name="md_inverse_on_surface">#2E3036</color>
 </resources>

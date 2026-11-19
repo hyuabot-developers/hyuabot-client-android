@@ -23,8 +23,8 @@ Supported page routes are `home`, `shuttle`, `bus`, `subway`, `cafeteria`,
 Supported navigation dialogs are `shuttle-stop-dialog`,
 `shuttle-help-dialog`, `shuttle-timetable-dialog`,
 `shuttle-timetable-filter-dialog`, `bus-help-dialog`, `bus-stop-info`,
-`bus-departure-dialog`, `bus-route-dialog`, `language-setting-dialog`,
-`campus-setting-dialog`, `theme-setting-dialog`, and `developer-dialog`.
+`bus-departure-dialog`, and `bus-route-dialog`. `licenses` opens the open source
+licenses screen.
 
 Supported direct sheets are `home-quick-settings`, `bus-quick-settings`,
 `shuttle-quick-settings`, `shuttle-via`, and `building-webview`.

@@ -128,15 +128,6 @@ class ShuttleQuickSettingsDialog : BottomSheetDialogFragment() {
                 show()
             }
         }
-        binding.openHomeButton.setOnClickListener {
-            parentFragmentManager.setFragmentResult(
-                REQUEST_KEY,
-                Bundle().apply {
-                    putBoolean(KEY_OPEN_HOME, true)
-                },
-            )
-            dismiss()
-        }
         binding.openInquiryButton.setOnClickListener {
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
@@ -166,7 +157,6 @@ class ShuttleQuickSettingsDialog : BottomSheetDialogFragment() {
         const val KEY_SHOW_SUBWAY_TRANSFER = "show_subway_transfer"
         const val KEY_SUBWAY_DESTINATION = "subway_destination"
         const val KEY_ALTERNATIVE_MODE = "alternative_mode"
-        const val KEY_OPEN_HOME = "open_home"
         const val KEY_OPEN_INQUIRY = "open_inquiry"
         private const val ARG_SHOW_BY_DESTINATION = "arg_show_by_destination"
         private const val ARG_SHOW_DEPARTURE_TIME = "arg_show_departure_time"

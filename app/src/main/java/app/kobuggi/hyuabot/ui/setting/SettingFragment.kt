@@ -1,216 +1,180 @@
 package app.kobuggi.hyuabot.ui.setting
 
-import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import app.kobuggi.hyuabot.databinding.FragmentSettingBinding
+import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
-import app.kobuggi.hyuabot.service.safeNavigate
-import app.kobuggi.hyuabot.ui.MainActivity
 import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
-import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
-import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
+import app.kobuggi.hyuabot.ui.common.compose.HyuabotTheme
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import app.kobuggi.hyuabot.util.CrashlyticsManager
-import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
+import app.kobuggi.hyuabot.widget.refreshHyuabotWidgets
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SettingFragment @Inject constructor() : Fragment(), DialogInterface.OnDismissListener {
-    private val binding by lazy { FragmentSettingBinding.inflate(layoutInflater) }
+class SettingFragment @Inject constructor() : Fragment() {
+    private val viewModel by viewModels<SettingViewModel>()
 
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding.apply {
-            settingCampus.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "campus"); openCampusDialog() }
-            settingLanguage.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "language"); openLanguageDialog() }
-            settingTheme.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "theme"); openThemeDialog() }
-            appInfo.setOnClickListener { AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "info"); openInfoDialog() }
-            settingHelp.setOnClickListener {
-                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "help")
-                openHelp()
-            }
-            settingPrivacyPolicy.setOnClickListener {
-                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "privacy_policy")
-                openPrivacyPolicy()
-            }
-            settingOpenSourceLicenses.setOnClickListener {
-                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = "open_source_licenses")
-                openOpenSourceLicenses()
-            }
-            settingCoachmarkReset.setOnClickListener {
-                lifecycleScope.launch {
-                    Coachmarks.USER_VISIBLE_KEYS.forEach { userPreferencesRepository.resetCoachmark(it) }
-                    Toast.makeText(requireContext(), R.string.coachmark_reset_complete, Toast.LENGTH_SHORT).show()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+        ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent { HyuabotTheme { SettingContent() } }
+        }
+
+    @Composable
+    private fun SettingContent() {
+        val campusID by viewModel.campusID.collectAsStateWithLifecycle()
+        val theme by viewModel.theme.collectAsStateWithLifecycle()
+        val startScreen by viewModel.startScreen.collectAsStateWithLifecycle()
+        val analytics by viewModel.analyticsConsent.collectAsStateWithLifecycle()
+        val languageCode = currentLanguageCode()
+        var showSheet by remember { mutableStateOf(false) }
+        val snackbar = remember { SnackbarHostState() }
+        val scope = rememberCoroutineScope()
+        val systemLanguage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        val resetSnack = getString(R.string.coachmark_reset_complete)
+
+        val state = SettingState(
+            campusID = campusID,
+            theme = theme,
+            startScreen = startScreen,
+            languageName = stringResource(AppLanguage.entries.firstOrNull { it.code == languageCode }?.localized ?: R.string.language_korean),
+            analytics = analytics,
+            versionName = BuildConfig.VERSION_NAME,
+            systemLanguageSettings = systemLanguage,
+        )
+        val actions = SettingActions(
+            onBack = { findNavController().popBackStack() },
+            onCampus = { id ->
+                if (id != campusID) {
+                    log("campus")
+                    AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_CAMPUS, type = AnalyticsContentType.MENU, name = if (id == 1) "seoul" else "erica")
+                    viewModel.setCampusID(id)
+                    refreshHyuabotWidgets(requireContext())
+                    val name = getString(if (id == 1) R.string.campus_seoul else R.string.campus_erica)
+                    scope.launch { snackbar.showSnackbar(getString(R.string.setting_campus_changed_format, name)) }
                 }
-            }
-            appInfo.setOnLongClickListener {
-                lifecycleScope.launch {
+            },
+            onTheme = { value ->
+                AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_THEME, type = AnalyticsContentType.MENU, name = value ?: "system")
+                viewModel.setTheme(value)
+            },
+            onStartScreen = { viewModel.setStartScreen(it) },
+            onLanguage = {
+                log("language")
+                if (systemLanguage) openSystemLanguageSettings() else showSheet = true
+            },
+            onAnalytics = { enabled ->
+                viewModel.setAnalyticsConsent(enabled)
+                AnalyticsManager.setCollectionEnabled(enabled)
+                CrashlyticsManager.setCollectionEnabled(enabled)
+            },
+            onPrivacy = { log("privacy_policy"); openCustomTab(getString(R.string.privacy_policy_url)) },
+            onHelp = { log("help"); openCustomTab(helpUrl()) },
+            onResetCoachmarks = {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    Coachmarks.USER_VISIBLE_KEYS.forEach { userPreferencesRepository.resetCoachmark(it) }
+                    snackbar.showSnackbar(resetSnack)
+                }
+            },
+            onLicenses = { log("open_source_licenses"); findNavController().navigate(R.id.licensesFragment) },
+            onVersionLongPress = {
+                viewLifecycleOwner.lifecycleScope.launch {
                     userPreferencesRepository.resetCoachmark(Coachmarks.SHUTTLE_REALTIME_UPDATES)
                     Toast.makeText(requireContext(), R.string.coachmark_shuttle_realtime_updates_reset, Toast.LENGTH_SHORT).show()
                 }
-                true
-            }
-        }
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        var updatingSwitch = false
-        binding.settingAnalyticsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (!updatingSwitch) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    userPreferencesRepository.setAnalyticsConsent(isChecked)
-                    AnalyticsManager.setCollectionEnabled(isChecked)
-                    CrashlyticsManager.setCollectionEnabled(isChecked)
-                }
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    userPreferencesRepository.analyticsConsent.collect { enabled ->
-                        updatingSwitch = true
-                        binding.settingAnalyticsSwitch.isChecked = enabled
-                        updatingSwitch = false
-                    }
-                }
-                launch {
-                    userPreferencesRepository.campusID.collect { campusID ->
-                        binding.settingCampusValue.text = getString(
-                            if (campusID == 1) R.string.campus_seoul else R.string.campus_erica
-                        )
-                    }
-                }
-                launch {
-                    userPreferencesRepository.theme.collect { theme ->
-                        binding.settingThemeValue.text = getString(
-                            when (theme) {
-                                "light" -> R.string.theme_light
-                                "dark" -> R.string.theme_dark
-                                else -> R.string.theme_system
-                            }
-                        )
-                    }
-                }
-            }
-        }
-        updateLanguageValue()
-        showCoachmarkOnce(userPreferencesRepository, Coachmarks.SETTING) {
-            listOf(
-                CoachmarkStep(
-                    { binding.settingCampus },
-                    R.string.coachmark_setting_campus_title, R.string.coachmark_setting_campus_desc
-                ),
-                CoachmarkStep(
-                    { binding.settingTheme },
-                    R.string.coachmark_setting_theme_title, R.string.coachmark_setting_theme_desc
-                ),
-            )
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updateLanguageValue()
-    }
-
-    private fun updateLanguageValue() {
-        val appLanguage = AppCompatDelegate.getApplicationLocales()[0]?.language
-            ?: resources.configuration.locales[0].language
-        binding.settingLanguageValue.text = getString(
-            when (appLanguage) {
-                "en" -> R.string.language_english
-                "ja" -> R.string.language_japanese
-                "zh" -> R.string.language_chinese
-                else -> R.string.language_korean
-            }
+            },
         )
-    }
-
-    private fun openThemeDialog() {
-        SettingFragmentDirections.actionSettingFragmentToThemeSettingDialogFragment().also {
-            findNavController().safeNavigate(it)
+        Box {
+            SettingScreen(state, actions)
+            SnackbarHost(snackbar, modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(16.dp))
+            if (showSheet) {
+                LanguageSheet(
+                    currentCode = languageCode,
+                    onSelect = { language ->
+                        AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_LANGUAGE, type = AnalyticsContentType.MENU, name = language.analyticsName)
+                        showSheet = false
+                        applyLanguage(language)
+                    },
+                    onDismiss = { showSheet = false },
+                )
+            }
         }
     }
 
-    private fun openCampusDialog() {
-        SettingFragmentDirections.actionSettingFragmentToCampusSettingDialogFragment().also {
-            findNavController().safeNavigate(it)
+    private fun log(name: String) =
+        AnalyticsManager.logSelect(AnalyticsItem.SETTING_SELECT_ROW, type = AnalyticsContentType.LIST_ITEM, name = name)
+
+    private fun currentLanguageCode(): String =
+        AppCompatDelegate.getApplicationLocales()[0]?.language ?: resources.configuration.locales[0].language
+
+    private fun applyLanguage(language: AppLanguage) {
+        val host = activity
+        viewModel.clearLocalizedCaches {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(language.tag))
+            refreshHyuabotWidgets(requireContext())
+            host?.recreate()
         }
     }
 
-    private fun openLanguageDialog() {
-        SettingFragmentDirections.actionSettingFragmentToLanguageSettingDialogFragment().also {
-            findNavController().safeNavigate(it)
-        }
+    private fun openSystemLanguageSettings() {
+        val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS, Uri.fromParts("package", requireContext().packageName, null))
+        runCatching { startActivity(intent) }
     }
 
-    private fun openInfoDialog() {
-        SettingFragmentDirections.actionSettingFragmentToSettingDeveloperDialogFragment().also {
-            findNavController().safeNavigate(it)
-        }
-    }
-
-    private fun openHelp() {
-        val appLanguage = AppCompatDelegate.getApplicationLocales()[0]?.language
-            ?: resources.configuration.locales[0].language
-        val docsLocalePath = when (appLanguage) {
+    private fun helpUrl(): String {
+        val docsLocalePath = when (currentLanguageCode()) {
             "en" -> "en/"
             "ja" -> "ja/"
             "zh" -> "zh-Hans/"
             else -> ""
         }
-        val url = "${getString(R.string.docs_site_base_url)}/$docsLocalePath" + "docs/android"
-        SettingFragmentDirections.actionSettingFragmentToNoticeWebViewFragment(
-            url,
-            getString(R.string.help),
-        ).also {
-            findNavController().safeNavigate(it)
-        }
+        return "${getString(R.string.docs_site_base_url)}/$docsLocalePath" + "docs/android"
     }
 
-    private fun openPrivacyPolicy() {
-        SettingFragmentDirections.actionSettingFragmentToNoticeWebViewFragment(
-            getString(R.string.privacy_policy_url),
-            getString(R.string.privacy_policy),
-        ).also {
-            findNavController().safeNavigate(it)
-        }
-    }
-
-    private fun openOpenSourceLicenses() {
-        OssLicensesMenuActivity.setActivityTitle(getString(R.string.open_source_licenses))
-        startActivity(Intent(requireContext(), OssLicensesMenuActivity::class.java))
-    }
-
-    override fun onDismiss(dialogInterface: DialogInterface?) {
-        if (requireActivity() is MainActivity){
-            requireActivity().runOnUiThread {
-                (requireActivity() as MainActivity).onDismiss(dialogInterface)
-            }
-        }
+    private fun openCustomTab(url: String) {
+        runCatching { CustomTabsIntent.Builder().setShowTitle(true).build().launchUrl(requireContext(), url.toUri()) }
+            .onFailure { runCatching { startActivity(Intent(Intent.ACTION_VIEW, url.toUri())) } }
     }
 }

@@ -38,7 +38,7 @@ internal object DebugDeepLinkRouter {
         }
 
         val destination = when (route) {
-            "home" -> R.id.homeFragment
+            "home" -> R.id.shuttleRealtimeFragment
             "shuttle", "shuttle-realtime" -> R.id.shuttleRealtimeFragment
             "shuttle-timetable" -> R.id.shuttleTimetableFragment
             "shuttle-stop-dialog" -> R.id.shuttleStopDialogFragment
@@ -62,10 +62,7 @@ internal object DebugDeepLinkRouter {
             "inquiry" -> R.id.inquiryChatFragment
             "campus" -> R.id.menuFragment
             "notice" -> R.id.noticeWebViewFragment
-            "language-setting-dialog" -> R.id.languageSettingDialogFragment
-            "campus-setting-dialog" -> R.id.campusSettingDialogFragment
-            "theme-setting-dialog" -> R.id.themeSettingDialogFragment
-            "developer-dialog" -> R.id.settingDeveloperDialogFragment
+            "licenses" -> R.id.licensesFragment
             else -> return false
         }
 

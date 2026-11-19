@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinKsp)
     alias(libs.plugins.hiltPlugin)
     alias(libs.plugins.apollo)
@@ -10,7 +11,6 @@ plugins {
     alias(libs.plugins.googleServicesPlugin)
     alias(libs.plugins.crashlyticsPlugin)
     alias(libs.plugins.kover)
-    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 val props = Properties()
@@ -77,6 +77,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        compose = true
         buildConfig = true
     }
 
@@ -112,6 +113,13 @@ android {
 }
 
 dependencies {
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.browser)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -127,26 +135,21 @@ dependencies {
     // Navigation
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
-    implementation(libs.navigation.dynamic.features.fragment)
     // RXJava
     implementation(libs.rxJava)
     implementation(libs.rxAndroid)
     // Networking
-    implementation(libs.gson)
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
     implementation(libs.apollo)
     implementation(libs.apolloNormalizedCache)
     // DataStore
     implementation(libs.dataStore)
-    implementation(libs.dataStoreRx)
     // ViewPager2
     implementation(libs.viewPager2)
     // Room
     implementation(libs.room)
-    implementation(libs.roomRx)
     implementation(libs.roomKtx)
-    implementation(libs.roomPaging)
     ksp(libs.roomCompiler)
     // Calendar
     implementation(libs.calendar)
@@ -179,7 +182,6 @@ dependencies {
     // ML Kit
     implementation(libs.mlkit.translate)
     // Open source notices
-    implementation(libs.play.services.oss.licenses)
 }
 
 hilt {
