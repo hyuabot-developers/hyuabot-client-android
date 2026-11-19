@@ -22,10 +22,6 @@
     <color name="bottom_navigation_selected">#0A84FF</color>
     <color name="bottom_navigation_unselected">#FFFFFF</color>
     <color name="plain_button_text">#FFFFFF</color>
-    <color name="campus_icon_background">#17324D</color>
-    <color name="campus_icon_tint">#D6ECFF</color>
-    <color name="campus_card_background">#1C1C1E</color>
-    <color name="campus_support_background">#1C1C1E</color>
     <color name="app_separator">#99545458</color>
     <color name="app_selection_background">#48484A</color>
     <color name="switch_track_on">#30D158</color>
@@ -77,6 +73,8 @@
     <color name="md_on_secondary_container">#C4C6CF</color>
     <color name="md_inverse_surface">#E2E2E9</color>
     <color name="md_inverse_on_surface">#2E3036</color>
+    <color name="md_pink_container">#5B1A33</color>
+    <color name="md_on_pink_container">#FFB1C8</color>
     <color name="md_highlight">#5A4500</color>
     <color name="md_on_highlight">#FFE08A</color>
 </resources>

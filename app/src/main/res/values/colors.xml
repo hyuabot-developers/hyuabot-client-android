@@ -39,10 +39,6 @@
     <color name="bottom_navigation_selected">#0E4A84</color>
     <color name="bottom_navigation_unselected">#000000</color>
     <color name="plain_button_text">#0E4A84</color>
-    <color name="campus_icon_background">#E4EFF8</color>
-    <color name="campus_icon_tint">#0E4A84</color>
-    <color name="campus_card_background">#FFFFFF</color>
-    <color name="campus_support_background">#FFFFFF</color>
     <color name="app_separator">#493C3C43</color>
     <color name="app_selection_background">#E5E5EA</color>
     <color name="switch_track_on">#34C759</color>
@@ -102,6 +98,8 @@
     <color name="md_on_secondary_container">#44474E</color>
     <color name="md_inverse_surface">#2E3036</color>
     <color name="md_inverse_on_surface">#EFF0F7</color>
+    <color name="md_pink_container">#FFD9E2</color>
+    <color name="md_on_pink_container">#8E0048</color>
     <color name="md_highlight">#FFE08A</color>
     <color name="md_on_highlight">#241A00</color>
 </resources>
