@@ -1,190 +1,261 @@
 package app.kobuggi.hyuabot.ui.readingRoom
-import app.kobuggi.hyuabot.util.AnalyticsContentType
-import app.kobuggi.hyuabot.util.AnalyticsItem
-import app.kobuggi.hyuabot.util.AnalyticsManager
 
 import android.Manifest.permission.POST_NOTIFICATIONS
-import android.app.AlertDialog
 import android.app.AlarmManager
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-import android.util.Log
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.FrameLayout
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import app.kobuggi.hyuabot.BuildConfig
 import app.kobuggi.hyuabot.R
-import app.kobuggi.hyuabot.ReadingRoomPageQuery
-import app.kobuggi.hyuabot.databinding.FragmentReadingRoomBinding
-import app.kobuggi.hyuabot.service.alarm.AlarmFunction
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
-import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
+import app.kobuggi.hyuabot.ui.common.coachmark.placeAt
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
-import app.kobuggi.hyuabot.ui.common.applyGodoTypography
+import app.kobuggi.hyuabot.ui.common.compose.HyuabotTheme
+import app.kobuggi.hyuabot.util.AnalyticsContentType
+import app.kobuggi.hyuabot.util.AnalyticsItem
+import app.kobuggi.hyuabot.util.AnalyticsManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
+/** 열람실: 좌석 현황(15초마다 자동 갱신), 빈자리 알림(FCM 토픽), 이용 종료 알림(알람). 알림 권한은 필요한 순간에 안내한다. */
 @AndroidEntryPoint
 class ReadingRoomFragment @Inject constructor() : Fragment() {
-    private val binding by lazy { FragmentReadingRoomBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<ReadingRoomViewModel>()
 
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
-    private lateinit var roomListAdapter: ReadingRoomListAdapter
-    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            Toast.makeText(requireContext(), R.string.reading_room_noti_allowed, Toast.LENGTH_SHORT).show()
+    /** 코치마크가 가리킬, Compose 요소 위에 겹친 보이지 않는 뷰. */
+    private val anchors = mutableMapOf<ReadingRoomAnchor, View>()
+
+    /** 정확한 알람 설정 화면에 다녀오는 중이면 true. 돌아오면(ON_RESUME) 보류한 예약을 이어서 한다. */
+    private var awaitingExactAlarm = false
+
+    private val notificationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        val job = viewModel.state.value.job
+        if (granted && job != null) {
+            proceed(job)
         } else {
-            Toast.makeText(requireContext(), R.string.reading_room_noti_denied, Toast.LENGTH_SHORT).show()
+            viewModel.setJob(null)
+            if (!granted) viewModel.showMessage(ReadingRoomMessage.PermissionDenied)
         }
     }
-    private lateinit var alarmFunction: AlarmFunction
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        alarmFunction = AlarmFunction(requireContext())
-        roomListAdapter = ReadingRoomListAdapter(requireContext(), ::onClickReadingRoom, emptyList(), emptySet())
-        binding.apply {
-            readingRoomSwipeRefreshLayout.setOnRefreshListener {
-                viewModel.campusID.observe(viewLifecycleOwner) {
-                    viewModel.fetchRooms(it)
-                }
-            }
-            readingRoomRecyclerView.apply {
-                setHasFixedSize(true)
-                adapter = roomListAdapter
-                layoutManager = LinearLayoutManager(context)
-            }
-            readingRoomAlarm3Hour.setOnClickListener {
-                AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_ALARM_TOGGLE, type = AnalyticsContentType.TOGGLE, name = "3hour")
-                callAlarm(R.string.reading_room_alarm_3_hour, 3)
-            }
-            readingRoomAlarm4Hour.setOnClickListener {
-                AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_ALARM_TOGGLE, type = AnalyticsContentType.TOGGLE, name = "4hour")
-                callAlarm(R.string.reading_room_alarm_4_hour, 4)
-            }
-            readingRoomAlarmCancel.setOnClickListener {
-                AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_ALARM_TOGGLE, type = AnalyticsContentType.TOGGLE, name = "cancel")
-                alarmFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
-                alarmFunction.cancelAlarm(R.string.reading_room_alarm_4_hour)
-                viewModel.setExtendNotificationTime(null)
-                readingRoomAlarmCancel.visibility = View.GONE
-            }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val context = requireContext()
+        val compose = ComposeView(context).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent { HyuabotTheme { ReadingRoomContent() } }
         }
-
-        return binding.root
+        val root = FrameLayout(context).apply {
+            addView(compose, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        }
+        ReadingRoomAnchor.entries.forEach { anchor ->
+            val view = View(context).apply { importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO }
+            anchors[anchor] = view
+            root.addView(view, FrameLayout.LayoutParams(0, 0))
+        }
+        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        askNotificationPermission()
-        viewModel.apply {
-            campusID.observe(viewLifecycleOwner) {
-                fetchRooms(it)
-            }
-            rooms.observe(viewLifecycleOwner) {
-                binding.readingRoomSwipeRefreshLayout.isRefreshing = false
-                roomListAdapter.updateData(it)
-                if (it.isNotEmpty()) {
-                    // The updatedAt field is in UTC format and converted to LocalDateTime
-                    binding.readingRoomUpdateTime.text = getString(
-                        R.string.reading_room_update_time,
-                        it[0].updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                    )
-                } else {
-                    binding.readingRoomUpdateTime.text = getString(R.string.reading_room_update_time, LocalDateTime.now().toString())
+        val fixtureQuery = arguments?.getString("readingRoomFixture")?.takeIf { BuildConfig.DEBUG }
+        viewModel.start(fixtureQuery, BuildConfig.DEBUG)
+        // 화면이 보이는 동안 15초마다 조용히 다시 불러온다. 다시 앞으로 오면(STARTED 진입) 즉시 한 번 부르고 다시 시작한다.
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.refresh(manual = false)
+                while (true) {
+                    delay(ReadingRoomLogic.AUTO_REFRESH_MS)
+                    viewModel.refresh(manual = false)
                 }
-            }
-            notificationList.observe(viewLifecycleOwner) {
-                Log.d("ReadingRoomFragment", "Notification list updated: $it")
-                roomListAdapter.updateNotifications(it.mapNotNull { item -> item.split("_").getOrNull(2)?.toIntOrNull() }.toSet())
-            }
-            extendNotificationTime.observe(viewLifecycleOwner) {
-                if (!it.isNullOrEmpty()) {
-                    binding.readingRoomRunningAlarm.apply {
-                        text = getString(R.string.reading_room_alarm_format, it)
-                        visibility = View.VISIBLE
-                    }
-                    binding.readingRoomAlarmCancel.visibility = View.VISIBLE
-                } else {
-                    binding.readingRoomRunningAlarm.visibility = View.GONE
-                    binding.readingRoomAlarmCancel.visibility = View.GONE
-                }
-            }
-            queryError.observe(viewLifecycleOwner) {
-                it?.let { Toast.makeText(requireContext(), getString(R.string.reading_room_error), Toast.LENGTH_SHORT).show() }
             }
         }
-        showCoachmarkOnce(userPreferencesRepository, Coachmarks.READING_ROOM) {
-            listOf(
-                CoachmarkStep(
-                    { binding.readingRoomRecyclerView },
-                    R.string.coachmark_reading_room_seats_title, R.string.coachmark_reading_room_seats_desc
-                ),
-                CoachmarkStep(
-                    { binding.readingRoomAlarmDescription },
-                    R.string.coachmark_reading_room_alarm_title, R.string.coachmark_reading_room_alarm_desc
-                ),
+        if (!viewModel.isFixture) scheduleCoachmark()
+    }
+
+    override fun onDestroyView() {
+        anchors.clear()
+        super.onDestroyView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!awaitingExactAlarm) return
+        awaitingExactAlarm = false
+        val job = viewModel.state.value.job as? ReadingRoomJob.Alarm
+        if (job != null && canScheduleExactAlarms()) viewModel.scheduleAlarm(job.hours) else viewModel.setJob(null)
+    }
+
+    /** 목록이 처음 보인 뒤 한 번만: 갱신 줄 → 첫 행 벨 → 이용 종료 알림 카드. */
+    private fun scheduleCoachmark() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.state.first { it.rooms.isNotEmpty() && it.sheet == null }
+            delay(COACHMARK_DELAY_MS)
+            showCoachmarkOnce(userPreferencesRepository, Coachmarks.READING_ROOM) {
+                listOfNotNull(
+                    anchors[ReadingRoomAnchor.Status]?.let { v ->
+                        CoachmarkStep({ v }, R.string.coachmark_reading_room_status_title, R.string.coachmark_reading_room_status_desc)
+                    },
+                    anchors[ReadingRoomAnchor.Bell]?.let { v ->
+                        CoachmarkStep({ v }, R.string.coachmark_reading_room_bell_title, R.string.coachmark_reading_room_bell_desc)
+                    },
+                    anchors[ReadingRoomAnchor.Alarm]?.let { v ->
+                        CoachmarkStep({ v }, R.string.coachmark_reading_room_alarm_title, R.string.coachmark_reading_room_alarm_desc)
+                    },
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun ReadingRoomContent() {
+        val state by viewModel.state.collectAsStateWithLifecycle()
+        val actions = remember(viewModel) {
+            ReadingRoomActions(
+                onBack = { findNavController().popBackStack() },
+                onCampus = { findNavController().navigate(R.id.settingFragment) },
+                onRefresh = {
+                    AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_REFRESH)
+                    viewModel.refresh(manual = true)
+                },
+                onRetry = { viewModel.refresh(manual = true) },
+                onBell = ::onBell,
+                onAlarm = { hours ->
+                    AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_ALARM_TOGGLE, type = AnalyticsContentType.TOGGLE, name = "${hours}hour")
+                    request(ReadingRoomJob.Alarm(hours))
+                },
+                onCancelAlarm = {
+                    AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_ALARM_TOGGLE, type = AnalyticsContentType.TOGGLE, name = "cancel")
+                    viewModel.cancelAlarm()
+                },
+                onSheetPrimary = ::onSheetPrimary,
+                onSheetSecondary = { viewModel.dismissSheet() },
+                onSheetDismiss = { viewModel.dismissSheet() },
+                onMessageShown = viewModel::consumeMessage,
+                onAnchor = { anchor, bounds -> anchors[anchor]?.placeAt(bounds) },
             )
         }
+        // 디버그 픽스처가 열어 둔 시트도 분석 이벤트를 남기지 않도록 사용자가 연 시트만 기록한다 (request에서 기록).
+        ReadingRoomScreen(state, actions)
     }
 
-    private fun askNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(requireContext(), POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                AlertDialog.Builder(requireContext())
-                    .setTitle(R.string.notification_permission_disclosure_title)
-                    .setMessage(R.string.reading_room_notification_permission_disclosure_message)
-                    .setPositiveButton(R.string.notification_permission_disclosure_allow) { dialog, _ ->
-                        dialog.dismiss()
-                        requestPermissionLauncher.launch(POST_NOTIFICATIONS)
-                    }
-                    .setNegativeButton(R.string.notification_permission_disclosure_later, null)
-                    .show()
-                    .applyGodoTypography()
+    private fun onBell(seq: Int) {
+        AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_ALARM_TOGGLE, type = AnalyticsContentType.TOGGLE, name = seq.toString())
+        // 이미 켠 알림을 끄는 데는 권한이 필요 없다.
+        if (seq in viewModel.state.value.subscribed) viewModel.toggleSubscription(seq) else request(ReadingRoomJob.Bell(seq))
+    }
+
+    /** 누른 순간에 권한을 확인한다: 있으면 바로, 처음이면 안내 시트 → 시스템 팝업, 영구 거부면 설정 안내 시트. */
+    private fun request(job: ReadingRoomJob) {
+        viewModel.setJob(job)
+        when (notificationAccess()) {
+            NotificationAccess.Granted -> proceed(job)
+            NotificationAccess.Ask -> openSheet(ReadingRoomSheet.Perm)
+            NotificationAccess.Denied -> openSheet(ReadingRoomSheet.Denied)
+        }
+    }
+
+    private fun openSheet(sheet: ReadingRoomSheet, job: ReadingRoomJob? = null) {
+        AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_PERMISSION_SHEET, name = sheet.name.lowercase())
+        viewModel.openSheet(sheet, job)
+    }
+
+    /** 권한이 갖춰진 뒤 이어서 하는 동작. 이용 종료 알림은 정확한 알람 권한도 필요하다. */
+    private fun proceed(job: ReadingRoomJob) {
+        when (job) {
+            is ReadingRoomJob.Bell -> viewModel.toggleSubscription(job.seq)
+            is ReadingRoomJob.Alarm ->
+                if (canScheduleExactAlarms()) viewModel.scheduleAlarm(job.hours) else openSheet(ReadingRoomSheet.Exact, job)
+        }
+    }
+
+    /** 설정 화면이 없는 기기에서도 죽지 않게, 열지 못하면 앱 정보 화면으로 돌린다. 열었으면 true. */
+    private fun openSettings(intent: Intent): Boolean =
+        runCatching { startActivity(intent) }.isSuccess ||
+            runCatching {
+                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${requireContext().packageName}")))
+            }.isSuccess
+
+    private fun onSheetPrimary() {
+        val sheet = viewModel.state.value.sheet ?: return
+        val context = requireContext()
+        when (sheet) {
+            ReadingRoomSheet.Perm -> {
+                AnalyticsManager.logSelect(AnalyticsItem.READING_ROOM_PERMISSION_SHEET, name = "perm_allow")
+                context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_ASKED, true).apply()
+                // 시트만 닫고 이어서 할 동작은 남겨 둔다. 허용하면 방금 누른 동작을 이어서 한다.
+                viewModel.hideSheet()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    notificationPermission.launch(POST_NOTIFICATIONS)
+                } else {
+                    viewModel.state.value.job?.let(::proceed)
+                }
+            }
+            ReadingRoomSheet.Denied -> {
+                viewModel.dismissSheet()
+                openSettings(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName))
+            }
+            ReadingRoomSheet.Exact -> {
+                viewModel.hideSheet()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    awaitingExactAlarm = openSettings(
+                        Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:${context.packageName}")),
+                    )
+                }
             }
         }
     }
 
-    private fun onClickReadingRoom(room: ReadingRoomPageQuery.ReadingRoom, subscribe: Boolean) {
-        viewModel.viewModelScope.launch {
-            viewModel.toggleReadingRoomNotification(requireContext(), room.seq, subscribe)
-        }
+    private fun canScheduleExactAlarms(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
+        val manager = ContextCompat.getSystemService(requireContext(), AlarmManager::class.java) ?: return false
+        return manager.canScheduleExactAlarms()
     }
 
-    private fun callAlarm(alarmResId: Int, hours: Long) {
-        val alarmManager = ContextCompat.getSystemService(requireContext(), AlarmManager::class.java)
-        alarmFunction.cancelAlarm(R.string.reading_room_alarm_3_hour)
-        alarmFunction.cancelAlarm(R.string.reading_room_alarm_4_hour)
-        if (alarmManager == null) {
-            return
-        }
+    private enum class NotificationAccess { Granted, Ask, Denied }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
-            return
-        }
+    private fun notificationAccess(): NotificationAccess {
+        val context = requireContext()
+        if (NotificationManagerCompat.from(context).areNotificationsEnabled()) return NotificationAccess.Granted
+        // 13 미만은 시스템 팝업이 없으므로 꺼져 있으면 설정 안내뿐이다.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return NotificationAccess.Denied
+        val asked = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_ASKED, false)
+        // 영구 거부: 이미 물어봤고 더는 시스템 팝업을 띄울 수 없다.
+        return if (asked && !shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)) NotificationAccess.Denied else NotificationAccess.Ask
+    }
 
-        val alarmTime = LocalDateTime.now().plusHours(hours).minusMinutes(10).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        alarmFunction.callAlarm(alarmTime, alarmResId, getString(R.string.reading_room_alarm_extend))
-        viewModel.setExtendNotificationTime(alarmTime)
+    private companion object {
+        const val PREFS = "reading_room"
+        const val KEY_ASKED = "notification_asked"
+        const val COACHMARK_DELAY_MS = 400L
     }
 }

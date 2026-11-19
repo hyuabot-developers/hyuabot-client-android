@@ -169,8 +169,7 @@
     <fragment
         android:id="@+id/readingRoomFragment"
         android:name="app.kobuggi.hyuabot.ui.readingRoom.ReadingRoomFragment"
-        android:label="열람실 정보"
-        tools:layout="@layout/fragment_reading_room">
+        android:label="열람실 정보">
         <deepLink app:uri="hyuabot://reading-room" />
         <deepLink app:uri="https://hyuabot.app/reading-room" />
     </fragment>
