@@ -66,6 +66,7 @@ enum class AnalyticsScreen(val id: String) {
     // Android-only screens
     MENU("menu"),                       // bottom-nav "more" hub
     CAMPUS("campus"),
+    COMMUTER_BUS("commuter_bus"),
     NOTICE("notice"),                   // notice list
     SETTING_CAMPUS("setting_campus"),   // campus picker dialog
     SETTING_THEME("setting_theme"),     // theme picker dialog

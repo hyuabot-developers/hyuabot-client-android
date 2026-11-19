@@ -482,11 +482,15 @@
     <string name="campus_map_title">校园地图</string>
     <string name="campus_map_subtitle">查找建筑和教室位置</string>
     <string name="campus_reading_room_title">阅览室</string>
-    <string name="campus_reading_room_subtitle">查看剩余座位并设置空位提醒</string>
+    <string name="campus_reading_room_subtitle">剩余座位·空位提醒</string>
     <string name="campus_calendar_title">学事历</string>
     <string name="campus_calendar_subtitle">查看重要学事日程</string>
     <string name="campus_contact_title">校内联系方式</string>
     <string name="campus_contact_subtitle">查找校内部门和电话号码</string>
+    <string name="campus_commuter_title">通学班车</string>
+    <string name="campus_commuter_subtitle">按路线和站点查看时刻表</string>
+    <string name="campus_commuter_badge">NEW</string>
+    <string name="campus_donate_external">前往 KakaoPay</string>
     <string name="campus_support_title">支持与设置</string>
     <string name="map_search_guide">搜索教室</string>
     <string name="map_external_error">没有可打开地图的应用。</string>

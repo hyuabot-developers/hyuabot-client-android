@@ -4,170 +4,93 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import app.kobuggi.hyuabot.R
-import androidx.lifecycle.lifecycleScope
-import app.kobuggi.hyuabot.databinding.FragmentMenuBinding
-import app.kobuggi.hyuabot.databinding.ItemCampusToolBinding
 import app.kobuggi.hyuabot.service.preferences.UserPreferencesRepository
 import app.kobuggi.hyuabot.service.safeNavigate
-import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.CoachmarkStep
+import app.kobuggi.hyuabot.ui.common.coachmark.Coachmarks
 import app.kobuggi.hyuabot.ui.common.coachmark.showCoachmarkOnce
-import app.kobuggi.hyuabot.util.InAppReviewManager
+import app.kobuggi.hyuabot.ui.common.compose.HyuabotTheme
+import app.kobuggi.hyuabot.ui.common.openCustomTab
 import app.kobuggi.hyuabot.util.AnalyticsContentType
 import app.kobuggi.hyuabot.util.AnalyticsItem
 import app.kobuggi.hyuabot.util.AnalyticsManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/** 캠퍼스 탭 (Compose). 이동 방식은 [CampusDestination]마다 정해져 있다. */
 @AndroidEntryPoint
 class MenuFragment @Inject constructor() : Fragment() {
-    private val binding by lazy { FragmentMenuBinding.inflate(layoutInflater) }
-
-    @Inject
-    lateinit var inAppReviewManager: InAppReviewManager
-
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
-    private val menuList = listOf(
-        MenuItem(R.drawable.ic_settings, R.string.menu_settings, "settings"),
-        MenuItem(R.drawable.ic_chat, R.string.menu_chat, "inquiry"),
-        MenuItem(R.drawable.ic_donate, R.string.menu_donate, "donate"),
-        MenuItem(R.drawable.ic_star, R.string.menu_review, "review"),
-    )
+    /** Compose 레이아웃 위치를 따라가는 투명 View. 코치마크(View 기반)가 가리킬 대상이다. */
+    private var toolsAnchor: View? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val menuAdapter = MenuListAdapter(requireContext(), menuList, ::onClickMenu)
-        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        setupCampusTools()
-
-        binding.menuRecyclerView.apply {
-            adapter = menuAdapter
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(context)
-            addItemDecoration(decoration)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val ctx = requireContext()
+        val anchor = View(ctx).apply { importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO }
+        toolsAnchor = anchor
+        val compose = ComposeView(ctx).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent { HyuabotTheme { CampusScreen(onSelect = ::onSelect, onToolsBounds = ::placeAnchor) } }
+        }
+        val root = FrameLayout(ctx).apply {
+            addView(compose, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+            addView(anchor, FrameLayout.LayoutParams(0, 0))
         }
         showCoachmarkOnce(userPreferencesRepository, Coachmarks.MENU) {
-            listOf(
-                CoachmarkStep(
-                    { binding.campusToolsGrid },
-                    R.string.coachmark_menu_title, R.string.coachmark_menu_desc
-                ),
-            )
+            listOf(CoachmarkStep({ toolsAnchor }, R.string.coachmark_menu_title, R.string.coachmark_menu_desc))
         }
-        return binding.root
+        return root
     }
 
-    private fun setupCampusTools() {
-        bindCampusTool(
-            binding.campusMapCard,
-            R.drawable.ic_map,
-            R.string.campus_map_title,
-            R.string.campus_map_subtitle,
-            "map",
-        ) { onClickMenu(MenuItem(R.drawable.ic_map, R.string.menu_map, "map")) }
-        bindCampusTool(
-            binding.campusReadingRoomCard,
-            R.drawable.ic_book,
-            R.string.campus_reading_room_title,
-            R.string.campus_reading_room_subtitle,
-            "reading_room",
-        ) { onClickMenu(MenuItem(R.drawable.ic_book, R.string.menu_book, "reading_room")) }
-        bindCampusTool(
-            binding.campusCalendarCard,
-            R.drawable.ic_calendar,
-            R.string.campus_calendar_title,
-            R.string.campus_calendar_subtitle,
-            "calendar",
-        ) { onClickMenu(MenuItem(R.drawable.ic_calendar, R.string.menu_calendar, "calendar")) }
-        bindCampusTool(
-            binding.campusContactCard,
-            R.drawable.ic_contact,
-            R.string.campus_contact_title,
-            R.string.campus_contact_subtitle,
-            "contact",
-        ) { onClickMenu(MenuItem(R.drawable.ic_contact, R.string.menu_contact, "contact")) }
+    override fun onDestroyView() {
+        toolsAnchor = null
+        super.onDestroyView()
     }
 
-    private fun bindCampusTool(
-        binding: ItemCampusToolBinding,
-        iconRes: Int,
-        titleRes: Int,
-        subtitleRes: Int,
-        analyticsName: String,
-        onClick: () -> Unit,
-    ) {
-        val title = getString(titleRes)
-        val subtitle = getString(subtitleRes)
-        binding.toolIcon.setImageResource(iconRes)
-        binding.toolTitle.text = title
-        binding.toolSubtitle.text = subtitle
-        binding.toolCard.contentDescription = "$title. $subtitle"
-        binding.toolCard.setOnClickListener {
-            AnalyticsManager.logSelect(
-                AnalyticsItem.CAMPUS_SELECT_TOOL,
-                type = AnalyticsContentType.LIST_ITEM,
-                name = analyticsName,
-                destinationId = analyticsName,
-            )
-            onClick()
+    private fun placeAnchor(bounds: Rect) {
+        val anchor = toolsAnchor ?: return
+        val lp = anchor.layoutParams as FrameLayout.LayoutParams
+        val width = bounds.width.toInt()
+        val height = bounds.height.toInt()
+        if (lp.width != width || lp.height != height) {
+            lp.width = width
+            lp.height = height
+            anchor.layoutParams = lp
+        }
+        anchor.translationX = bounds.left
+        anchor.translationY = bounds.top
+    }
+
+    private fun onSelect(destination: CampusDestination) {
+        AnalyticsManager.logSelect(
+            AnalyticsItem.CAMPUS_SELECT_TOOL,
+            type = AnalyticsContentType.LIST_ITEM,
+            name = destination.id,
+            destinationId = destination.id,
+        )
+        val nav = findNavController()
+        when (destination) {
+            CampusDestination.CommuterBus -> nav.safeNavigate(MenuFragmentDirections.actionMenuFragmentToCommuterFragment())
+            CampusDestination.Map -> nav.safeNavigate(MenuFragmentDirections.actionMenuFragmentToMapFragment())
+            CampusDestination.ReadingRoom -> nav.safeNavigate(MenuFragmentDirections.actionMenuFragmentToReadingRoomFragment())
+            CampusDestination.Calendar -> nav.safeNavigate(MenuFragmentDirections.actionMenuFragmentToCalendarFragment())
+            CampusDestination.Contact -> nav.safeNavigate(MenuFragmentDirections.actionMenuFragmentToContactFragment())
+            CampusDestination.Setting -> nav.safeNavigate(MenuFragmentDirections.actionMenuFragmentToSettingFragment())
+            CampusDestination.Inquiry -> nav.safeNavigate(MenuFragmentDirections.actionMenuFragmentToInquiryChatFragment())
+            CampusDestination.Donate -> requireContext().openCustomTab(DONATE_URL)
         }
     }
 
-    private fun onClickMenu(menuItem: MenuItem) {
-        when(menuItem.titleResource) {
-            R.string.menu_book -> {
-                MenuFragmentDirections.actionMenuFragmentToReadingRoomFragment().also {
-                    findNavController().safeNavigate(it)
-                }
-            }
-            R.string.menu_map -> {
-                MenuFragmentDirections.actionMenuFragmentToMapFragment().also {
-                    findNavController().safeNavigate(it)
-                }
-            }
-            R.string.menu_contact -> {
-                MenuFragmentDirections.actionMenuFragmentToContactFragment().also {
-                    findNavController().safeNavigate(it)
-                }
-            }
-            R.string.menu_calendar -> {
-                MenuFragmentDirections.actionMenuFragmentToCalendarFragment().also {
-                    findNavController().safeNavigate(it)
-                }
-            }
-            R.string.menu_settings -> {
-                MenuFragmentDirections.actionMenuFragmentToSettingFragment().also {
-                    findNavController().safeNavigate(it)
-                }
-            }
-            R.string.menu_chat -> {
-                MenuFragmentDirections.actionMenuFragmentToInquiryChatFragment().also {
-                    findNavController().safeNavigate(it)
-                }
-            }
-            R.string.menu_donate -> {
-                val url = "https://qr.kakaopay.com/FWxVPo8iO"
-                MenuFragmentDirections.actionMenuFragmentToNoticeWebViewFragment(url).also {
-                    findNavController().safeNavigate(it)
-                }
-            }
-            R.string.menu_review -> {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    inAppReviewManager.launchReview(requireActivity())
-                }
-            }
-            else -> {}
-        }
+    private companion object {
+        const val DONATE_URL = "https://qr.kakaopay.com/FWxVPo8iO"
     }
 }

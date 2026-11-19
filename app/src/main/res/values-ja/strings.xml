@@ -482,11 +482,15 @@
     <string name="campus_map_title">キャンパスマップ</string>
     <string name="campus_map_subtitle">建物や講義室の場所を検索</string>
     <string name="campus_reading_room_title">閲覧室</string>
-    <string name="campus_reading_room_subtitle">空席確認と空席通知</string>
+    <string name="campus_reading_room_subtitle">空席・空席通知</string>
     <string name="campus_calendar_title">学事暦</string>
     <string name="campus_calendar_subtitle">主な学事日程を一覧で確認</string>
     <string name="campus_contact_title">学内連絡先</string>
     <string name="campus_contact_subtitle">学内の部署と電話番号を検索</string>
+    <string name="campus_commuter_title">通学バス</string>
+    <string name="campus_commuter_subtitle">路線・停留所別の時刻表案内</string>
+    <string name="campus_commuter_badge">NEW</string>
+    <string name="campus_donate_external">KakaoPayへ移動</string>
     <string name="campus_support_title">サポートと設定</string>
     <string name="map_search_guide">講義室を検索</string>
     <string name="map_external_error">地図を開けるアプリがありません。</string>

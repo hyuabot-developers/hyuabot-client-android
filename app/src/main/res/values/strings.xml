@@ -553,11 +553,15 @@
     <string name="campus_map_title">캠퍼스 지도</string>
     <string name="campus_map_subtitle">건물과 강의실 위치 찾기</string>
     <string name="campus_reading_room_title">열람실</string>
-    <string name="campus_reading_room_subtitle">잔여 좌석 확인과 빈자리 알림</string>
+    <string name="campus_reading_room_subtitle">잔여 좌석·빈자리 알림</string>
     <string name="campus_calendar_title">학사일정</string>
     <string name="campus_calendar_subtitle">주요 학사일정 한눈에 보기</string>
     <string name="campus_contact_title">교내 연락처</string>
     <string name="campus_contact_subtitle">교내 부서와 전화번호 찾기</string>
+    <string name="campus_commuter_title">통학버스</string>
+    <string name="campus_commuter_subtitle">노선·정류장별 시간표 안내</string>
+    <string name="campus_commuter_badge">NEW</string>
+    <string name="campus_donate_external">카카오페이로 이동</string>
     <string name="campus_support_title">지원 및 설정</string>
     <string name="map_search_guide">강의실 검색</string>
     <string name="map_external_error">지도를 열 수 있는 앱이 없습니다.</string>
